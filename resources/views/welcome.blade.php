@@ -39,6 +39,7 @@
         <div class="container">
             <div class="content">
                 <div class="title">Super Amazing Book System 5</div>
+                <div class="title">Here's some more text!</div>
             </div>
         </div>
     </body>
