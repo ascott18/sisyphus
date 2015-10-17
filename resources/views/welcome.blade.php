@@ -104,60 +104,38 @@
     {{--</div>--}}
 </div>
 <!-- /.row--><!-- Morris Charts CSS-->
-<link href="/stylesheets/plugins/morris.css" rel="stylesheet">
+
 <div class="row">
-    <div class="col-lg-12">
+    <div class="col-lg-8">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title"><i class="fa fa-money fa-fw"></i> Current Orders</h3>
+                <h3 class="panel-title"><i class="fa fa-bar-chart-o fa-fw"></i> Area Chart</h3>
             </div>
             <div class="panel-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover table-striped">
-                        <thead>
-                        <tr>
-                            <th>Requester</th>
-                            <th>Order Date</th>
-                            <th>Book</th>
-                            <th>Quantitiy</th>
-                            <th>Price</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>Tom Capaul</td>
-                            <td>9/15/2015 4:29 PM</td>
-                            <td>Head First Design Patterns, 1st edition</td>
-                            <td>28</td>
-                            <td><a href="http://www.amazon.com/dp/0596007124" class="price-link"><i
-                                            class="fa fa-amazon"></i><span> - $0.00</span></a></td>
-                        </tr>
-                        <tr>
-                            <td>Stu Steiner</td>
-                            <td>9/15/2015 4:29 PM</td>
-                            <td>Operating System Concepts, 8th edition</td>
-                            <td>34</td>
-                            <td><a href="http://www.amazon.com/dp/0470128720" class="price-link"><i
-                                            class="fa fa-amazon"></i><span> - $0.00</span></a></td>
-                        </tr>
-                        <tr>
-                            <td>Chris Peters</td>
-                            <td>9/15/2015 4:29 PM</td>
-                            <td>Java Foundations: Introduction to Program Design and Data Structures, 2nd
-                                edition
-                            </td>
-                            <td>31</td>
-                            <td><a href="http://www.amazon.com/dp/0132128810" class="price-link"><i
-                                            class="fa fa-amazon"></i><span> - $0.00</span></a></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="text-right"><a href="#">View All Orders <i class="fa fa-arrow-circle-right"></i></a>
+                <div id="morris-area-chart"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-long-arrow-right fa-fw"></i> Donut Chart</h3>
+            </div>
+            <div class="panel-body">
+                <div id="morris-donut-chart"></div>
+                <div class="text-right">
+                    <a href="#">View Details <i class="fa fa-arrow-circle-right"></i></a>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
+
+<link href="/stylesheets/plugins/morris.css" rel="stylesheet">
+
+
+<div class="row">
     <div class="col-lg-12">
         <div class="panel panel-default">
             <div class="panel-heading">

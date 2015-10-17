@@ -4,7 +4,7 @@
 
 
 @section('content')
-    @include('shared.partial.header', ['headerText'=>'Books', 'subHeaderText'=>'All Books'])
+    @include('shared.partial.header', ['headerText'=>'Orders', 'subHeaderText'=>'All Orders'])
 
 
 <div class="row">
@@ -20,39 +20,40 @@
                     <table class="table table-bordered table-hover table-striped">
                         <thead>
                         <tr>
+                            <th>Ordered By</th>
                             <th>Title</th>
-                            <th>ISBN</th>
-                            <th>Amazon</th>
+                            <th>Quantity</th>
                         </tr>
                         </thead>
                         <tbody>
 
-                        @foreach ($books as $book)
+                        @foreach ($orders as $order)
                             <tr>
-                                <td><div>
-                                        {{ $book->title }}
+                                <td>{{ $order->orderedByName }} </td>
+                                <td>
+                                    <div>
+                                        {{ $order->book->title }}
                                     </div>
                                     <div class="text-muted">
                                         <?php $index = 0; ?>
-                                        @foreach($book->authors as $author)
-                                            {{$author->last_name}}, {{$author->first_name}}
-                                            @if ($index++ != count($book->authors)-1)
+                                        @foreach($order->book->authors as $author)
+                                            {{$author->first_name}} {{$author->last_name}}
+                                            @if ($index++ != count($order->book->authors)-1)
                                                 |
                                             @endif
                                         @endforeach
                                     </div>
                                 </td>
-                                <td>{{ $book->isbn13 }}</td>
-                                <td><a href="http://www.amazon.com/dp/{{ $book->asin }}" class="price-link"><i
-                                                class="fa fa-amazon"></i><span> Amazon! </span></a></td>
+                                <td>{{ $order->quantityRequested }} </td>
                             </tr>
-
-
                         @endforeach
 
 
                         </tbody>
                     </table>
+
+                    {{-- Render pagination controls --}}
+                    {!! $orders->render() !!}
                 </div>
             </div>
         </div>
