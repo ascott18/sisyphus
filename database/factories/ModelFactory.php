@@ -11,11 +11,30 @@
 |
 */
 
-$factory->define(App\User::class, function (Faker\Generator $faker) {
+$factory->define(App\Models\Book::class, function (Faker\Generator $faker) {
+
+    $faker->addProvider(new Faker\Provider\BookTitle($faker));
+
     return [
-        'name' => $faker->name,
-        'email' => $faker->email,
-        'password' => bcrypt(str_random(10)),
-        'remember_token' => str_random(10),
+        'title' => $faker->bookTitle,
+        'isbn13' => $faker->isbn13,
+        'asin' => str_random(10),
+    ];
+});
+
+
+$factory->define(App\Models\Author::class, function (Faker\Generator $faker) {
+    return [
+        'first_name' => $faker->firstName,
+        'last_name' => $faker->lastName,
+    ];
+});
+
+
+$factory->define(App\Models\Order::class, function (Faker\Generator $faker) {
+    return [
+        'quantityRequested' => $faker->numberBetween(5, 50),
+        'orderedByName' => $faker->name,
+        'book_id' => App\Models\Book::orderByRaw("RAND()")->first()->book_id,
     ];
 });

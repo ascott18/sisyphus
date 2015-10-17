@@ -11,6 +11,14 @@
 |
 */
 
+
 Route::get('/', function () {
     return view('welcome');
+});
+
+
+Route::get('/books', function () {
+    $books = App\Models\Book::getPaginatedBooks(10, 0);
+
+    return view('books', ['books' => $books]);
 });
