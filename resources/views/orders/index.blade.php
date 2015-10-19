@@ -29,7 +29,7 @@
 
                         @foreach ($orders as $order)
                             <tr>
-                                <td>{{ $order->orderedByName }} </td>
+                                <td>{{ $order->ordered_by_name }} </td>
                                 <td>
                                     <div>
                                         {{ $order->book->title }}
@@ -44,7 +44,7 @@
                                         @endforeach
                                     </div>
                                 </td>
-                                <td>{{ $order->quantityRequested }} </td>
+                                <td>{{ $order->quantity_requested }} </td>
                             </tr>
                         @endforeach
 

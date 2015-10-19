@@ -11,17 +11,17 @@ class BooksAndAuthorsSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\Models\Book::class, 50)->create()->each(function($u) {
+        factory(App\Models\Book::class, 50)->create()->each(function($book) {
 
-            $u->authors()->save(factory(App\Models\Author::class)->make());
+            $book->authors()->save(factory(App\Models\Author::class)->make());
 
             // 50% chance of generating with two authors.
             if (rand(0, 1)) {
-                $u->authors()->save(factory(App\Models\Author::class)->make());
+                $book->authors()->save(factory(App\Models\Author::class)->make());
 
                 // 25% chance of a third author
                 if (rand(0, 1)) {
-                    $u->authors()->save(factory(App\Models\Author::class)->make());
+                    $book->authors()->save(factory(App\Models\Author::class)->make());
                 }
             }
         });

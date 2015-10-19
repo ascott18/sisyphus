@@ -11,10 +11,11 @@ class OrdersSeed extends Seeder
      */
     public function run()
     {
-        factory(App\Models\Order::class, 50)->create()->each(function($u) {
+        factory(App\Models\Course::class, 50)->create()->each(function($u) {
 
-            $book = App\Models\Book::orderByRaw("RAND()")->first();
-            $u->book_id = $book->book_id;
+        });
+
+        factory(App\Models\Order::class, 50)->create()->each(function($u) {
 
         });
     }

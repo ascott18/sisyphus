@@ -19,8 +19,8 @@ class CreateOrdersTable extends Migration
             $table->foreign('book_id')->references('book_id')->on('books');
 
             $table->integer('status')->unsigned();
-            $table->string('orderedByName'); // TODO: get rid of this, reference the users table instead.
-            $table->integer('quantityRequested')->unsigned();
+            $table->string('ordered_by_name'); // TODO: get rid of this, reference the users table instead.
+            $table->integer('quantity_requested')->unsigned();
             $table->timestamps();
         });
     }

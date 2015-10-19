@@ -7,6 +7,10 @@ use App\Models\Order;
 class OrderController extends Controller
 {
 
+    /** GET: /orders/
+     *
+     * @return \Illuminate\View\View
+     */
     public function getIndex()
     {
         $orders = Order::paginate(10);

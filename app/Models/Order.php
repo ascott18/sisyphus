@@ -17,4 +17,10 @@ class Order extends Model
     {
         return $this->hasOne('App\Models\Book', 'book_id', 'book_id');
     }
+
+
+    public function course()
+    {
+        return $this->hasOne('App\Models\Course', 'course_id', 'course_id');
+    }
 }

@@ -4,6 +4,7 @@
 
 
 @section('content')
+
     @include('shared.partial.header', ['headerText'=>'Books', 'subHeaderText'=>'All Books'])
 
 
@@ -21,6 +22,7 @@
                         <thead>
                         <tr>
                             <th>Title</th>
+                            <th>Publisher</th>
                             <th>ISBN</th>
                             <th>Amazon</th>
                         </tr>
@@ -42,6 +44,7 @@
                                         @endforeach
                                     </div>
                                 </td>
+                                <td>{{ $book->publisher }}</td>
                                 <td>{{ $book->isbn13 }}</td>
                                 <td><a href="http://www.amazon.com/dp/{{ $book->asin }}" class="price-link"><i
                                                 class="fa fa-amazon"></i><span> Amazon! </span></a></td>

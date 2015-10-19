@@ -7,6 +7,10 @@ use App\Models\Book;
 class BookController extends Controller
 {
 
+    /** GET: /books/
+     *
+     * @return \Illuminate\View\View
+     */
     public function getIndex()
     {
         $books = Book::paginate(10);

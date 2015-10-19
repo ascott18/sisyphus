@@ -18,6 +18,8 @@ class CreateAuthorsTable extends Migration
             $table->string('last_name', 100);
 
             $table->integer('book_id')->unsigned();
+
+
             $table->foreign('book_id')->references('book_id')->on('books')->onDelete('cascade');
 
             $table->timestamps();

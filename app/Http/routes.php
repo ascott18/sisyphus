@@ -13,10 +13,11 @@
 
 
 
-
 Route::controller('books', 'BookController');
 
 Route::controller('orders', 'OrderController');
+
+Route::controller('courses', 'CourseController');
 
 Route::controller('/', 'HomeController');
 
