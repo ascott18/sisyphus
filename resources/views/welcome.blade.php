@@ -168,3 +168,13 @@
 </div>
 
 @stop
+
+
+@section('scripts')
+
+    <!-- Morris Charts JavaScript-->
+    <script src="javascripts/plugins/morris/raphael.min.js"></script>
+    <script src="javascripts/plugins/morris/morris.min.js"></script>
+    <script src="javascripts/plugins/morris/morris-data.js"></script>
+
+@stop

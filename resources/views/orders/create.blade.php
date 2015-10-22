@@ -1,22 +1,10 @@
 @extends('layouts.master')
 
 
-@section('scripts')
+@section('scripts-head')
 
-    <script type="application/javascript">
-
-        var app = angular.module('sisyphus', [])
-
-        app.config(function($interpolateProvider) {
-            $interpolateProvider.startSymbol('[[');
-            $interpolateProvider.endSymbol(']]');
-        });
-
-        app.controller('OrdersController', function($scope){
-            $scope.stage = 1;
-        })
-
-    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+    <script src="/javascripts/ng/app.orders.js"></script>
 
 @stop
 

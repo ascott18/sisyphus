@@ -15,11 +15,7 @@
     <link href="/stylesheets/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
 
-
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries-->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file://--><!--if lt IE 9script(src='https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js')
-			script(src='https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js')-->
+    @yield('scripts-head')
 </head>
 <body>
 <div id="wrapper">
@@ -172,6 +168,7 @@
 </html>
 
 
+
 <script src="/javascripts/jquery-1.10.2.js"></script>
 
 <script type="text/javascript">
@@ -190,10 +187,6 @@
 
 <script src="/javascripts/bootstrap.js"></script>
 <script src="/javascripts/respond.js"></script>
-<!-- Morris Charts JavaScript-->
-<script src="javascripts/plugins/morris/raphael.min.js"></script>
-<script src="javascripts/plugins/morris/morris.min.js"></script>
-<script src="javascripts/plugins/morris/morris-data.js"></script>
 
 
 @yield('scripts')
