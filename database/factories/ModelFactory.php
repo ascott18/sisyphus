@@ -55,7 +55,7 @@ $factory->define(App\Models\User::class, function (Faker\Generator $faker) {
     $firstName = $faker->firstName;
     $lastName = $faker->lastName;
 
-    $netId = str_slug($lastName, '') . strtolower($firstName[0]) . (!random_int(0, 3) ? random_int(1, 99) : '');
+    $netId = str_slug($lastName, '') . strtolower($firstName[0]) . random_int(1, 99);
 
     return [
         'first_name' => $firstName,
