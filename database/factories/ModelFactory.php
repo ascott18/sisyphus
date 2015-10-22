@@ -12,6 +12,11 @@
 */
 
 
+/**
+ * @param $class Illuminate\Database\Eloquent\Model::class
+ * @param $primaryKey string The name of the primary key of the given model.
+ * @return int A random primary key from the table of the provided model.
+ */
 function dbRandom($class, $primaryKey)
 {
     static $tables = [];
@@ -47,11 +52,16 @@ $factory->define(App\Models\Author::class, function (Faker\Generator $faker) {
 
 
 $factory->define(App\Models\User::class, function (Faker\Generator $faker) {
+    $firstName = $faker->firstName;
+    $lastName = $faker->lastName;
+
+    $netId = str_slug($lastName, '') . strtolower($firstName[0]) . (!random_int(0, 3) ? random_int(1, 99) : '');
+
     return [
-        'first_name' => $faker->firstName,
-        'last_name' => $faker->lastName,
-        'net_id' => str_random(10),
-        'email' => $faker->email,
+        'first_name' => $firstName,
+        'last_name' => $lastName,
+        'net_id' => $netId,
+        'email' => $netId . "@ewu.edu",
     ];
 });
 
