@@ -186,7 +186,6 @@
 </script>
 
 <script src="/javascripts/bootstrap.js"></script>
-<script src="/javascripts/respond.js"></script>
 
 
 @yield('scripts')
