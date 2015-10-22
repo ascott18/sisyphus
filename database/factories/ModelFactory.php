@@ -11,6 +11,20 @@
 |
 */
 
+
+function dbRandom($class, $primaryKey)
+{
+    static $tables = [];
+
+    if (!isset($tables[$class]))
+    {
+        $highestId = $class::max($primaryKey);
+        $tables[$class] = $highestId;
+    }
+
+    return random_int(1, $tables[$class]);
+}
+
 $factory->define(App\Models\Book::class, function (Faker\Generator $faker) {
 
     $faker->addProvider(new Faker\Provider\BookTitle($faker));
@@ -32,12 +46,22 @@ $factory->define(App\Models\Author::class, function (Faker\Generator $faker) {
 });
 
 
+$factory->define(App\Models\User::class, function (Faker\Generator $faker) {
+    return [
+        'first_name' => $faker->firstName,
+        'last_name' => $faker->lastName,
+        'net_id' => str_random(10),
+        'email' => $faker->email,
+    ];
+});
+
+
 $factory->define(App\Models\Order::class, function (Faker\Generator $faker) {
     return [
         'quantity_requested' => $faker->numberBetween(5, 50),
         'ordered_by_name' => $faker->name,
-        'book_id' => App\Models\Book::orderByRaw("RAND()")->first()->book_id,
-        'course_id' => App\Models\Course::orderByRaw("RAND()")->first()->course_id,
+        'book_id' => dbRandom(App\Models\Book::class, 'book_id'),
+        'course_id' => dbRandom(App\Models\Course::class, 'course_id'),
     ];
 });
 
@@ -49,5 +73,6 @@ $factory->define(App\Models\Course::class, function (Faker\Generator $faker) {
         'course_number' => random_int(98, 698),
         'course_section' => random_int(1, 4),
         'course_name' => ucwords($faker->words(random_int(3, 6), true)),
+        'user_id' => dbRandom(App\Models\User::class, 'user_id'),
     ];
 });

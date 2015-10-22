@@ -13,6 +13,9 @@ class Book extends Model
      */
     protected $primaryKey = 'book_id';
 
+
+    protected $fillable = array('title', 'isbn13', 'publisher');
+
     public function authors()
     {
         return $this->hasMany('App\Models\Author', 'book_id', 'book_id');

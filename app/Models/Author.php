@@ -14,6 +14,9 @@ class Author extends Model
     protected $primaryKey = 'author_id';
 
 
+
+    protected $fillable = ['first_name', 'last_name'];
+
     public function book()
     {
         return $this->belongsTo('App\Models\Book', 'book_id', 'book_id');

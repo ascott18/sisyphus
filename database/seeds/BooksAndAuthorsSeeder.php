@@ -11,7 +11,7 @@ class BooksAndAuthorsSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\Models\Book::class, 50)->create()->each(function($book) {
+        factory(App\Models\Book::class, 50*config('database.seed_scale'))->create()->each(function($book) {
 
             $book->authors()->save(factory(App\Models\Author::class)->make());
 

@@ -2,6 +2,22 @@
 
 return [
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Custom: Seed scale factor
+    |--------------------------------------------------------------------------
+    |
+    | By default, the seed scale factor is 1. Set it to some integer greater than
+    | 1 in order to multiply the amount of seed data that is put into the database.
+    | All database seeders should respect this setting. Use this to stress test the
+    | app with large amounts of data.
+    |
+    */
+    'seed_scale' => env('DB_SEED_SCALE', 1),
+
+
+
     /*
     |--------------------------------------------------------------------------
     | PDO Fetch Style

@@ -13,9 +13,9 @@
 
 
 
-Route::controller('books', 'BookController');
+Route::resource('books', 'BookController');
 
-Route::controller('orders', 'OrderController');
+Route::resource('orders', 'OrderController');
 
 Route::controller('courses', 'CourseController');
 

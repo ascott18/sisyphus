@@ -35,8 +35,6 @@
                                     <td>{{ $course->course_name }}</td>
 
                                 </tr>
-
-
                             @endforeach
 
 

@@ -4,11 +4,17 @@
 
 
 @section('content')
-    @include('shared.partial.header', ['headerText'=>'Orders', 'subHeaderText'=>'All Orders'])
+    @include('shared.partial.header', ['headerText'=>'Requests', 'subHeaderText'=>'All Requests'])
 
 
 <div class="row">
     <div class="col-lg-12">
+
+        <a href="/orders/create" class="btn btn-success btn-lg">Place a request <i class="fa fa-arrow-right fa-fw"></i></a>
+
+        <br/>
+        <br/>
+
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title"><i class="fa fa-book fa-fw"></i> All Books</h3>

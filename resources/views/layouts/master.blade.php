@@ -14,6 +14,9 @@
     <!-- Custom Fonts-->
     <link href="/stylesheets/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries-->
     <!-- WARNING: Respond.js doesn't work if you view the page via file://--><!--if lt IE 9script(src='https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js')
 			script(src='https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js')-->
@@ -127,9 +130,9 @@
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav side-nav">
                 <li><a href="/"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a></li>
-                <li><a href="books"><i class="fa fa-fw fa-book"></i> Books</a></li>
-                <li><a href="orders"><i class="fa fa-fw fa-shopping-cart"></i> Orders</a></li>
-                <li><a href="courses"><i class="fa fa-fw fa-pencil"></i> Courses</a></li>
+                <li><a href="/books"><i class="fa fa-fw fa-book"></i> Books</a></li>
+                <li><a href="/orders"><i class="fa fa-fw fa-shopping-cart"></i> Orders</a></li>
+                <li><a href="/courses"><i class="fa fa-fw fa-pencil"></i> Courses</a></li>
 
                 {{--<li><a href="tables.html"><i class="fa fa-fw fa-table"></i> Tables</a></li>--}}
                 {{--<li><a href="forms.html"><i class="fa fa-fw fa-edit"></i> Forms</a></li>--}}
@@ -167,6 +170,8 @@
 </div>
 </body>
 </html>
+
+
 <script src="/javascripts/jquery-1.10.2.js"></script>
 
 <script type="text/javascript">
@@ -189,3 +194,6 @@
 <script src="javascripts/plugins/morris/raphael.min.js"></script>
 <script src="javascripts/plugins/morris/morris.min.js"></script>
 <script src="javascripts/plugins/morris/morris-data.js"></script>
+
+
+@yield('scripts')
