@@ -40,8 +40,14 @@ body {
     table-layout: fixed;
 }
 
+.top-nav {
+    margin-top: 10px;
+}
 
 @media (max-width: 767px) {
+    .navbar-collapse {
+        margin-top: 20px;
+    }
 
     body {
         margin-top: 10px;
@@ -102,7 +108,7 @@ footer {
     font-family: 'Open Sans', sans-serif
 }
 
-.navbar a, .top-nav a {
+.navbar * {
     font-family: 'Open Sans', sans-serif;
     color: white !important
 }
