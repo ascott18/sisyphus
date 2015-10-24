@@ -1,13 +1,6 @@
 @extends('layouts.master')
 
 
-@section('scripts-head')
-
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
-    <script src="/javascripts/ng/app.orders.js"></script>
-
-@stop
-
 @section('content')
     @include('shared.partial.header', ['headerText'=>'Requests', 'subHeaderText'=>'Create a request'])
 
@@ -61,7 +54,6 @@
 
 
     <div class="col-lg-12" ng-cloak ng-show="stage == 3">
-
         <form action="/orders" method="POST">
             {!! csrf_field() !!}
 
@@ -123,7 +115,10 @@
             </button>
         </form>
     </div>
+</div>
+@stop
 
-    </div>
-
+@section('scripts-head')
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+    <script src="/javascripts/ng/app.orders.js"></script>
 @stop

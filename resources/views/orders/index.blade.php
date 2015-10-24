@@ -10,7 +10,9 @@
 <div class="row">
     <div class="col-lg-12">
 
-        <a href="/orders/create" class="btn btn-success btn-lg">Place a request <i class="fa fa-arrow-right fa-fw"></i></a>
+        <a href="/orders/create" class="btn btn-success btn-lg">
+            Place a request <i class="fa fa-arrow-right fa-fw"></i>
+        </a>
 
         <br/>
         <br/>
