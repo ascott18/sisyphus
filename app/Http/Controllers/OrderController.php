@@ -7,6 +7,7 @@ use App\Models\Author;
 use App\Models\Book;
 use App\Models\User;
 use App\Models\Order;
+use App\Models\Course;
 
 class OrderController extends Controller
 {
@@ -17,11 +18,10 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orders = Order::paginate(10);
+        $courses = Course::paginate(10);
 
-        return view('orders.index', ['orders' => $orders]);
+        return view('orders.index', ['courses' => $courses]);
     }
-
 
 
     /**
