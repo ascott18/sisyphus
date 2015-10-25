@@ -19,7 +19,7 @@ Route::resource('orders', 'OrderController');
 
 Route::controller('courses', 'CourseController');
 
-Route::resource('messages', 'MessageController');
+Route::controller('messages', 'MessageController');
 
 Route::controller('/', 'HomeController');
 

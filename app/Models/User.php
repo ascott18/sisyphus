@@ -10,6 +10,10 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 
+/**
+ * @property  int user_id
+ * @property  string net_id The user's EWU NetID.
+ */
 class User extends Model implements AuthenticatableContract,
                                     AuthorizableContract
 {

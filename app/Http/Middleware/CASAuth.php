@@ -23,13 +23,6 @@ class CASAuth {
             throw new \Exception("You're missing the CAS config in your .env file. Grab it from .env.example!");
         }
 
-        // Andrew 10-21-2015: This is important. This comes from the config as a string,
-        // but phpCAS validates it to be an int. It will try to throw an exception that doesn't
-        // exist if it is not an int.
-        // Because the config is reloaded again later in the process, we have to set the proper value
-        // directly in _ENV. See https://github.com/Jasig/phpCAS/issues/162
-        $_ENV['CAS_PORT'] = (int)$this->config['cas_port'];
-
         $this->session = app('session');
     }
 
@@ -50,6 +43,20 @@ class CASAuth {
             }
             $cas = app('cas');
             $cas->authenticate();
+
+            $net_id = $cas->getCurrentUser();
+
+            $user = \App\Models\User::where(['net_id' => $net_id])->first();
+
+            if (is_null($user))
+            {
+                $user = new \App\Models\User();
+                $user->net_id = $net_id;
+                $user->save();
+            }
+
+            $this->session->put('user_id', $user->user_id);
+            $this->session->put('net_id', $net_id);
         }
 
         return $next($request);

@@ -3,84 +3,132 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use App\Http\Requests;
-use App\Http\Controllers\Controller;
+use App\Models\Message;
+use DB;
 
 class MessageController extends Controller
 {
-    /**
-     * Display a listing of the resource.
+    /** GET: /messages/
+     *
+     * Displays the message management view.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function getIndex()
     {
         return view('messages.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
+
+    /** GET: /messages/all
      *
-     * @return \Illuminate\Http\Response
+     * Returns all messages to the user.
+     *
+     * @return \Illuminate\Http\Response An array of all messages as JSON.
      */
-    public function create()
+    public function getAll()
     {
-        //
+        return response()->json(Message::all());
     }
 
-    /**
-     * Store a newly created resource in storage.
+
+    //TODO: i should be in a userscontroller!
+    public function getAllUsers()
+    {
+        $users = \App\Models\User::all(['user_id', 'first_name', 'last_name']);
+
+
+        // Good luck doing this efficiently with Eloquent.
+        // Selects all users who teach at least one course.
+        // least_num_orders is the lowest number of orders that any of their courses has.
+        // 0 indicates one of their courses has no orders.
+        $usersWithCourses = DB::select( DB::raw(
+            "SELECT DISTINCT(users.user_id), first_name, last_name,
+             MIN((SELECT count(*) FROM `orders` WHERE courses.course_id=orders.course_id)) as least_num_orders
+             FROM `courses` JOIN `users` ON courses.user_id = users.user_id GROUP BY users.user_id"));
+
+        return response()->json($usersWithCourses);
+    }
+
+
+
+    /** POST: /messages/create-message?message_id={message_id}
+     *
+     * Create a new message, and send it back as JSON.
+     * If message_id is specified, the new message will be cloned from that message.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response The new message as JSON.
      */
-    public function store(Request $request)
+    public function postCreateMessage(Request $request)
     {
-        //
+        $cloneFrom = $request->get('message_id');
+
+        if (is_null($cloneFrom))
+        {
+            $message = new Message();
+            $message->subject = "EWU Textbook Requests";
+            $message->body = "<h3>New Message</h3>";
+            $message->owner_user_id = session('user_id');
+            $message->save();
+        }
+        else
+        {
+            $message = Message::findOrFail((int)$cloneFrom)->replicate();
+            $message->owner_user_id = session('user_id');
+            $message->subject = $message->subject . " Copy";
+            $message->save();
+        }
+
+        return response()->json($message);
     }
 
-    /**
-     * Display the specified resource.
+
+    /** POST: /messages/delete-message?message_id={message_id}
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
+     * Delete the specified message. Will fail if the current user does not own the message.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response The new message as JSON.
      */
-    public function update(Request $request, $id)
+    public function postDeleteMessage(Request $request)
     {
-        //
+        $message_id = (int)$request->get('message_id');
+
+        $message = Message::findOrFail($message_id);
+        if ($message->owner_user_id != session('user_id'))
+        {
+            return response()->json(['success' => false, 'error' => 'You do not own that message'], Response::HTTP_FORBIDDEN);
+        };
+
+        $message->delete();
+
+        return response()->json(['success' => true]);
     }
 
-    /**
-     * Remove the specified resource from storage.
+
+
+    /** POST: /messages/save-message?message_id={message_id}&subject={subject}&body={body}
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Saves a message. Will fail if the current user is not the owner, or if the message does not exist.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response The new message as JSON.
      */
-    public function destroy($id)
+    public function postSaveMessage(Request $request)
     {
-        //
+        $message_id = (int)$request->get('message_id');
+
+        $message = Message::findOrFail($message_id);
+        if ($message->owner_user_id != session('user_id'))
+        {
+            return response()->json(['success' => false, 'error' => 'You do not own that message'], Response::HTTP_FORBIDDEN);
+        };
+
+        $message->update($request->only(['subject', 'body']));
+
+        return response()->json(['success' => true]);
     }
 }

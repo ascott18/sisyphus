@@ -1,3 +1,8 @@
+
+.ta-toolbar .btn-group {
+	margin-bottom: 5px;
+}
+
 .ta-hidden-input {
 	width: 1px;
 	height: 1px;

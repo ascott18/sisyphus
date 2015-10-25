@@ -45,7 +45,7 @@
 
             <ul class="nav navbar-right top-nav">
                 <li >
-                    <span><i class="fa fa-user"></i> Welcome, {{ Xavrsl\Cas\Facades\Cas::getCurrentUser() }}! </span>
+                    <span><i class="fa fa-user"></i> Welcome, {{ session('net_id') }}! </span>
                 </li>
             </ul>
 
