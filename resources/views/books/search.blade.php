@@ -5,7 +5,7 @@
 
 @section('content')
 
-    @include('shared.partial.header', ['headerText'=>'Books', 'subHeaderText'=>'All Books'])
+    @include('shared.partial.header', ['headerText'=>'Books', 'subHeaderText'=>'Search'])
 
 
     <div class="row">
@@ -26,7 +26,7 @@
         <div class="col-lg-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title"><i class="fa fa-book fa-fw"></i> All Books</h3>
+                    <h3 class="panel-title"><i class="fa fa-book fa-fw"></i> Search Results: {{ $searchTerm }}</h3>
                 </div>
                 <div class="panel-body">
 

@@ -12,8 +12,7 @@
 */
 
 
-
-Route::resource('books', 'BookController');
+Route::controller('books', 'BookController');
 
 Route::resource('orders', 'OrderController');
 
