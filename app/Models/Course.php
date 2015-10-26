@@ -4,6 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property string department
+ * @property int course_number
+ * @property int course_section
+ */
 class Course extends Model
 {
     /**
@@ -13,6 +18,11 @@ class Course extends Model
      */
     protected $primaryKey = 'course_id';
 
+
+    public function displayIdentifier()
+    {
+        return $this->department . ' ' . $this->course_number . '-' . str_pad($this->course_section, 2, '0', STR_PAD_LEFT);
+    }
 
     public function orders()
     {

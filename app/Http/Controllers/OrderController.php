@@ -8,6 +8,7 @@ use App\Models\Book;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\Course;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class OrderController extends Controller
 {
@@ -16,22 +17,30 @@ class OrderController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function index()
+    public function getIndex()
     {
-        $courses = Course::paginate(10);
+        $courses = User::orderByRaw("RAND()")->first()->courses();
 
-        return view('orders.index', ['courses' => $courses]);
+        return view('orders.index', ['courses' => $courses->get()]);
     }
 
 
-    /**
+    /** GET /orders/create/1
      * Show the form for creating a new resource.
      *
+     * @param int $course_id The courseId to create an order for.
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function getCreate($course_id)
     {
-        $user = User::orderByRaw("RAND()")->first();
+        $course = Course::findOrFail($course_id);
+
+        if ($course->user_id !== session('user_id'))
+        {
+            throw new AccessDeniedHttpException("You do not teach this course");
+        }
+
+        $user = User::find($course->user_id)->first();
 
         return view('orders.create', ['user' => $user]);
     }
@@ -43,7 +52,7 @@ class OrderController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function postStore(Request $request)
     {
         $params = $request->all();
 
