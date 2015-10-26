@@ -5,7 +5,7 @@
     @include('shared.partial.header', ['headerText'=>'Requests', 'subHeaderText'=>'Create a request'])
 
 
-    <div class="row" ng-app="sisyphus" ng-controller="OrdersController">
+    <div class="row" ng-controller="OrdersController">
         {{ $user->last_name }}, {{ $user->first_name }}<br/>
 
         <i class="fa fa-spinner fa-spin fa-5x" style="margin-left: 48%" ng-show="stage == null"></i>

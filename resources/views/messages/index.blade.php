@@ -3,7 +3,7 @@
 @section('content')
     @include('shared.partial.header', ['headerText'=>'Messages', 'subHeaderText'=>'Create and send'])
 
-    <div class="row" ng-app="sisyphus" ng-controller="MessagesController" xmlns="http://www.w3.org/1999/html">
+    <div class="row" ng-controller="MessagesController" xmlns="http://www.w3.org/1999/html">
         <div ng-show="stage == STAGE_COMPOSE">
 
             <div class="col-md-4 ">
@@ -16,12 +16,9 @@
                              Create New Message</h4>
                     </li>
 
-                    <div ng-show="reloadingMessages > 0" style="margin-top: 15px;">
-                        <i class="fa fa-spinner fa-spin fa-3x" style="margin-left: 48%"></i>
-                    </div>
-
                     <li class="list-group-item cursor-pointer"
                          ng-cloak
+                         ng-controller="MessageSaver"
                          ng-class="{active: isMessageSelected(message)}"
                          ng-click="selectMessage(message)"
                          ng-repeat="message in messages | orderBy : ((message.isNew?10e10:0) + message.lastSent):true">
@@ -49,23 +46,35 @@
                 </ul>
             </div>
 
-            <div class="col-md-8" ng-cloak ng-show="anyMessageSelected()">
+            <!--  There is a reason why we do an ng-repeat here, I promise.
+              --  1) Angular will create an empty object for our selected message before the user selects anything,
+              --      causing issues with undo and redo and requiring extra logic to see if there is a REAL message selected.
+              --  2) Even without the creation of that empty message, undo/redo still don't work properly because
+              --      all messages will have a shared undo/redo state due to them using the same DOM element as their editor.
+              --  So, to get around this, we do an ng-repeat on all messages so that every message will get its own editor,
+              --      but we use an ng-if to prevent all but the selected message from ever creating a DOM element.
+              --      The result is that angular will automatically dispose/create an editor for us each time the
+              --      selected message changes. Thanks for being a cool guy, angular!  -->
+            <div class="col-md-8"
+                 ng-cloak
+                 ng-if="isMessageSelected(message)"
+                 ng-repeat="message in messages">
 
                 <div class="clearfix">
                     <button class="btn btn-success btn-md pull-right"
-                            ng-click="stage = STAGE_SEND">
+                            ng-click="setStage(STAGE_SEND)">
                         Choose Recipients <i class="fa fa-arrow-right fa-fw"></i>
                     </button>
                 </div>
 
                 <div class="form-group" >
                     <label>Subject:</label>
-                    <input type="text" class="form-control" ng-model="selectedMessage.subject">
+                    <input type="text" class="form-control" ng-model="message.subject">
                 </div>
 
 
                 <label>Body:</label>
-                <div text-angular ng-model="selectedMessage.body">
+                <div text-angular ng-model="message.body">
 
                 </div>
             </div>
@@ -76,7 +85,7 @@
 
         <div class="col-lg-12" ng-cloak ng-show="stage == STAGE_SEND">
             <button class="btn btn-primary btn-md "
-                    ng-click="stage = STAGE_COMPOSE">
+                    ng-click="setStage(STAGE_COMPOSE)">
                 <i class="fa fa-arrow-left fa-fw"></i> Back
             </button>
 

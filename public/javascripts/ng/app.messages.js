@@ -22,13 +22,63 @@ app.config(function($provide) {
     }]);
 });
 
+
+
+var saveMessage = function($http, message) {
+    $http.post('/messages/save-message', message).then(
+        function success(response){
+            // TODO: handle this properly - display a little thing that says "Saving" or "Saved"?
+            console.log("Saved!", response);
+        },
+        function error(response){
+            // TODO: handle this properly.
+            console.log("Not Saved!", response);
+        })
+};
+
+
+app.controller('MessageSaver', function($scope, $timeout, $http){
+    var save = function(){
+        saveMessage($http, $scope.message);
+    };
+
+    var debounceSaveUpdates = function(newVal, oldVal) {
+        if (newVal != oldVal ) {
+            if ($scope.timeout) {
+                $timeout.cancel($scope.timeout)
+            }
+            $scope.timeout = $timeout(save, 1000);  // 1000 = 1 second
+        }
+    };
+
+    $(window).bind('beforeunload', function(){
+        // timeout.cancel returns true if the timer was running when we canceled it,
+        // which means that we do need to perform a save.
+        if ($scope.timeout && $timeout.cancel($scope.timeout)) {
+            save();
+        }
+    });
+
+    $scope.$watch('message.subject', debounceSaveUpdates);
+    $scope.$watch('message.body', debounceSaveUpdates);
+});
+
 app.controller('MessagesController', function($scope, $timeout, $http){
 
-    // Constants
+    // STAGE CONTROL
+
     $scope.STAGE_COMPOSE = 1;
     $scope.STAGE_SEND = 2;
 
     $scope.stage = $scope.STAGE_COMPOSE;
+
+    $scope.setStage = function(stage){
+        $scope.stage = stage;
+    };
+
+
+
+    // MESSAGES
 
     $scope.selectMessage = function(message){
         $scope.selectedMessage = message;
@@ -39,30 +89,25 @@ app.controller('MessagesController', function($scope, $timeout, $http){
     };
 
     $scope.anyMessageSelected = function(){
-        return !!$scope.selectedMessage.message_id;
+        return $scope.selectedMessage && !!$scope.selectedMessage.message_id;
     };
 
-    $scope.reloadingMessages = 0;
     $scope.reloadMessages = function(after) {
         $scope.messages = [];
         $scope.selectMessage(null);
-        $scope.reloadingMessages++;
 
         $http.get('/messages/all').then(
             function success(response) {
                 $scope.messages = response.data;
                 if (after) after();
-                $scope.reloadingMessages--;
             },
             function error(response) {
                 // TODO: handle properly
                 console.log("Couldn't get messages", response);
-                $scope.reloadingMessages--;
             }
         );
     };
     $scope.reloadMessages();
-
 
     $scope.deleteMessage = function(message){
         $http.post('/messages/delete-message', message).then(
@@ -104,40 +149,10 @@ app.controller('MessagesController', function($scope, $timeout, $http){
 
 
 
-    var timeout = null;
-    var saveUpdates = function() {
-        if (! $scope.selectedMessage['message_id'] ) return;
-
-        $http.post('/messages/save-message', $scope.selectedMessage).then(
-            function success(response){
-                // TODO: handle this properly - display a little thing that says "Saving" or "Saved".
-                console.log("Saved!", response);
-            },
-            function error(response){
-                // TODO: handle this properly.
-                console.log("Not Saved!", response);
-            })
-    };
-
-    var debounceSaveUpdates = function(newVal, oldVal) {
-        if (newVal != oldVal) {
-            if (timeout) {
-                $timeout.cancel(timeout)
-            }
-            timeout = $timeout(saveUpdates, 1000);  // 1000 = 1 second
-        }
-    };
-
-    $(window).bind('beforeunload', function(){
-        saveUpdates();
-    });
-
-    $scope.$watch('selectedMessage.subject', debounceSaveUpdates);
-    $scope.$watch('selectedMessage.body', debounceSaveUpdates);
 
 
 
-
+    // RECIPIENTS
 
     $scope.recipients = [];
 
@@ -155,17 +170,20 @@ app.controller('MessagesController', function($scope, $timeout, $http){
         })};
     }
 
+
+    // Recipient selection functions
     $scope.selectUsersMissingOrders = new selector(function(r){return r.least_num_orders == 0});
     $scope.selectAllUsers = new selector(function(r){return true});
     $scope.selectNoUsers = new selector(function(r){return false});
 
-    $http.get('/messages/all-users').then(
+    // Go fetch all possible recipients of the messages.
+    $http.get('/messages/all-recipients').then(
         function success(response) {
             $scope.recipients = response.data;
         },
         function error(response) {
             // TODO: handle properly
-            console.log("Couldn't get users", response);
+            console.log("Couldn't get recipients", response);
         }
     );
 

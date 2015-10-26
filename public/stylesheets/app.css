@@ -51,9 +51,32 @@ body {
     margin-top: 10px;
 }
 
+
+[ng-spinner] {
+    position: fixed;
+    top: 0.5em;
+    left: 50%;
+    font-size: 3.2em !important;
+    color: white;
+    z-index: 9999;
+}
+
+@media (max-width: 991px) {
+    [ng-spinner] {
+        top: initial;
+        left: 0.5em;
+        bottom: 0.5em;
+    }
+}
+
 @media (max-width: 767px) {
     .navbar-collapse {
         margin-top: 20px;
+    }
+
+    [ng-spinner] {
+        font-size: 2em !important;
+        color: black;
     }
 
     body {

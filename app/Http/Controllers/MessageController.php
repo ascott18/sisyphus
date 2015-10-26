@@ -33,17 +33,21 @@ class MessageController extends Controller
         return response()->json(Message::all());
     }
 
-
-    //TODO: i should be in a userscontroller!
-    public function getAllUsers()
+    /** GET: /messages/all-recipients
+     *
+     * Returns all users available for receiving messages.
+     *
+     * @return \Illuminate\Http\Response An array of all users as JSON.
+     */
+    public function getAllRecipients()
     {
-        $users = \App\Models\User::all(['user_id', 'first_name', 'last_name']);
-
-
         // Good luck doing this efficiently with Eloquent.
         // Selects all users who teach at least one course.
         // least_num_orders is the lowest number of orders that any of their courses has.
-        // 0 indicates one of their courses has no orders.
+        // 0 indicates one of their courses has no orders, anything higher indicates that
+        // all of their courses have at least one order.
+        // TODO: restrict this query to courses from the current term only.
+        // TODO: have least_num_orders skip courses that are marked as no book.
         $usersWithCourses = DB::select( DB::raw(
             "SELECT DISTINCT(users.user_id), first_name, last_name,
              MIN((SELECT count(*) FROM `orders` WHERE courses.course_id=orders.course_id)) as least_num_orders

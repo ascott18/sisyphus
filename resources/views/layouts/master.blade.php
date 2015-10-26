@@ -17,8 +17,10 @@
 
     @yield('scripts-head')
 </head>
-<body>
+<body ng-app="sisyphus">
 <div id="wrapper">
+    <i ng-spinner ng-cloak class="fa fa-spinner fa-spin "></i>
+
     <!-- Navigation-->
     <nav role="navigation" class="navbar navbar-inverse navbar-fixed-top">
         <!-- Brand and toggle get grouped for better mobile display-->
@@ -36,6 +38,9 @@
                     <img src="/images/logoWhite.svg" class="pull-left" >
 
                     <h2>Textbook Orders</h2>
+
+
+
                 </div>
             </a>
         </div>
