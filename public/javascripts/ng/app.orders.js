@@ -25,10 +25,10 @@ app.controller('OrdersController', function($scope){
 
 
     $scope.pastBooks = [
-        {title: "Stu's old crappy book that he used one time like 2 years ago", mine:true},
-        {title: "ANother really dumb book that he tried once and didnt like at all", mine:false},
-        {title: "Stu's favorite crappy book that he forces on all his students", mine:false},
-        {title: "I'm sick of coming up with clever fake books names", mine:true}
+        {title: "Stu's old book that he used 2 years ago", mine:true},
+        {title: "Another book that he tried once and didn't like", mine:false},
+        {title: "Stu's favorite opsys book", mine:true},
+        {title: "Another clever fake book name", mine:false}
     ]
 
 
