@@ -25,7 +25,7 @@ Next, clone this repository to the web root of your apache installation. Then, g
     * This will populate APP_KEY in your `.env` file.
 * Run `php artisan migrate` to generate the database.
     * If you would like to seed the database with test data, run `php artisan migrate:refresh --seed` instead. Be warned that this will drop all tables and re-create them.
-* Ensure that Apache has write permissions to the `storage` directory of the project.
+* Ensure that Apache has full permissions to the `storage` directory of the project.
 
 ### Apache Configuration
 
