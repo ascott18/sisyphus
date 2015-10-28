@@ -22,41 +22,52 @@
                             <th ></th>
                         </thead>
                         <tbody>
-                        @foreach ($courses as $course)
-                            <tr class="list-group-item" >
+
+                            <tr class="list-group-item" ng-repeat="course in courses">
                                 <td style="width: 100%">
-                                    <h4 class="list-group-item-heading">{{ $course->displayIdentifier() }}: {{$course->course_name}}</h4>
+                                    <h4 class="list-group-item-heading">[[course.course_name]]</h4>
 
                                     <p style="margin-left: 3em">
-                                        @if(count($course->orders) == 0)
-                                        <br>
-                                        <span class="well well-sm" style="background-color: #fcf8e3; border-color: #fbeed5">
-                                            No requests submitted - please let us know what you need!
-                                        </span>
+                                        <div ng-show="courseNeedsOrders(course)">
+                                            </br>
+                                            <div class="well well-sm" style="background-color: #fcf8e3; border-color: #fbeed5">
+                                                No requests submitted - please let us know what you need!
+                                            </div>
+                                        </div>
+                                        <div ng-show="course.no_book">
+                                            </br>
+                                            <div class="well well-sm" style="background-color: #fcf8e3; border-color: #fbeed5">
+                                                You selected that you didn't need a book
+                                            </div>
+                                        </div>
 
-                                        @endif
-                                        @foreach($course->orders as $order)
-                                            <?php $book = $order->book;?>
-                                            <span class="text-muted">{{$book->isbn13}}</span>: {{$book->title}}<br>
-                                        @endforeach
+                                        <span ng-repeat="order in course.orders">
+                                            <span class="text-muted">[[order.book.isbn13]]</span>: [[order.book.title]]
+                                            </br>
+                                        </span>
                                     </p>
                                 </td>
 
-                                <td style="vertical-align: top">
-                                    <a href="/orders/create/{{$course->course_id}}"
+                                <td style="vertical-align: top"><span ng-if="!course.no_book">
+                                    <a ng-click="setStage(2)"
                                        class="btn btn-primary"
                                        style="width:100%; margin-bottom:5px">
                                         Place a request <i class="fa fa-arrow-right fa-fw"></i>
                                     </a>
-
-                                    @if(count($course->orders) == 0)
-                                        <br>
-                                        <button class="btn btn-danger" style="width:100%"><i class="fa fa-times"></i> No book needed</button>
-                                    @endif
+                                        <span ng-if="course.orders.length == 0">
+                                            <br>
+                                            <button
+                                                    ng-confirm-click="noBook(course)"
+                                                    ng-confirm-click-message="Are you sure you don't want a book?"
+                                                    class="btn btn-danger"
+                                                    style="width:100%">
+                                                <i class="fa fa-times"></i> No book needed</button>
+                                        </span>
+                                        </span>
                                 </td>
 
                             </tr>
-                        @endforeach
+
                         </tbody>
                     </table>
                 </div>
