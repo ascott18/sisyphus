@@ -6,7 +6,7 @@
 @section('content')
     @include('shared.partial.header', ['headerText'=>'Requests', 'subHeaderText'=>'All Requests'])
 
-
+<div>
     <div class="row" ng-controller="OrdersController">
         <div class="col-lg-12" ng-show="getStage() == STAGE_SELECT_COURSE">
 
@@ -75,8 +75,7 @@
 
                         <div class="pull-right">
                             <button class="btn btn-xs btn-danger"
-                                    ng-confirm-click="deleteBookFromCart(book)"
-                                    ng-confirm-click-message="Are you sure you want to remove [[book.title]] from your request?">
+                                    ng-click="deleteBookFromCart(book)">
                                 <i class="fa fa-fw fa-times"></i>
                             </button>
                         </div>
@@ -115,20 +114,29 @@
                 </ul>
             </div>
 
-            <div class="col-md-6">
-                <form action="/orders" method="POST">
-                    {!! csrf_field() !!}
+            <div class="col-md-6" ng-controller="NewBookController">
 
+                <h3>New Book</h3>
                     <div class="form-group">
                         <label for="bookTitle">Book Title</label>
-                        <input type="text" class="form-control" name="bookTitle" placeholder="Book Title">
+                        <input type="text" class="form-control" name="bookTitle" placeholder="Book Title" required>
                     </div>
-
-                    <h1 class="panel panel-danger">TODO: allow multiple authors to be entered</h1>
 
                     <div class="form-group">
                         <label for="author1">Author</label>
                         <input type="text" class="form-control" name="author1" placeholder="Author">
+
+                        <div class="input-group" ng-repeat="author in authors" style="margin-top: 10px">
+                            <input type="text" class="form-control"  placeholder="Author" >
+                        <span class="input-group-addon" ng-click="removeAuthor($index)">
+                            <i class="fa fa-times"></i>
+                        </span>
+                        </div>
+
+                        <div style="margin-top: 10px;">
+                            <button class="btn btn-info" ng-click="addAuthor()">Add Author</button>
+                        </div>
+
                     </div>
 
 
@@ -148,15 +156,29 @@
                     </div>
 
 
-                    <button type="submit" class="btn btn-primary"
-                            ng-click="addInputBookToCart()">
-                        <i class="fa fa-check"></i> Place Order
+                    <button class="btn btn-primary"
+                            ng-click="submitNewBook()">
+                        <i class="fa fa-plus"></i> Add to Cart
                     </button>
-                </form>
+
             </div>
 
         </div>
+
+
+
     </div>
+
+    <div class="row">
+        <button class="btn btn-success pull-right"
+                ng-click="addInputBookToCart()"
+                style="margin: 20px;">
+            <i class="fa fa-arrow-right"></i> Review Order
+        </button>
+    </div>
+
+
+</div>
 
 @stop
 

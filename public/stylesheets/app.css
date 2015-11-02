@@ -373,3 +373,8 @@ ul.alert-dropdown {
 .panel-yellow > a:hover {
     color: #df8a13
 }
+
+.form-group.required .control-label:after {
+    content:"*";
+    color: #b52b27;
+}

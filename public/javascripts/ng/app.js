@@ -1,5 +1,5 @@
 
-var app = angular.module('sisyphus.helpers', [])
+var app = angular.module('sisyphus.helpers', []);
 
 app.config(function($interpolateProvider) {
     $interpolateProvider.startSymbol('[[');
