@@ -75,9 +75,108 @@
         </div>
 
 
-        <div class="col-lg-12" ng-show="getStage() == STAGE_SELECT_BOOKS">
+        <div class="col-lg-12" ng-show="getStage() == STAGE_SELECT_BOOKS" ng-controller="NewBookController">
+
+
 
             <div class="col-md-6">
+
+                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+
+                        <div class="panel-heading" role="tab" id="headingOne">
+                            <h4 class="panel-title">
+                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    Add New Book
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingThree">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <label for="bookTitle">Book Title</label>
+                                    <input type="text" class="form-control" name="bookTitle" placeholder="Book Title" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="author1">Author</label>
+                                    <input type="text" class="form-control" name="author1" placeholder="Author">
+
+                                    <div class="input-group" ng-repeat="author in authors" style="margin-top: 10px">
+                                        <input type="text" class="form-control"  placeholder="Author" >
+                        <span class="input-group-addon" ng-click="removeAuthor($index)">
+                            <i class="fa fa-times"></i>
+                        </span>
+                                    </div>
+
+                                    <div style="margin-top: 10px;">
+                                        <button class="btn btn-info" ng-click="addAuthor()">Add Author</button>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label for="publisher">Publisher</label>
+                                    <input type="text" class="form-control" name="publisher" placeholder="Publisher">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="isbn13">ISBN 13</label>
+                                    <input type="text" class="form-control" name="isbn13" placeholder="ISBN 13">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="edition">Edition</label>
+                                    <input type="text" class="form-control" name="edition" placeholder="Edition">
+                                </div>
+
+
+                                <button class="btn btn-primary"
+                                        ng-click="submitNewBook()">
+                                    <i class="fa fa-plus"></i> Add to Cart
+                                </button>
+                            </div>
+                        </div>
+
+
+                        <div class="panel-heading" role="tab" id="headingTwo">
+                            <h4 class="panel-title">
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    Add Past Books
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                            <div class="panel-body">
+                                <ul class="list-group">
+                                    <li class="list-group-item cursor-pointer"
+                                        ng-cloak
+                                        ng-repeat="book in pastBooks |orderBy: (book.mine?0:1):true">
+
+                                        <div class="pull-right">
+                                            <button class="btn btn-xs btn-primary"
+                                                    ng-click="addBookToCart(book)">
+                                                <i class="fa fa-fw fa-plus"></i>
+                                            </button>
+                                        </div>
+
+                                        <h4 class="list-group-item-heading no-pad-bottom">[[book.title]]</h4>
+                                        <small >
+                                            <span class="text-muted" > Ordered by Stuart Glenn Steiner for Fall 2014</span>
+                                        </small>
+
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                </div>
+
+
+            </div>
+
+            <div class="col-md-6">
+
                 <h3>Cart</h3>
                 <ul class="list-group">
                     <li class="list-group-item cursor-pointer"
@@ -101,76 +200,6 @@
                     </li>
                 </ul>
 
-                <hr>
-
-                <h3>Past Books</h3>
-                <ul class="list-group">
-                    <li class="list-group-item cursor-pointer"
-                        ng-cloak
-                        ng-repeat="book in pastBooks |orderBy: (book.mine?0:1):true">
-
-                        <div class="pull-right">
-                            <button class="btn btn-xs btn-primary"
-                                    ng-click="addBookToCart(book)">
-                                <i class="fa fa-fw fa-plus"></i>
-                            </button>
-                        </div>
-
-                        <h4 class="list-group-item-heading no-pad-bottom">[[book.title]]</h4>
-                        <small >
-                            <span class="text-muted" > Ordered by Stuart Glenn Steiner for Fall 2014</span>
-                        </small>
-
-                    </li>
-                </ul>
-            </div>
-
-            <div class="col-md-6" ng-controller="NewBookController">
-
-                <h3>New Book</h3>
-                    <div class="form-group">
-                        <label for="bookTitle">Book Title</label>
-                        <input type="text" class="form-control" name="bookTitle" placeholder="Book Title" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="author1">Author</label>
-                        <input type="text" class="form-control" name="author1" placeholder="Author">
-
-                        <div class="input-group" ng-repeat="author in authors" style="margin-top: 10px">
-                            <input type="text" class="form-control"  placeholder="Author" >
-                        <span class="input-group-addon" ng-click="removeAuthor($index)">
-                            <i class="fa fa-times"></i>
-                        </span>
-                        </div>
-
-                        <div style="margin-top: 10px;">
-                            <button class="btn btn-info" ng-click="addAuthor()">Add Author</button>
-                        </div>
-
-                    </div>
-
-
-                    <div class="form-group">
-                        <label for="publisher">Publisher</label>
-                        <input type="text" class="form-control" name="publisher" placeholder="Publisher">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="isbn13">ISBN 13</label>
-                        <input type="text" class="form-control" name="isbn13" placeholder="ISBN 13">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="edition">Edition</label>
-                        <input type="text" class="form-control" name="edition" placeholder="Edition">
-                    </div>
-
-
-                    <button class="btn btn-primary"
-                            ng-click="submitNewBook()">
-                        <i class="fa fa-plus"></i> Add to Cart
-                    </button>
 
             </div>
 
