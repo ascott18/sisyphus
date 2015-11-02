@@ -59,8 +59,9 @@
                 <li><a href="/"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a></li>
                 <li><a href="/books"><i class="fa fa-fw fa-book"></i> Books</a></li>
                 <li><a href="/orders"><i class="fa fa-fw fa-shopping-cart"></i> Orders</a></li>
-                <li><a href="/courses"><i class="fa fa-fw fa-pencil"></i> Courses</a></li>
+                <li><a href="/courses"><i class="fa fa-fw fa-group"></i> Courses</a></li>
                 <li><a href="/messages"><i class="fa fa-fw fa-envelope"></i> Messages</a></li>
+                <li><a href="/terms"><i class="fa fa-fw fa-calendar"></i> Terms</a></li>
 
                 {{--<li><a href="tables.html"><i class="fa fa-fw fa-table"></i> Tables</a></li>--}}
                 {{--<li><a href="forms.html"><i class="fa fa-fw fa-edit"></i> Forms</a></li>--}}

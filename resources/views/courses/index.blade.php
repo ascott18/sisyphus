@@ -15,8 +15,6 @@
                     <h3 class="panel-title"><i class="fa fa-pencil fa-fw"></i> All Courses</h3>
                 </div>
                 <div class="panel-body">
-
-
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover table-striped">
                             <thead>
@@ -46,6 +44,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 

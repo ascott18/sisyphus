@@ -11,7 +11,7 @@ class OrdersSeed extends Seeder
      */
     public function run()
     {
-        factory(App\Models\Course::class, 50*config('database.seed_scale'))->create();
+        factory(App\Models\Course::class, 35*config('database.seed_scale'))->create();
 
         factory(App\Models\Order::class, 50*config('database.seed_scale'))->create();
     }

@@ -5,7 +5,7 @@
 
 @section('content')
 
-    @include('shared.partial.header', ['headerText'=>'Books', 'subHeaderText'=> $book->title])
+    @include('shared.partial.header', ['headerText'=>'Books', 'subHeaderText'=> $book->isbn13])
 
 
 <div class="row">
