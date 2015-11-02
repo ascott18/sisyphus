@@ -45,6 +45,25 @@ class OrderController extends Controller
         return view('orders.create', ['user' => $user]);
     }
 
+    public function postNoBook(Request $request)
+    {
+        $course_id=$request->get("course_id");
+
+        $course = Course::findOrFail($course_id);
+
+        if ($course->user_id !== session('user_id'))
+        {
+            // throw new AccessDeniedHttpException("You do not teach this course");
+        }
+        $course->no_book=true;
+        $course->save();
+    }
+
+    public function getReadCourses()
+    {
+        $courses = User::orderByRaw("RAND()")->first()->courses()->with("orders.book")->getResults();
+        return response()->json($courses);
+    }
 
     /**
      * Store a newly created resource in storage.

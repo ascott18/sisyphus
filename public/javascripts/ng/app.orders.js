@@ -1,6 +1,7 @@
 
 var app = angular.module('sisyphus', ['sisyphus.helpers']);
 
+<<<<<<< HEAD
 app.service("CartService", function () {
     this.cartBooks = [
         {title: "Stu's happy fun land book"},
@@ -10,11 +11,14 @@ app.service("CartService", function () {
 });
 
 app.controller('OrdersController',['$scope', 'CartService', function($scope, CartService){
+=======
+app.controller('OrdersController', function($scope, $http){
+>>>>>>> c2f91ecfd8320d1e8f4ed30d8eb17968bbb8a85d
 
     $scope.STAGE_SELECT_COURSE = 1;
     $scope.STAGE_SELECT_BOOKS = 2;
 
-    $scope.stage = $scope.STAGE_SELECT_BOOKS;
+    $scope.stage = $scope.STAGE_SELECT_COURSE;
 
     $scope.getStage = function(){
         return $scope.stage;
@@ -23,6 +27,35 @@ app.controller('OrdersController',['$scope', 'CartService', function($scope, Car
     $scope.setStage = function(stage){
         $scope.stage = stage;
     };
+
+    $scope.courseNeedsOrders = function(course)
+    {
+        return course.orders.length == 0 && !course.no_book
+    }
+
+    $scope.noBook= function(course)
+    {
+        $http.post('/orders/no-book', {course_id: course.course_id}).then(
+            function success(response){
+                course.no_book=true;
+                // TODO: handle this properly - display a little thing that says "Saving" or "Saved"?
+                console.log("Saved!", response);
+            },
+            function error(response){
+                // TODO: handle this properly.
+                console.log("Not Saved!", response);
+            })
+    };
+
+    $http.get('/orders/read-courses').then(
+        function success(response) {
+            $scope.courses = response.data;
+        },
+        function error(response) {
+            // TODO: handle properly
+            console.log("Couldn't get recipients", response);
+        }
+    );
 
 
     $scope.cartBooks = [
@@ -33,11 +66,19 @@ app.controller('OrdersController',['$scope', 'CartService', function($scope, Car
 
 
     $scope.pastBooks = [
+<<<<<<< HEAD
         {title: "Stu's old crappy book that he used one time like 2 years ago", mine:true},
         {title: "ANother really dumb book that he tried once and didnt like at all", mine:false},
         {title: "Stu's favorite crappy book that he forces on all his students", mine:false},
         {title: "I'm sick of coming up with clever fake books names", mine:true}
     ];
+=======
+        {title: "Stu's old book that he used 2 years ago", mine:true},
+        {title: "Another book that he tried once and didn't like", mine:false},
+        {title: "Stu's favorite opsys book", mine:true},
+        {title: "Another clever fake book name", mine:false}
+    ]
+>>>>>>> c2f91ecfd8320d1e8f4ed30d8eb17968bbb8a85d
 
 
     $scope.addInputBookToCart = function(){
