@@ -9,12 +9,12 @@ app.service("CartService", function () {
     ];
 });
 
-app.controller('OrdersController',['$scope', 'CartService', function($scope, CartService){
+app.controller('OrdersController',['$scope', '$http', 'CartService', function($scope, $http, CartService){
 
     $scope.STAGE_SELECT_COURSE = 1;
     $scope.STAGE_SELECT_BOOKS = 2;
 
-    $scope.stage = $scope.STAGE_SELECT_COURSE;
+    $scope.stage = $scope.STAGE_SELECT_BOOKS;
 
     $scope.getStage = function(){
         return $scope.stage;
