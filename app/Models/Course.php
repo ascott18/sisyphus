@@ -5,9 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property string department
- * @property int course_number
- * @property int course_section
+ * @property string department The department code for the course, e.g. "CSCD".
+ * @property string course_name The name of the course, e.g. "Programming Principles I"
+ * @property int course_number The number of the course, e.g. 210.
+ * @property int course_section The section of the course, e.g. 01.
+ * @property int term_id The id of the term that the course belongs to, referencing the terms table.
+ * @property int user_id The id of user that teaches the course.
+ * @property integer course_id The database primary key for this model.
  */
 class Course extends Model
 {
@@ -31,6 +35,11 @@ class Course extends Model
 
     public function user()
     {
-        return $this->hasMany('App\Models\User', 'user_id', 'user_id');
+        return $this->hasOne('App\Models\User', 'user_id', 'user_id');
+    }
+
+    public function term()
+    {
+        return $this->hasOne('App\Models\Term', 'term_id', 'term_id');
     }
 }

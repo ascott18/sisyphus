@@ -20,6 +20,8 @@ Route::controller('courses', 'CourseController');
 
 Route::controller('messages', 'MessageController');
 
+Route::controller('terms', 'TermController');
+
 Route::controller('/', 'HomeController');
 
 

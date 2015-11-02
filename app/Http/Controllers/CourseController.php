@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Course;
+use App\Models\Term;
+use Illuminate\Database\Query\Builder;
 
 class CourseController extends Controller
 {
@@ -15,10 +17,10 @@ class CourseController extends Controller
     public function getIndex()
     {
         $courses = Course::paginate(10);
+        $terms = Term::all();
 
-        return view('courses.index', ['courses' => $courses]);
+        return view('courses.index', ['courses' => $courses, 'terms' => $terms]);
     }
-
 
 //
 //    /**

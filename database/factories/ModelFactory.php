@@ -84,5 +84,7 @@ $factory->define(App\Models\Course::class, function (Faker\Generator $faker) {
         'course_section' => random_int(1, 4),
         'course_name' => ucwords($faker->words(random_int(3, 6), true)),
         'user_id' => dbRandom(App\Models\User::class, 'user_id'),
+        'term_id' => dbRandom(App\Models\Term::class, 'term_id'),
     ];
 });
+
