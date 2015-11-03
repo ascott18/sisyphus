@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Requests;
 use App\Models\Message;
 use DB;
+use Mail;
 
 class MessageController extends Controller
 {
@@ -134,5 +137,33 @@ class MessageController extends Controller
         $message->update($request->only(['subject', 'body']));
 
         return response()->json(['success' => true]);
+    }
+
+
+    public function postSendMessages(Request $request)
+    {
+        // TODO: auth that the user is an admin.
+
+        $message = $request->get('message');
+
+        Message::findOrFail($message['message_id'])->update(['last_sent' => Carbon::now()]);
+
+        $recipientIds = $request->get('recipients');
+
+        foreach ($recipientIds as $user_id)
+        {
+            $recipient = User::find($user_id);
+
+            if ($recipient && $recipient->email)
+            {
+                Mail::queue([], [], function ($m) use ($recipient, $message) {
+                    $email = $recipient->email;
+                    $m->from("postmaster@scotta.me", "Book Orders");
+                    $m->to($email, $recipient->first_name . ' ' . $recipient->last_name);
+                    $m->subject($message['subject']);
+                    $m->setBody($message['body'], 'text/html');
+                });
+            }
+        }
     }
 }

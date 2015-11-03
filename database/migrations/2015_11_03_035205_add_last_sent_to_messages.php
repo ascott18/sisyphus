@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddNoBookToCourseTable extends Migration
+class AddLastSentToMessages extends Migration
 {
     /**
      * Run the migrations.
@@ -12,8 +12,8 @@ class AddNoBookToCourseTable extends Migration
      */
     public function up()
     {
-        Schema::table('courses',function($table){
-            $table->boolean('no_book');
+        Schema::table('messages',function($table){
+            $table->date('last_sent');
         });
     }
 
@@ -24,8 +24,8 @@ class AddNoBookToCourseTable extends Migration
      */
     public function down()
     {
-        Schema::table('courses',function($table){
-            $table->dropColumn('no_book');
+        Schema::table('messages',function($table){
+            $table->date('last_sent');
         });
     }
 }
