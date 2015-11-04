@@ -14,7 +14,7 @@ app.controller('OrdersController',['$scope', '$http', 'CartService', function($s
     $scope.STAGE_SELECT_COURSE = 1;
     $scope.STAGE_SELECT_BOOKS = 2;
 
-    $scope.stage = $scope.STAGE_SELECT_BOOKS;
+    $scope.stage = $scope.STAGE_SELECT_COURSE;
 
     $scope.getStage = function(){
         return $scope.stage;
@@ -62,10 +62,10 @@ app.controller('OrdersController',['$scope', '$http', 'CartService', function($s
 
 
     $scope.pastBooks = [
-        {title: "Stu's old crappy book that he used one time like 2 years ago", mine:true},
-        {title: "ANother really dumb book that he tried once and didnt like at all", mine:false},
-        {title: "Stu's favorite crappy book that he forces on all his students", mine:false},
-        {title: "I'm sick of coming up with clever fake books names", mine:true}
+        {title: "Stu's favorite book that he always uses", mine:true},
+        {title: "Stu's old book that he used 2 years ago", mine:false},
+        {title: "Another book that he tried once", mine:false},
+        {title: "Yet another example book", mine:true}
     ];
 
 
