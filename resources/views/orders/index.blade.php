@@ -83,15 +83,15 @@
 
                 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 
-                        <div class="panel-heading" role="tab" id="headingOne">
-                            <h4 class="panel-title">
-                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                    Add New Book
-                                </a>
-                            </h4>
+
+                        <div class="panel-title">
+                            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                <h3><i class="fa fa-chevron-down"></i> Add New Book</h3>
+                            </a>
                         </div>
+
                         <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingThree">
-                            <div class="panel-body">
+
                                 <div class="form-group">
                                     <label for="bookTitle">Book Title</label>
                                     <input type="text" class="form-control" name="bookTitle" placeholder="Book Title" required>
@@ -103,9 +103,9 @@
 
                                     <div class="input-group" ng-repeat="author in authors" style="margin-top: 10px">
                                         <input type="text" class="form-control"  placeholder="Author" >
-                        <span class="input-group-addon" ng-click="removeAuthor($index)">
-                            <i class="fa fa-times"></i>
-                        </span>
+                                        <span class="input-group-addon" ng-click="removeAuthor($index)">
+                                            <i class="fa fa-times"></i>
+                                        </span>
                                     </div>
 
                                     <div style="margin-top: 10px;">
@@ -113,7 +113,6 @@
                                     </div>
 
                                 </div>
-
 
                                 <div class="form-group">
                                     <label for="publisher">Publisher</label>
@@ -130,24 +129,20 @@
                                     <input type="text" class="form-control" name="edition" placeholder="Edition">
                                 </div>
 
-
                                 <button class="btn btn-primary"
-                                        ng-click="submitNewBook()">
+                                        ng-click="addNewBookToCart()">
                                     <i class="fa fa-plus"></i> Add to Cart
                                 </button>
-                            </div>
+
                         </div>
 
-
-                        <div class="panel-heading" role="tab" id="headingTwo">
-                            <h4 class="panel-title">
-                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                    Add Past Books
-                                </a>
-                            </h4>
+                        <div class="panel-title">
+                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                <h3><i class="fa fa-chevron-down"></i> Add Past Books</h3>
+                            </a>
                         </div>
+
                         <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
-                            <div class="panel-body">
                                 <ul class="list-group">
                                     <li class="list-group-item cursor-pointer"
                                         ng-cloak
@@ -167,7 +162,6 @@
 
                                     </li>
                                 </ul>
-                            </div>
                         </div>
 
                 </div>
@@ -211,7 +205,7 @@
 
     <div class="row">
         <button class="btn btn-success pull-right"
-                ng-click="addInputBookToCart()"
+                ng-click="addNewBookToCart()"
                 style="margin: 20px;">
             <i class="fa fa-arrow-right"></i> Review Order
         </button>

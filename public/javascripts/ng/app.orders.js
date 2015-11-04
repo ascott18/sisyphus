@@ -13,6 +13,7 @@ app.controller('OrdersController',['$scope', '$http', 'CartService', function($s
 
     $scope.STAGE_SELECT_COURSE = 1;
     $scope.STAGE_SELECT_BOOKS = 2;
+    $scope.cartBooks = CartService.cartBooks;
 
     $scope.stage = $scope.STAGE_SELECT_BOOKS;
 
@@ -53,25 +54,14 @@ app.controller('OrdersController',['$scope', '$http', 'CartService', function($s
         }
     );
 
-
-    $scope.cartBooks = [
-        {title: "Stu's happy fun land book"},
-        {title: "Some other book"},
-        {title: "Naming things is hard"}
-    ];
-
-
     $scope.pastBooks = [
         {title: "Stu's old crappy book that he used one time like 2 years ago", mine:true},
-        {title: "ANother really dumb book that he tried once and didnt like at all", mine:false},
+        {title: "Another really dumb book that he tried once and didnt like at all", mine:false},
         {title: "Stu's favorite crappy book that he forces on all his students", mine:false},
         {title: "I'm sick of coming up with clever fake books names", mine:true}
     ];
 
 
-    $scope.addInputBookToCart = function(){
-
-    };
 
     $scope.deleteBookFromCart = function(book) {
         //TODO: we need to know this book came from past books and was not a new book that was entered.
@@ -94,7 +84,7 @@ app.controller('OrdersController',['$scope', '$http', 'CartService', function($s
 
 
 
-app.controller("NewBookController", function($scope, $http) {
+app.controller("NewBookController", ["$scope", "$http", "CartService", function($scope, $http, CartService) {
     $scope.authors = [];
 
     $scope.addAuthor = function(author) {
@@ -107,4 +97,9 @@ app.controller("NewBookController", function($scope, $http) {
             $scope.authors.splice(index, 1);
         }
     };
-});
+
+    $scope.addNewBookToCart = function(){
+
+    };
+
+}]);
