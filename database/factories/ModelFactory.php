@@ -61,7 +61,7 @@ $factory->define(App\Models\User::class, function (Faker\Generator $faker) {
         'first_name' => $firstName,
         'last_name' => $lastName,
         'net_id' => $netId,
-        'email' => $netId . "@ewu.edu",
+        'email' => $netId . "@fake.email",
     ];
 });
 
