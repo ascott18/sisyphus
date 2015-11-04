@@ -25,7 +25,7 @@ class AddLastSentToMessages extends Migration
     public function down()
     {
         Schema::table('messages',function($table){
-            $table->date('last_sent');
+            $table->dropColumn('last_sent');
         });
     }
 }
