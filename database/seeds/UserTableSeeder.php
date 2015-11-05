@@ -11,7 +11,7 @@ class UserTableSeeder extends Seeder
      */
     public function run()
     {
-        App\Models\User::create([
+        factory(App\Models\User::class, 1)->create([
             'first_name' => 'Arthur',
             'last_name' => 'Aardvark', // Need him to be first in our alphabetically sorted list.
             'net_id' => 'aAardvark92',
@@ -19,5 +19,7 @@ class UserTableSeeder extends Seeder
         ]);
 
         factory(App\Models\User::class, 20*config('database.seed_scale'))->create();
+
+        factory(App\Models\UserDepartment::class, 50*config('database.seed_scale'))->create();
     }
 }
