@@ -29,6 +29,7 @@ Next, clone this repository to the web root of your apache installation. Then, g
 
 ### Apache Configuration
 
+* This application makes the assumption that data returned from MySQL will be of the correct types (as opposed to only strings). This means that the `mysqlnd` native driver is [required](http://stackoverflow.com/questions/5323146/mysql-integer-field-is-returned-as-string-in-php). Install it with `apt-get install php5-mysqlnd`.
 * Laravel, the framework used by this application, requires `mod_rewrite`. Enable it by running `a2enmod rewrite`.
 * Set the `DocumentRoot` to the `public` directory in the root of the project.
 * Find the `<Directory>` directive that governs the document root (it may be in your base apache configuration, or in a VirtualHost), and set `AllowOverride All`. Laravel makes use of directory-specific .htaccess files, and will not work if this is not set.
