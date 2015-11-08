@@ -21,24 +21,22 @@
                             <th style="width: 100%"></th>
                             <th ></th>
                         </thead>
-                        <tbody>
 
+                        <tbody>
                             <tr class="list-group-item" ng-repeat="course in courses">
                                 <td style="width: 100%">
-                                    <h4 class="list-group-item-heading">[[course.course_name]]</h4>
+                                    <h4 class="list-group-item-heading">[[course.department]] [[course.course_number]]-[[course.course_section]] [[course.course_name]]</h4>
 
                                     <p style="margin-left: 3em">
                                         <div ng-show="courseNeedsOrders(course)">
                                             </br>
-                                            <div class="well well-sm" style="background-color: #fcf8e3; border-color: #fbeed5">
+                                            <span class="well well-sm" style="background-color: #fcf8e3; border-color: #fbeed5">
                                                 No requests submitted - please let us know what you need!
-                                            </div>
+                                            </span>
                                         </div>
                                         <div ng-show="course.no_book">
                                             </br>
-                                            <div class="well well-sm" style="background-color: #fcf8e3; border-color: #fbeed5">
-                                                You selected that you didn't need a book
-                                            </div>
+                                            You selected that you didn't need a book
                                         </div>
 
                                         <span ng-repeat="order in course.orders">
@@ -48,7 +46,8 @@
                                     </p>
                                 </td>
 
-                                <td style="vertical-align: top"><span ng-if="!course.no_book">
+                                <td style="vertical-align: top">
+                                    <span ng-if="!course.no_book">
                                     <a ng-click="setStage(2)"
                                        class="btn btn-primary"
                                        style="width:100%; margin-bottom:5px">
@@ -63,11 +62,9 @@
                                                     style="width:100%">
                                                 <i class="fa fa-times"></i> No book needed</button>
                                         </span>
-                                        </span>
+                                    </span>
                                 </td>
-
                             </tr>
-
                         </tbody>
                     </table>
                 </div>
@@ -77,10 +74,7 @@
 
         <div class="col-lg-12" ng-show="getStage() == STAGE_SELECT_BOOKS" ng-controller="NewBookController">
 
-
-
             <div class="col-md-6">
-
                 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 
                         <div class="panel-heading" role="tab" id="headingOne">
@@ -103,9 +97,9 @@
 
                                     <div class="input-group" ng-repeat="author in authors" style="margin-top: 10px">
                                         <input type="text" class="form-control"  placeholder="Author" >
-                        <span class="input-group-addon" ng-click="removeAuthor($index)">
-                            <i class="fa fa-times"></i>
-                        </span>
+                                        <span class="input-group-addon" ng-click="removeAuthor($index)">
+                                            <i class="fa fa-times"></i>
+                                        </span>
                                     </div>
 
                                     <div style="margin-top: 10px;">
@@ -201,6 +195,13 @@
                 </ul>
 
 
+                <div class="row">
+                    <button class="btn btn-success pull-right"
+                            ng-click="addInputBookToCart()"
+                            style="margin: 20px;">
+                        <i class="fa fa-arrow-right"></i> Review Order
+                    </button>
+                </div>
             </div>
 
         </div>
@@ -209,13 +210,6 @@
 
     </div>
 
-    <div class="row">
-        <button class="btn btn-success pull-right"
-                ng-click="addInputBookToCart()"
-                style="margin: 20px;">
-            <i class="fa fa-arrow-right"></i> Review Order
-        </button>
-    </div>
 
 
 </div>

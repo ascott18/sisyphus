@@ -61,7 +61,7 @@ $factory->define(App\Models\User::class, function (Faker\Generator $faker) {
         'first_name' => $firstName,
         'last_name' => $lastName,
         'net_id' => $netId,
-        'email' => $netId . "@ewu.edu",
+        'email' => $netId . "@fake.email",
     ];
 });
 
@@ -76,15 +76,25 @@ $factory->define(App\Models\Order::class, function (Faker\Generator $faker) {
 });
 
 
-
 $factory->define(App\Models\Course::class, function (Faker\Generator $faker) {
+    $faker->addProvider(new Faker\Provider\Department($faker));
+
     return [
-        'department' => strtoupper($faker->randomLetter . $faker->randomLetter . $faker->randomLetter . $faker->randomLetter),
+        'department' => $faker->departmentCode,
         'course_number' => random_int(98, 698),
         'course_section' => random_int(1, 4),
         'course_name' => ucwords($faker->words(random_int(3, 6), true)),
         'user_id' => dbRandom(App\Models\User::class, 'user_id'),
         'term_id' => dbRandom(App\Models\Term::class, 'term_id'),
+    ];
+});
+
+$factory->define(App\Models\UserDepartment::class, function (Faker\Generator $faker) {
+    $faker->addProvider(new Faker\Provider\Department($faker));
+
+    return [
+        'department' => $faker->departmentCode,
+        'user_id' => dbRandom(App\Models\User::class, 'user_id'),
     ];
 });
 

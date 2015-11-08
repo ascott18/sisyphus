@@ -22,7 +22,7 @@ function(){
     };
 }]);
 
-app.directive('ngSpinner', ['$http', '$rootScope' ,function ($http, $rootScope){
+app.directive('ngSpinner', ['$http', '$rootScope', function ($http, $rootScope){
     return {
         link: function (scope, elm, attrs)
         {
