@@ -4,6 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int author_id
+ * @property int book_id
+ * @property string first_name
+ * @property string last_name
+ */
 class Author extends Model
 {
     /**
