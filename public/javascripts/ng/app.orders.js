@@ -45,6 +45,7 @@ app.controller('OrdersController',['$scope', '$http', 'CartService', function($s
 
     $http.get('/orders/read-courses').then(
         function success(response) {
+            console.log("got books")
             $scope.courses = response.data;
         },
         function error(response) {
