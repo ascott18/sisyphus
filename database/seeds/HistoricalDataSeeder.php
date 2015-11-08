@@ -24,13 +24,13 @@ class HistoricalDataSeeder extends Seeder
             Artisan::call('parseCourseCsv', [
                 'termNumber' => array_search($fileInfo[0], Term::$termNumbers),
                 'year' => $fileInfo[1],
-                'file' => "database\\seeds\\dataFiles\\eagleNet$fileInfo[0]$fileInfo[1].csv"
+                'file' => "database/seeds/dataFiles/eagleNet$fileInfo[0]$fileInfo[1].csv"
             ]);
         }
 
         $this->command->line("Parsing MBS data...");
         Artisan::call('parseMbs', [
-            'file' => 'database\seeds\dataFiles\MBSFall2015.txt'
+            'file' => 'database/seeds/dataFiles/MBSFall2015.txt'
         ]);
     }
 }
