@@ -69,6 +69,7 @@ app.controller('MessagesController', function($scope, $timeout, $http){
 
     $scope.STAGE_COMPOSE = 1;
     $scope.STAGE_SEND = 2;
+    $scope.STAGE_SENT = 3;
 
     $scope.stage = $scope.STAGE_COMPOSE;
 
@@ -99,6 +100,14 @@ app.controller('MessagesController', function($scope, $timeout, $http){
         $http.get('/messages/all').then(
             function success(response) {
                 $scope.messages = response.data;
+
+                angular.forEach($scope.messages, function(message){
+
+                    message.last_sent = Date.parse(message.last_sent.substring(0, 10));
+                    if (!message.last_sent)
+                        message.last_sent = null;
+                });
+
                 if (after) after();
             },
             function error(response) {
@@ -147,6 +156,39 @@ app.controller('MessagesController', function($scope, $timeout, $http){
             });
     };
 
+    $scope.sendingMessages = false;
+    $scope.numSendingMessages = 0;
+
+    $scope.sendMessages = function(){
+        var request = {
+            message: $scope.selectedMessage,
+            recipients: []
+        };
+
+        $scope.numSendingMessages = 0;
+        for (var i=0; i < $scope.recipients.length; i++){
+            var recipient = $scope.recipients[i];
+            if (recipient.selected) {
+                $scope.numSendingMessages++;
+                request.recipients.push(recipient.user_id);
+            }
+        }
+
+        $scope.sendingMessages = true;
+        $http.post('/messages/send-messages', request).then(
+            function success(response){
+                $scope.sendingMessages = false;
+                $scope.setStage($scope.STAGE_SENT);
+                $scope.selectNoUsers();
+                $scope.reloadMessages();
+            },
+            function error(response){
+                // TODO: handle this properly.
+                $scope.sendingMessages = false;
+                console.log("Not Sent!", response);
+            });
+    };
+
 
 
 
@@ -172,9 +214,9 @@ app.controller('MessagesController', function($scope, $timeout, $http){
 
 
     // Recipient selection functions
-    $scope.selectUsersMissingOrders = new selector(function(r){return r.least_num_orders == 0});
-    $scope.selectAllUsers = new selector(function(r){return true});
-    $scope.selectNoUsers = new selector(function(r){return false});
+    $scope.selectUsersMissingOrders = selector(function(r){return r.least_num_orders == 0});
+    $scope.selectAllUsers = selector(function(){return true});
+    $scope.selectNoUsers = selector(function(){return false});
 
     // Go fetch all possible recipients of the messages.
     $http.get('/messages/all-recipients').then(

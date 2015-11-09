@@ -21,24 +21,22 @@
                             <th style="width: 100%"></th>
                             <th ></th>
                         </thead>
-                        <tbody>
 
+                        <tbody>
                             <tr class="list-group-item" ng-repeat="course in courses">
                                 <td style="width: 100%">
-                                    <h4 class="list-group-item-heading">[[course.course_name]]</h4>
+                                    <h4 class="list-group-item-heading">[[course.department]] [[course.course_number]]-[[course.course_section]] [[course.course_name]]</h4>
 
                                     <p style="margin-left: 3em">
                                         <div ng-show="courseNeedsOrders(course)">
                                             </br>
-                                            <div class="well well-sm" style="background-color: #fcf8e3; border-color: #fbeed5">
+                                            <span class="well well-sm" style="background-color: #fcf8e3; border-color: #fbeed5">
                                                 No requests submitted - please let us know what you need!
-                                            </div>
+                                            </span>
                                         </div>
                                         <div ng-show="course.no_book">
                                             </br>
-                                            <div class="well well-sm" style="background-color: #fcf8e3; border-color: #fbeed5">
-                                                You selected that you didn't need a book
-                                            </div>
+                                            You selected that you didn't need a book
                                         </div>
 
                                         <span ng-repeat="order in course.orders">
@@ -48,7 +46,8 @@
                                     </p>
                                 </td>
 
-                                <td style="vertical-align: top"><span ng-if="!course.no_book">
+                                <td style="vertical-align: top">
+                                    <span ng-if="!course.no_book">
                                     <a ng-click="setStage(2)"
                                        class="btn btn-primary"
                                        style="width:100%; margin-bottom:5px">
@@ -63,11 +62,9 @@
                                                     style="width:100%">
                                                 <i class="fa fa-times"></i> No book needed</button>
                                         </span>
-                                        </span>
+                                    </span>
                                 </td>
-
                             </tr>
-
                         </tbody>
                     </table>
                 </div>
@@ -75,9 +72,106 @@
         </div>
 
 
-        <div class="col-lg-12" ng-show="getStage() == STAGE_SELECT_BOOKS">
+        <div class="col-lg-12" ng-show="getStage() == STAGE_SELECT_BOOKS" ng-controller="NewBookController">
 
             <div class="col-md-6">
+                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+
+
+                    <div>
+
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" class="active"><a href="#newbook" aria-controls="newbook" role="tab" data-toggle="tab">New Book</a></li>
+                            <li role="presentation"><a href="#pastbooks" aria-controls="pastbooks" role="tab" data-toggle="tab">Past Books</a></li>
+                        </ul>
+
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane active" id="newbook">
+
+                                </br>
+
+                                <div class="form-group">
+                                    <label for="bookTitle">Book Title</label>
+                                    <input type="text" class="form-control" name="bookTitle" placeholder="Book Title" ng-model="book.title">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="author1">Author</label>
+                                    <input type="text" class="form-control" name="author1" placeholder="Author" ng-model="authors[0].name">
+
+                                    <div class="input-group" ng-repeat="author in authors" style="margin-top: 10px"  ng-show="!$first">
+                                        <input type="text" class="form-control"  placeholder="Author" ng-model="author.name">
+                                        <span class="input-group-addon" ng-click="removeAuthor($index)">
+                                            <i class="fa fa-times"></i>
+                                        </span>
+                                    </div>
+
+                                    <div style="margin-top: 10px;margin-bottom: 10px">
+                                        <button class="btn btn-info" ng-click="addAuthor()">Add Author</button>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="publisher">Publisher</label>
+                                        <input type="text" class="form-control" name="publisher" placeholder="Publisher" ng-model="book.publisher">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="isbn13">ISBN 13</label>
+                                        <input type="text" class="form-control" name="isbn13" placeholder="ISBN 13" ng-model="book.isbn">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="edition">Edition</label>
+                                        <input type="text" class="form-control" name="edition" placeholder="Edition" ng-model="book.edition">
+                                    </div>
+
+                                    <button class="btn btn-primary"
+                                            ng-click="addNewBookToCart(book)">
+                                        <i class="fa fa-plus"></i> Add to Cart
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                            <div role="tabpanel" class="tab-pane" id="pastbooks">
+
+                                </br>
+
+                                <ul class="list-group">
+                                    <li class="list-group-item cursor-pointer"
+                                        ng-cloak
+                                        ng-repeat="book in pastBooks |orderBy: (book.mine?0:1):true">
+
+                                        <div class="pull-right">
+                                            <button class="btn btn-xs btn-primary"
+                                                    ng-click="addBookToCart(book)">
+                                                <i class="fa fa-fw fa-plus"></i>
+                                            </button>
+                                        </div>
+
+                                        <h4 class="list-group-item-heading no-pad-bottom">[[book.title]]</h4>
+                                        <small >
+                                            <span class="text-muted" > Ordered by Stuart Glenn Steiner for Fall 2014</span>
+                                        </small>
+
+                                    </li>
+                                </ul>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+            <div class="col-md-6">
+
                 <h3>Cart</h3>
                 <ul class="list-group">
                     <li class="list-group-item cursor-pointer"
@@ -101,91 +195,20 @@
                     </li>
                 </ul>
 
-                <hr>
 
-                <h3>Past Books</h3>
-                <ul class="list-group">
-                    <li class="list-group-item cursor-pointer"
-                        ng-cloak
-                        ng-repeat="book in pastBooks |orderBy: (book.mine?0:1):true">
-
-                        <div class="pull-right">
-                            <button class="btn btn-xs btn-primary"
-                                    ng-click="addBookToCart(book)">
-                                <i class="fa fa-fw fa-plus"></i>
-                            </button>
-                        </div>
-
-                        <h4 class="list-group-item-heading no-pad-bottom">[[book.title]]</h4>
-                        <small >
-                            <span class="text-muted" > Ordered by Stuart Glenn Steiner for Fall 2014</span>
-                        </small>
-
-                    </li>
-                </ul>
-            </div>
-
-            <div class="col-md-6" ng-controller="NewBookController">
-
-                <h3>New Book</h3>
-                    <div class="form-group">
-                        <label for="bookTitle">Book Title</label>
-                        <input type="text" class="form-control" name="bookTitle" placeholder="Book Title" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="author1">Author</label>
-                        <input type="text" class="form-control" name="author1" placeholder="Author">
-
-                        <div class="input-group" ng-repeat="author in authors" style="margin-top: 10px">
-                            <input type="text" class="form-control"  placeholder="Author" >
-                        <span class="input-group-addon" ng-click="removeAuthor($index)">
-                            <i class="fa fa-times"></i>
-                        </span>
-                        </div>
-
-                        <div style="margin-top: 10px;">
-                            <button class="btn btn-info" ng-click="addAuthor()">Add Author</button>
-                        </div>
-
-                    </div>
-
-
-                    <div class="form-group">
-                        <label for="publisher">Publisher</label>
-                        <input type="text" class="form-control" name="publisher" placeholder="Publisher">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="isbn13">ISBN 13</label>
-                        <input type="text" class="form-control" name="isbn13" placeholder="ISBN 13">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="edition">Edition</label>
-                        <input type="text" class="form-control" name="edition" placeholder="Edition">
-                    </div>
-
-
-                    <button class="btn btn-primary"
-                            ng-click="submitNewBook()">
-                        <i class="fa fa-plus"></i> Add to Cart
+                <div class="row">
+                    <button class="btn btn-success pull-right"
+                            ng-click="addInputBookToCart()"
+                            style="margin: 20px;">
+                        <i class="fa fa-arrow-right"></i> Review Order
                     </button>
-
+                </div>
             </div>
 
         </div>
 
 
 
-    </div>
-
-    <div class="row">
-        <button class="btn btn-success pull-right"
-                ng-click="addInputBookToCart()"
-                style="margin: 20px;">
-            <i class="fa fa-arrow-right"></i> Review Order
-        </button>
     </div>
 
 

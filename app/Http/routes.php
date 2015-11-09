@@ -22,6 +22,8 @@ Route::controller('messages', 'MessageController');
 
 Route::controller('terms', 'TermController');
 
+Route::controller('users', 'UserController');
+
 Route::controller('/', 'HomeController');
 
 

@@ -13,6 +13,7 @@ use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 /**
  * @property  int user_id
  * @property  string net_id The user's EWU NetID.
+ * @property  string email The user's email address.
  */
 class User extends Model implements AuthenticatableContract,
                                     AuthorizableContract
@@ -38,6 +39,12 @@ class User extends Model implements AuthenticatableContract,
     public function courses()
     {
         return $this->hasMany('App\Models\Course', 'user_id', 'user_id');
+    }
+
+
+    public function departments()
+    {
+        return $this->hasMany('App\Models\UserDepartment', 'user_id', 'user_id');
     }
 
 }

@@ -35,29 +35,29 @@ class CASAuth {
      */
     public function handle($request, Closure $next)
     {
-        if ($this->auth->guest())
+        $cas = app('cas');
+
+        // This will throw an exception if authentication fails,
+        // and will redirect to login.ewu.edu if authentication is needed.
+        $cas->authenticate();
+
+        $net_id = $cas->getCurrentUser();
+
+        $user = \App\Models\User::where(['net_id' => $net_id])->first();
+
+        if (is_null($user))
         {
-            if ($request->ajax())
-            {
-                return response('Unauthorized.', 401);
-            }
-            $cas = app('cas');
-            $cas->authenticate();
-
-            $net_id = $cas->getCurrentUser();
-
-            $user = \App\Models\User::where(['net_id' => $net_id])->first();
-
-            if (is_null($user))
-            {
-                $user = new \App\Models\User();
-                $user->net_id = $net_id;
-                $user->save();
-            }
-
-            $this->session->put('user_id', $user->user_id);
-            $this->session->put('net_id', $net_id);
+            $user = new \App\Models\User();
+            $user->net_id = $net_id;
+            $user->save();
         }
+
+        // Second parameter is to prevent persistent logins.
+        // We want to auth with CAS every time, in case the user has logged out.
+        $this->auth->login($user, false);
+
+        $this->session->put('user_id', $user->user_id);
+        $this->session->put('net_id', $net_id);
 
         return $next($request);
     }

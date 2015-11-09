@@ -21,7 +21,7 @@
                          ng-controller="MessageSaver"
                          ng-class="{active: isMessageSelected(message)}"
                          ng-click="selectMessage(message)"
-                         ng-repeat="message in messages | orderBy : ((message.isNew?10e10:0) + message.lastSent):true">
+                         ng-repeat="message in messages | orderBy : ['isNew', 'last_sent == null', '-last_sent']">
 
                         <div class="pull-right">
                             <button class="btn btn-xs btn-danger"
@@ -37,9 +37,9 @@
 
                         <h4 class="list-group-item-heading no-pad-bottom">[[message.subject]]</h4>
                         <small >
-                            <span class="text-muted" ng-show="message['lastSent']">Sent On</span>
-                            <span class="text-muted" ng-show="!message['lastSent']">Never Sent</span>
-                            <span ng-bind="message.lastSent | date:'MM/dd/yyyy'"></span>
+                            <span class="text-muted" ng-show="message['last_sent']">Sent On</span>
+                            <span class="text-muted" ng-show="!message['last_sent']">Never Sent</span>
+                            <span ng-bind="message.last_sent | date:'MMMM dd, yyyy'"></span>
                         </small>
 
                     </li>
@@ -142,8 +142,29 @@
                     <dir-pagination-controls>
 
                     </dir-pagination-controls>
+
+
+                    <button class="btn btn-success btn-md pull-right"
+                            ng-click="sendMessages()"
+                            ng-show="!sendingMessages">
+                        Send [[(recipients | filter: {selected: true}).length]] Messages <i class="fa fa-arrow-right fa-fw"></i>
+                    </button>
+
+                    <button class="btn btn-success btn-md pull-right"
+                            ng-show="sendingMessages">
+                        Sending [[numSendingMessages]] Messages <i class="fa fa-spinner fa-spin fa-fw"></i>
+                    </button>
                 </div>
             </div>
+        </div>
+
+        <div class="col-lg-12" ng-cloak ng-show="stage == STAGE_SENT">
+            <button class="btn btn-primary btn-md "
+                    ng-click="setStage(STAGE_COMPOSE)">
+                <i class="fa fa-arrow-left fa-fw"></i> Send Another
+            </button>
+
+            <h2 class="" style="width: 100%; display: block; text-align:center;">Message sent to [[numSendingMessages]] users!</h2>
         </div>
     </div>
 
