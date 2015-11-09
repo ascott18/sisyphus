@@ -47,8 +47,11 @@ class CASAuth {
 
         if (is_null($user))
         {
+            $attributes = $cas->getAttributes();
+
             $user = new \App\Models\User();
             $user->net_id = $net_id;
+            $user->ewu_id = $attributes['Ewuid'];
             $user->save();
         }
 

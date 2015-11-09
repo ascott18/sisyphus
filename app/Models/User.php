@@ -16,6 +16,7 @@ use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
  * @property  string email The user's email address.
  * @property  string first_name
  * @property  string last_name
+ * @property  string ewu_id The user's 8-digit EWU ID.
  */
 class User extends Model implements AuthenticatableContract,
                                     AuthorizableContract

@@ -273,7 +273,6 @@ EOL;
 
                         $dbBook = Book::firstOrNew(['isbn13' => $isbn]);
                         $dbBook->title = title_case($book[$bookRegGroups['Title']]);
-                        $dbBook->isbn13 = $isbn;
                         $dbBook->publisher = title_case($book[$bookRegGroups['Publisher']]);
                         // TODO: save edition (there is no DB field yet)
                         $dbBook->save();
