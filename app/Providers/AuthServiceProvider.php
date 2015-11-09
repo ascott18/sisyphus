@@ -26,6 +26,8 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies($gate);
 
-        //
+        $gate->define('view-department-order', function ($user, $post) {
+            return $user->id === $post->user_id;
+        });
     }
 }

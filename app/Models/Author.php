@@ -14,7 +14,11 @@ class Author extends Model
     protected $primaryKey = 'author_id';
 
 
-
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $fillable = ['first_name', 'last_name'];
 
     public function book()
