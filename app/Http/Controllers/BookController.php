@@ -17,6 +17,43 @@ class BookController extends Controller
         return view('books.index');
     }
 
+    /**
+     * Build the search query for the books controller
+     *
+     * @param \Illuminate\Database\Query $query
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Database\Query
+     */
+    private function buildSearchQuery($request, $query) {
+        if($request->input('title'))
+            $query = $query->where('title', 'LIKE', '%'.$request->input('title').'%');
+        if($request->input('publisher'))
+            $query = $query->where('publisher', 'LIKE', '%'.$request->input('publisher').'%');
+        if($request->input('isbn13'))
+            $query = $query->where('isbn13', 'LIKE', '%'.$request->input('isbn13').'%');
+
+
+        return $query;
+    }
+
+
+    /**
+     * Build the sort query for the books controller
+     *
+     * @param \Illuminate\Database\Query $query
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Database\Query
+     */
+    private function buildSortQuery($request, $query) {
+        if($request->input('sort'))
+            if($request->input('dir'))
+                $query = $query->orderBy($request->input('sort'), "desc");
+            else
+                $query = $query->orderBy($request->input('sort'));
+
+        return $query;
+    }
+
     /** GET: /books/book-list?page={}&{sort=}&{dir=}&{title=}&{publisher=}&{isbn=}
      * Searches the book list
      *
@@ -29,19 +66,9 @@ class BookController extends Controller
 
         $query = Book::query();
 
-        if($request->input('sort'))
-            if($request->input('dir'))
-                $query = $query->orderBy($request->input('sort'), "desc");
-            else
-                $query = $query->orderBy($request->input('sort'));
+        $query = $this->buildSearchQuery($request, $query);
 
-        if($request->input('title'))
-            $query = $query->where('title', 'LIKE', '%'.$request->input('title').'%');
-        if($request->input('publisher'))
-            $query = $query->where('publisher', 'LIKE', '%'.$request->input('publisher').'%');
-        if($request->input('isbn13'))
-            $query = $query->where('isbn13', 'LIKE', '%'.$request->input('isbn13').'%');
-
+        $query = $this->buildSortQuery($request, $query);
 
         $books = $query->paginate(10);
 

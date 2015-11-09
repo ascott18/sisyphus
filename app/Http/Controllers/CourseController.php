@@ -20,16 +20,15 @@ class CourseController extends Controller
         return view('courses.index');
     }
 
-    /** GET: /courses/course-list?page={}&{sort=}&{dir=}&{section=}&{name=}
-     * Searches the book list
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return Response()->json() // I'm not actually sure where it is?
-     */
-    public function getCourseList(Request $request)
-    {
-        $query = Course::query();
 
+    /**
+     * Build the search query for the courses controller
+     *
+     * @param \Illuminate\Database\Query $query
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Database\Query
+     */
+    private function buildSearchQuery($request, $query) {
         if($request->input('section')) {
             $searchArray = preg_split("/[\s-]/", $request->input('section'));
             if(count($searchArray) == 2) {
@@ -46,8 +45,8 @@ class CourseController extends Controller
             } else {
                 for($i=0; $i<count($searchArray); $i++) {
                     $query = $query->where('department', 'LIKE', '%'.$searchArray[$i].'%')
-                    ->orWhere('course_number', 'LIKE', '%'.$searchArray[$i].'%')
-                    ->orWhere('course_section', 'LIKE', '%'.$searchArray[$i].'%');
+                        ->orWhere('course_number', 'LIKE', '%'.$searchArray[$i].'%')
+                        ->orWhere('course_section', 'LIKE', '%'.$searchArray[$i].'%');
                 }
             }
         }
@@ -55,7 +54,18 @@ class CourseController extends Controller
         if($request->input('name'))
             $query = $query->where('course_name', 'LIKE', '%'.$request->input('name').'%');
 
+        return $query;
+    }
 
+
+    /**
+     * Build the sort query for the courses controller
+     *
+     * @param \Illuminate\Database\Query $query
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Database\Query
+     */
+    private function buildSortQuery($request, $query) {
         if($request->input('sort'))
             if($request->input('sort') == "section"){
                 if($request->input('dir')) {
@@ -73,6 +83,23 @@ class CourseController extends Controller
                 else
                     $query = $query->orderBy($request->input('sort'));
             }
+
+        return $query;
+    }
+
+    /** GET: /courses/course-list?page={}&{sort=}&{dir=}&{section=}&{name=}
+     * Searches the book list
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return Response()->json() // I'm not actually sure where it is?
+     */
+    public function getCourseList(Request $request)
+    {
+        $query = Course::query();
+
+        $query = $this->buildSearchQuery($request, $query);
+
+        $query = $this->buildSortQuery($request, $query);
 
         $courses = $query->paginate(10);
 
