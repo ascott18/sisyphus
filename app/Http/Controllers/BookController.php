@@ -14,9 +14,7 @@ class BookController extends Controller
      */
     public function getIndex()
     {
-        $books = Book::paginate(10);
-
-        return view('books.index', ['books' => $books]);
+        return view('books.index');
     }
 
     /** GET: /books/book-list?page={}&{sort=}&{dir=}&{title=}&{publisher=}&{isbn=}
@@ -53,21 +51,6 @@ class BookController extends Controller
 
 
         return response()->json($books);
-    }
-
-    /** GET: /books/search?search={search}
-     * Searches the book list
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\View\View
-     */
-
-    public function getSearch(Request $request)
-    {
-        $searchTerm = $request->input('search');
-        $books = Book::where('title', 'LIKE', '%'. $searchTerm .'%')->paginate(10);
-
-        return view('books.search', ['books' => $books, 'searchTerm' => $searchTerm]);
     }
 
     /** GET: /books/{id}

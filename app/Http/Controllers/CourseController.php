@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Course;
+use Illuminate\Http\Request;
 use App\Models\Term;
 use Illuminate\Database\Query\Builder;
 
@@ -16,10 +17,66 @@ class CourseController extends Controller
      */
     public function getIndex()
     {
-        $courses = Course::paginate(10);
-        $terms = Term::all();
+        return view('courses.index');
+    }
 
-        return view('courses.index', ['courses' => $courses, 'terms' => $terms]);
+    /** GET: /courses/course-list?page={}&{sort=}&{dir=}&{section=}&{name=}
+     * Searches the book list
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return Response()->json() // I'm not actually sure where it is?
+     */
+    public function getCourseList(Request $request)
+    {
+        $query = Course::query();
+
+        if($request->input('section')) {
+            $searchArray = preg_split("/[\s-]/", $request->input('section'));
+            if(count($searchArray) == 2) {
+                $query = $query->where('department', 'LIKE', '%'.$searchArray[0].'%')
+                    ->where('course_number', 'LIKE', '%'.$searchArray[1].'%')
+                    ->orWhere('course_number', 'LIKE', '%'.$searchArray[0].'%')
+                    ->where('course_section', 'LIKE', '%'.$searchArray[1].'%')
+                    ->orWhere('department', 'LIKE', '%'.$searchArray[0].'%')
+                    ->where('course_section', 'LIKE', '%'.$searchArray[1].'%');
+            } elseif(count($searchArray) == 3) {
+                $query = $query->where('department', 'LIKE', '%'.$searchArray[0].'%');
+                $query = $query->where('course_number', 'LIKE', '%'.$searchArray[1].'%');
+                $query = $query->where('course_section', 'LIKE', '%'.$searchArray[2].'%');
+            } else {
+                for($i=0; $i<count($searchArray); $i++) {
+                    $query = $query->where('department', 'LIKE', '%'.$searchArray[$i].'%')
+                    ->orWhere('course_number', 'LIKE', '%'.$searchArray[$i].'%')
+                    ->orWhere('course_section', 'LIKE', '%'.$searchArray[$i].'%');
+                }
+            }
+        }
+
+        if($request->input('name'))
+            $query = $query->where('course_name', 'LIKE', '%'.$request->input('name').'%');
+
+
+        if($request->input('sort'))
+            if($request->input('sort') == "section"){
+                if($request->input('dir')) {
+                    $query = $query->orderBy("department", "desc");
+                    $query = $query->orderBy("course_number", "desc");
+                    $query = $query->orderBy("course_section", "desc");
+                } else {
+                    $query = $query->orderBy("department");
+                    $query = $query->orderBy("course_number");
+                    $query = $query->orderBy("course_section");
+                }
+            } else {
+                if($request->input('dir'))
+                    $query = $query->orderBy($request->input('sort'), "desc");
+                else
+                    $query = $query->orderBy($request->input('sort'));
+            }
+
+        $courses = $query->paginate(10);
+
+        return response()->json($courses);
     }
 
 //

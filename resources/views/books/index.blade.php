@@ -63,9 +63,6 @@
                             </tr>
                             </tfoot>
                         </table>
-
-                        {{-- Render pagination controls --}}
-                        {{-- {!! $books->render() !!} --}}
                     </div>
                 </div>
             </div>
