@@ -25,7 +25,7 @@ class AddNoBookToCourseTable extends Migration
     public function down()
     {
         Schema::table('courses',function($table){
-            $table->dropColumn('noBook');
+            $table->dropColumn('no_Book');
         });
     }
 }
