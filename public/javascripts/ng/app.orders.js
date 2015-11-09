@@ -3,9 +3,9 @@ var app = angular.module('sisyphus', ['sisyphus.helpers']);
 
 app.service("CartService", function () {
     this.cartBooks = [
-        {title: "Stu's happy fun land book"},
-        {title: "Some other book"},
-        {title: "Naming things is hard"}
+        //{title: "Stu's happy fun land book"},
+        //{title: "Some other book"},
+        //{title: "Naming things is hard"}
     ];
 });
 
@@ -64,21 +64,22 @@ app.controller('OrdersController',['$scope', '$http', 'CartService', function($s
 
 
     $scope.deleteBookFromCart = function(book) {
-        //TODO: we need to know this book came from past books and was not a new book that was entered.
-        transferBook($scope.cartBooks, $scope.pastBooks, book);
+        var index = $scope.cartBooks.indexOf(book);
+        if (index > -1) {
+            var book = $scope.cartBooks.splice(index, 1)[0];
+            if (!book.isNew) {
+                $scope.pastBooks.push(book);
+            }
+        }
     };
 
     $scope.addBookToCart = function(book) {
-        transferBook($scope.pastBooks, $scope.cartBooks, book);
-    };
-
-    transferBook = function(fromList, toList, book) {
-        var index = fromList.indexOf(book);
+        var index = $scope.pastBooks.indexOf(book);
         if (index > -1) {
-            var book = fromList.splice(index, 1);
-            toList.push(book[0]);
+            var book = $scope.pastBooks.splice(index, 1)[0];
+            $scope.cartBooks.push(book);
         }
-    }
+    };
 
 }]);
 
@@ -86,6 +87,8 @@ app.controller('OrdersController',['$scope', '$http', 'CartService', function($s
 
 app.controller("NewBookController", ["$scope", "$http", "CartService", function($scope, $http, CartService) {
     $scope.authors = [];
+    $scope.master = {};
+    $scope.book = {};
 
     $scope.addAuthor = function(author) {
         $scope.authors.push({name: ""});
@@ -98,8 +101,20 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", function(
         }
     };
 
-    $scope.addNewBookToCart = function(){
-
+    $scope.addNewBookToCart = function(book){
+        $scope.master = angular.copy(book);
+        $scope.master["authors"] = $scope.authors;
+        $scope.master["isNew"] = true;
+        CartService.cartBooks.push($scope.master);
+        $scope.master = {};
+        $scope.authors = [];
+        $scope.reset();
     };
+
+    $scope.reset = function() {
+        $scope.book = angular.copy($scope.master);
+    };
+
+    $scope.reset();
 
 }]);

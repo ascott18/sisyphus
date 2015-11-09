@@ -94,15 +94,15 @@
 
                                 <div class="form-group">
                                     <label for="bookTitle">Book Title</label>
-                                    <input type="text" class="form-control" name="bookTitle" placeholder="Book Title" required>
+                                    <input type="text" class="form-control" name="bookTitle" placeholder="Book Title" ng-model="book.title">
                                 </div>
 
                                 <div class="form-group">
                                     <label for="author1">Author</label>
-                                    <input type="text" class="form-control" name="author1" placeholder="Author">
+                                    <input type="text" class="form-control" name="author1" placeholder="Author" ng-model="authors[0].name">
 
-                                    <div class="input-group" ng-repeat="author in authors" style="margin-top: 10px">
-                                        <input type="text" class="form-control"  placeholder="Author" >
+                                    <div class="input-group" ng-repeat="author in authors" style="margin-top: 10px"  ng-show="!$first">
+                                        <input type="text" class="form-control"  placeholder="Author" ng-model="author.name">
                                         <span class="input-group-addon" ng-click="removeAuthor($index)">
                                             <i class="fa fa-times"></i>
                                         </span>
@@ -114,21 +114,21 @@
 
                                     <div class="form-group">
                                         <label for="publisher">Publisher</label>
-                                        <input type="text" class="form-control" name="publisher" placeholder="Publisher">
+                                        <input type="text" class="form-control" name="publisher" placeholder="Publisher" ng-model="book.publisher">
                                     </div>
 
                                     <div class="form-group">
                                         <label for="isbn13">ISBN 13</label>
-                                        <input type="text" class="form-control" name="isbn13" placeholder="ISBN 13">
+                                        <input type="text" class="form-control" name="isbn13" placeholder="ISBN 13" ng-model="book.isbn">
                                     </div>
 
                                     <div class="form-group">
                                         <label for="edition">Edition</label>
-                                        <input type="text" class="form-control" name="edition" placeholder="Edition">
+                                        <input type="text" class="form-control" name="edition" placeholder="Edition" ng-model="book.edition">
                                     </div>
 
                                     <button class="btn btn-primary"
-                                            ng-click="addNewBookToCart()">
+                                            ng-click="addNewBookToCart(book)">
                                         <i class="fa fa-plus"></i> Add to Cart
                                     </button>
 
