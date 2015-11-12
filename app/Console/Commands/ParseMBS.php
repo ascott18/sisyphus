@@ -189,10 +189,6 @@ EOL;
                 $booksFound++;
 
                 $books[] = $book;
-
-                for($i = 1; $i < count($book); $i++){
-                    // echo array_search($i, $bookRegGroups) . ": " . $book[$i] . "\n";
-                }
             }
 
             // Now that we have all the data from the course,

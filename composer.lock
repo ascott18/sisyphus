@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "34ac916c6d02c10e50aac55002afb943",
-    "content-hash": "b023e7a48e81694c6c70df469f62bb9b",
+    "hash": "abac3fea6a6c1c34de685a95701a5da0",
+    "content-hash": "e2d005e79662255df81c677d978aaa06",
     "packages": [
         {
             "name": "barryvdh/laravel-ide-helper",
@@ -1998,6 +1998,73 @@
                 "phpCAS"
             ],
             "time": "2015-05-04 10:33:43"
+        },
+        {
+            "name": "zizaco/entrust",
+            "version": "1.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Zizaco/entrust.git",
+                "reference": "3aa6e7923c5beea3fb0a5e57e902ae1d6beed173"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Zizaco/entrust/zipball/3aa6e7923c5beea3fb0a5e57e902ae1d6beed173",
+                "reference": "3aa6e7923c5beea3fb0a5e57e902ae1d6beed173",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/console": "~5.0",
+                "illuminate/support": "~5.0",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "illuminate/database": "~5.0",
+                "mockery/mockery": "dev-master",
+                "phpunit/phpunit": "~4.1",
+                "sami/sami": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/commands"
+                ],
+                "psr-4": {
+                    "Zizaco\\Entrust\\": "src/Entrust/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Andrew Elkins",
+                    "homepage": "http://andrewelkins.com"
+                },
+                {
+                    "name": "Zizaco Zizuini",
+                    "email": "zizaco@gmail.com"
+                },
+                {
+                    "name": "Ben Batschelet",
+                    "homepage": "http://github.com/bbatsche"
+                },
+                {
+                    "name": "Michele Angioni",
+                    "email": "michele.angioni@gmail.com"
+                }
+            ],
+            "description": "This package provides a flexible way to add Role-based Permissions to Laravel",
+            "keywords": [
+                "acl",
+                "auth",
+                "illuminate",
+                "laravel",
+                "permission",
+                "roles"
+            ],
+            "time": "2015-08-07 18:05:40"
         }
     ],
     "packages-dev": [

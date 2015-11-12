@@ -60,10 +60,17 @@ class ParseCourseCsv extends Command implements SelfHandling
 
                 $fake_net_id = camel_case($prof);
 
+                // TODO: this isn't how we're going to seed users.
+                // Or courses for that matter. This whole file exists only
+                // so that we can get the MBS parsing done.
                 $user = User::firstOrNew(['net_id' => $fake_net_id]);
                 $user->first_name = $profNames[0];
                 $user->last_name = $profNames[count($profNames) - 1];
                 $user->save();
+
+                // In particular, this is definitely only for testing.
+                // In reality, only manager-type users need departments assigned.
+                // $user->departments()->updateOrCreate(['department' => $dept]);
 
 
                 $course = new Course;

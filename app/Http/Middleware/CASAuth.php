@@ -26,6 +26,15 @@ class CASAuth {
         $this->session = app('session');
     }
 
+    private function isPretending()
+    {
+        if (!empty(config("cas.cas_pretend_user")))
+        {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Handle an incoming request.
      *
@@ -47,7 +56,16 @@ class CASAuth {
 
         if (is_null($user))
         {
-            $attributes = $cas->getAttributes();
+            if (!$this->isPretending())
+            {
+                $attributes = $cas->getAttributes();
+            }
+            else
+            {
+                $attributes = [
+                    'Ewuid' => "00123456",
+                ];
+            }
 
             $user = new \App\Models\User();
             $user->net_id = $net_id;

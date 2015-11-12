@@ -5,18 +5,42 @@
 
     @include('shared.partial.header', ['headerText'=>'Users', 'subHeaderText'=>'Management'])
 
+    <style>
+        .role-input select {
+            margin: 0 0 10px 0;
+        }
 
-    <div class="row">
+        .dept-input input {
+            margin: 10px 0;
+            text-transform: uppercase;
+        }
+
+        .dept-input {
+            width: 150px;
+        }
+    </style>
+
+    <script>
+        allRoles = {!! $roles !!}
+
+        allRoles.unshift({name:"", display_name:"Faculty"});
+    </script>
+
+    <div class="row" ng-controller="UsersController">
         <div class="col-lg-12">
+            <a class="btn btn-primary"
+               href="/users/roles">
+                <i class="fa fa-key"></i> Manage Roles
+            </a>
+            <br>
+            <br>
+
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title"><i class="fa fa-book fa-fw"></i> All Books</h3>
+                    <h3 class="panel-title"><i class="fa fa-group fa-fw"></i> All Users</h3>
                 </div>
                 <div class="panel-body">
 
-
-                    {{-- Render pagination controls --}}
-                    {!! $users->render() !!}
 
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover table-striped">
@@ -26,37 +50,88 @@
                                 <th>First Name</th>
                                 <th>NetID</th>
                                 <th>Email</th>
-                                <th>Departments</th>
+                                <th width="240px">Role</th>
+                                <th width="170px">Departments</th>
                             </tr>
                             </thead>
                             <tbody>
 
-                            @foreach ($users as $user)
-                                <tr>
-                                    <td>
-                                        {{ $user->last_name }}
-                                    </td>
-                                    <td>
-                                        {{ $user->first_name }}
-                                    </td>
-                                    <td>
-                                        {{ $user->net_id }}
-                                    </td>
-                                    <td>
-                                        {{ $user->email }}
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-xs btn-primary pull-right">
-                                            <i class="fa fa-plus"></i> Add
-                                        </button>
+                            <tr ng-cloak
+                                ng-repeat="user in users">
+                                <td>
+                                    [[user.last_name]]
+                                </td>
+                                <td>
+                                    [[user.first_name]]
+                                </td>
+                                <td>
+                                    [[user.net_id]]
+                                </td>
+                                <td>
+                                    [[user.email]]
+                                </td>
+                                <td>
+                                    <span ng-if="!user.editingRole">
+                                        [[user.roles[0] ? user.roles[0].display_name : "Faculty"]]
 
-                                        @foreach($user->sortedDepartments as $department)
-                                            <i class="fa fa-times text-danger cursor-pointer"></i>
-                                            {{$department['department']}} <br>
-                                        @endforeach
-                                    </td>
-                                </tr>
-                            @endforeach
+                                        <button class="btn btn-xs btn-default pull-right"
+                                                ng-click="user.editingRole = true">
+                                            <i class="fa fa-pencil"></i> Change
+                                        </button>
+                                    </span>
+
+                                    <div class="role-input"
+                                         ng-if="user.editingRole"
+                                         ng-controller="ChangeRoleController">
+                                        <select class="form-control"
+                                                ng-model="selectedRole"
+                                                ng-options="role.display_name for role in allRoles track by role.display_name">
+
+                                        </select>
+
+                                        <button class="btn btn-sm btn-success"
+                                                ng-click="changeRole()">
+                                            <i class="fa fa-check"></i> Change
+                                        </button>
+                                        <button class="btn btn-sm btn-default"
+                                                ng-click="user.editingRole = false;">
+                                            <i class="fa fa-times"></i> Cancel
+                                        </button>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="btn btn-xs btn-default pull-right"
+                                            ng-if="!user.addingDept"
+                                            ng-click="user.addingDept = true">
+                                        <i class="fa fa-plus"></i> Add
+                                    </button>
+
+                                    <span ng-repeat="dept in user.departments | orderBy: 'department'">
+                                        <i class="fa fa-times text-danger cursor-pointer"
+                                           ng-confirm-click="removeDepartment(user, dept.department)"
+                                           ng-confirm-click-message="Are you sure you want to remove [[user.first_name]] [[user.last_name]] from [[dept.department]]?"></i>
+                                        [[dept.department]] <br>
+                                    </span>
+
+                                    <div class="dept-input"
+                                         ng-if="user.addingDept"
+                                         ng-controller="NewDepartmentController">
+                                        <input type="text" class="form-control" placeholder="DEPT"
+                                               ng-model="newDept"
+                                               autofocus="true"
+                                               ng-keypress="($event.keyCode == 13) ? addDepartment() : null">
+                                        <button class="btn btn-sm btn-success"
+                                                ng-disabled="!canAddDepartment()"
+                                                ng-click="addDepartment()">
+                                            <i class="fa fa-check"></i> Add
+                                        </button>
+                                        <button class="btn btn-sm btn-default"
+                                                ng-click="user.addingDept = false; newDept='' ">
+                                            <i class="fa fa-times"></i> Cancel
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
 
                             </tbody>
                         </table>
@@ -66,4 +141,12 @@
         </div>
     </div>
 
+@stop
+
+
+@section('scripts-head')
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+    <script src="/javascripts/ui-bootstrap-tpls-0.14.3.min.js"></script>
+    <script src="/javascripts/ng/app.js"></script>
+    <script src="/javascripts/ng/app.users.js"></script>
 @stop
