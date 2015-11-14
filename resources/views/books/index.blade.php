@@ -32,7 +32,7 @@
                                 <th></th>
                             </tr>
                             </thead>
-                            <tbody ng-show="!mc.isLoading">
+                            <tbody>
 
                             <tr ng-repeat="book in mc.displayed">
                                 <td>

@@ -27,9 +27,9 @@ app.controller('CoursesController', function($scope, $http) {
         if(tableState.search.predicateObject) {
             var predicateObject = tableState.search.predicateObject;
             if(predicateObject.section)
-                getRequestString += '&section=' + predicateObject.section;
+                getRequestString += '&section=' + encodeURIComponent(predicateObject.section);
             if(predicateObject.name)
-                getRequestString += '&name=' + predicateObject.name;
+                getRequestString += '&name=' + encodeURIComponent(predicateObject.name);
         }
 
 

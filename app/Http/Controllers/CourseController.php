@@ -90,10 +90,10 @@ class CourseController extends Controller
     /** GET: /courses/course-list?page={}&{sort=}&{dir=}&{section=}&{name=}
      * Searches the book list
      *
-     * @param \Illuminate\Http\Request $request
-     * @return Response()->json() // I'm not actually sure where it is?
+     * @param \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function getCourseList(Request $request)
+    public function postCourseList(Request $request)
     {
         $query = Course::query();
 

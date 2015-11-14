@@ -50,37 +50,36 @@
                 <h3 class="panel-title"><i class="fa fa-history fa-fw"></i> Past Orders</h3>
             </div>
             <div class="panel-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover table-striped">
+                <div ng-controller="BookDetailsController as bdc" class="table-responsive">
+                    <table st-pipe="bdc.callServer" st-table="bdc.displayed" class="table table-bordered table-hover table-striped">
                         <thead>
                         <tr>
-                            <th>Course</th>
-                            <th>Course Name</th>
-                            <th>Ordered By</th>
-                            <th>Quantity Requested</th>
+                            <th st-sort="section">Course</th>
+                            <th st-sort="course_name">Course Name</th>
+                            <th st-sort="ordered_by_name">Ordered By</th>
+                            <th st-sort="quantity_requested">Quantity Requested</th>
                         </tr>
                         </thead>
                         <tbody>
-
-                        @foreach ($book->orders as $order)
-                            <tr>
+                            <tr ng-repeat="order in bdc.displayed">
                                 <td>
-                                    {{ $order->course->department }} {{ str_pad($order->course->course_number, 3, "0", STR_PAD_LEFT) }}-{{ $order->course->course_section }}
+                                    [[ order.course.department ]] [[ order.course.course_number ]]-[[ order.course.course_section ]]
                                 </td>
-                                <td>{{ $order->course->course_name }}</td>
+                                <td>[[ order.course.course_name ]]</td>
 
                                 <td>
-                                    {{ $order->ordered_by_name }}
+                                    [[ order.order_by_name ]]
                                 </td>
 
-                                <td>{{ $order->quantity_requested }}</td>
+                                <td>[[ order.quantity_requested ]]</td>
                             </tr>
-
-
-                        @endforeach
-
-
                         </tbody>
+                        <tfoot>
+                        <tr>
+                            <td class="text-center" st-pagination="" st-items-by-page="10" colspan="4">
+                            </td>
+                        </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
@@ -88,4 +87,15 @@
     </div>
 </div>
 
+@stop
+
+@section('scripts-head')
+    <script>
+        book_id_init = new String('{{ $book->book_id }}');
+    </script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+    <script src="/javascripts/ng/smart-table/smart-table.min.js"></script>
+    <script src="/javascripts/ng/app.js"></script>
+    <script src="/javascripts/ng/app.books.js"></script>
 @stop
