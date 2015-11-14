@@ -4,6 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property mixed book_id
+ * @property mixed course_id
+ */
 class Order extends Model
 {
     /**

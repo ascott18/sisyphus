@@ -126,4 +126,11 @@ class TermController extends Controller
 
         return $this->getDetails($term_id);
     }
+
+    public function getCheck($term_id)
+    {
+        $term = Term::with("courses.orders.book")->findOrFail($term_id);
+
+        return view('terms.check',['term'=>$term]);
+    }
 }

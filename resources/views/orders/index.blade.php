@@ -77,71 +77,69 @@
             <div class="col-md-6">
                 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 
-                        <div class="panel-heading" role="tab" id="headingOne">
-                            <h4 class="panel-title">
-                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                    Add New Book
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingThree">
-                            <div class="panel-body">
+
+                    <div>
+
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" class="active"><a href="#newbook" aria-controls="newbook" role="tab" data-toggle="tab">New Book</a></li>
+                            <li role="presentation"><a href="#pastbooks" aria-controls="pastbooks" role="tab" data-toggle="tab">Past Books</a></li>
+                        </ul>
+
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane active" id="newbook">
+
+                                </br>
+
                                 <div class="form-group">
                                     <label for="bookTitle">Book Title</label>
-                                    <input type="text" class="form-control" name="bookTitle" placeholder="Book Title" required>
+                                    <input type="text" class="form-control" name="bookTitle" placeholder="Book Title" ng-model="book.title">
                                 </div>
 
                                 <div class="form-group">
                                     <label for="author1">Author</label>
-                                    <input type="text" class="form-control" name="author1" placeholder="Author">
+                                    <input type="text" class="form-control" name="author1" placeholder="Author" ng-model="authors[0].name">
 
-                                    <div class="input-group" ng-repeat="author in authors" style="margin-top: 10px">
-                                        <input type="text" class="form-control"  placeholder="Author" >
+                                    <div class="input-group" ng-repeat="author in authors" style="margin-top: 10px"  ng-show="!$first">
+                                        <input type="text" class="form-control"  placeholder="Author" ng-model="author.name">
                                         <span class="input-group-addon" ng-click="removeAuthor($index)">
                                             <i class="fa fa-times"></i>
                                         </span>
                                     </div>
 
-                                    <div style="margin-top: 10px;">
+                                    <div style="margin-top: 10px;margin-bottom: 10px">
                                         <button class="btn btn-info" ng-click="addAuthor()">Add Author</button>
                                     </div>
 
+                                    <div class="form-group">
+                                        <label for="publisher">Publisher</label>
+                                        <input type="text" class="form-control" name="publisher" placeholder="Publisher" ng-model="book.publisher">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="isbn13">ISBN 13</label>
+                                        <input type="text" class="form-control" name="isbn13" placeholder="ISBN 13" ng-model="book.isbn">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="edition">Edition</label>
+                                        <input type="text" class="form-control" name="edition" placeholder="Edition" ng-model="book.edition">
+                                    </div>
+
+                                    <button class="btn btn-primary"
+                                            ng-click="addNewBookToCart(book)">
+                                        <i class="fa fa-plus"></i> Add to Cart
+                                    </button>
+
                                 </div>
 
-
-                                <div class="form-group">
-                                    <label for="publisher">Publisher</label>
-                                    <input type="text" class="form-control" name="publisher" placeholder="Publisher">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="isbn13">ISBN 13</label>
-                                    <input type="text" class="form-control" name="isbn13" placeholder="ISBN 13">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="edition">Edition</label>
-                                    <input type="text" class="form-control" name="edition" placeholder="Edition">
-                                </div>
-
-
-                                <button class="btn btn-primary"
-                                        ng-click="submitNewBook()">
-                                    <i class="fa fa-plus"></i> Add to Cart
-                                </button>
                             </div>
-                        </div>
 
+                            <div role="tabpanel" class="tab-pane" id="pastbooks">
 
-                        <div class="panel-heading" role="tab" id="headingTwo">
-                            <h4 class="panel-title">
-                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                    Add Past Books
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
-                            <div class="panel-body">
+                                </br>
+
                                 <ul class="list-group">
                                     <li class="list-group-item cursor-pointer"
                                         ng-cloak
@@ -161,8 +159,11 @@
 
                                     </li>
                                 </ul>
+
                             </div>
                         </div>
+
+                    </div>
 
                 </div>
 
@@ -209,7 +210,6 @@
 
 
     </div>
-
 
 
 </div>

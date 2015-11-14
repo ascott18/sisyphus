@@ -92,6 +92,8 @@
                             </tbody>
                         </table>
 
+                        <a href="/terms/check/{{$term->term_id}}" class="btn btn-primary">Check Sheet</a>
+
                         {{-- Render pagination controls --}}
                         {!! $courses->render() !!}
                     </div>

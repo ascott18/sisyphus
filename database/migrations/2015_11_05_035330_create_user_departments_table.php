@@ -12,6 +12,10 @@ class CreateUserDepartmentsTable extends Migration
      */
     public function up()
     {
+        Schema::table('users', function(Blueprint $table) {
+            $table->string('ewu_id', 10);
+        });
+
         Schema::create('user_departments', function (Blueprint $table) {
             $table->increments('user_department_id');
 
@@ -30,6 +34,10 @@ class CreateUserDepartmentsTable extends Migration
      */
     public function down()
     {
+        Schema::table('users', function(Blueprint $table) {
+            $table->dropColumn('ewu_id');
+        });
+
         Schema::drop('user_departments');
     }
 }

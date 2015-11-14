@@ -6,6 +6,10 @@ app.config(function($interpolateProvider) {
     $interpolateProvider.endSymbol(']]');
 });
 
+app.config(function($httpProvider) {
+    $httpProvider.defaults.headers.common = { 'X-Requested-With' : 'XMLHttpRequest' }
+});
+
 
 app.directive('ngConfirmClick', [
 function(){
