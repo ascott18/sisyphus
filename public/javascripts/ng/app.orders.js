@@ -3,9 +3,9 @@ var app = angular.module('sisyphus', ['sisyphus.helpers']);
 
 app.service("CartService", function () {
     this.cartBooks = [
-        //{title: "Stu's happy fun land book"},
-        //{title: "Some other book"},
-        //{title: "Naming things is hard"}
+        {title: "Stu's happy fun land book"},
+        {title: "Some other book"},
+        {title: "Naming things is hard"}
     ];
 });
 
@@ -89,6 +89,7 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", function(
     $scope.authors = [];
     $scope.master = {};
     $scope.book = {};
+    $scope.submitted = false;
 
     $scope.addAuthor = function(author) {
         $scope.authors.push({name: ""});
@@ -101,20 +102,38 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", function(
         }
     };
 
-    $scope.addNewBookToCart = function(book){
-        $scope.master = angular.copy(book);
-        $scope.master["authors"] = $scope.authors;
-        $scope.master["isNew"] = true;
-        CartService.cartBooks.push($scope.master);
-        $scope.master = {};
-        $scope.authors = [];
-        $scope.reset();
+    $scope.addNewBookToCart = function(book, form){
+        $scope.submitted = true;
+        if (form.$valid) {
+            $scope.master = angular.copy(book);
+            $scope.master["authors"] = $scope.authors;
+            $scope.master["isNew"] = true;
+            CartService.cartBooks.push($scope.master);
+            $scope.master = {};
+            $scope.authors = [];
+            $scope.reset(form);
+        }
     };
 
-    $scope.reset = function() {
+    $scope.reset = function(form) {
+        $scope.submitted = false;
+        if (form) {
+            form.$setPristine();
+            form.$setUntouched();
+        }
         $scope.book = angular.copy($scope.master);
     };
 
     $scope.reset();
+
+    validateBook = function(book) {
+        for (key in book) {
+            if (key || key == "") {
+                alert("Invalid!");
+                return false;
+            }
+        }
+        return true;
+    };
 
 }]);

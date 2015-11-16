@@ -92,14 +92,29 @@
 
                                 </br>
 
-                                <div class="form-group">
-                                    <label for="bookTitle">Book Title</label>
-                                    <input type="text" class="form-control" name="bookTitle" placeholder="Book Title" ng-model="book.title">
+                                <form novalidate class="simple-form" name="form">
+                                <div class="form-group" ng-class="{'has-error': (submitted || form.isbn13.$touched) && form.isbn13.$error.required}">
+                                    <label for="isbn13">ISBN 13</label>
+                                    <input type="text" class="form-control" name="isbn13" placeholder="ISBN 13" ng-model="book.isbn" required="">
+                                    <div ng-show="submitted || form.isbn13.$touched">
+                                        <div ng-show="form.isbn13.$error.required">Required</div>
+                                    </div>
                                 </div>
 
-                                <div class="form-group">
+                                <div class="form-group" ng-class="{'has-error': (submitted || form.bookTitle.$touched) && form.bookTitle.$error.required}">
+                                    <label for="bookTitle">Book Title</label>
+                                    <input type="text" class="form-control" name="bookTitle" placeholder="Book Title" ng-model="book.title" required="">
+                                    <div ng-show="submitted || form.bookTitle.$touched">
+                                        <div ng-show="form.bookTitle.$error.required">Required</div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" ng-class="{'has-error': (submitted || form.author1.$touched) && form.author1.$error.required}">
                                     <label for="author1">Author</label>
-                                    <input type="text" class="form-control" name="author1" placeholder="Author" ng-model="authors[0].name">
+                                    <input type="text" class="form-control" name="author1" placeholder="Author" ng-model="authors[0].name" required="">
+                                    <div ng-show="submitted || form.author1.$touched">
+                                        <div ng-show="form.author1.$error.required">Required</div>
+                                    </div>
 
                                     <div class="input-group" ng-repeat="author in authors" style="margin-top: 10px"  ng-show="!$first">
                                         <input type="text" class="form-control"  placeholder="Author" ng-model="author.name">
@@ -107,32 +122,41 @@
                                             <i class="fa fa-times"></i>
                                         </span>
                                     </div>
+                                </div>
 
                                     <div style="margin-top: 10px;margin-bottom: 10px">
                                         <button class="btn btn-info" ng-click="addAuthor()">Add Author</button>
                                     </div>
 
-                                    <div class="form-group">
+                                    <div class="form-group" ng-class="{'has-error': (submitted || form.publisher.$touched) && form.publisher.$error.required}">
                                         <label for="publisher">Publisher</label>
-                                        <input type="text" class="form-control" name="publisher" placeholder="Publisher" ng-model="book.publisher">
+                                        <input type="text" class="form-control" name="publisher" placeholder="Publisher" ng-model="book.publisher" required="">
+                                        <div ng-show="submitted || form.publisher.$touched">
+                                            <div ng-show="form.publisher.$error.required">Required</div>
+                                        </div>
                                     </div>
 
-                                    <div class="form-group">
-                                        <label for="isbn13">ISBN 13</label>
-                                        <input type="text" class="form-control" name="isbn13" placeholder="ISBN 13" ng-model="book.isbn">
-                                    </div>
 
-                                    <div class="form-group">
+
+                                    <div class="form-group" ng-class="{'has-error': (submitted || form.edition.$touched) && form.edition.$error.required}">
                                         <label for="edition">Edition</label>
-                                        <input type="text" class="form-control" name="edition" placeholder="Edition" ng-model="book.edition">
+                                        <input type="text" class="form-control" name="edition" placeholder="Edition" ng-model="book.edition" required="">
+                                        <div ng-show="submitted || form.edition.$touched">
+                                            <div ng-show="form.edition.$error.required">Required</div>
+                                        </div>
                                     </div>
 
-                                    <button class="btn btn-primary"
-                                            ng-click="addNewBookToCart(book)">
+                                    <button type="button" class="btn btn-primary"
+                                            ng-click="addNewBookToCart(book,form)"
+                                            ng-disabled="form.$invalid">
                                         <i class="fa fa-plus"></i> Add to Cart
                                     </button>
 
-                                </div>
+                                </form>
+
+
+
+
 
                             </div>
 
