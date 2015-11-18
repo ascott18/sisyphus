@@ -15,11 +15,11 @@ app.controller('CoursesController', function($scope, $http) {
         var end = pagination.number || 10;
         var page = (start/end)+1;
 
-        var getRequestString = '/courses/course-list?page=' + page;
+        var getRequestString = '/courses/course-list?page=' + page;                                 // set course list uri
 
 
         if(tableState.sort.predicate) {
-            getRequestString += '&sort=' + tableState.sort.predicate;
+            getRequestString += '&sort=' + tableState.sort.predicate;                               // build sort string
             if(tableState.sort.reverse)
                 getRequestString += '&dir=desc';
         }
@@ -27,17 +27,17 @@ app.controller('CoursesController', function($scope, $http) {
         if(tableState.search.predicateObject) {
             var predicateObject = tableState.search.predicateObject;
             if(predicateObject.section)
-                getRequestString += '&section=' + predicateObject.section;
+                getRequestString += '&section=' + encodeURIComponent(predicateObject.section);     // search for section
             if(predicateObject.name)
-                getRequestString += '&name=' + predicateObject.name;
+                getRequestString += '&name=' + encodeURIComponent(predicateObject.name);           // search for name
         }
 
 
         $http.get(getRequestString).then(
             function success(response) {
-                tableState.pagination.numberOfPages = response.data.last_page;
-                tableState.pagination.number = response.data.per_page;
-                ctrl.displayed = response.data.data;
+                tableState.pagination.numberOfPages = response.data.last_page;                    // update number of pages with laravel response
+                tableState.pagination.number = response.data.per_page;                            // update entries per page with laravel response
+                ctrl.displayed = response.data.data;                                              // save laravel response data
                 ctrl.isLoading=false;
             },
             function error(response) {

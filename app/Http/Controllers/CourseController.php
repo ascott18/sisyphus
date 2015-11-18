@@ -39,9 +39,9 @@ class CourseController extends Controller
                     ->orWhere('department', 'LIKE', '%'.$searchArray[0].'%')
                     ->where('course_section', 'LIKE', '%'.$searchArray[1].'%');
             } elseif(count($searchArray) == 3) {
-                $query = $query->where('department', 'LIKE', '%'.$searchArray[0].'%');
-                $query = $query->where('course_number', 'LIKE', '%'.$searchArray[1].'%');
-                $query = $query->where('course_section', 'LIKE', '%'.$searchArray[2].'%');
+                $query = $query->where('department', 'LIKE', '%'.$searchArray[0].'%')
+                                ->where('course_number', 'LIKE', '%'.$searchArray[1].'%')
+                                ->where('course_section', 'LIKE', '%'.$searchArray[2].'%');
             } else {
                 for($i=0; $i<count($searchArray); $i++) {
                     $query = $query->where('department', 'LIKE', '%'.$searchArray[$i].'%')
@@ -90,8 +90,8 @@ class CourseController extends Controller
     /** GET: /courses/course-list?page={}&{sort=}&{dir=}&{section=}&{name=}
      * Searches the book list
      *
-     * @param \Illuminate\Http\Request $request
-     * @return Response()->json() // I'm not actually sure where it is?
+     * @param \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Http\JsonResponse
      */
     public function getCourseList(Request $request)
     {

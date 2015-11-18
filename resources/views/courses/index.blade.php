@@ -27,7 +27,7 @@
                                 <td><input type="text" class="form-control" placeholder="Search..." st-search="name"/></td>
                             </tr>
                             </thead>
-                            <tbody ng-show="!cc.isLoading">
+                            <tbody>
 
                             <tr ng-repeat="course in cc.displayed">
                                 <td>

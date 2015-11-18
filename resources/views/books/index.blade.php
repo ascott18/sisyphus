@@ -32,7 +32,7 @@
                                 <th></th>
                             </tr>
                             </thead>
-                            <tbody ng-show="!mc.isLoading">
+                            <tbody>
 
                             <tr ng-repeat="book in mc.displayed">
                                 <td>
@@ -41,7 +41,7 @@
                                     </div>
                                     <div class="text-muted">
                                         <span ng-repeat="author in book.authors">
-                                        [[ author.last_name ]], [[ author.first_name ]] |
+                                            [[ author.last_name]] [[ (author.first_name != '') ? ( ',' + author.first_name):('') ]] [[ $last ? '' : '|']]
                                         </span>
                                     </div>
                                 </td>

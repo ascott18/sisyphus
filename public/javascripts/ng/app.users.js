@@ -1,5 +1,5 @@
 
-var app = angular.module('sisyphus', ['sisyphus.helpers', 'ui.bootstrap']);
+var app = angular.module('sisyphus', ['sisyphus.helpers', 'ui.bootstrap', 'smart-table']);
 
 app.controller('UsersController', function($scope, $http) {
     $scope.removeDepartment = function(user, department){
@@ -23,6 +23,59 @@ app.controller('UsersController', function($scope, $http) {
         );
     };
 
+
+
+    var ctrl = this;
+
+    this.displayed = [];
+
+    this.callServer = function callServer(tableState) {
+        ctrl.isLoading = true;
+
+        var pagination = tableState.pagination;
+        var start = pagination.start || 0;
+        var end = pagination.number || 10;
+        var page = (start/end)+1;
+
+        var getRequestString = '/users/user-list?page=' + page;                                 // user list URI
+
+
+        if(tableState.sort.predicate) {
+            getRequestString += '&sort=' + tableState.sort.predicate;                           // build sort string
+            if(tableState.sort.reverse)
+                getRequestString += '&dir=desc';
+        }
+
+        if(tableState.search.predicateObject) {
+            var predicateObject = tableState.search.predicateObject;
+
+            if(predicateObject.lName)
+                getRequestString += '&lName=' + encodeURIComponent(predicateObject.lName);    // search for last name
+            if(predicateObject.fName)
+                getRequestString += '&fName=' + encodeURIComponent(predicateObject.fName);    // search for first name
+            if(predicateObject.netID)
+                getRequestString += '&netID=' + encodeURIComponent(predicateObject.netID);    // search for netID
+            if(predicateObject.email)
+                getRequestString += '&email=' + encodeURIComponent(predicateObject.email);    // search for email
+        }
+
+
+        $http.get(getRequestString).then(
+            function success(response) {
+                tableState.pagination.numberOfPages = response.data.last_page;                // update number of pages with laravel response
+                tableState.pagination.number = response.data.per_page;                        // update number of entries per page with laravel response
+                $scope.users = response.data.data; // using scope var since it was already there.
+                ctrl.isLoading=false;
+            },
+            function error(response) {
+                // TODO: handle properly
+                console.log("Couldn't get users", response);
+            }
+        );
+
+    }
+
+    /*
     $http.get('/users/all-users').then(
         function(response){
             $scope.users = response.data;
@@ -32,6 +85,7 @@ app.controller('UsersController', function($scope, $http) {
             console.log("Error getting users");
         }
     );
+    */
 });
 
 

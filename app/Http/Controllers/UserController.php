@@ -47,6 +47,66 @@ class UserController extends Controller
     }
 
     /**
+     * Build the search query for the users controller
+     *
+     * @param \Illuminate\Database\Query $query
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Database\Query
+     */
+    private function buildSearchQuery($request, $query) {
+        if($request->input('lName'))
+            $query = $query->where('last_name', 'LIKE', '%'.$request->input('lName').'%');
+        if($request->input('fName'))
+            $query = $query->where('first_name', 'LIKE', '%'.$request->input('fName').'%');
+        if($request->input('netID'))
+            $query = $query->where('first_name', 'LIKE', '%'.$request->input('netID').'%');
+        if($request->input('email'))
+            $query = $query->where('first_name', 'LIKE', '%'.$request->input('email').'%');
+
+        return $query;
+    }
+
+
+    /**
+     * Build the sort query for the users controller
+     *
+     * @param \Illuminate\Database\Query $query
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Database\Query
+     */
+    private function buildSortQuery($request, $query) {
+        if($request->input('sort'))
+            if($request->input('dir'))
+                $query = $query->orderBy($request->input('sort'), "desc");
+            else
+                $query = $query->orderBy($request->input('sort'));
+
+        return $query;
+    }
+
+    /** GET: /users/user-list/
+     * Searches the book list
+     *
+     * @param \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getUserList(Request $request)
+    {
+        $query = \App\Models\User::query();
+
+        $query = $query->with(['departments', 'roles']);
+
+        $query = $this->buildSearchQuery($request, $query);
+
+        $query = $this->buildSortQuery($request, $query);
+
+        $users = $query->paginate(10);
+
+        return $users;
+    }
+
+
+    /**
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
