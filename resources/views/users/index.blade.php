@@ -26,7 +26,7 @@
         allRoles.unshift({name:"", display_name:"Faculty"});
     </script>
 
-    <div class="row" ng-controller="UsersController">
+    <div class="row" ng-controller="UsersController as uc">
         <div class="col-lg-12">
             <a class="btn btn-primary"
                href="/users/roles">
@@ -43,15 +43,24 @@
 
 
                     <div class="table-responsive">
-                        <table class="table table-bordered table-hover table-striped">
+                        <table st-pipe="uc.callServer" st-table="users"
+                               class="table table-bordered table-hover table-striped">
                             <thead>
                             <tr>
-                                <th>Last Name</th>
-                                <th>First Name</th>
-                                <th>NetID</th>
-                                <th>Email</th>
+                                <th st-sort="last_name">Last Name</th>
+                                <th st-sort="first_name">First Name</th>
+                                <th st-sort="net_id">NetID</th>
+                                <th st-sort="email">Email</th>
                                 <th width="240px">Role</th>
                                 <th width="170px">Departments</th>
+                            </tr>
+                            <tr>
+                                <th><input type="text" class="form-control" placeholder="Search..." st-search="lName"/></th>
+                                <th><input type="text" class="form-control" placeholder="Search..." st-search="fName"/></th>
+                                <th><input type="text" class="form-control" placeholder="Search..." st-search="netID"/></th>
+                                <th><input type="text" class="form-control" placeholder="Search..." st-search="email"/></th>
+                                <th width="240px"></th>
+                                <th width="170px"></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -134,6 +143,12 @@
                             </tr>
 
                             </tbody>
+                            <tfoot>
+                            <tr>
+                                <td class="text-center" st-pagination="" st-items-by-page="10" colspan="6">
+                                </td>
+                            </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -146,6 +161,7 @@
 
 @section('scripts-head')
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+    <script src="/javascripts/ng/smart-table/smart-table.min.js"></script>
     <script src="/javascripts/ui-bootstrap-tpls-0.14.3.min.js"></script>
     <script src="/javascripts/ng/app.js"></script>
     <script src="/javascripts/ng/app.users.js"></script>

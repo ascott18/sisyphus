@@ -59,13 +59,19 @@
                             <th st-sort="ordered_by_name">Ordered By</th>
                             <th st-sort="quantity_requested">Quantity Requested</th>
                         </tr>
+                        <tr>
+                            <th><input type="text" class="form-control" placeholder="Search..." st-search="section"/></th>
+                            <th><input type="text" class="form-control" placeholder="Search..." st-search="course_name"/></th>
+                            <th><input type="text" class="form-control" placeholder="Search..." st-search="ordered_by_name"/></th>
+                            <th></th>
+                        </tr>
                         </thead>
                         <tbody>
                             <tr ng-repeat="order in bdc.displayed">
                                 <td>
-                                    [[ order.course.department ]] [[ order.course.course_number ]]-[[ order.course.course_section ]]
+                                    [[ order.department ]] [[ order.course_number | zpad:3 ]]-[[ order.course_section | zpad:2 ]]
                                 </td>
-                                <td>[[ order.course.course_name ]]</td>
+                                <td>[[ order.course_name ]]</td>
 
                                 <td>
                                     [[ order.order_by_name ]]

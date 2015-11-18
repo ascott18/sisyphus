@@ -37,6 +37,20 @@ class TermController extends Controller
     }
 
     /**
+     * return array of matched string in the term names
+     *
+     */
+    private function searchTermNames($searchTerm) {
+        $results = array();
+        foreach(Term::$termNumbers as $key => $termName) {
+            if(stripos($termName, $searchTerm) !== false) {
+                $results[] = $key;
+            }
+        }
+        return $results;
+    }
+
+    /**
      * Build the search query for the term controller
      *
      * @param \Illuminate\Database\Eloquent\Builder
@@ -44,10 +58,17 @@ class TermController extends Controller
      * @return \Illuminate\Database\Eloquent\Builder
      */
     private function buildTermSearchQuery($request, $query) {
-        if($request->input('term'))
-            $query = $query->where('year', '=', $request->input('term'));
-
-
+        if($request->input('term')) {
+            $termList = $this->searchTermNames($request->input('term'));
+            if (count($termList) > 0) {
+                #print_r($termList);
+                for ($j = 0; $j < count($termList); $j++) {
+                    $query = $query->orWhere("term_number", "=", $termList[$j]);
+                }
+            } else {
+                $query = $query->where('year', '=', $request->input('term'));
+            }
+        }
         return $query;
     }
 
@@ -78,7 +99,7 @@ class TermController extends Controller
         return $query;
     }
 
-    /** GET: /terms/term-list?page={}&{sort=}&{dir=}&{title=}&{publisher=}&{isbn=}
+    /** GET: /terms/term-list?page={}
      * Searches the term list
      *
      * @param \Illuminate\Http\Request $request
@@ -93,6 +114,8 @@ class TermController extends Controller
         $query = $this->buildTermSearchQuery($request, $query);
 
         $query = $this->buildTermSortQuery($request, $query);
+
+        //print_r($query->toSql());
 
         $terms = $query->paginate(10);
 
@@ -133,4 +156,96 @@ class TermController extends Controller
 
         return view('terms.check',['term'=>$term]);
     }
+
+    /**
+     * Build the search query for the term detail list
+     *
+     * @param \Illuminate\Database\Query $query
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Database\Query
+     */
+    private function buildDetailSearchQuery($request, $query) {
+        if($request->input('section')) {
+            $searchArray = preg_split("/[\s-]/", $request->input('section'));
+            if(count($searchArray) == 2) {
+                $query = $query->where('department', 'LIKE', '%'.$searchArray[0].'%')
+                    ->where('course_number', 'LIKE', '%'.$searchArray[1].'%')
+                    ->orWhere('course_number', 'LIKE', '%'.$searchArray[0].'%')
+                    ->where('course_section', 'LIKE', '%'.$searchArray[1].'%')
+                    ->orWhere('department', 'LIKE', '%'.$searchArray[0].'%')
+                    ->where('course_section', 'LIKE', '%'.$searchArray[1].'%');
+            } elseif(count($searchArray) == 3) {
+                $query = $query->where('department', 'LIKE', '%'.$searchArray[0].'%')
+                    ->where('course_number', 'LIKE', '%'.$searchArray[1].'%')
+                    ->where('course_section', 'LIKE', '%'.$searchArray[2].'%');
+            } else {
+                for($i=0; $i<count($searchArray); $i++) {
+                    $query = $query->where('department', 'LIKE', '%'.$searchArray[$i].'%')
+                        ->orWhere('course_number', 'LIKE', '%'.$searchArray[$i].'%')
+                        ->orWhere('course_section', 'LIKE', '%'.$searchArray[$i].'%');
+                }
+            }
+        }
+
+        if($request->input('name'))
+            $query = $query->where('course_name', 'LIKE', '%'.$request->input('name').'%');
+
+        return $query;
+    }
+
+    /**
+     * Build the sort query for the term detail list
+     *
+     * @param \Illuminate\Database\Eloquent\Builder
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    private function buildDetailSortQuery($request, $query) {
+        if($request->input('sort'))
+            if($request->input('sort') == "section"){
+                if($request->input('dir')) {
+                    $query = $query->orderBy("department", "desc");
+                    $query = $query->orderBy("course_number", "desc");
+                    $query = $query->orderBy("course_section", "desc");
+                } else {
+                    $query = $query->orderBy("department");
+                    $query = $query->orderBy("course_number");
+                    $query = $query->orderBy("course_section");
+                }
+            } else {
+                if($request->input('dir'))
+                    $query = $query->orderBy($request->input('sort'), "desc");
+                else
+                    $query = $query->orderBy($request->input('sort'));
+            }
+
+        return $query;
+    }
+
+
+    /** GET: /books/book-detail-list?page={}&{sort=}&{dir=}&{section=}&{course_name=}&{ordered_by=}
+     * Searches the book list
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function getTermDetailList(Request $request)
+    {
+
+        $query = \App\Models\Course::query();
+
+
+        if($request->input('term_id'))
+            $query = $query->where('term_id', '=', $request->input('term_id')); // find the term ID
+
+        $query = $this->buildDetailSearchQuery($request, $query); // build the search terms query
+
+        $query = $this->buildDetailSortQuery($request, $query); // build the sort query
+
+        $courses = $query->paginate(10); // get paginated result
+
+        return response()->json($courses);
+    }
+
 }
