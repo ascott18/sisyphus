@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -71,6 +72,8 @@ class MessageController extends Controller
      */
     public function postCreateMessage(Request $request)
     {
+        $this->authorize('send-messages');
+
         $cloneFrom = $request->get('message_id');
 
         if (is_null($cloneFrom))
@@ -103,12 +106,9 @@ class MessageController extends Controller
     public function postDeleteMessage(Request $request)
     {
         $message_id = (int)$request->get('message_id');
-
         $message = Message::findOrFail($message_id);
-        if ($message->owner_user_id != session('user_id'))
-        {
-            return response()->json(['success' => false, 'error' => 'You do not own that message'], Response::HTTP_FORBIDDEN);
-        };
+
+        $this->authorize('touch-message', $message);
 
         $message->delete();
 
@@ -127,12 +127,9 @@ class MessageController extends Controller
     public function postSaveMessage(Request $request)
     {
         $message_id = (int)$request->get('message_id');
-
         $message = Message::findOrFail($message_id);
-        if ($message->owner_user_id != session('user_id'))
-        {
-            return response()->json(['success' => false, 'error' => 'You do not own that message'], Response::HTTP_FORBIDDEN);
-        };
+
+        $this->authorize('touch-message', $message);
 
         $message->update($request->only(['subject', 'body']));
 
@@ -146,7 +143,12 @@ class MessageController extends Controller
 
         $message = $request->get('message');
 
-        Message::findOrFail($message['message_id'])->update(['last_sent' => Carbon::now()]);
+        $dbMessage = Message::findOrFail($message['message_id']);
+
+        $this->authorize('touch-message', $dbMessage);
+        $this->authorize('send-messages');
+
+        $dbMessage->update(['last_sent' => Carbon::now()]);
 
         $recipientIds = $request->get('recipients');
 
@@ -154,7 +156,7 @@ class MessageController extends Controller
         {
             $recipient = User::find($user_id);
 
-            if ($recipient && $recipient->email)
+            if ($recipient && $recipient->email && Auth::user()->can('send-message-to-user', $recipient))
             {
                 Mail::queue([], [], function ($m) use ($recipient, $message) {
                     $email = $recipient->email;

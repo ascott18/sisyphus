@@ -35,10 +35,7 @@ class OrderController extends Controller
     {
         $course = Course::findOrFail($course_id);
 
-        if ($course->user_id !== session('user_id'))
-        {
-            throw new AccessDeniedHttpException("You do not teach this course");
-        }
+        $this->authorize('place-order', $course);
 
         $user = User::find($course->user_id)->first();
 
@@ -48,13 +45,10 @@ class OrderController extends Controller
     public function postNoBook(Request $request)
     {
         $course_id=$request->get("course_id");
-
         $course = Course::findOrFail($course_id);
 
-        if ($course->user_id !== session('user_id'))
-        {
-            // throw new AccessDeniedHttpException("You do not teach this course");
-        }
+        $this->authorize('place-order', $course);
+
         $course->no_book=true;
         $course->save();
     }

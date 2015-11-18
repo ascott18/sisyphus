@@ -2,10 +2,15 @@
 
 namespace App\Providers;
 
+use App\Models\Course;
+use App\Models\Message;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
+use Request;
+use View;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -28,6 +33,45 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies($gate);
 
+        if (config("app.debug")){
+            // If we're running in debug, allow any action,
+            // but show a warning to the user if it would normally be unauthorized.
+
+            $gate->before(function ($user, $ability, ...$data) {
+                // We do a recursive role check by calling denies($ability), so
+                // prevent us from doing the global check here if we're already doing it now.
+                global $runningBefore;
+
+                if (config("app.debug") && !$runningBefore){
+                    $runningBefore = true;
+                    if (Gate::forUser($user)->denies($ability, $data) ) {
+                        // View::doneRendering() returns true if we are done rendering the view (duh),
+                        // OR if we have not yet started rendering the view (which is actually what we want to check here)
+
+                        // The reason for this is that there is role checking for the menu items, but we don't want
+                        // to display this message if the only thing being checked is those items in master.blade.php.
+
+                        // In other words, if we haven't started rendering yet, then we must be still running through the controller,
+                        // so it is safe to display this message at that point
+                        // (the user is unauthorized to do something in the controller if we reach this point).
+                        if (!Request::ajax() && View::doneRendering()){
+                            echo "<style>.navbar-brand h2:after{
+                                content: '(debugging unauthorized action)';
+                                margin-left: 100px;
+                                padding: 0 10px;
+                                border: 5px solid red;
+                                color: white;
+                                font-size: 1.2em}</style>";
+                        }
+
+                        $runningBefore = false;
+                        return true;
+                    }
+                    $runningBefore = false;
+                }
+            });
+        }
+
         $gate->define('view-order', function (User $user, Order $order) {
             if ($user->may('view-all-orders')) {
                 return true;
@@ -39,6 +83,84 @@ class AuthServiceProvider extends ServiceProvider
             }
 
             if ($user->user_id == $order->course()->user_id){
+                return true;
+            }
+
+            return false;
+        });
+
+        $gate->define('edit-order', function (User $user, Order $order) {
+            if ($user->may('edit-all-orders')) {
+                return true;
+            }
+
+            return false;
+        });
+
+        $gate->define('place-order-for-course', function (User $user, Course $course) {
+            if ($user->may('place-all-orders')) {
+                return true;
+            }
+
+            if ($user->may('place-dept-orders') &&
+                $user->departments()->where('department', '=', $course->department)->count()){
+                return true;
+            }
+
+            if ($user->user_id == $course->user_id){
+                return true;
+            }
+
+            return false;
+        });
+
+
+        $gate->define('edit-book', function (User $user, Book $book) {
+            if ($user->may('edit-books')) {
+                return true;
+            }
+
+            return false;
+        });
+
+
+
+
+
+        $gate->define('manage-users', function (User $user) {
+            return $user->may('manage-users');
+        });
+
+        $gate->define('manage-roles', function (User $user) {
+            return $user->may('manage-roles');
+        });
+
+        $gate->define('view-terms', function (User $user) {
+            return $user->may('view-terms');
+        });
+
+        $gate->define('edit-terms', function (User $user) {
+            return $user->may('edit-terms');
+        });
+
+        $gate->define('send-messages', function (User $user) {
+            return $user->may('send-messages-to-all')
+            || $user->may('send-messages-to-department');
+        });
+
+        $gate->define('touch-message', function (User $user, Message $message) {
+            return $message->owner_user_id == $user->user_id;
+        });
+
+        $gate->define('send-message-to-user', function (User $user, User $recipient) {
+            if ($user->may('send-messages-to-all'))
+                return true;
+
+            $userDepartments = $user->departments();
+
+            // TODO: test if this works
+            if ($user->may('send-messages-to-department') &&
+                $recipient->courses()->whereIn('department', $userDepartments)->first() != null){
                 return true;
             }
 
