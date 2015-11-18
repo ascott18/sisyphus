@@ -14,6 +14,19 @@ use View;
 
 class AuthServiceProvider extends ServiceProvider
 {
+
+    protected $controllerAuthCount = 0;
+
+    /**
+     * Gets whether or not an attempt has been made to authorize the
+     * current request before the view has started rendering.
+     *
+     * @return bool Whether or not an authorization attempt has been made.
+     */
+    public function getHasControllerAttemptedAuthorization(){
+        return $this->controllerAuthCount > 0;
+    }
+
     /**
      * The policy mappings for the application.
      *
@@ -42,6 +55,11 @@ class AuthServiceProvider extends ServiceProvider
                 // prevent us from doing the global check here if we're already doing it now.
                 global $runningBefore;
 
+                // See comments below for why we check doneRendering()
+                if (View::doneRendering()){
+                    $this->controllerAuthCount++;
+                }
+
                 if (config("app.debug") && !$runningBefore){
                     $runningBefore = true;
                     if (Gate::forUser($user)->denies($ability, $data) ) {
@@ -64,13 +82,18 @@ class AuthServiceProvider extends ServiceProvider
                                 font-size: 1.2em}</style>";
                         }
 
-                        $runningBefore = false;
-                        return true;
                     }
                     $runningBefore = false;
                 }
+                return true;
             });
         }
+
+        // Use sparingly!
+        $gate->define('all', function (User $user) {
+            return true;
+        });
+
 
         $gate->define('view-order', function (User $user, Order $order) {
             if ($user->may('view-all-orders')) {
@@ -165,6 +188,15 @@ class AuthServiceProvider extends ServiceProvider
             }
 
             return false;
+        });
+    }
+
+    public function register()
+    {
+        parent::register();
+
+        $this->app->singleton(AuthServiceProvider::class, function ($app) {
+            return $this;
         });
     }
 }

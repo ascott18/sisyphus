@@ -47,8 +47,11 @@ class CASAuth {
         $cas = app('cas');
 
         // This will throw an exception if authentication fails,
-        // and will redirect to login.ewu.edu if authentication is needed.
+        // and will immediately redirect to login.ewu.edu if authentication is needed.
         $cas->authenticate();
+
+
+        // If we get here, the user is authenticated with CAS.
 
         $net_id = $cas->getCurrentUser();
 

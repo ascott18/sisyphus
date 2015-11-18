@@ -16,7 +16,7 @@
             @if ($response['message'])
                 <hr>
                 <br/>
-                <p>{{$response['message']}}</p>
+                <p>{!! nl2br(e($response['message'])) !!}</p>
             @endif
         </div>
     </div>

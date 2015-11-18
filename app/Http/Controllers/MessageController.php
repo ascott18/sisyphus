@@ -22,6 +22,8 @@ class MessageController extends Controller
      */
     public function getIndex()
     {
+        $this->authorize('send-messages');
+
         return view('messages.index');
     }
 
@@ -34,7 +36,9 @@ class MessageController extends Controller
      */
     public function getAll()
     {
-        return response()->json(Message::all());
+        $this->authorize('send-messages');
+
+        return response()->json(Message::where('owner_user_id', '=', Auth::user()->user_id)->get());
     }
 
     /** GET: /messages/all-recipients
@@ -45,12 +49,15 @@ class MessageController extends Controller
      */
     public function getAllRecipients()
     {
+        $this->authorize('send-messages');
+
         // Good luck doing this efficiently with Eloquent.
         // Selects all users who teach at least one course.
         // least_num_orders is the lowest number of orders that any of their courses has.
         // 0 indicates one of their courses has no orders, anything higher indicates that
         // all of their courses have at least one order.
         // TODO: restrict this query to courses from the current term only.
+        // TODO: restrict this to only users that the current user should be able to send messages to.
         // TODO: have least_num_orders skip courses that are marked as no book.
         $usersWithCourses = DB::select( DB::raw(
             "SELECT DISTINCT(users.user_id), first_name, last_name,
@@ -86,7 +93,10 @@ class MessageController extends Controller
         }
         else
         {
-            $message = Message::findOrFail((int)$cloneFrom)->replicate();
+            $message = Message::findOrFail((int)$cloneFrom);
+            $this->authorize('touch-message', $message);
+
+            $message = $message->replicate();
             $message->owner_user_id = session('user_id');
             $message->subject = $message->subject . " Copy";
             $message->save();
@@ -139,8 +149,6 @@ class MessageController extends Controller
 
     public function postSendMessages(Request $request)
     {
-        // TODO: auth that the user is an admin.
-
         $message = $request->get('message');
 
         $dbMessage = Message::findOrFail($message['message_id']);
@@ -160,6 +168,7 @@ class MessageController extends Controller
             {
                 Mail::queue([], [], function ($m) use ($recipient, $message) {
                     $email = $recipient->email;
+                    // TODO: change this from address.
                     $m->from("postmaster@scotta.me", "Book Orders");
                     $m->to($email, $recipient->first_name . ' ' . $recipient->last_name);
                     $m->subject($message['subject']);
