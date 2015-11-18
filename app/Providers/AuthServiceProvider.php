@@ -37,7 +37,7 @@ class AuthServiceProvider extends ServiceProvider
             // If we're running in debug, allow any action,
             // but show a warning to the user if it would normally be unauthorized.
 
-            $gate->before(function ($user, $ability, $data) {
+            $gate->before(function ($user, $ability, $data = null) {
                 // We do a recursive role check by calling denies($ability), so
                 // prevent us from doing the global check here if we're already doing it now.
                 global $runningBefore;
