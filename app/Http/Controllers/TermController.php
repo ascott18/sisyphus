@@ -59,16 +59,69 @@ class TermController extends Controller
      */
     private function buildTermSearchQuery($request, $query) {
         if($request->input('term')) {
-            $termList = $this->searchTermNames($request->input('term'));
-            if (count($termList) > 0) {
-                #print_r($termList);
-                for ($j = 0; $j < count($termList); $j++) {
-                    $query = $query->orWhere("term_number", "=", $termList[$j]);
+
+            $searchArray = preg_split("/[\s]/", $request->input('term')); // split the terms
+            //print_r($searchArray);
+            if(count($searchArray) == 1) {
+                $termList = $this->searchTermNames($request->input('term'));
+                for($i=0; $i<count($termList); $i++) {
+                    $query = $query->orWhere("term_number", "=", $termList[$i]);      // this will take entire search into term field
                 }
-            } else {
-                $query = $query->where('year', '=', $request->input('term'));
+                $query = $query->orWhere("year", "=", $request->input('term'));
+            } else if(count($searchArray) == 2) {
+                $query = $query->where(function($sQuery) use ($searchArray, $request) {     // create subquery to find term
+                    $termList = $this->searchTermNames($request->input('term'));
+                    if(count($termList) > 0) {
+                        for ($i = 0; $i < count($termList); $i++) {
+                            $sQuery = $sQuery->orWhere("term_number", "=", $termList[$i]);      // this will take entire search into term field
+                        }
+                    } else {
+                        $termList = $this->searchTermNames($searchArray[0]);
+                        if(count($termList) > 0) {
+                            for ($i = 0; $i < count($termList); $i++) {
+                                $sQuery = $sQuery->orWhere("term_number", "=", $termList[$i]);      // this will take entire search into term field
+                            }
+                        }
+                        $sQuery = $sQuery->where("year", "=", $searchArray[1]);
+
+                    }
+
+                    return $sQuery;
+
+                    /*
+                    for($i=0; $i<count($searchArray); $i++) {                               // need to check other cases of 2 where search term is term and year
+                        $termList = $this->searchTermNames($searchArray[$i]);               // look for term
+                        //print_r($termList);
+                        for($j=0; $j<count($termList); $j++) {                              // iterate over results
+                            $sQuery = $sQuery->orwhere("term_number", "=", $termList[$j]);
+                        }
+                        if(count($termList)>0)
+                            $sQuery = $sQuery->Where("year", "=", $searchArray[$i]);          // apply each to year as well to catch those
+                        else
+                            $sQuery = $sQuery->orWhere("year", "=", $searchArray[$i]);          // apply each to year as well to catch those
+
+                    }
+                    */
+                });
+            } else if(count($searchArray) == 3) {                                           // if they enter three things, its either term term year, or year term term
+                $query = $query->where(function($sQuery) use ($searchArray) {
+                    for($i=0; $i<2; $i++) {                                                 // look at both combinations
+                        $termList = $this->searchTermNames($searchArray[$i] . " " . $searchArray[$i+1]);
+                        foreach($termList as $term)
+                            $sQuery = $sQuery->orWhere("term_number", "=", $term);
+                    }
+                });
+                $query = $query->Where(function($sQuery) use ($searchArray) {              // place each in the year category to see if any of those stick
+                    for($i=0; $i<count($searchArray); $i++) {
+                        $sQuery = $sQuery->orWhere("year", "=", $searchArray[$i]);
+                    }
+                });
             }
         }
+
+        //print_r($query->toSql());
+        //print("\n");
+
         return $query;
     }
 
