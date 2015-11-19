@@ -112,6 +112,7 @@ class TermController extends Controller
 
     public function getTermList(Request $request)
     {
+        $this->authorize("view-terms");
 
         $query = Term::query();
 
@@ -240,6 +241,7 @@ class TermController extends Controller
 
     public function getTermDetailList(Request $request)
     {
+        $this->authorize("view-terms");
 
         $query = \App\Models\Course::query();
 

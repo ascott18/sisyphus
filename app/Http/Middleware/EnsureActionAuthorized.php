@@ -34,7 +34,7 @@ class EnsureActionAuthorized
 
             if (config("app.debug")){
                 $message .= "\n\nDeveloper Notes:\n"
-                    . 'Make sure to call $this->authorize("some-ability") in your controller at least once for all execution paths.
+                    . 'Make sure to call $this->authorize("some-ability") in this action at least once for all execution paths.
                     Explicitly authorize the "all" ability if the action is truly public.';
             }
 

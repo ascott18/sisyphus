@@ -17,6 +17,9 @@ class CourseController extends Controller
      */
     public function getIndex()
     {
+        // TODO: this should not be authorized to all. it needs its own permission.
+        $this->authorize("all");
+
         return view('courses.index');
     }
 
@@ -95,6 +98,9 @@ class CourseController extends Controller
      */
     public function getCourseList(Request $request)
     {
+        // TODO: this should not be authorized to all. it needs its own permission.
+        $this->authorize("all");
+
         $query = Course::query();
 
         $query = $this->buildSearchQuery($request, $query);
@@ -105,71 +111,4 @@ class CourseController extends Controller
 
         return response()->json($courses);
     }
-
-//
-//    /**
-//     * Show the form for creating a new resource.
-//     *
-//     * @return \Illuminate\Http\Response
-//     */
-//    public function create()
-//    {
-//        //
-//    }
-//
-//    /**
-//     * Store a newly created resource in storage.
-//     *
-//     * @param  \Illuminate\Http\Request  $request
-//     * @return \Illuminate\Http\Response
-//     */
-//    public function store(Request $request)
-//    {
-//        //
-//    }
-//
-//    /**
-//     * Display the specified resource.
-//     *
-//     * @param  int  $id
-//     * @return \Illuminate\Http\Response
-//     */
-//    public function show($id)
-//    {
-//        //
-//    }
-//
-//    /**
-//     * Show the form for editing the specified resource.
-//     *
-//     * @param  int  $id
-//     * @return \Illuminate\Http\Response
-//     */
-//    public function edit($id)
-//    {
-//        //
-//    }
-//
-//    /**
-//     * Update the specified resource in storage.
-//     *
-//     * @param  \Illuminate\Http\Request  $request
-//     * @param  int  $id
-//     * @return \Illuminate\Http\Response
-//     */
-//    public function update(Request $request, $id)
-//    {
-//        //
-//    }
-//
-//    /**
-//     * Remove the specified resource from storage.
-//     *
-//     * @param  int  $id
-//     * @return \Illuminate\Http\Response
-//     */
-//    public function destroy($id)
-//    {
-//        //
-//    }
 }

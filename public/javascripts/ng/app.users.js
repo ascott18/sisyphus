@@ -73,19 +73,7 @@ app.controller('UsersController', function($scope, $http) {
             }
         );
 
-    }
-
-    /*
-    $http.get('/users/all-users').then(
-        function(response){
-            $scope.users = response.data;
-        },
-        function(response){
-            // TODO: handle this properly.
-            console.log("Error getting users");
-        }
-    );
-    */
+    };
 });
 
 

@@ -46,48 +46,43 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies($gate);
 
-        if (config("app.debug")){
-            // If we're running in debug, allow any action,
-            // but show a warning to the user if it would normally be unauthorized.
+        $gate->before(function ($user, $ability, $data = null) {
+            // We do a recursive role check by calling denies($ability), so
+            // prevent us from doing the global check here if we're already doing it now.
+            global $runningBefore;
 
-            $gate->before(function ($user, $ability, $data = null) {
-                // We do a recursive role check by calling denies($ability), so
-                // prevent us from doing the global check here if we're already doing it now.
-                global $runningBefore;
+            // See comments below for why we check doneRendering()
+            if (View::doneRendering()){
+                $this->controllerAuthCount++;
+            }
 
-                // See comments below for why we check doneRendering()
-                if (View::doneRendering()){
-                    $this->controllerAuthCount++;
-                }
+            if (config("app.debug") && !$runningBefore){
+                $runningBefore = true;
+                if (Gate::forUser($user)->denies($ability, $data) ) {
+                    // View::doneRendering() returns true if we are done rendering the view (duh),
+                    // OR if we have not yet started rendering the view (which is actually what we want to check here)
 
-                if (config("app.debug") && !$runningBefore){
-                    $runningBefore = true;
-                    if (Gate::forUser($user)->denies($ability, $data) ) {
-                        // View::doneRendering() returns true if we are done rendering the view (duh),
-                        // OR if we have not yet started rendering the view (which is actually what we want to check here)
+                    // The reason for this is that there is role checking for the menu items, but we don't want
+                    // to display this message if the only thing being checked is those items in master.blade.php.
 
-                        // The reason for this is that there is role checking for the menu items, but we don't want
-                        // to display this message if the only thing being checked is those items in master.blade.php.
-
-                        // In other words, if we haven't started rendering yet, then we must be still running through the controller,
-                        // so it is safe to display this message at that point
-                        // (the user is unauthorized to do something in the controller if we reach this point).
-                        if (!Request::ajax() && View::doneRendering()){
-                            echo "<style>.navbar-brand h2:after{
-                                content: '(debugging unauthorized action)';
-                                margin-left: 100px;
-                                padding: 0 10px;
-                                border: 5px solid red;
-                                color: white;
-                                font-size: 1.2em}</style>";
-                        }
-
+                    // In other words, if we haven't started rendering yet, then we must be still running through the controller,
+                    // so it is safe to display this message at that point
+                    // (the user is unauthorized to do something in the controller if we reach this point).
+                    if (!Request::ajax() && View::doneRendering()){
+                        echo "<style>.navbar-brand h2:after{
+                            content: '(debugging unauthorized action)';
+                            margin-left: 100px;
+                            padding: 0 10px;
+                            border: 5px solid red;
+                            color: white;
+                            font-size: 1.2em}</style>";
                     }
                     $runningBefore = false;
+                    return true;
                 }
-                return true;
-            });
-        }
+                $runningBefore = false;
+            }
+        });
 
         // Use sparingly!
         $gate->define('all', function (User $user) {

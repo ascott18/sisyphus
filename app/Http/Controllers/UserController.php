@@ -36,17 +36,6 @@ class UserController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function getAllUsers(Request $request)
-    {
-        $this->authorize('manage-users');
-
-        return \App\Models\User::with(['departments', 'roles'])->get();
-    }
-
-    /**
      * Build the search query for the users controller
      *
      * @param \Illuminate\Database\Query $query
@@ -92,6 +81,8 @@ class UserController extends Controller
      */
     public function getUserList(Request $request)
     {
+        $this->authorize('manage-users');
+
         $query = \App\Models\User::query();
 
         $query = $query->with(['departments', 'roles']);
@@ -124,15 +115,16 @@ class UserController extends Controller
     public function postAddDepartment(Request $request)
     {
         $this->authorize('manage-users');
+        $this->validate($request, [
+            'department' => 'required|min:2|max:10',
+            'user_id' => 'required',
+        ]);
 
         $user_id = $request->get('user_id');
+        $user = User::findOrFail($user_id);
 
         $department = $request->get('department');
         $department = strtoupper($department);
-
-        // TODO: validation on $department
-
-        $user = User::findOrFail($user_id);
 
         $user->departments()->updateOrCreate(['department' => $department]);
 
