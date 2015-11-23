@@ -1,12 +1,9 @@
 @extends('layouts.master')
 
-
-
+@section('area', 'Books')
+@section('page', 'All Books')
 
 @section('content')
-
-    @include('shared.partial.header', ['headerText'=>'Books', 'subHeaderText'=>'All Books'])
-
     <div class="row">
         <div class="col-lg-12">
             <div class="panel panel-default">
@@ -23,7 +20,7 @@
                                 <th st-sort="title">Title</th>
                                 <th st-sort="publisher">Publisher</th>
                                 <th st-sort="isbn13">ISBN</th>
-                                <th>Details</th>
+                                <th width="110px">Details</th>
                             </tr>
                             <tr>
                                 <th><input type="text" class="form-control" placeholder="Search..." st-search="title"/></th>
@@ -48,8 +45,8 @@
                                 <td>[[ book.publisher ]]</td>
                                 <td>[[ book.isbn13 ]]</td>
                                 <td>
-                                    <a href="/books/show/[[ book.book_id ]]" class="btn btn-info" role="button">
-                                        <i class="fa fa-info-circle"></i> Details
+                                    <a href="/books/show/[[ book.book_id ]]" class="btn btn-sm btn-info" role="button">
+                                        Details <i class="fa fa-arrow-right"></i>
                                     </a>
                                 </td>
                             </tr>

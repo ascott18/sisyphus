@@ -25,6 +25,23 @@ class CourseController extends Controller
 
 
     /**
+     * Display a listing of the resource.
+     *
+     * @param $id integer The id of the course to display details for.
+     * @return \Illuminate\Http\Response
+     */
+    public function getDetails($id)
+    {
+        // TODO: this should not be authorized to all. it needs its own permission.
+        $this->authorize("all");
+
+        $course = Course::findOrFail($id);
+
+        return view('courses.details', ['course' => $course]);
+    }
+
+
+    /**
      * Build the search query for the courses controller
      *
      * @param \Illuminate\Database\Query $query

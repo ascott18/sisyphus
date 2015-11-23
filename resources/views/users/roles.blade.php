@@ -1,5 +1,7 @@
 @extends('layouts.master')
 
+@section('area', 'Users')
+@section('page', 'Role Management')
 
 <style>
     .perm-input select {
@@ -13,8 +15,6 @@
 </script>
 
 @section('content')
-
-    @include('shared.partial.header', ['headerText'=>'Users', 'subHeaderText'=>'Roles'])
 
     <div class="row" ng-controller="RolesController">
         <div class="col-lg-12">

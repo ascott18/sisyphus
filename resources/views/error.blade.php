@@ -1,6 +1,6 @@
-
 @extends('layouts.master')
 
+@section('page', $response['status'])
 
 @section('content')
     <div class="row open-sans error-page">

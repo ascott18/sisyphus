@@ -1,7 +1,9 @@
 @extends('layouts.master')
 
+@section('area', 'Messages')
+@section('page', 'Send Messages')
+
 @section('content')
-    @include('shared.partial.header', ['headerText'=>'Messages', 'subHeaderText'=>'Create and send'])
 
     <div class="row" ng-controller="MessagesController" xmlns="http://www.w3.org/1999/html">
         <div ng-show="stage == STAGE_COMPOSE">
