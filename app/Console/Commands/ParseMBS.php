@@ -274,7 +274,7 @@ EOL;
                         $dbBook->save();
 
                         Author::firstOrCreate([
-                            'last_name' => title_case($book[$bookRegGroups['Author']]),
+                            'last_name' => trim(title_case($book[$bookRegGroups['Author']])),
                             'book_id' => $dbBook->book_id,
                         ]);
 
