@@ -20,6 +20,7 @@
                             <thead>
                             <tr>
                                 <th st-sort="term">Term</th>
+                                <th>Year</th>
                                 <th>Status</th>
                                 <th st-sort="order_start_date">Order Start Date</th>
                                 <th st-sort="order_due_date">Order Due Date</th>
@@ -27,6 +28,7 @@
                             </tr>
                             <tr>
                                 <th><input type="text" class="form-control" placeholder="Search..." st-search="term"/></th>
+                                <th><input type="text" class="form-control" placeholder="Search..." st-search="year"/></th>
                                 <th></th>
                                 <th></th>
                                 <th></th>
@@ -35,7 +37,8 @@
                             </thead>
                             <tbody>
                                 <tr ng-repeat="term in tc.displayed">
-                                    <td> [[ term.termName ]] [[ term.year ]] </td>
+                                    <td> [[ term.termName ]] </td>
+                                    <td> [[ term.year ]] </td>
 
                                     <td> [[ term.status ]] </td>
 

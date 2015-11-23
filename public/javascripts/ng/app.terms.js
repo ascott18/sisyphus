@@ -1,5 +1,17 @@
 
-var app = angular.module('sisyphus', ['sisyphus.helpers', 'ui.bootstrap', 'smart-table']);
+var app = angular.module('sisyphus', ['sisyphus.helpers', 'ui.bootstrap', 'smart-table', 'filters']);
+
+angular.module('filters', []).filter('zpad', function() {
+    return function(input, n) {
+        if(input === undefined)
+            input = ""
+        if(input.length >= n)
+            return input
+        var zeros = "0".repeat(n);
+        return (zeros + input).slice(-1 * n)
+    };
+});
+
 
 app.controller('TermsController', function($scope) {
 
@@ -32,6 +44,8 @@ app.controller('TermsTableController', function($scope, $http) {
             var predicateObject = tableState.search.predicateObject;
             if(predicateObject.term)
                 getRequestString += '&term=' + encodeURIComponent(predicateObject.term);      // build search for term
+            if(predicateObject.year)
+                getRequestString += '&year=' + encodeURIComponent(predicateObject.year);    // build search for year
         }
         $http.get(getRequestString).then(
             function success(response) {
