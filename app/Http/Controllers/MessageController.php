@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -21,6 +22,8 @@ class MessageController extends Controller
      */
     public function getIndex()
     {
+        $this->authorize('send-messages');
+
         return view('messages.index');
     }
 
@@ -33,7 +36,9 @@ class MessageController extends Controller
      */
     public function getAll()
     {
-        return response()->json(Message::all());
+        $this->authorize('send-messages');
+
+        return response()->json(Message::where('owner_user_id', '=', Auth::user()->user_id)->get());
     }
 
     /** GET: /messages/all-recipients
@@ -44,12 +49,15 @@ class MessageController extends Controller
      */
     public function getAllRecipients()
     {
+        $this->authorize('send-messages');
+
         // Good luck doing this efficiently with Eloquent.
         // Selects all users who teach at least one course.
         // least_num_orders is the lowest number of orders that any of their courses has.
         // 0 indicates one of their courses has no orders, anything higher indicates that
         // all of their courses have at least one order.
         // TODO: restrict this query to courses from the current term only.
+        // TODO: restrict this to only users that the current user should be able to send messages to.
         // TODO: have least_num_orders skip courses that are marked as no book.
         $usersWithCourses = DB::select( DB::raw(
             "SELECT DISTINCT(users.user_id), first_name, last_name,
@@ -71,6 +79,8 @@ class MessageController extends Controller
      */
     public function postCreateMessage(Request $request)
     {
+        $this->authorize('send-messages');
+
         $cloneFrom = $request->get('message_id');
 
         if (is_null($cloneFrom))
@@ -83,7 +93,10 @@ class MessageController extends Controller
         }
         else
         {
-            $message = Message::findOrFail((int)$cloneFrom)->replicate();
+            $message = Message::findOrFail((int)$cloneFrom);
+            $this->authorize('touch-message', $message);
+
+            $message = $message->replicate();
             $message->owner_user_id = session('user_id');
             $message->subject = $message->subject . " Copy";
             $message->save();
@@ -103,12 +116,9 @@ class MessageController extends Controller
     public function postDeleteMessage(Request $request)
     {
         $message_id = (int)$request->get('message_id');
-
         $message = Message::findOrFail($message_id);
-        if ($message->owner_user_id != session('user_id'))
-        {
-            return response()->json(['success' => false, 'error' => 'You do not own that message'], Response::HTTP_FORBIDDEN);
-        };
+
+        $this->authorize('touch-message', $message);
 
         $message->delete();
 
@@ -127,12 +137,9 @@ class MessageController extends Controller
     public function postSaveMessage(Request $request)
     {
         $message_id = (int)$request->get('message_id');
-
         $message = Message::findOrFail($message_id);
-        if ($message->owner_user_id != session('user_id'))
-        {
-            return response()->json(['success' => false, 'error' => 'You do not own that message'], Response::HTTP_FORBIDDEN);
-        };
+
+        $this->authorize('touch-message', $message);
 
         $message->update($request->only(['subject', 'body']));
 
@@ -142,11 +149,14 @@ class MessageController extends Controller
 
     public function postSendMessages(Request $request)
     {
-        // TODO: auth that the user is an admin.
-
         $message = $request->get('message');
 
-        Message::findOrFail($message['message_id'])->update(['last_sent' => Carbon::now()]);
+        $dbMessage = Message::findOrFail($message['message_id']);
+
+        $this->authorize('touch-message', $dbMessage);
+        $this->authorize('send-messages');
+
+        $dbMessage->update(['last_sent' => Carbon::now()]);
 
         $recipientIds = $request->get('recipients');
 
@@ -154,10 +164,11 @@ class MessageController extends Controller
         {
             $recipient = User::find($user_id);
 
-            if ($recipient && $recipient->email)
+            if ($recipient && $recipient->email && Auth::user()->can('send-message-to-user', $recipient))
             {
                 Mail::queue([], [], function ($m) use ($recipient, $message) {
                     $email = $recipient->email;
+                    // TODO: change this from address.
                     $m->from("postmaster@scotta.me", "Book Orders");
                     $m->to($email, $recipient->first_name . ' ' . $recipient->last_name);
                     $m->subject($message['subject']);

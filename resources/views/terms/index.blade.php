@@ -15,37 +15,41 @@
                 </div>
                 <div class="panel-body">
 
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover table-striped">
+                    <div ng-controller="TermsTableController as tc" class="table-responsive">
+                        <table  st-pipe="tc.callServer" st-table="tc.displayed" class="table table-bordered table-hover table-striped">
                             <thead>
                             <tr>
-                                <th>Term</th>
+                                <th st-sort="term">Term</th>
                                 <th>Status</th>
-                                <th>Order Start Date</th>
-                                <th>Order Due Date</th>
+                                <th st-sort="order_start_date">Order Start Date</th>
+                                <th st-sort="order_due_date">Order Due Date</th>
+                                <th>Details</th>
+                            </tr>
+                            <tr>
+                                <th><input type="text" class="form-control" placeholder="Search..." st-search="term"/></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
                                 <th></th>
                             </tr>
                             </thead>
                             <tbody>
+                                <tr ng-repeat="term in tc.displayed">
+                                    <td> [[ term.termName ]] [[ term.year ]] </td>
 
-                            @foreach ($terms as $term)
-                                <tr>
-                                    <td> {{ $term->termName() }} {{ $term->year }} </td>
+                                    <td> [[ term.status ]] </td>
 
-                                    <td> {{ $term->getStatusDisplayString() }}</td>
-
-                                    <td>{{ $term->order_start_date->toFormattedDateString() }}</td>
-                                    <td>{{ $term->order_due_date->toFormattedDateString() }}</td>
-                                    <td style="width: 1%"> <a href="/terms/details/{{$term->term_id}}" class="btn btn-sm btn-primary">Details&nbsp; <i class="fa fa-arrow-right"></i></a> </td>
+                                    <td> [[ term.orderStartDate ]] </td>
+                                    <td> [[ term.orderDueDate ]] </td>
+                                    <td style="width: 1%"> <a href="/terms/details/[[ term.term_id ]]" class="btn btn-sm btn-primary">Details&nbsp; <i class="fa fa-arrow-right"></i></a> </td>
 
                                 </tr>
-                            @endforeach
 
                             </tbody>
                         </table>
 
-                        {{-- Render pagination controls --}}
-                        {!! $terms->render() !!}
+                        <td class="text-center" st-pagination="" st-items-by-page="10" colspan="4">
+                        </td>
 
                     </div>
                 </div>
@@ -59,6 +63,7 @@
 @section('scripts-head')
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
     <script src="/javascripts/ui-bootstrap-tpls-0.14.3.min.js"></script>
+    <script src="/javascripts/ng/smart-table/smart-table.min.js"></script>
     <script src="/javascripts/ng/app.js"></script>
     <script src="/javascripts/ng/app.terms.js"></script>
 @stop

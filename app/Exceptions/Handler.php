@@ -53,13 +53,18 @@ class Handler extends ExceptionHandler
             $debug = config('app.debug');
 
             $response = [
-                'debug' => $debug,
+                'success' => false,
                 'status' => $status,
                 'statusName' => Response::$statusTexts[$status],
                 'message' => $e->getMessage(),
             ];
 
-            return response()->view("error", ['response' => $response], $status);
+            if (\Request::ajax()){
+                return response()->json(['response' => $response], $status);
+            }
+            else{
+                return response()->view("error", ['response' => $response], $status);
+            }
         } else {
             return $this->convertExceptionToResponse($e);
         }
@@ -75,7 +80,13 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $e)
     {
         if ($e instanceof ModelNotFoundException) {
-            $e = new NotFoundHttpException($e->getMessage(), $e);
+            $modelClass = $e->getModel();
+            $modelClassPath = preg_split('/\\\\/', $modelClass);
+            $modelName = $modelClassPath[count($modelClassPath) - 1];
+
+            $message = "$modelName not found.";
+
+            $e = new NotFoundHttpException($message, $e);
         }
 
         return parent::render($request, $e);

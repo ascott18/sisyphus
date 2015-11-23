@@ -11,12 +11,10 @@
             <br/>
             <p>was it you? i bet it was you!</p>
             <p>how could there be an error with me? i'm flawless!</p>
-            <p></p>
-            <br/>
             @if ($response['message'])
                 <hr>
-                <br/>
-                <p>{{$response['message']}}</p>
+                <p>i guess what i'm really trying to say here is this:</p>
+                <h4>{!! nl2br(e($response['message'])) !!}</h4>
             @endif
         </div>
     </div>

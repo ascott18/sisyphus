@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
+
     <title>EWU CS Book Orders</title>
     <!-- Bootstrap Core CSS-->
     <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
@@ -50,7 +51,7 @@
 
             <ul class="nav navbar-right top-nav">
                 <li >
-                    <span><i class="fa fa-user"></i> Welcome, {{ session('net_id') }}! </span>
+                    <span id="userName"><i class="fa fa-user"></i> Welcome, {{ session('net_id') }}! </span>
                 </li>
             </ul>
 
@@ -61,8 +62,13 @@
                 <li><a href="/orders"><i class="fa fa-fw fa-shopping-cart"></i> Orders</a></li>
                 <li><a href="/courses"><i class="fa fa-fw fa-pencil"></i> Courses</a></li>
                 <li><a href="/messages"><i class="fa fa-fw fa-envelope"></i> Messages</a></li>
-                <li><a href="/terms"><i class="fa fa-fw fa-calendar"></i> Terms</a></li>
-                <li><a href="/users"><i class="fa fa-fw fa-group"></i> Users</a></li>
+                @can('view-terms')
+                    <li><a href="/terms"><i class="fa fa-fw fa-calendar"></i> Terms</a></li>
+                @endcan
+
+                @can('manage-users')
+                    <li><a href="/users"><i class="fa fa-fw fa-group"></i> Users</a></li>
+                @endcan
 
                 {{--<li><a href="tables.html"><i class="fa fa-fw fa-table"></i> Tables</a></li>--}}
                 {{--<li><a href="forms.html"><i class="fa fa-fw fa-edit"></i> Forms</a></li>--}}

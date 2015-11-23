@@ -68,32 +68,39 @@
                 <div class="panel-body">
                     <?php  $courses = $term->courses()->paginate(10); ?>
 
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover table-striped">
+                    <div ng-controller="TermsTableController as ttc" class="table-responsive">
+                        <table st-pipe="ttc.callServerDetail" st-table="ttc.displayed" class="table table-bordered table-hover table-striped">
                             <thead>
                             <tr>
-                                <th>Section</th>
-                                <th>Name</th>
+                                <th st-sort="section">Section</th>
+                                <th st-sort="course_name">Name</th>
+                            </tr>
+                            <tr>
+                                <th><input type="text" class="form-control" placeholder="Search..." st-search="section"/></th>
+                                <th><input type="text" class="form-control" placeholder="Search..." st-search="name"/></th>
                             </tr>
                             </thead>
                             <tbody>
-
-                            @foreach ($courses as $course)
-                                <tr>
+                                <tr ng-repeat="course in ttc.displayed">
                                     <td>
-                                        {{ $course->department }} {{ str_pad($course->course_number, 3, "0", STR_PAD_LEFT) }}-{{ $course->course_section }}
+                                        [[ course.department ]] [[ course.course_number ]]-[[ course.course_section ]]
                                     </td>
-                                    <td>{{ $course->course_name }}</td>
+                                    <td>[[ course.course_name ]]</td>
 
                                 </tr>
-                            @endforeach
 
 
                             </tbody>
                         </table>
 
-                        {{-- Render pagination controls --}}
-                        {!! $courses->render() !!}
+                        <a href="/terms/check/{{$term->term_id}}" class="btn btn-primary">Check Sheet</a>
+
+                        <tfoot>
+                        <tr>
+                            <td class="text-center" st-pagination="" st-items-by-page="10" colspan="4">
+                            </td>
+                        </tr>
+                        </tfoot>
                     </div>
                 </div>
             </div>
@@ -111,6 +118,7 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
     <script src="/javascripts/ui-bootstrap-tpls-0.14.3.min.js"></script>
+    <script src="/javascripts/ng/smart-table/smart-table.min.js"></script>
     <script src="/javascripts/ng/app.js"></script>
     <script src="/javascripts/ng/app.terms.js"></script>
 @stop
