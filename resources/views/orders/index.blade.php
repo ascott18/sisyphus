@@ -74,11 +74,14 @@
 
         <div class="col-lg-12" ng-show="getStage() == STAGE_SELECT_BOOKS" ng-controller="NewBookController">
 
+
+
             <div class="col-md-6">
                 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 
 
                     <div>
+
 
                         <!-- Nav tabs -->
                         <ul class="nav nav-tabs" role="tablist">
@@ -92,72 +95,10 @@
 
                                 </br>
 
-                                <form novalidate class="simple-form" name="form">
-                                <div class="form-group" ng-class="{'has-error': (submitted || form.isbn13.$touched) && form.isbn13.$error.required}">
-                                    <label for="isbn13">ISBN 13</label>
-                                    <input type="text" class="form-control" name="isbn13" placeholder="ISBN 13" ng-model="book.isbn" required="">
-                                    <div ng-show="submitted || form.isbn13.$touched">
-                                        <div ng-show="form.isbn13.$error.required">Required</div>
-                                    </div>
+
+                                <div ng-controller="NewBookController">
+                                    <book-editor></book-editor>
                                 </div>
-
-                                <div class="form-group" ng-class="{'has-error': (submitted || form.bookTitle.$touched) && form.bookTitle.$error.required}">
-                                    <label for="bookTitle">Book Title</label>
-                                    <input type="text" class="form-control" name="bookTitle" placeholder="Book Title" ng-model="book.title" required="">
-                                    <div ng-show="submitted || form.bookTitle.$touched">
-                                        <div ng-show="form.bookTitle.$error.required">Required</div>
-                                    </div>
-                                </div>
-
-                                <div class="form-group" ng-class="{'has-error': (submitted || form.author1.$touched) && form.author1.$error.required}">
-                                    <label for="author1">Author</label>
-                                    <input type="text" class="form-control" name="author1" placeholder="Author" ng-model="authors[0].name" required="">
-                                    <div ng-show="submitted || form.author1.$touched">
-                                        <div ng-show="form.author1.$error.required">Required</div>
-                                    </div>
-
-                                    <div class="input-group" ng-repeat="author in authors" style="margin-top: 10px"  ng-show="!$first">
-                                        <input type="text" class="form-control"  placeholder="Author" ng-model="author.name">
-                                        <span class="input-group-addon" ng-click="removeAuthor($index)">
-                                            <i class="fa fa-times"></i>
-                                        </span>
-                                    </div>
-                                </div>
-
-                                    <div style="margin-top: 10px;margin-bottom: 10px">
-                                        <button class="btn btn-info" ng-click="addAuthor()">Add Author</button>
-                                    </div>
-
-                                    <div class="form-group" ng-class="{'has-error': (submitted || form.publisher.$touched) && form.publisher.$error.required}">
-                                        <label for="publisher">Publisher</label>
-                                        <input type="text" class="form-control" name="publisher" placeholder="Publisher" ng-model="book.publisher" required="">
-                                        <div ng-show="submitted || form.publisher.$touched">
-                                            <div ng-show="form.publisher.$error.required">Required</div>
-                                        </div>
-                                    </div>
-
-
-
-                                    <div class="form-group" ng-class="{'has-error': (submitted || form.edition.$touched) && form.edition.$error.required}">
-                                        <label for="edition">Edition</label>
-                                        <input type="text" class="form-control" name="edition" placeholder="Edition" ng-model="book.edition" required="">
-                                        <div ng-show="submitted || form.edition.$touched">
-                                            <div ng-show="form.edition.$error.required">Required</div>
-                                        </div>
-                                    </div>
-
-                                    <button type="button" class="btn btn-primary"
-                                            ng-click="addNewBookToCart(book,form)"
-                                            ng-disabled="form.$invalid">
-                                        <i class="fa fa-plus"></i> Add to Cart
-                                    </button>
-
-                                </form>
-
-
-
-
-
                             </div>
 
                             <div role="tabpanel" class="tab-pane" id="pastbooks">
@@ -197,38 +138,46 @@
             <div class="col-md-6">
 
                 <h3>Cart</h3>
-                <ul class="list-group">
-                    <li class="list-group-item cursor-pointer"
-                        ng-cloak
-                        ng-repeat="book in cartBooks">
-
-                        <div class="pull-right">
-                            <button class="btn btn-xs btn-danger"
-                                    ng-click="deleteBookFromCart(book)">
-                                <i class="fa fa-fw fa-times"></i>
-                            </button>
-                        </div>
-
-                        <h4 class="list-group-item-heading no-pad-bottom">[[book.title]]</h4>
-                        <small >
-                            <span class="text-muted" >1234567891234</span>
-                            <br>
-                            <span class="text-muted" > Author Name, Author2 Name</span>
-                        </small>
-
-                    </li>
-                </ul>
+                <div ng-controller="NewBookController">
+                    <cart></cart>
+                </div>
 
 
                 <div class="row">
                     <button class="btn btn-success pull-right"
-                            ng-click="addInputBookToCart()"
+                            ng-click="setStage(3)"
                             style="margin: 20px;">
                         <i class="fa fa-arrow-right"></i> Review Order
                     </button>
                 </div>
             </div>
 
+        </div>
+
+        <div class="col-lg-12" ng-show="getStage() == STAGE_REVIEW_ORDERS">
+
+            <div class="row">
+                <button class="btn btn-primary pull-left"
+                        ng-click="setStage(2)"
+                        style="margin: 20px;">
+                    <i class="fa fa-arrow-left"></i> Back
+                </button>
+            </div>
+
+            <h3>Book Details</h3>
+            <div ng-controller="NewBookController">
+                <div ng-repeat="book in cartBooks">
+                    <book-details book="book"></book-details>
+                </div>
+            </div>
+
+            <div class="row">
+                <button class="btn btn-success pull-right"
+                        ng-click="submitOrders()"
+                        style="margin: 20px;">
+                    <i class="fa fa-check"></i> Submit
+                </button>
+            </div>
         </div>
 
 

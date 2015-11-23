@@ -9,10 +9,41 @@ app.service("CartService", function () {
     ];
 });
 
+app.controller('Controller', ['$scope', function($scope) {
+    $scope.customer = {
+        name: 'Naomi',
+        address: '1600 Amphitheatre'
+    };
+}]);
+
+app.directive('bookEditor', function() {
+    return {
+        restrict: 'E',
+        templateUrl: '/javascripts/ng/templates/bookEditor.html'
+    };
+});
+
+app.directive('cart', function() {
+    return {
+        templateUrl: '/javascripts/ng/templates/cart.html'
+    };
+});
+
+app.directive('bookDetails', function() {
+   return {
+       scope: {
+           book: '='
+       },
+       templateUrl: '/javascripts/ng/templates/bookDetails.html'
+   }
+});
+
 app.controller('OrdersController',['$scope', '$http', 'CartService', function($scope, $http, CartService){
 
     $scope.STAGE_SELECT_COURSE = 1;
     $scope.STAGE_SELECT_BOOKS = 2;
+    $scope.STAGE_REVIEW_ORDERS = 3;
+
     $scope.cartBooks = CartService.cartBooks;
 
     $scope.stage = $scope.STAGE_SELECT_BOOKS;
