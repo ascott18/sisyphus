@@ -3,16 +3,47 @@ var app = angular.module('sisyphus', ['sisyphus.helpers']);
 
 app.service("CartService", function () {
     this.cartBooks = [
-        //{title: "Stu's happy fun land book"},
-        //{title: "Some other book"},
-        //{title: "Naming things is hard"}
+        {title: "Stu's happy fun land book"},
+        {title: "Some other book"},
+        {title: "Naming things is hard"}
     ];
+});
+
+app.controller('Controller', ['$scope', function($scope) {
+    $scope.customer = {
+        name: 'Naomi',
+        address: '1600 Amphitheatre'
+    };
+}]);
+
+app.directive('bookEditor', function() {
+    return {
+        restrict: 'E',
+        templateUrl: '/javascripts/ng/templates/bookEditor.html'
+    };
+});
+
+app.directive('cart', function() {
+    return {
+        templateUrl: '/javascripts/ng/templates/cart.html'
+    };
+});
+
+app.directive('bookDetails', function() {
+   return {
+       scope: {
+           book: '='
+       },
+       templateUrl: '/javascripts/ng/templates/bookDetails.html'
+   }
 });
 
 app.controller('OrdersController',['$scope', '$http', 'CartService', function($scope, $http, CartService){
 
     $scope.STAGE_SELECT_COURSE = 1;
     $scope.STAGE_SELECT_BOOKS = 2;
+    $scope.STAGE_REVIEW_ORDERS = 3;
+
     $scope.cartBooks = CartService.cartBooks;
 
     $scope.stage = $scope.STAGE_SELECT_BOOKS;
@@ -46,6 +77,7 @@ app.controller('OrdersController',['$scope', '$http', 'CartService', function($s
 
     $http.get('/orders/read-courses').then(
         function success(response) {
+            console.log("got books")
             $scope.courses = response.data;
         },
         function error(response) {
@@ -89,6 +121,7 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", function(
     $scope.authors = [];
     $scope.master = {};
     $scope.book = {};
+    $scope.submitted = false;
 
     $scope.addAuthor = function(author) {
         $scope.authors.push({name: ""});
@@ -101,20 +134,38 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", function(
         }
     };
 
-    $scope.addNewBookToCart = function(book){
-        $scope.master = angular.copy(book);
-        $scope.master["authors"] = $scope.authors;
-        $scope.master["isNew"] = true;
-        CartService.cartBooks.push($scope.master);
-        $scope.master = {};
-        $scope.authors = [];
-        $scope.reset();
+    $scope.addNewBookToCart = function(book, form){
+        $scope.submitted = true;
+        if (form.$valid) {
+            $scope.master = angular.copy(book);
+            $scope.master["authors"] = $scope.authors;
+            $scope.master["isNew"] = true;
+            CartService.cartBooks.push($scope.master);
+            $scope.master = {};
+            $scope.authors = [];
+            $scope.reset(form);
+        }
     };
 
-    $scope.reset = function() {
+    $scope.reset = function(form) {
+        $scope.submitted = false;
+        if (form) {
+            form.$setPristine();
+            form.$setUntouched();
+        }
         $scope.book = angular.copy($scope.master);
     };
 
     $scope.reset();
+
+    validateBook = function(book) {
+        for (key in book) {
+            if (key || key == "") {
+                alert("Invalid!");
+                return false;
+            }
+        }
+        return true;
+    };
 
 }]);

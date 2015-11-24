@@ -7,21 +7,6 @@
 
     @include('shared.partial.header', ['headerText'=>'Books', 'subHeaderText'=>'All Books'])
 
-
-    <div class="row">
-        <div class="col-lg-4">
-            <form action="/books/search" method="GET">
-                <div class="input-group">
-                    <input type="text" class="form-control" name="search" placeholder="Search...">
-                    <span class="input-group-btn">
-                        <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                    </span>
-                </div>
-            </form>
-        </div>
-        <div class="col-lg-8"></div>
-    </div>
-    <br/>
     <div class="row">
         <div class="col-lg-12">
             <div class="panel panel-default">
@@ -31,58 +16,64 @@
                 <div class="panel-body">
 
 
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover table-striped">
+                    <div ng-controller="BooksController as mc" class="table-responsive">
+                        <table st-pipe="mc.callServer" st-table="mc.displayed" class="table table-bordered table-hover table-striped">
                             <thead>
                             <tr>
-                                <th>Title</th>
-                                <th>Publisher</th>
-                                <th>ISBN</th>
+                                <th st-sort="title">Title</th>
+                                <th st-sort="publisher">Publisher</th>
+                                <th st-sort="isbn13">ISBN</th>
                                 <th>Details</th>
+                            </tr>
+                            <tr>
+                                <th><input type="text" class="form-control" placeholder="Search..." st-search="title"/></th>
+                                <th><input type="text" class="form-control" placeholder="Search..." st-search="publisher"/></th>
+                                <th><input type="text" class="form-control" placeholder="Search..." st-search="isbn13"/></th>
+                                <th></th>
                             </tr>
                             </thead>
                             <tbody>
 
-                            @foreach ($books as $book)
-                                <tr>
-                                    <td>
-                                        <div>
-                                            {{ $book->title }}
-                                        </div>
-                                        <div class="text-muted">
-                                            <?php $index = 0; ?>
-                                            @foreach($book->authors as $author)
-                                                {{$author->last_name}}, {{$author->first_name}}
-                                                @if ($index++ != count($book->authors)-1)
-                                                    |
-                                                @endif
-                                            @endforeach
-                                        </div>
-                                    </td>
-                                    <td>{{ $book->publisher }}</td>
-                                    <td>{{ $book->isbn13 }}</td>
-                                    {{--<td><a href="http://www.amazon.com/dp/{{ $book->asin }}" class="price-link"><i--}}
-                                    {{--class="fa fa-amazon"></i><span> Amazon! </span></a></td>--}}
-                                    <td>
-                                        <a href="/books/show/{{ $book->book_id }}" class="btn btn-info" role="button">
-                                            <i class="fa fa-info-circle"></i> Details
-                                        </a>
-                                    </td>
-                                </tr>
-
-
-                            @endforeach
+                            <tr ng-repeat="book in mc.displayed">
+                                <td>
+                                    <div>
+                                        [[ book.title ]]
+                                    </div>
+                                    <div class="text-muted">
+                                        <span ng-repeat="author in book.authors">
+                                            [[ author.last_name]] [[ (author.first_name != '') ? ( ',' + author.first_name):('') ]] [[ $last ? '' : '|']]
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>[[ book.publisher ]]</td>
+                                <td>[[ book.isbn13 ]]</td>
+                                <td>
+                                    <a href="/books/show/[[ book.book_id ]]" class="btn btn-info" role="button">
+                                        <i class="fa fa-info-circle"></i> Details
+                                    </a>
+                                </td>
+                            </tr>
 
 
                             </tbody>
+                            <tfoot>
+                            <tr>
+                                <td class="text-center" st-pagination="" st-items-by-page="10" colspan="4">
+                                </td>
+                            </tr>
+                            </tfoot>
                         </table>
-
-                        {{-- Render pagination controls --}}
-                        {!! $books->render() !!}
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+@stop
+
+@section('scripts-head')
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+    <script src="/javascripts/ng/smart-table/smart-table.min.js"></script>
+    <script src="/javascripts/ng/app.js"></script>
+    <script src="/javascripts/ng/app.books.js"></script>
 @stop

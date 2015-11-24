@@ -145,7 +145,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
-        'Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider', // Laravel IDE helper
+        'Zizaco\Entrust\EntrustServiceProvider',
+        'Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider',
 
         /*
          * CAS auth provider for SSO.
@@ -201,6 +202,7 @@ return [
         'URL'       => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View'      => Illuminate\Support\Facades\View::class,
+        'Entrust'   => 'Zizaco\Entrust\EntrustFacade',
 
         // Custom
         'Cas' => Xavrsl\Cas\Facades\Cas::class,

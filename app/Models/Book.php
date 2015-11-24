@@ -4,6 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property string publisher The publisher of the book. varchar(255)
+ * @property string isbn13 The ISBN13 of the book, without hyphens. varchar(13)
+ * @property string title The title of the book. varchar(100)
+ */
 class Book extends Model
 {
     /**
