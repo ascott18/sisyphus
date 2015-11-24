@@ -13,6 +13,9 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title"><i class="fa fa-book fa-fw"></i> Book Details</h3>
+                <a href="/books/edit/{{ $book->book_id }}" class="btn btn-info " role="button">
+                    <i class="fa fa-info-circle"></i> Edit
+                </a>
             </div>
             <div class="panel-body">
 
@@ -41,6 +44,7 @@
                         {{ $book->isbn13 }}
                     </dd>
                 </dl>
+
             </div>
         </div>
 
