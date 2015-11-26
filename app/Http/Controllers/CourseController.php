@@ -20,6 +20,8 @@ class CourseController extends Controller
         // TODO: this should not be authorized to all. it needs its own permission.
         $this->authorize("all");
 
+
+
         return view('courses.index');
     }
 
@@ -119,6 +121,16 @@ class CourseController extends Controller
         $this->authorize("all");
 
         $query = Course::query();
+
+        if ($request->user()->may('place-dept-orders'))
+        {
+            $departments = $request->user()->departments()->lists('department');
+            $query = $query->whereIn('department', $departments);
+        }
+        elseif (!$request->user()->may('place-all-orders'))
+        {
+            $query = $query->where('user_id', $request->user()->user_id);
+        }
 
         $query = $this->buildSearchQuery($request, $query);
 
