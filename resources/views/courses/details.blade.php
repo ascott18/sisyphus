@@ -13,7 +13,7 @@
                 </div>
                 <div class="panel-body">
 
-                    <dl class="col-md-6 dl-horizontal">
+                    <dl class="col-md-4 dl-horizontal">
                         <dt>Title</dt>
                         <dd>
                             {{ $course->course_name }}
@@ -33,14 +33,28 @@
                         <dd>
                             {{ $course->course_section }}
                         </dd>
+                    </dl>
 
+                    <dl class="col-md-4 dl-horizontal">
                         <dt>Term</dt>
                         <dd>
                             {{ $course->term->termName() }} {{ $course->term->year }}
                         </dd>
+
+                        <dt>Order Period</dt>
+                        <dd>
+                            {{ $course->term->getStatusDisplayString() }}
+                        </dd>
+
+                        @if ($course->term->areOrdersInProgress())
+                        <dt>Order Deadline</dt>
+                        <dd>
+                            {{ $course->term->order_due_date->toFormattedDateString() }}
+                        </dd>
+                        @endif
                     </dl>
 
-                    <dl class="col-md-6 dl-horizontal">
+                    <dl class="col-md-4 dl-horizontal">
                         <dt>Professor</dt>
                         <dd>
                             {{ $course->user->last_name }}, {{ $course->user->first_name }}
@@ -60,6 +74,14 @@
                     <h3 class="panel-title"><i class="fa fa-shopping-cart fa-fw"></i> Orders</h3>
                 </div>
                 <div class="panel-body">
+                    @if ($course->canPlaceOrder())
+                        <a href="/orders?user_id={{$course->user->user_id}}" class="btn btn-primary" role="button">
+                            Place an order <i class="fa fa-arrow-right"></i>
+                        </a>
+                        <br>
+                        <br>
+                    @endif
+
                     @if ($course->no_book)
                         <h3 class="text-muted">It was reported that this class does not need a book.</h3>
                     @elseif (!count($course->orders))
@@ -90,12 +112,6 @@
                             @endforeach
 
                             </tbody>
-                            <tfoot>
-                            <tr>
-                                <td class="text-center" st-pagination="" st-items-by-page="10" colspan="4">
-                                </td>
-                            </tr>
-                            </tfoot>
                         </table>
                     @endif
                 </div>

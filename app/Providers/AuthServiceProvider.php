@@ -137,6 +137,28 @@ class AuthServiceProvider extends ServiceProvider
             return false;
         });
 
+        $gate->define('place-order-for-user', function (User $user, User $targetUser) {
+            if ($user->may('place-all-orders')) {
+                return true;
+            }
+
+            // TODO: restrict these courses to those of the current term.
+            if ($user->may('place-dept-orders')) {
+                $departments = $user->departments()->lists('department');
+                foreach ($targetUser->currentCourses as $course) {
+                    if ($departments->contains($course->department)) {
+                        return true;
+                    }
+                }
+            }
+
+            if ($user->user_id == $targetUser->user_id){
+                return true;
+            }
+
+            return false;
+        });
+
 
         $gate->define('edit-book', function (User $user, Book $book) {
             if ($user->may('edit-books')) {

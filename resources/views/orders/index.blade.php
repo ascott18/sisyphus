@@ -5,6 +5,8 @@
 
 @section('content')
 
+    <script>requested_user_id = {{$user_id}}</script>
+
 <div>
     <div class="row" ng-controller="OrdersController">
         <div class="col-lg-12" ng-show="getStage() == STAGE_SELECT_COURSE">
@@ -39,7 +41,7 @@
                                         </div>
 
                                         <span ng-repeat="order in course.orders">
-                                            <span class="text-muted">[[order.book.isbn13]]</span>: [[order.book.title]]
+                                            <span class="text-muted">[[order.book.isbn13 | isbnHyphenate]]</span>: [[order.book.title]]
                                             </br>
                                         </span>
                                     </p>
@@ -186,7 +188,7 @@
 
                         <h4 class="list-group-item-heading no-pad-bottom">[[book.title]]</h4>
                         <small >
-                            <span class="text-muted" >1234567891234</span>
+                            <span class="text-muted" > [[book.isbn | isbnHyphenate]] </span>
                             <br>
                             <span class="text-muted" > Author Name, Author2 Name</span>
                         </small>
@@ -220,5 +222,6 @@
 @section('scripts-head')
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
     <script src="/javascripts/ng/app.js"></script>
+    <script src="/javascripts/ng/helper.isbnHyphenate.js"></script>
     <script src="/javascripts/ng/app.orders.js"></script>
 @stop

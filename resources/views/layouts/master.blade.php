@@ -115,6 +115,7 @@
             <hr>
             <footer>
                 <p>&copy; 2015 - Eastern Washington University</p>
+                <p>made with <i class="fa fa-heart"></i> by EWU Computer Science students</p>
             </footer>
         </div>
     </div>

@@ -1,5 +1,5 @@
 
-var app = angular.module('sisyphus', ['sisyphus.helpers']);
+var app = angular.module('sisyphus', ['sisyphus.helpers', 'sisyphus.helpers.isbnHyphenate']);
 
 app.service("CartService", function () {
     this.cartBooks = [
@@ -9,7 +9,8 @@ app.service("CartService", function () {
     ];
 });
 
-app.controller('OrdersController',['$scope', '$http', 'CartService', function($scope, $http, CartService){
+app.controller('OrdersController', ['$scope', '$http', 'CartService',
+    function($scope, $http, CartService){
 
     $scope.STAGE_SELECT_COURSE = 1;
     $scope.STAGE_SELECT_BOOKS = 2;
@@ -44,9 +45,13 @@ app.controller('OrdersController',['$scope', '$http', 'CartService', function($s
             })
     };
 
-    $http.get('/orders/read-courses').then(
+    var readUrl = '/orders/read-courses';
+    if (requested_user_id)
+        readUrl += '?user_id=' + requested_user_id;
+
+    $http.get(readUrl).then(
         function success(response) {
-            console.log("got books")
+            console.log("got courses")
             $scope.courses = response.data;
         },
         function error(response) {
