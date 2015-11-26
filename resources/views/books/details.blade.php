@@ -23,7 +23,7 @@
                     <dd>
                         <?php $index = 0; ?>
                         @foreach($book->authors as $author)
-                            {{$author->last_name}}, {{$author->first_name}}
+                            {{$author->name}}
                             @if ($index++ != count($book->authors)-1)
                                 <br/>
                             @endif

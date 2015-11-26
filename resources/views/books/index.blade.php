@@ -38,7 +38,7 @@
                                     </div>
                                     <div class="text-muted">
                                         <span ng-repeat="author in book.authors">
-                                            [[ author.last_name]] [[ (author.first_name != '') ? ( ',' + author.first_name):('') ]] [[ $last ? '' : '|']]
+                                            [[ author.name]] [[ $last ? '' : '|']]
                                         </span>
                                     </div>
                                 </td>
