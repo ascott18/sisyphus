@@ -1,17 +1,5 @@
 
-var app = angular.module('sisyphus', ['sisyphus.helpers', 'smart-table', 'filters']);
-
-
-angular.module('filters', []).filter('zpad', function() {
-    return function(input, n) {
-        if(input === undefined)
-            input = ""
-        if(input.length >= n)
-            return input
-        var zeros = "0".repeat(n);
-        return (zeros + input).slice(-1 * n)
-    };
-});
+var app = angular.module('sisyphus', ['sisyphus.helpers', 'sisyphus.helpers.isbnHyphenate', 'smart-table', 'filters']);
 
 
 app.controller('BooksController', function($scope, $http) {

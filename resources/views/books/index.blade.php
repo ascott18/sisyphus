@@ -43,7 +43,7 @@
                                     </div>
                                 </td>
                                 <td>[[ book.publisher ]]</td>
-                                <td>[[ book.isbn13 ]]</td>
+                                <td>[[ book.isbn13 | isbnHyphenate]]</td>
                                 <td>
                                     <a href="/books/show/[[ book.book_id ]]" class="btn btn-sm btn-info" role="button">
                                         Details <i class="fa fa-arrow-right"></i>
@@ -72,5 +72,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
     <script src="/javascripts/ng/smart-table/smart-table.min.js"></script>
     <script src="/javascripts/ng/app.js"></script>
+    <script src="/javascripts/ng/helper.isbnHyphenate.js"></script>
     <script src="/javascripts/ng/app.books.js"></script>
 @stop

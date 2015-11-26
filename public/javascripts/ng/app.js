@@ -10,6 +10,17 @@ app.config(function($httpProvider) {
     $httpProvider.defaults.headers.common = { 'X-Requested-With' : 'XMLHttpRequest' }
 });
 
+angular.module('filters', []).filter('zpad', function() {
+    return function(input, n) {
+        if(input === undefined)
+            input = "";
+        if(input.length >= n)
+            return input;
+        var zeros = "0".repeat(n);
+        return (zeros + input).slice(-1 * n)
+    };
+});
+
 
 app.directive('ngConfirmClick', [
 function(){
