@@ -17,6 +17,7 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
 
 
+
     @yield('scripts-head')
 </head>
 <body ng-app="sisyphus">
@@ -39,10 +40,14 @@
                 <div >
                     <img src="/images/logoWhite.svg" class="pull-left" >
 
-                    <h2>Textbook Orders</h2>
-
-
-
+                    <h2>Textbook Orders
+                        @inject('auth', 'App\Providers\AuthServiceProvider')
+                        @if ($auth->getIsDebuggingUnauthorizedAction())
+                            <p style="position: absolute; font-size: 0.7em; width: 100%">
+                                <i class="fa fa-bug fa-spin"></i> (debugging unauthorized action) <i class="fa fa-bug fa-spin"></i>
+                            </p>
+                        @endif
+                    </h2>
                 </div>
             </a>
         </div>
@@ -107,7 +112,6 @@
 
             @yield('content')
 
-            <!-- /.row-->
             <hr>
             <footer>
                 <p>&copy; 2015 - Eastern Washington University</p>

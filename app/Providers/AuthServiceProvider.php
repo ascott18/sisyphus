@@ -16,6 +16,7 @@ class AuthServiceProvider extends ServiceProvider
 {
 
     protected $controllerAuthCount = 0;
+    protected $isDebuggingUnauthorizedAction = false;
 
     /**
      * Gets whether or not an attempt has been made to authorize the
@@ -25,6 +26,16 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function getHasControllerAttemptedAuthorization(){
         return $this->controllerAuthCount > 0;
+    }
+
+    /**
+     * Gets whether or not we are in debug mode and have bypassed an auth
+     * check as a result of being in debug mode.
+     *
+     * @return bool Whether or not an authorization attempt has been bypassed.
+     */
+    public function getIsDebuggingUnauthorizedAction(){
+        return $this->isDebuggingUnauthorizedAction;
     }
 
     /**
@@ -69,13 +80,7 @@ class AuthServiceProvider extends ServiceProvider
                     // so it is safe to display this message at that point
                     // (the user is unauthorized to do something in the controller if we reach this point).
                     if (!Request::ajax() && View::doneRendering()){
-                        echo "<style>.navbar-brand h2:after{
-                            content: '(debugging unauthorized action)';
-                            margin-left: 100px;
-                            padding: 0 10px;
-                            border: 5px solid red;
-                            color: white;
-                            font-size: 1.2em}</style>";
+                        $this->isDebuggingUnauthorizedAction = true;
                     }
                     $runningBefore = false;
                     return true;
