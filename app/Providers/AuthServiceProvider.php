@@ -83,7 +83,7 @@ class AuthServiceProvider extends ServiceProvider
                         $this->isDebuggingUnauthorizedAction = true;
                     }
                     $runningBefore = false;
-                    // return true;
+                     return true;
                 }
                 $runningBefore = false;
             }
@@ -136,6 +136,29 @@ class AuthServiceProvider extends ServiceProvider
 
             return false;
         });
+
+        $gate->define('view-course', function (User $user, Course $course) {
+            if ($user->may('view-all-courses')) {
+                return true;
+            }
+
+            if ($user->may('view-dept-courses') &&
+                $user->departments()->where('department', '=', $course->department)->count()){
+                return true;
+            }
+
+            if ($user->user_id == $course->user_id){
+                return true;
+            }
+
+            return false;
+        });
+
+
+        $gate->define('view-course-list', function (User $user) {
+            return $user->may('view-course-list');
+        });
+
 
         $gate->define('place-order-for-user', function (User $user, User $targetUser) {
             if ($user->may('place-all-orders')) {

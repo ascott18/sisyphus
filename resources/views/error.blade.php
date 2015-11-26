@@ -14,7 +14,7 @@
             @if ($response['message'])
                 <hr>
                 <p>i guess what i'm really trying to say here is this:</p>
-                <h4>{!! nl2br(e($response['message'])) !!}</h4>
+                <h3 style="font-size: 2.5em;">{!! nl2br(e($response['message'])) !!}</h3>
             @endif
         </div>
     </div>

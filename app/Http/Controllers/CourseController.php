@@ -17,10 +17,7 @@ class CourseController extends Controller
      */
     public function getIndex()
     {
-        // TODO: this should not be authorized to all. it needs its own permission.
-        $this->authorize("all");
-
-
+        $this->authorize("view-course-list");
 
         return view('courses.index');
     }
@@ -34,10 +31,9 @@ class CourseController extends Controller
      */
     public function getDetails($id)
     {
-        // TODO: this should not be authorized to all. it needs its own permission.
-        $this->authorize("all");
-
         $course = Course::findOrFail($id);
+
+        $this->authorize("view-course", $course);
 
         return view('courses.details', ['course' => $course]);
     }
@@ -117,17 +113,16 @@ class CourseController extends Controller
      */
     public function getCourseList(Request $request)
     {
-        // TODO: this should not be authorized to all. it needs its own permission.
-        $this->authorize("all");
+        $this->authorize("view-course-list");
 
         $query = Course::query();
 
-        if ($request->user()->may('place-dept-orders'))
+        if ($request->user()->may('view-dept-courses'))
         {
             $departments = $request->user()->departments()->lists('department');
             $query = $query->whereIn('department', $departments);
         }
-        elseif (!$request->user()->may('place-all-orders'))
+        elseif (!$request->user()->may('view-all-courses'))
         {
             $query = $query->where('user_id', $request->user()->user_id);
         }

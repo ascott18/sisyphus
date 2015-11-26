@@ -66,7 +66,9 @@
                 <li><a href="/"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a></li>
                 <li><a href="/books"><i class="fa fa-fw fa-book"></i> Books</a></li>
                 <li><a href="/orders"><i class="fa fa-fw fa-shopping-cart"></i> Orders</a></li>
-                <li><a href="/courses"><i class="fa fa-fw fa-pencil"></i> Courses</a></li>
+                @can('view-course-list')
+                    <li><a href="/courses"><i class="fa fa-fw fa-pencil"></i> Courses</a></li>
+                @endcan
                 @can('send-messages')
                     <li><a href="/messages"><i class="fa fa-fw fa-envelope"></i> Messages</a></li>
                 @endcan
