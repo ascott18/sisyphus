@@ -79,7 +79,7 @@ class AuthServiceProvider extends ServiceProvider
                     // In other words, if we haven't started rendering yet, then we must be still running through the controller,
                     // so it is safe to display this message at that point
                     // (the user is unauthorized to do something in the controller if we reach this point).
-                    if (!Request::ajax() && View::doneRendering()){
+                    if (View::doneRendering()){
                         $this->isDebuggingUnauthorizedAction = true;
                     }
                     $runningBefore = false;

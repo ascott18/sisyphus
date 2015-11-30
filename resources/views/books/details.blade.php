@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('area', 'Books')
-@section('page', $book->isbn13)
+@section('page', $book->title)
 
 @section('content')
 
@@ -19,8 +19,11 @@
                         {{ $book->title }}
                     </dd>
 
-                    <dt>Authors</dt>
+                    <dt>{{count($book->authors) == 1 ? "Author" : "Authors"}}</dt>
                     <dd>
+                        @if (count($book->authors) == 0)
+                            <span class="text-muted">No Authors</span>
+                        @endif
                         <?php $index = 0; ?>
                         @foreach($book->authors as $author)
                             {{$author->name}}
@@ -35,7 +38,7 @@
                     </dd>
                     <dt>ISBN 13</dt>
                     <dd>
-                        {{ $book->isbn13 }}
+                        [["{{ $book->isbn13 }}" | isbnHyphenate]]
                     </dd>
                 </dl>
             </div>
@@ -54,7 +57,8 @@
                             <th st-sort="section">Course</th>
                             <th st-sort="course_name">Course Name</th>
                             <th st-sort="ordered_by_name">Ordered By</th>
-                            <th st-sort="quantity_requested">Quantity Requested</th>
+                            <th width="160px">Details</th>
+                            {{--<th st-sort="quantity_requested">Quantity Requested</th>--}}
                         </tr>
                         <tr>
                             <th><input type="text" class="form-control" placeholder="Search..." st-search="section"/></th>
@@ -73,8 +77,12 @@
                                 <td>
                                     [[ order.order_by_name ]]
                                 </td>
+                                <td><a class="btn btn-sm btn-info" href="/courses/details/[[order.course_id]]" role="button">
+                                        Course Details <i class="fa fa-arrow-right"></i>
+                                    </a>
+                                </td>
 
-                                <td>[[ order.quantity_requested ]]</td>
+                                {{--<td>[[ order.quantity_requested ]]</td>--}}
                             </tr>
                         </tbody>
                         <tfoot>
