@@ -66,6 +66,37 @@ app.controller('BookDetailsController', function($scope, $http) {
 
     $scope.book_id = book_id_init;
 
+    function generateSignature() {
+
+        var date = new Date();
+
+        var date_string = encodeURIComponent(date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate() + "T" + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + "Z")
+
+        console.log(date_string);
+
+        var test_string =
+            "GET\n" +
+            "webservices.amazon.com\n" +
+            "/onca/xml\n" +
+            "AssociateTag=demon0ed-20&AWSAccessKeyId=AKIAI3BKF5TMJDXYX3FA&IdType=ISBN&ItemId=9780201633610&Operation=ItemLookup&ResponseGroup=Large&SearchIndex=All&Service=AWSECommerceService&Timestamp=" + date_string;
+
+        var amazonRequestString = "http://webservices.amazon.com/onca/xml?AssociateTag=demon0ed-20&AWSAccessKeyId=AKIAI3BKF5TMJDXYX3FA&IdType=ISBN&ItemId=9780201633610&Operation=ItemLookup&ResponseGroup=Large&SearchIndex=All&Service=AWSECommerceService&Timestamp=" + date_string;
+
+        var signature2 = CryptoJS.HmacSHA256(test_string, "d0QgjhPq4cUT0FlSFJ9eVjgdZOLW3nXklPY/n+Pl");
+
+        $http.get(amazonRequestString + "&Signature=" + signature2).then(
+            function success(response) {
+                console.log(response);
+            },
+            function error(response) {
+                // TODO: handle properly
+                console.log("Couldn't get book details", response);
+            }
+        );
+
+        console.log("test signature", signature2.toString(CryptoJS.enc.Base64));
+    };
+
     this.displayed = [];
 
     this.callServer = function callServer(tableState) { // TODO: move this into other controller
@@ -108,6 +139,6 @@ app.controller('BookDetailsController', function($scope, $http) {
                 console.log("Couldn't get book details", response);
             }
         );
-
+        generateSignature();
     }
 });
