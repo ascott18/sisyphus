@@ -47,12 +47,12 @@
                                     <td style="width: 1%"> <a href="/terms/details/[[ term.term_id ]]" class="btn btn-sm btn-primary">Details&nbsp; <i class="fa fa-arrow-right"></i></a> </td>
 
                                 </tr>
-
                             </tbody>
+                            <tfoot>
+                            <td class="text-center" st-pagination="" st-items-by-page="10" colspan="6">
+                            </td>
+                            </tfoot>
                         </table>
-
-                        <td class="text-center" st-pagination="" st-items-by-page="10" colspan="4">
-                        </td>
 
                     </div>
                 </div>
