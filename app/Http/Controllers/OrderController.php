@@ -31,7 +31,9 @@ class OrderController extends Controller
 
         $this->authorize('place-order-for-user', $targetUser);
 
-        return view('orders.index', ['user_id' => $targetUser->user_id]);
+        $openTerms = Term::currentTerms()->get();
+
+        return view('orders.index', ['user_id' => $targetUser->user_id, 'openTerms' => $openTerms]);
     }
 
 

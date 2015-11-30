@@ -56,14 +56,12 @@
                         <tr>
                             <th st-sort="section">Course</th>
                             <th st-sort="course_name">Course Name</th>
-                            <th st-sort="ordered_by_name">Ordered By</th>
                             <th width="160px">Details</th>
                             {{--<th st-sort="quantity_requested">Quantity Requested</th>--}}
                         </tr>
                         <tr>
                             <th><input type="text" class="form-control" placeholder="Search..." st-search="section"/></th>
                             <th><input type="text" class="form-control" placeholder="Search..." st-search="course_name"/></th>
-                            <th><input type="text" class="form-control" placeholder="Search..." st-search="ordered_by_name"/></th>
                             <th></th>
                         </tr>
                         </thead>
@@ -74,9 +72,6 @@
                                 </td>
                                 <td>[[ order.course_name ]]</td>
 
-                                <td>
-                                    [[ order.order_by_name ]]
-                                </td>
                                 <td><a class="btn btn-sm btn-info" href="/courses/details/[[order.course_id]]" role="button">
                                         Course Details <i class="fa fa-arrow-right"></i>
                                     </a>

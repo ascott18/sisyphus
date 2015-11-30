@@ -93,6 +93,7 @@
                                 <th>Title</th>
                                 <th>ISBN</th>
                                 <th>Publisher</th>
+                                <th width="140px"></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -107,6 +108,11 @@
                                     </td>
                                     <td>
                                         {{ $order->book->publisher }}
+                                    </td>
+
+                                    <td><a class="btn btn-sm btn-info" href="/books/show/{{ $order->book->book_id }}" role="button">
+                                            Book Details <i class="fa fa-arrow-right"></i>
+                                        </a>
                                     </td>
                                 </tr>
                             @endforeach

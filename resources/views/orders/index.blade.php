@@ -17,7 +17,19 @@
                 </div>
                 <div class="panel-body">
 
-                    <table class="list-group" style="width: 100%">
+                    <h3 ng-hide="courses.length" class="text-muted">
+                        @if (count($openTerms) == 0)
+                            No terms are open for ordering.
+                        @else
+                            No courses found for the terms currently open for ordering:
+                        <ul>
+                            @foreach($openTerms as $term)
+                                <li>{{$term->termName()}} {{ $term->year }}</li>
+                            @endforeach
+                        </ul>
+                        @endif
+                    </h3>
+                    <table ng-show="courses.length" class="list-group" style="width: 100%">
                         <thead>
                             <th style="width: 100%"></th>
                             <th ></th>
@@ -157,18 +169,12 @@
                                         <small >
                                             <span class="text-muted" > Ordered by Stuart Glenn Steiner for Fall 2014</span>
                                         </small>
-
                                     </li>
                                 </ul>
-
                             </div>
                         </div>
-
                     </div>
-
                 </div>
-
-
             </div>
 
             <div class="col-md-6">

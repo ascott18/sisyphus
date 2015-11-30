@@ -117,8 +117,6 @@ class BookController extends Controller
 
         if($request->input('course_name'))
             $query = $query->where('course_name', 'LIKE', '%'.$request->input('course_name').'%');
-        if($request->input('ordered_by'))
-            $query = $query->where('ordered_by_name', 'LIKE', '%'.$request->input('ordered_by_name').'%');
 
         return $query;
     }
