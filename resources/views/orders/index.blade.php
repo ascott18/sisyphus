@@ -8,14 +8,14 @@
     <script>requested_user_id = {{$user_id}}</script>
 
 <div>
-    <div class="row" ng-controller="OrdersController">
+    <div ng-cloak class="row" ng-controller="OrdersController">
         <div class="col-lg-12" ng-show="getStage() == STAGE_SELECT_COURSE">
 
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="fa fa-pencil fa-fw"></i>My Courses</h3>
                 </div>
-                <div class="panel-body">
+                <div ng-show="gotCourses" class="panel-body">
 
                     <h3 ng-hide="courses.length" class="text-muted">
                         @if (count($openTerms) == 0)

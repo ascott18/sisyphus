@@ -39,10 +39,6 @@ app.controller('BooksController', function($scope, $http) {
                 tableState.pagination.number = response.data.per_page;                                  // update how many per page based on laravel response
                 ctrl.displayed = response.data.data;                                                    // get return data
                 ctrl.isLoading=false;
-            },
-            function error(response) {
-                // TODO: handle properly
-                console.log("Couldn't get book list", response);
             }
         );
 
@@ -90,10 +86,6 @@ app.controller('BookDetailsController', function($scope, $http) {
                 tableState.pagination.number = response.data.per_page;
                 ctrl.displayed = response.data.data;
                 ctrl.isLoading=false;
-            },
-            function error(response) {
-                // TODO: handle properly
-                console.log("Couldn't get book details", response);
             }
         );
 

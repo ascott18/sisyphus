@@ -31,7 +31,7 @@
                             </thead>
                             <tbody>
 
-                            <tr ng-repeat="book in mc.displayed">
+                            <tr ng-cloak ng-repeat="book in mc.displayed">
                                 <td>
                                     <div>
                                         [[ book.title ]]

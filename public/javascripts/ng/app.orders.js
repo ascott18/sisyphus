@@ -36,12 +36,6 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService',
         $http.post('/orders/no-book', {course_id: course.course_id}).then(
             function success(response){
                 course.no_book=true;
-                // TODO: handle this properly - display a little thing that says "Saving" or "Saved"?
-                console.log("Saved!", response);
-            },
-            function error(response){
-                // TODO: handle this properly.
-                console.log("Not Saved!", response);
             })
     };
 
@@ -51,12 +45,8 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService',
 
     $http.get(readUrl).then(
         function success(response) {
-            console.log("got courses")
+            $scope.gotCourses = true;
             $scope.courses = response.data;
-        },
-        function error(response) {
-            // TODO: handle properly
-            console.log("Couldn't get recipients", response);
         }
     );
 

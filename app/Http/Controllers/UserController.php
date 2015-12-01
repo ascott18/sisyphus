@@ -181,7 +181,6 @@ class UserController extends Controller
             $user->roles()->detach();
             $user->roles()->attach($dbRole);
         }
-
         return ['success' => true];
     }
 

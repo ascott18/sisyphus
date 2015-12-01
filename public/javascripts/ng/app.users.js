@@ -15,10 +15,6 @@ app.controller('UsersController', function($scope, $http) {
                         break;
                     }
                 }
-            },
-            function(response){
-                // TODO: handle this properly.
-                console.log("Error removing department");
             }
         );
     };
@@ -66,10 +62,6 @@ app.controller('UsersController', function($scope, $http) {
                 tableState.pagination.number = response.data.per_page;                        // update number of entries per page with laravel response
                 $scope.users = response.data.data; // using scope var since it was already there.
                 ctrl.isLoading=false;
-            },
-            function error(response) {
-                // TODO: handle properly
-                console.log("Couldn't get users", response);
             }
         );
 
@@ -112,10 +104,6 @@ app.controller('NewDepartmentController', function($scope, $http) {
                 user.departments.push({department: newDept});
                 user.newDept = "";
                 user.addingDept = false;
-            },
-            function(response){
-                // TODO: handle this properly.
-                console.log("Error adding department");
             }
         );
     };
@@ -140,10 +128,6 @@ app.controller('ChangeRoleController', function($scope, $http) {
             function(response){
                 $scope.user.roles = [$scope.selectedRole];
                 $scope.user.editingRole = false;
-            },
-            function(response){
-                // TODO: handle this properly.
-                console.log("Error adding department");
             }
         );
     };

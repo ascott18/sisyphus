@@ -67,8 +67,17 @@ class OrderController extends Controller
 
         $this->authorize('place-order-for-course', $course);
 
+        if (count($course->orders)){
+            return response()->json([
+                'success' => false,
+                'message' => "This course already has orders placed for it."],
+                Response::HTTP_BAD_REQUEST);
+        }
+
         $course->no_book=true;
         $course->save();
+
+        return ['success' => true];
     }
 
     public function getReadCourses(Request $request)

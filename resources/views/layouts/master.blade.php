@@ -57,7 +57,7 @@
 
             <ul class="nav navbar-right top-nav">
                 <li >
-                    <span id="userName"><i class="fa fa-user"></i> Welcome, {{ session('net_id') }}! </span>
+                    <span id="userName"><i class="fa fa-user"></i> Welcome, {{ Auth::user()->net_id }}! </span>
                 </li>
             </ul>
 
@@ -111,6 +111,12 @@
                 </div>
             </div>
             @endif
+
+            <div ng-cloak ng-repeat="error in appErrors"
+                    class="alert alert-danger alert-dismissible" role="alert">
+                <button type="button" class="close" aria-label="Close" ng-click="appErrors.splice(appErrors.indexOf(error), 1)"><span aria-hidden="true">&times;</span></button>
+                <strong>Error!</strong> <span ng-repeat="message in error.messages"><br>[[message]]</span>
+            </div>
 
             @yield('content')
 
