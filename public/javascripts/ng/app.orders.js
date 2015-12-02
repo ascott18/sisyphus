@@ -2,24 +2,35 @@
 var app = angular.module('sisyphus', ['sisyphus.helpers']);
 
 app.service("CartService", function () {
-    this.cartBooks = [
-        {title: "Stu's happy fun land book"},
-        {title: "Some other book"},
-        {title: "Naming things is hard"}
-    ];
+    this.cartBooks = [];
 });
-
-app.controller('Controller', ['$scope', function($scope) {
-    $scope.customer = {
-        name: 'Naomi',
-        address: '1600 Amphitheatre'
-    };
-}]);
 
 app.directive('bookEditor', function() {
     return {
         restrict: 'E',
         templateUrl: '/javascripts/ng/templates/bookEditor.html'
+    };
+});
+
+var ISBN13_REGEXP = /^\x20*(?=.{17}$)97(?:8|9)([ -])\d{1,5}\1\d{1,7}\1\d{1,6}\1\d$/;
+app.directive('isbn13', function() {
+    return {
+        require: 'ngModel',
+        link: function(scope, elm, attrs, ctrl) {
+            ctrl.$validators.isbn13 = function(modelValue, viewValue) {
+                if (ctrl.$isEmpty(modelValue)) {
+                    // consider empty models to be valid
+                    return true;
+                }
+
+                if (ISBN13_REGEXP.test(viewValue)) {
+                    // it is valid
+                    return true;
+                }
+                // it is invalid
+                return false;
+            };
+        }
     };
 });
 
@@ -31,6 +42,7 @@ app.directive('cart', function() {
 
 app.directive('bookDetails', function() {
    return {
+       restrict: 'E',
        scope: {
            book: '='
        },
@@ -43,10 +55,13 @@ app.controller('OrdersController',['$scope', '$http', 'CartService', function($s
     $scope.STAGE_SELECT_COURSE = 1;
     $scope.STAGE_SELECT_BOOKS = 2;
     $scope.STAGE_REVIEW_ORDERS = 3;
+    $scope.STAGE_CONFIRMATION = 4;
 
     $scope.cartBooks = CartService.cartBooks;
 
-    $scope.stage = $scope.STAGE_SELECT_BOOKS;
+    $scope.stage = $scope.STAGE_SELECT_COURSE;
+
+    $scope.selectedCourse;
 
     $scope.getStage = function(){
         return $scope.stage;
@@ -54,6 +69,40 @@ app.controller('OrdersController',['$scope', '$http', 'CartService', function($s
 
     $scope.setStage = function(stage){
         $scope.stage = stage;
+    };
+
+    $scope.placeRequestForCourse = function(course) {
+        $scope.setStage($scope.STAGE_SELECT_BOOKS);
+
+        $scope.selectedCourse = course;
+
+        $http.get('/orders/past-courses/' + course.course_id).then(
+            function success(response) {
+                console.log("got courses", response.data);
+                var pastCourses = response.data;
+                var pastBooks = [];
+
+                for (var i = 0; i < pastCourses.length; i++) {
+                    var pastCourse = pastCourses[i];
+                    for (var j = 0; j < pastCourse.orders.length; j++) {
+                        var order = pastCourse.orders[j];
+                        var bookData = {};
+                        bookData['book'] = order.book;
+                        bookData['course'] = pastCourse;
+                        pastBooks.push(bookData);
+                    }
+                }
+
+
+                course['pastBooks'] = pastBooks;
+                $scope.selectedCourse = course;
+            },
+            function error(response) {
+                // TODO: handle properly
+                console.log("Couldn't get past courses", response);
+            }
+        );
+
     };
 
     $scope.courseNeedsOrders = function(course)
@@ -72,8 +121,10 @@ app.controller('OrdersController',['$scope', '$http', 'CartService', function($s
             function error(response){
                 // TODO: handle this properly.
                 console.log("Not Saved!", response);
-            })
+            });
     };
+
+
 
     $http.get('/orders/read-courses').then(
         function success(response) {
@@ -86,32 +137,39 @@ app.controller('OrdersController',['$scope', '$http', 'CartService', function($s
         }
     );
 
-    $scope.pastBooks = [
-        {title: "Stu's favorite book that he always uses", mine:true},
-        {title: "Stu's old book that he used 2 years ago", mine:false},
-        {title: "Another book that he tried once", mine:false},
-        {title: "Yet another example book", mine:true}
-    ];
 
 
-
-    $scope.deleteBookFromCart = function(book) {
-        var index = $scope.cartBooks.indexOf(book);
+    $scope.deleteBookFromCart = function(bookData) {
+        var index = $scope.cartBooks.indexOf(bookData);
         if (index > -1) {
-            var book = $scope.cartBooks.splice(index, 1)[0];
-            if (!book.isNew) {
-                $scope.pastBooks.push(book);
+            $scope.cartBooks.splice(index, 1);
+            if (!bookData.isNew) {
+                $scope.selectedCourse['pastBooks'].push(bookData);
             }
         }
     };
 
-    $scope.addBookToCart = function(book) {
-        var index = $scope.pastBooks.indexOf(book);
+    $scope.addBookToCart = function(bookData) {
+        var index = $scope.selectedCourse['pastBooks'].indexOf(bookData);
         if (index > -1) {
-            var book = $scope.pastBooks.splice(index, 1)[0];
-            $scope.cartBooks.push(book);
+            $scope.selectedCourse['pastBooks'].splice(index, 1);
+            $scope.cartBooks.push(bookData);
         }
     };
+
+    $scope.submitOrders = function() {
+
+        $http.post('/orders/submit-order', {course_id:$scope.selectedCourse.course_id, cart:CartService.cartBooks}).then(
+            function success(response){
+                $scope.setStage($scope.STAGE_CONFIRMATION);
+                console.log("Saved!", response);
+            },
+            function error(response){
+                // TODO: handle this properly.
+                alert("notsaved!");
+                console.log("Not Saved!", response);
+            });
+    }
 
 }]);
 
@@ -136,11 +194,14 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", function(
 
     $scope.addNewBookToCart = function(book, form){
         $scope.submitted = true;
+
         if (form.$valid) {
             $scope.master = angular.copy(book);
             $scope.master["authors"] = $scope.authors;
             $scope.master["isNew"] = true;
-            CartService.cartBooks.push($scope.master);
+            var bookData = {};
+            bookData['book'] = $scope.master;
+            CartService.cartBooks.push(bookData);
             $scope.master = {};
             $scope.authors = [];
             $scope.reset(form);
@@ -157,15 +218,5 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", function(
     };
 
     $scope.reset();
-
-    validateBook = function(book) {
-        for (key in book) {
-            if (key || key == "") {
-                alert("Invalid!");
-                return false;
-            }
-        }
-        return true;
-    };
 
 }]);

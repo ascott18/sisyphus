@@ -1,1 +1,35 @@
-<div>Hello, {{book.title}}!</div>
+
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-book fa-fw"></i> Book Details</h3>
+    </div>
+    <div class="panel-body">
+
+        <dl class="dl-horizontal">
+            <dt>Title</dt>
+            <dd>
+                [[book.title]]
+            </dd>
+
+            <dt>Authors</dt>
+            <dd ng-repeat="author in book.authors">
+                <span>[[author.first_name]]</span>
+                <span>[[author.last_name]]</span>
+            </dd>
+            <dt>Publisher</dt>
+            <dd>
+                [[book.publisher]]
+            </dd>
+            <dt>ISBN 13</dt>
+            <dd>
+                [[book.isbn13]]
+            </dd>
+
+            <dt>Required</dt>
+            <dd>
+                [[book.required]]
+            </dd>
+        </dl>
+    </div>
+</div>

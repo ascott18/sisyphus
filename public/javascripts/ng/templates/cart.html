@@ -1,20 +1,24 @@
 <ul class="list-group">
     <li class="list-group-item cursor-pointer"
         ng-cloak
-        ng-repeat="book in cartBooks">
+        ng-repeat="bookData in cartBooks">
 
         <div class="pull-right">
             <button class="btn btn-xs btn-danger"
-                    ng-click="deleteBookFromCart(book)">
+                    ng-click="deleteBookFromCart(bookData)">
                 <i class="fa fa-fw fa-times"></i>
             </button>
         </div>
 
-        <h4 class="list-group-item-heading no-pad-bottom">[[book.title]]</h4>
+        <h4 class="list-group-item-heading no-pad-bottom">[[bookData.book.title]]</h4>
         <small >
-            <span class="text-muted" >1234567891234</span>
+            <span class="text-muted" >[[bookData.book.isbn13]]</span>
             <br>
-            <span class="text-muted" > Author Name, Author2 Name</span>
+            <div ng-repeat="author in bookData.book.authors">
+                <span class="text-muted" >[[author.first_name]]</span>
+                <span class="text-muted" >[[author.last_name]]</span>
+            </div>
+
         </small>
 
     </li>

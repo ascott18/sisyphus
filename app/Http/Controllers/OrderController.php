@@ -72,28 +72,65 @@ class OrderController extends Controller
         return response()->json($courses);
     }
 
+
+    /**
+     * @param $id int course id to get books for.
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getPastCourses($id)
+    {
+        $this->authorize("all");
+
+        $course = Course::findOrFail($id);
+        $courses = Course::where(['department' => $course->department, 'course_number' => $course->course_number]);
+        $books = $courses->with("orders.book.authors")->get();
+        return response()->json($books);
+    }
+
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function postStore(Request $request)
+    public function postSubmitOrder(Request $request)
     {
-        // TODO: pretty sure this action isn't even used.
-        throw new AccessDeniedHttpException("This action is obsolete. Update it, or remove it.");
-
         $params = $request->all();
 
-        $book = Book::create([
-            'title' => $params['bookTitle'],
-            'isbn13' => $params['isbn13'],
-            'publisher' => $params['publisher'],
-        ]);
+        $course = Course::findOrFail($params['course_id']);
+        $this->authorize("place-order-for-course", $course);
 
-        // TODO: THIS SUCKS
-        $book->authors()->save(new Author([
-            'first_name' => $params['author1'],
-        ]));
+
+
+        foreach ($params['cart'] as $bookData) {
+
+            $book = $bookData['book'];
+
+            if (isset($book['isNew']) && $book['isNew']) {
+                $db_book = Book::create([
+                    'title' => $params['bookTitle'],
+                    'isbn13' => $params['isbn13'],
+                    'publisher' => $params['publisher'],
+                ]);
+
+                foreach ($book['authors'] as $author) {
+                    $db_book->authors()->save(new Author([
+                        'first_name' => $author['name']
+                    ]));
+                }
+            }
+            else {
+                $db_book = Book::findOrFail($book['book_id']);
+            }
+
+            Order::create([
+                'course_id' => $params['course_id'],
+                'book_id' => $db_book->book_id
+            ]);
+
+        }
+
+
+
     }
 }

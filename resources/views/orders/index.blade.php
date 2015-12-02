@@ -48,7 +48,7 @@
 
                                 <td style="vertical-align: top">
                                     <span ng-if="!course.no_book">
-                                    <a ng-click="setStage(2)"
+                                    <a ng-click="placeRequestForCourse(course)"
                                        class="btn btn-primary"
                                        style="width:100%; margin-bottom:5px">
                                         Place a request <i class="fa fa-arrow-right fa-fw"></i>
@@ -108,16 +108,16 @@
                                 <ul class="list-group">
                                     <li class="list-group-item cursor-pointer"
                                         ng-cloak
-                                        ng-repeat="book in pastBooks |orderBy: (book.mine?0:1):true">
+                                        ng-repeat="data in selectedCourse.pastBooks |orderBy: (book.mine?0:1):true">
 
                                         <div class="pull-right">
                                             <button class="btn btn-xs btn-primary"
-                                                    ng-click="addBookToCart(book)">
+                                                    ng-click="addBookToCart(data)">
                                                 <i class="fa fa-fw fa-plus"></i>
                                             </button>
                                         </div>
 
-                                        <h4 class="list-group-item-heading no-pad-bottom">[[book.title]]</h4>
+                                        <h4 class="list-group-item-heading no-pad-bottom">[[data.book.title]]</h4>
                                         <small >
                                             <span class="text-muted" > Ordered by Stuart Glenn Steiner for Fall 2014</span>
                                         </small>
@@ -164,10 +164,10 @@
                 </button>
             </div>
 
-            <h3>Book Details</h3>
+            <h3>Cart Details</h3>
             <div ng-controller="NewBookController">
-                <div ng-repeat="book in cartBooks">
-                    <book-details book="book"></book-details>
+                <div ng-repeat="bookData in cartBooks">
+                    <book-details book="bookData.book"></book-details>
                 </div>
             </div>
 
@@ -178,6 +178,11 @@
                     <i class="fa fa-check"></i> Submit
                 </button>
             </div>
+        </div>
+
+        <div class="col-lg-12" ng-show="getStage() == STAGE_CONFIRMATION">
+
+            <h1>OMG! You totes placed an order!</h1>
         </div>
 
 
