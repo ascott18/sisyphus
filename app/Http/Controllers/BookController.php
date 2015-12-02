@@ -14,6 +14,8 @@ class BookController extends Controller
      */
     public function getIndex()
     {
+        $this->authorize("all");
+
         return view('books.index');
     }
 
@@ -63,6 +65,7 @@ class BookController extends Controller
 
     public function getBookList(Request $request)
     {
+        $this->authorize("all");
 
         $query = Book::query();
 
@@ -159,6 +162,7 @@ class BookController extends Controller
 
     public function getBookDetailList(Request $request)
     {
+        $this->authorize("all");
 
         $query = \App\Models\Order::query();
 
@@ -177,7 +181,7 @@ class BookController extends Controller
         return response()->json($orders);
     }
 
-    /** GET: /books/{id}
+    /** GET: /books/show/{id}
      * Display the specified resource.
      *
      * @param  int  $id
@@ -185,6 +189,8 @@ class BookController extends Controller
      */
     public function getShow($id)
     {
+        $this->authorize("all");
+
         $book = Book::findOrFail($id);
 
         return view('books.details', ['book' => $book]);

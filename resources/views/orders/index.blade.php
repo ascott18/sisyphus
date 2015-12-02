@@ -1,10 +1,9 @@
 @extends('layouts.master')
 
-
-
+@section('area', 'Requests')
+@section('page', 'All Requests')
 
 @section('content')
-    @include('shared.partial.header', ['headerText'=>'Requests', 'subHeaderText'=>'All Requests'])
 
 <div>
     <div class="row" ng-controller="OrdersController">

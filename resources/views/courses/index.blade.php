@@ -1,12 +1,9 @@
 @extends('layouts.master')
 
-
-
+@section('area', 'Courses')
+@section('page', 'All Courses')
 
 @section('content')
-
-    @include('shared.partial.header', ['headerText'=>'Courses', 'subHeaderText'=>'All Courses'])
-
 
     <div class="row">
         <div class="col-lg-12">
@@ -21,10 +18,12 @@
                             <tr>
                                 <th st-sort="section">Section</th>
                                 <th st-sort="course_name">Name</th>
+                                <th width="110px">Details</th>
                             </tr>
                             <tr>
                                 <th><input type="text" class="form-control" placeholder="Search..." st-search="section"/></th>
                                 <td><input type="text" class="form-control" placeholder="Search..." st-search="name"/></td>
+                                <td></td>
                             </tr>
                             </thead>
                             <tbody>
@@ -34,6 +33,10 @@
                                     [[ course.department ]] [[ course.course_number | zpad:3 ]]-[[ course.course_section | zpad:2 ]]
                                 </td>
                                 <td>[[ course.course_name ]]</td>
+                                <td><a class="btn btn-sm btn-info" href="/courses/details/[[course.course_id]]" role="button">
+                                        Details <i class="fa fa-arrow-right"></i>
+                                    </a>
+                                </td>
                             </tr>
 
                             </tbody>

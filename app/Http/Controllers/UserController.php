@@ -18,6 +18,8 @@ class UserController extends Controller
      */
     public function getIndex()
     {
+        $this->authorize('manage-users');
+
         $roles = Role::all();
 
         return view('users.index', ['roles' => $roles]);
@@ -25,21 +27,12 @@ class UserController extends Controller
 
     public function getRoles()
     {
+        $this->authorize('manage-roles');
+
         $roles = Role::all();
         $permissions = Permission::all();
 
         return view('users.roles', ['roles' => $roles, 'permissions' => $permissions]);
-    }
-
-    /**
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function getAllUsers(Request $request)
-    {
-        // TODO: please please please don't forget to gate this.
-
-        return \App\Models\User::with(['departments', 'roles'])->get();
     }
 
     /**
@@ -88,6 +81,8 @@ class UserController extends Controller
      */
     public function getUserList(Request $request)
     {
+        $this->authorize('manage-users');
+
         $query = \App\Models\User::query();
 
         $query = $query->with(['departments', 'roles']);
@@ -108,7 +103,7 @@ class UserController extends Controller
      */
     public function getAllRoles(Request $request)
     {
-        // TODO: don't forget to gate this.
+        $this->authorize('manage-roles');
 
         return \App\Models\Role::with(['permissions'])->get();
     }
@@ -119,14 +114,17 @@ class UserController extends Controller
      */
     public function postAddDepartment(Request $request)
     {
+        $this->authorize('manage-users');
+        $this->validate($request, [
+            'department' => 'required|min:2|max:10',
+            'user_id' => 'required',
+        ]);
+
         $user_id = $request->get('user_id');
+        $user = User::findOrFail($user_id);
 
         $department = $request->get('department');
         $department = strtoupper($department);
-
-        // TODO: validation on $department
-
-        $user = User::findOrFail($user_id);
 
         $user->departments()->updateOrCreate(['department' => $department]);
 
@@ -139,6 +137,8 @@ class UserController extends Controller
      */
     public function postRemoveDepartment(Request $request)
     {
+        $this->authorize('manage-users');
+
         $user_id = $request->get('user_id');
         $department = $request->get('department');
 
@@ -162,6 +162,8 @@ class UserController extends Controller
      */
     public function postSetRole(Request $request)
     {
+        $this->authorize('manage-users');
+
         $user_id = $request->get('user_id');
 
         $role = $request->get('role');
@@ -194,6 +196,8 @@ class UserController extends Controller
      */
     public function postAddPermission(Request $request)
     {
+        $this->authorize('manage-roles');
+
         $role = Role::findOrFail($request->get('role_id'));
         $permission = Permission::findOrFail($request->get('permission_id'));
 
@@ -209,6 +213,8 @@ class UserController extends Controller
      */
     public function postRemovePermission(Request $request)
     {
+        $this->authorize('manage-roles');
+
         $role = Role::findOrFail($request->get('role_id'));
         $permission = Permission::findOrFail($request->get('permission_id'));
 

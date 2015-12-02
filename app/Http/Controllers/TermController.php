@@ -17,6 +17,8 @@ class TermController extends Controller
      */
     public function getIndex()
     {
+        $this->authorize("view-terms");
+
         $terms = Term::orderBy('order_due_date', 'DESC')->paginate(10);
 
         return view('terms.index', ['terms' => $terms]);
@@ -31,6 +33,8 @@ class TermController extends Controller
      */
     public function getDetails($term_id)
     {
+        $this->authorize("view-terms");
+
         $term = Term::findOrFail($term_id);
 
         return view('terms.details', ['term' => $term]);
@@ -111,6 +115,7 @@ class TermController extends Controller
 
     public function getTermList(Request $request)
     {
+        $this->authorize("view-terms");
 
         $query = Term::query();
 
@@ -144,6 +149,8 @@ class TermController extends Controller
      */
     public function postDetails(Request $request, $term_id)
     {
+        $this->authorize("edit-terms");
+
         $term = Term::findOrFail($term_id);
 
         $dates = $request->only('order_start_date', 'order_due_date');
@@ -155,6 +162,8 @@ class TermController extends Controller
 
     public function getCheck($term_id)
     {
+        $this->authorize("view-terms"); // TODO: maybe a different permission for this?
+
         $term = Term::with("courses.orders.book")->findOrFail($term_id);
 
         return view('terms.check',['term'=>$term]);
@@ -235,6 +244,7 @@ class TermController extends Controller
 
     public function getTermDetailList(Request $request)
     {
+        $this->authorize("view-terms");
 
         $query = \App\Models\Course::query();
 

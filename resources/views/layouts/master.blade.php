@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
+    <title>@yield('page') - EWU Textbook Requests </title>
 
-    <title>EWU CS Book Orders</title>
     <!-- Bootstrap Core CSS-->
     <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
     <!-- Custom CSS-->
@@ -15,6 +15,7 @@
     <!-- Custom Fonts-->
     <link href="/stylesheets/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+
 
     @yield('scripts-head')
 </head>
@@ -51,7 +52,7 @@
 
             <ul class="nav navbar-right top-nav">
                 <li >
-                    <span><i class="fa fa-user"></i> Welcome, {{ session('net_id') }}! </span>
+                    <span id="userName"><i class="fa fa-user"></i> Welcome, {{ session('net_id') }}! </span>
                 </li>
             </ul>
 
@@ -61,9 +62,15 @@
                 <li><a href="/books"><i class="fa fa-fw fa-book"></i> Books</a></li>
                 <li><a href="/orders"><i class="fa fa-fw fa-shopping-cart"></i> Orders</a></li>
                 <li><a href="/courses"><i class="fa fa-fw fa-pencil"></i> Courses</a></li>
-                <li><a href="/messages"><i class="fa fa-fw fa-envelope"></i> Messages</a></li>
-                <li><a href="/terms"><i class="fa fa-fw fa-calendar"></i> Terms</a></li>
-                <li><a href="/users"><i class="fa fa-fw fa-group"></i> Users</a></li>
+                @can('send-messages')
+                    <li><a href="/messages"><i class="fa fa-fw fa-envelope"></i> Messages</a></li>
+                @endcan
+                @can('view-terms')
+                    <li><a href="/terms"><i class="fa fa-fw fa-calendar"></i> Terms</a></li>
+                @endcan
+                @can('manage-users')
+                    <li><a href="/users"><i class="fa fa-fw fa-group"></i> Users</a></li>
+                @endcan
 
                 {{--<li><a href="tables.html"><i class="fa fa-fw fa-table"></i> Tables</a></li>--}}
                 {{--<li><a href="forms.html"><i class="fa fa-fw fa-edit"></i> Forms</a></li>--}}
@@ -88,6 +95,15 @@
             <!-- Page Heading-->
 
 
+            @if (array_key_exists('area', View::getSections()))
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">@yield('area')
+                        <small>@yield('page')</small>
+                    </h1>
+                </div>
+            </div>
+            @endif
 
             @yield('content')
 

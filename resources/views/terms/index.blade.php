@@ -1,10 +1,9 @@
 @extends('layouts.master')
 
+@section('area', 'Terms')
+@section('page', 'All Terms')
 
 @section('content')
-
-    @include('shared.partial.header', ['headerText'=>'Terms', 'subHeaderText'=>'All Terms'])
-
 
     <div class="row">
         <div class="col-lg-12">

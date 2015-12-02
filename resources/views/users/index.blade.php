@@ -1,9 +1,9 @@
 @extends('layouts.master')
 
+@section('area', 'Users')
+@section('page', 'User Management')
 
 @section('content')
-
-    @include('shared.partial.header', ['headerText'=>'Users', 'subHeaderText'=>'Management'])
 
     <style>
         .role-input select {

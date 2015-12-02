@@ -1,12 +1,9 @@
 @extends('layouts.master')
 
-
-
+@section('area', 'Books')
+@section('page', $book->isbn13)
 
 @section('content')
-
-    @include('shared.partial.header', ['headerText'=>'Books', 'subHeaderText'=> $book->isbn13])
-
 
 <div class="row">
     <div class="col-lg-12">

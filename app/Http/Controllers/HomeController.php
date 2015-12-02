@@ -10,6 +10,8 @@ class HomeController extends Controller
      */
     public function getIndex()
     {
+        $this->authorize("all");
+
         return view('welcome');
     }
 }

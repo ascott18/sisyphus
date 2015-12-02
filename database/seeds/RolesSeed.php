@@ -46,6 +46,16 @@ class RolesSeed extends Seeder
 
         makePerm('edit-books', "Edit Books");
 
+        makePerm('manage-users', "Manage Users");
+        makePerm('manage-roles', "Manage Roles");
+
+        makePerm('view-terms', "View Terms");
+        makePerm('edit-terms', "Edit Terms");
+
+        makePerm('send-messages-to-all', "Send Messages To Everyone");
+        makePerm('send-messages-to-department', "Send Messages To Department");
+        makePerm('modify-message', "Modify Others' Messages");
+
 
         makeRole('admin', "Administrator")->attachPermissions([
             p('edit-books'),

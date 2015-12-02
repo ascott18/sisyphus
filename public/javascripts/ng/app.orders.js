@@ -15,7 +15,7 @@ app.controller('OrdersController',['$scope', '$http', 'CartService', function($s
     $scope.STAGE_SELECT_BOOKS = 2;
     $scope.cartBooks = CartService.cartBooks;
 
-    $scope.stage = $scope.STAGE_SELECT_BOOKS;
+    $scope.stage = $scope.STAGE_SELECT_COURSE;
 
     $scope.getStage = function(){
         return $scope.stage;
