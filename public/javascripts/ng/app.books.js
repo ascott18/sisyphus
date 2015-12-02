@@ -65,37 +65,44 @@ app.controller('BookDetailsController', function($scope, $http) {
     var ctrl = this;
 
     $scope.book_id = book_id_init;
+    $scope.book_isbn_13 = book_isbn_13_init;
 
-    function generateSignature() {
+    /* TODO: We need a missing thumbnail image */
+    $scope.book_cover_img = "";
 
-        var date = new Date();
+    /*
+    $scope.getLaravelImage = function() {
+        $http.get("/books/cover?isbn=" + $scope.book_isbn_13).then (
+            function success(response){
+                $scope.book_cover_img = "data:image/jpeg;base64," + response.data.image;
+            },
+            function error(response) {
+                // TODO: handle properly
+                console.log("Couldn't get book details", response);
+            }
+        )
+    }
+    */
 
-        var date_string = encodeURIComponent(date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate() + "T" + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + "Z")
-
-        console.log(date_string);
-
-        var test_string =
-            "GET\n" +
-            "webservices.amazon.com\n" +
-            "/onca/xml\n" +
-            "AssociateTag=demon0ed-20&AWSAccessKeyId=AKIAI3BKF5TMJDXYX3FA&IdType=ISBN&ItemId=9780201633610&Operation=ItemLookup&ResponseGroup=Large&SearchIndex=All&Service=AWSECommerceService&Timestamp=" + date_string;
-
-        var amazonRequestString = "http://webservices.amazon.com/onca/xml?AssociateTag=demon0ed-20&AWSAccessKeyId=AKIAI3BKF5TMJDXYX3FA&IdType=ISBN&ItemId=9780201633610&Operation=ItemLookup&ResponseGroup=Large&SearchIndex=All&Service=AWSECommerceService&Timestamp=" + date_string;
-
-        var signature2 = CryptoJS.HmacSHA256(test_string, "d0QgjhPq4cUT0FlSFJ9eVjgdZOLW3nXklPY/n+Pl");
-
-        $http.get(amazonRequestString + "&Signature=" + signature2).then(
-            function success(response) {
-                console.log(response);
+    $scope.getBookCoverImage = function() {
+        $http.get("https://www.googleapis.com/books/v1/volumes?q=isbn:" + $scope.book_isbn_13).then(
+            function success(response){
+                if(response.data.items) {
+                    $scope.book_cover_img = response.data.items[0].volumeInfo.imageLinks.thumbnail;
+                } else {
+                    $scope.book_cover_img = "/images/coverNotAvailable.jpg";
+                }
             },
             function error(response) {
                 // TODO: handle properly
                 console.log("Couldn't get book details", response);
             }
         );
+    }
 
-        console.log("test signature", signature2.toString(CryptoJS.enc.Base64));
-    };
+    //$scope.getLaravelImage();
+    $scope.getBookCoverImage();
+
 
     this.displayed = [];
 
@@ -139,6 +146,5 @@ app.controller('BookDetailsController', function($scope, $http) {
                 console.log("Couldn't get book details", response);
             }
         );
-        generateSignature();
     }
 });

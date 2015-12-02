@@ -82,6 +82,7 @@
                             <tr>
                                 <th><input type="text" class="form-control" placeholder="Search..." st-search="section"/></th>
                                 <th><input type="text" class="form-control" placeholder="Search..." st-search="name"/></th>
+                                <th></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -119,6 +120,7 @@
     <script>
         order_start_date_init = new Date('{{$term->order_start_date->toFormattedDateString()}}');
         order_due_date_init = new Date('{{$term->order_due_date->toFormattedDateString()}}');
+        term_id_init = {{$term->term_id}};
     </script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
