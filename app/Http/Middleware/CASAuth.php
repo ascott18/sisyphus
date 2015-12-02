@@ -44,7 +44,7 @@ class CASAuth {
      */
     public function handle($request, Closure $next)
     {
-        // Do we want to check this?
+        // TODO: Do we want to check this?
         // If we do check this, we will only auth with CAS when the session expires (config.session.lifetime)
         // If we don't check this, we will auth with CAS every single request. Both have their merits, i guess.
         if ($this->auth->guest())
