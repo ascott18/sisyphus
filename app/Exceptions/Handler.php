@@ -94,6 +94,10 @@ class Handler extends ExceptionHandler
         {
             $e = new BadRequestHttpException("URL is incomplete.", $e);
         }
+        elseif ($e instanceof NotFoundHttpException && $e->getMessage() == "Controller method not found.")
+        {
+            $e = new NotFoundHttpException("Page not found.", $e);
+        }
 
         return parent::render($request, $e);
     }

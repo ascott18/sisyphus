@@ -12,7 +12,7 @@ app.config(function($httpProvider) {
 
 
 
-angular.module('filters', []).filter('zpad', function() {
+app.filter('zpad', function() {
     return function(input, n) {
         if(input === undefined)
             input = "";
