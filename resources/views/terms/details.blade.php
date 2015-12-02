@@ -88,7 +88,7 @@
                             <tbody>
                                 <tr ng-repeat="course in ttc.displayed">
                                     <td>
-                                        [[ course.department ]] [[ course.course_number ]]-[[ course.course_section ]]
+                                        [[ course.department ]] [[ course.course_number | zpad:3 ]]-[[ course.course_section | zpad:2 ]]
                                     </td>
                                     <td>[[ course.course_name ]]</td>
                                     <td><a class="btn btn-sm btn-info" href="/courses/details/[[course.course_id]]" role="button">

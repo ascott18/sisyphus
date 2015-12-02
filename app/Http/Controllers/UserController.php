@@ -50,7 +50,7 @@ class UserController extends Controller
         if($request->input('netID'))
             $query = $query->where('net_id', 'LIKE', '%'.$request->input('netID').'%');
         if($request->input('email'))
-            $query = $query->where('first_name', 'LIKE', '%'.$request->input('email').'%');
+            $query = $query->where('email', 'LIKE', '%'.$request->input('email').'%');
 
         return $query;
     }

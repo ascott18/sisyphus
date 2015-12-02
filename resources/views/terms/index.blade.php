@@ -19,6 +19,7 @@
                             <thead>
                             <tr>
                                 <th st-sort="term">Term</th>
+                                <th>Year</th>
                                 <th>Status</th>
                                 <th st-sort="order_start_date">Order Start Date</th>
                                 <th st-sort="order_due_date">Order Due Date</th>
@@ -26,6 +27,7 @@
                             </tr>
                             <tr>
                                 <th><input type="text" class="form-control" placeholder="Search..." st-search="term"/></th>
+                                <th><input type="text" class="form-control" placeholder="Search..." st-search="year"/></th>
                                 <th></th>
                                 <th></th>
                                 <th></th>
@@ -34,7 +36,8 @@
                             </thead>
                             <tbody>
                                 <tr ng-repeat="term in tc.displayed">
-                                    <td> [[ term.termName ]] [[ term.year ]] </td>
+                                    <td> [[ term.termName ]] </td>
+                                    <td> [[ term.year ]] </td>
 
                                     <td> [[ term.status ]] </td>
 
@@ -43,12 +46,12 @@
                                     <td style="width: 1%"> <a href="/terms/details/[[ term.term_id ]]" class="btn btn-sm btn-primary">Details&nbsp; <i class="fa fa-arrow-right"></i></a> </td>
 
                                 </tr>
-
                             </tbody>
+                            <tfoot>
+                            <td class="text-center" st-pagination="" st-items-by-page="10" colspan="6">
+                            </td>
+                            </tfoot>
                         </table>
-
-                        <td class="text-center" st-pagination="" st-items-by-page="10" colspan="4">
-                        </td>
 
                     </div>
                 </div>

@@ -1,4 +1,4 @@
-var app = angular.module('sisyphus', ['sisyphus.helpers', 'ui.bootstrap', 'smart-table']);
+var app = angular.module('sisyphus', ['sisyphus.helpers', 'ui.bootstrap', 'smart-table', 'filters']);
 
 
 app.controller('TermsController', function($scope) {
@@ -33,6 +33,8 @@ app.controller('TermsTableController', function($scope, $http) {
         if(tableState.search.predicateObject) {
             var predicateObject = tableState.search.predicateObject;
             getRequestString += '&term=' + encodeURIComponent(predicateObject.term);      // build search for term
+            if(predicateObject.year)
+                getRequestString += '&year=' + encodeURIComponent(predicateObject.year);    // build search for year
         }
 
         $http.get(getRequestString).then(
