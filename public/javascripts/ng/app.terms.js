@@ -1,5 +1,5 @@
+var app = angular.module('sisyphus', ['sisyphus.helpers', 'ui.bootstrap', 'smart-table', 'filters']);
 
-var app = angular.module('sisyphus', ['sisyphus.helpers', 'ui.bootstrap', 'smart-table']);
 
 app.controller('TermsController', function($scope) {
 
@@ -9,30 +9,34 @@ app.controller('TermsController', function($scope) {
 });
 
 app.controller('TermsTableController', function($scope, $http) {
-    var ctrl = this;
 
+    var ctrl = this;
     this.displayed = [];
     this.callServer = function callServer(tableState) {
         console.log("server called");
-        ctrl.isLoading = true;
 
+        ctrl.isLoading = true;
         var pagination = tableState.pagination;
         var start = pagination.start || 0;
         var end = pagination.number || 10;
+
         var page = (start/end)+1;
 
         var getRequestString = '/terms/term-list?page=' + page;                                 // term list uri
-
         if(tableState.sort.predicate) {
             getRequestString += '&sort=' + encodeURIComponent(tableState.sort.predicate);      // build sort
-            if(tableState.sort.reverse)
+            if(tableState.sort.reverse) {
+                if (predicateObject.term)
                 getRequestString += '&dir=desc';
+            }
         }
         if(tableState.search.predicateObject) {
             var predicateObject = tableState.search.predicateObject;
-            if(predicateObject.term)
-                getRequestString += '&term=' + encodeURIComponent(predicateObject.term);      // build search for term
+            getRequestString += '&term=' + encodeURIComponent(predicateObject.term);      // build search for term
+            if(predicateObject.year)
+                getRequestString += '&year=' + encodeURIComponent(predicateObject.year);    // build search for year
         }
+
         $http.get(getRequestString).then(
             function success(response) {
                 tableState.pagination.numberOfPages = response.data.last_page;               // update number of pages with laravel response
@@ -41,7 +45,6 @@ app.controller('TermsTableController', function($scope, $http) {
                 ctrl.isLoading=false;
             }
         );
-
     }
 
     this.callServerDetail = function callServer(tableState) {
@@ -53,7 +56,9 @@ app.controller('TermsTableController', function($scope, $http) {
         var end = pagination.number || 10;
         var page = (start/end)+1;
 
-        var getRequestString = '/terms/term-detail-list?page=' + page;                                 // term list uri
+        var getRequestString = '/terms/term-detail-list?&page=' + page;                                 // term list uri
+
+        getRequestString += '&term_id=' + term_id_init;                                               // get term id
 
         if(tableState.sort.predicate) {
             getRequestString += '&sort=' + encodeURIComponent(tableState.sort.predicate);               // build sort

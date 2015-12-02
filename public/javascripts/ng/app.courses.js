@@ -1,5 +1,17 @@
 
-var app = angular.module('sisyphus', ['sisyphus.helpers', 'smart-table']);
+var app = angular.module('sisyphus', ['sisyphus.helpers', 'smart-table', 'filters']);
+
+
+angular.module('filters', []).filter('zpad', function() {
+    return function(input, n) {
+        if(input === undefined)
+            input = ""
+        if(input.length >= n)
+            return input
+        var zeros = "0".repeat(n);
+        return (zeros + input).slice(-1 * n)
+    };
+});
 
 
 app.controller('CoursesController', function($scope, $http) {

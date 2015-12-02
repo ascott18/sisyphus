@@ -5,16 +5,16 @@
 
 @section('content')
 
-<div class="row">
+<div ng-controller="BookDetailsController as bdc"  class="row">
     <div class="col-lg-12">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title"><i class="fa fa-book fa-fw"></i> Book Details</h3>
             </div>
             <div class="panel-body">
-
-                <dl class="dl-horizontal">
-                    <dt>Title</dt>
+                <div class="col-md-6">
+                    <dl class="dl-horizontal">
+                        <dt>Title</dt>
                     <dd>
                         {{ $book->title }}
                     </dd>
@@ -40,7 +40,11 @@
                     <dd>
                         [["{{ $book->isbn13 }}" | isbnHyphenate]]
                     </dd>
-                </dl>
+                    </dl>
+                </div>
+                <div class="col-md-6">
+                    <img ng-src="[[ book_cover_img ]]"/>
+                </div>
             </div>
         </div>
 
@@ -50,7 +54,7 @@
                 <h3 class="panel-title"><i class="fa fa-history fa-fw"></i> Past Orders</h3>
             </div>
             <div class="panel-body">
-                <div ng-controller="BookDetailsController as bdc" class="table-responsive">
+                <div class="table-responsive">
                     <table st-pipe="bdc.callServer" st-table="bdc.displayed" class="table table-bordered table-hover table-striped">
                         <thead>
                         <tr>
@@ -98,10 +102,13 @@
 @section('scripts-head')
     <script>
         book_id_init = new String('{{ $book->book_id }}');
+        book_isbn_13_init = new String('{{ $book->isbn13 }}');
     </script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
     <script src="/javascripts/ng/smart-table/smart-table.min.js"></script>
+    <script src="http://crypto-js.googlecode.com/svn/tags/3.0.2/build/rollups/hmac-sha256.js"></script>
+    <script src="http://crypto-js.googlecode.com/svn/tags/3.0.2/build/components/enc-base64.js"></script> <!-- tmp? -->
     <script src="/javascripts/ng/app.js"></script>
     <script src="/javascripts/ng/helper.isbnHyphenate.js"></script>
     <script src="/javascripts/ng/app.books.js"></script>

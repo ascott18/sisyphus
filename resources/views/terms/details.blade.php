@@ -82,12 +82,13 @@
                             <tr>
                                 <th><input type="text" class="form-control" placeholder="Search..." st-search="section"/></th>
                                 <th><input type="text" class="form-control" placeholder="Search..." st-search="name"/></th>
+                                <th></th>
                             </tr>
                             </thead>
                             <tbody>
                                 <tr ng-repeat="course in ttc.displayed">
                                     <td>
-                                        [[ course.department ]] [[ course.course_number ]]-[[ course.course_section ]]
+                                        [[ course.department ]] [[ course.course_number | zpad:3 ]]-[[ course.course_section | zpad:2 ]]
                                     </td>
                                     <td>[[ course.course_name ]]</td>
                                     <td><a class="btn btn-sm btn-info" href="/courses/details/[[course.course_id]]" role="button">
@@ -119,6 +120,7 @@
     <script>
         order_start_date_init = new Date('{{$term->order_start_date->toFormattedDateString()}}');
         order_due_date_init = new Date('{{$term->order_due_date->toFormattedDateString()}}');
+        term_id_init = {{$term->term_id}};
     </script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>

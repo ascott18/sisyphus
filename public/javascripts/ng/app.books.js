@@ -49,6 +49,44 @@ app.controller('BookDetailsController', function($scope, $http) {
     var ctrl = this;
 
     $scope.book_id = book_id_init;
+    $scope.book_isbn_13 = book_isbn_13_init;
+
+    /* TODO: We need a missing thumbnail image */
+    $scope.book_cover_img = "";
+
+    /*
+    $scope.getLaravelImage = function() {
+        $http.get("/books/cover?isbn=" + $scope.book_isbn_13).then (
+            function success(response){
+                $scope.book_cover_img = "data:image/jpeg;base64," + response.data.image;
+            },
+            function error(response) {
+                // TODO: handle properly
+                console.log("Couldn't get book details", response);
+            }
+        )
+    }
+    */
+
+    $scope.getBookCoverImage = function() {
+        $http.get("https://www.googleapis.com/books/v1/volumes?q=isbn:" + $scope.book_isbn_13).then(
+            function success(response){
+                if(response.data.items) {
+                    $scope.book_cover_img = response.data.items[0].volumeInfo.imageLinks.thumbnail;
+                } else {
+                    $scope.book_cover_img = "/images/coverNotAvailable.jpg";
+                }
+            },
+            function error(response) {
+                // TODO: handle properly
+                console.log("Couldn't get book details", response);
+            }
+        );
+    }
+
+    //$scope.getLaravelImage();
+    $scope.getBookCoverImage();
+
 
     this.displayed = [];
 
@@ -88,6 +126,5 @@ app.controller('BookDetailsController', function($scope, $http) {
                 ctrl.isLoading=false;
             }
         );
-
     }
 });
