@@ -73,25 +73,7 @@ app.controller('BookDetailsController', function($scope, $http) {
         )
     }
 
-
-    $scope.getBookCoverImage = function() {
-        $http.get("https://www.googleapis.com/books/v1/volumes?q=isbn:" + $scope.book_isbn_13).then(
-            function success(response){
-                if(response.data.items) {
-                    $scope.book_cover_img = response.data.items[0].volumeInfo.imageLinks.thumbnail;
-                } else {
-                    $scope.book_cover_img = "/images/coverNotAvailable.jpg";
-                }
-            },
-            function error(response) {
-                // TODO: handle properly
-                console.log("Couldn't get book details", response);
-            }
-        );
-    }
-
     $scope.getLaravelImage();
-    //$scope.getBookCoverImage();
 
 
     this.displayed = [];
