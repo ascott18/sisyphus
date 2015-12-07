@@ -178,7 +178,7 @@
 @section('scripts-head')
     <link rel='stylesheet' href='/javascripts/ng/text/textAngular.css'>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+    <script src="/javascripts/angular.min.js"></script>
 
     <script src='/javascripts/ng/text/textAngular-rangy.min.js'></script>
     <script src='/javascripts/ng/text/textAngular-sanitize.min.js'></script>

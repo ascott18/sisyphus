@@ -107,7 +107,7 @@
         book_isbn_13_init = new String('{{ $book->isbn13 }}');
     </script>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+    <script src="/javascripts/angular.min.js"></script>
     <script src="/javascripts/ng/smart-table/smart-table.min.js"></script>
     <script src="http://crypto-js.googlecode.com/svn/tags/3.0.2/build/rollups/hmac-sha256.js"></script>
     <script src="http://crypto-js.googlecode.com/svn/tags/3.0.2/build/components/enc-base64.js"></script> <!-- tmp? -->
