@@ -1,10 +1,9 @@
 @extends('layouts.master')
 
+@section('area', 'Terms')
+@section('page', $term->termName() . ' ' . $term->year)
 
 @section('content')
-
-    @include('shared.partial.header', ['headerText'=>'Terms', 'subHeaderText'=> $term->termName() . ' ' . $term->year])
-
 
     <div class="row" ng-controller="TermsController">
         <div class="col-lg-12">
@@ -30,6 +29,10 @@
                             <dd>{{ $term->order_due_date->toFormattedDateString() }}</dd>
 
                         </dl>
+
+
+
+                        <a href="/terms/check/{{$term->term_id}}" class="btn btn-primary">View Checksheet</a>
                     </div>
 
                     <form action="/terms/details/{{$term->term_id}}" method="POST">
@@ -74,33 +77,36 @@
                             <tr>
                                 <th st-sort="section">Section</th>
                                 <th st-sort="course_name">Name</th>
+                                <th width="110px">Details</th>
                             </tr>
                             <tr>
                                 <th><input type="text" class="form-control" placeholder="Search..." st-search="section"/></th>
                                 <th><input type="text" class="form-control" placeholder="Search..." st-search="name"/></th>
+                                <th></th>
                             </tr>
                             </thead>
                             <tbody>
                                 <tr ng-repeat="course in ttc.displayed">
                                     <td>
-                                        [[ course.department ]] [[ course.course_number ]]-[[ course.course_section ]]
+                                        [[ course.department ]] [[ course.course_number | zpad:3 ]]-[[ course.course_section | zpad:2 ]]
                                     </td>
                                     <td>[[ course.course_name ]]</td>
-
+                                    <td><a class="btn btn-sm btn-info" href="/courses/details/[[course.course_id]]" role="button">
+                                            Details <i class="fa fa-arrow-right"></i>
+                                        </a>
+                                    </td>
                                 </tr>
 
 
                             </tbody>
+
+                            <tfoot>
+                            <tr>
+                                <td class="text-center" st-pagination="" st-items-by-page="10" colspan="4">
+                                </td>
+                            </tr>
+                            </tfoot>
                         </table>
-
-                        <a href="/terms/check/{{$term->term_id}}" class="btn btn-primary">Check Sheet</a>
-
-                        <tfoot>
-                        <tr>
-                            <td class="text-center" st-pagination="" st-items-by-page="10" colspan="4">
-                            </td>
-                        </tr>
-                        </tfoot>
                     </div>
                 </div>
             </div>
@@ -114,6 +120,7 @@
     <script>
         order_start_date_init = new Date('{{$term->order_start_date->toFormattedDateString()}}');
         order_due_date_init = new Date('{{$term->order_due_date->toFormattedDateString()}}');
+        term_id_init = {{$term->term_id}};
     </script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>

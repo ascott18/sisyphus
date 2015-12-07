@@ -5,8 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property mixed book_id
- * @property mixed course_id
+ * @property mixed book_id integer The book_id of the book that this order was placed for.
+ * @property mixed course_id integer The course_id of the course that this order was placed for.
+ * @property mixed placed_by integer The user_id of the user who placed this order.
  */
 class Order extends Model
 {
@@ -33,5 +34,11 @@ class Order extends Model
     public function course()
     {
         return $this->hasOne('App\Models\Course', 'course_id', 'course_id');
+    }
+
+
+    public function placedBy()
+    {
+        return $this->hasOne('App\Models\User', 'user_id', 'placed_by');
     }
 }

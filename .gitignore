@@ -19,11 +19,12 @@ Homestead.json
 .idea/shelf
 
 # Sensitive or high-churn files:
-idea/dataSources.ids
-idea/dataSources.xml
-idea/sqlDataSources.xml
-idea/dynamic.xml
-idea/uiDesigner.xml
+.idea/dataSources.ids
+.idea/dataSources.xml
+.idea/sqlDataSources.xml
+.idea/dynamic.xml
+.idea/uiDesigner.xml
+.idea/jsLibraryMappings.xml
 
 # Gradle:
 # .idea/gradle.xml

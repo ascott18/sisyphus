@@ -1,20 +1,11 @@
 @extends('layouts.master')
 
-
+@section('area', 'Dashboard')
+@section('page', 'Overview')
 
 
 @section('content')
 
-@include('shared.partial.header', ['headerText'=>'Dashboard', 'subHeaderText'=>'Overview'])
-
-        <!-- /.row--><!--.row.col-lg-12
-						.alert.alert-info.alert-dismissable
-						    button.close(type='button', data-dismiss='alert', aria-hidden='true') ×
-						    i.fa.fa-info-circle
-						    strong Like SB Admin?
-						    |  Try out
-						    a.alert-link(href='http://startbootstrap.com/template-overviews/sb-admin-2') SB Admin 2
-						    |  for additional features!--><!-- /.row-->
 <div class="row">
     <div class="col-lg-3 col-xs-6">
         <div class="panel panel-primary">

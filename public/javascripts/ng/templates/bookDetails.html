@@ -8,8 +8,7 @@
 
     <dt>Authors</dt>
     <dd ng-repeat="author in book.authors">
-        <span>[[author.first_name]]</span>
-        <span>[[author.last_name]]</span>
+        <span>[[author.name]]</span>
     </dd>
     <dt>Publisher</dt>
     <dd>
@@ -17,7 +16,7 @@
     </dd>
     <dt>ISBN 13</dt>
     <dd>
-        [[book.isbn13]]
+        [[book.isbn13 | isbnHyphenate]]
     </dd>
 
     <dt>Required</dt>

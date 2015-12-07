@@ -1,5 +1,17 @@
 
-var app = angular.module('sisyphus', ['sisyphus.helpers', 'smart-table']);
+var app = angular.module('sisyphus', ['sisyphus.helpers', 'smart-table', 'filters']);
+
+
+angular.module('filters', []).filter('zpad', function() {
+    return function(input, n) {
+        if(input === undefined)
+            input = ""
+        if(input.length >= n)
+            return input
+        var zeros = "0".repeat(n);
+        return (zeros + input).slice(-1 * n)
+    };
+});
 
 
 app.controller('CoursesController', function($scope, $http) {
@@ -39,10 +51,6 @@ app.controller('CoursesController', function($scope, $http) {
                 tableState.pagination.number = response.data.per_page;                            // update entries per page with laravel response
                 ctrl.displayed = response.data.data;                                              // save laravel response data
                 ctrl.isLoading=false;
-            },
-            function error(response) {
-                // TODO: handle properly
-                console.log("Couldn't get recipients", response);
             }
         );
 

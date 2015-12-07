@@ -1,5 +1,9 @@
 
-var app = angular.module('sisyphus', ['sisyphus.helpers']);
+var app = angular.module('sisyphus', ['sisyphus.helpers', 'sisyphus.helpers.isbnHyphenate']);
+
+stripHyphens = function(isbn13) {
+    return isbn13.replace(/-/g, "");
+};
 
 app.service("CartService", function () {
     this.cartBooks = [];
@@ -15,17 +19,18 @@ app.directive('bookEditor', function() {
     };
 });
 
-var ISBN13_REGEXP = /((978[\--– ])?[0-9][0-9\--– ]{10}[\--– ][0-9xX])|((978)?[0-9]{9}[0-9Xx])/;
+var ISBN13_REGEXP = /^\d{13}$/;
 app.directive('isbn13', function() {
     return {
         require: 'ngModel',
         link: function(scope, elm, attrs, ctrl) {
             ctrl.$validators.isbn13 = function(modelValue, viewValue) {
+
                 if (ctrl.$isEmpty(modelValue)) {
                     // consider empty models to be valid
                     return true;
                 }
-
+                viewValue = stripHyphens(viewValue);
                 if (ISBN13_REGEXP.test(viewValue)) {
                     // it is valid
                     return true;
@@ -53,7 +58,8 @@ app.directive('bookDetails', function() {
    }
 });
 
-app.controller('OrdersController',['$scope', '$http', 'CartService', function($scope, $http, CartService){
+app.controller('OrdersController', ['$scope', '$http', 'CartService',
+    function($scope, $http, CartService){
 
     $scope.STAGE_SELECT_COURSE = 1;
     $scope.STAGE_SELECT_BOOKS = 2;
@@ -65,6 +71,7 @@ app.controller('OrdersController',['$scope', '$http', 'CartService', function($s
     $scope.stage = $scope.STAGE_SELECT_COURSE;
 
     $scope.selectedCourse;
+
 
     $scope.getStage = function(){
         return $scope.stage;
@@ -118,6 +125,7 @@ app.controller('OrdersController',['$scope', '$http', 'CartService', function($s
         $http.post('/orders/no-book', {course_id: course.course_id}).then(
             function success(response){
                 course.no_book=true;
+
                 // TODO: handle this properly - display a little thing that says "Saving" or "Saved"?
                 console.log("Saved!", response);
             },
@@ -127,16 +135,14 @@ app.controller('OrdersController',['$scope', '$http', 'CartService', function($s
             });
     };
 
+    var readUrl = '/orders/read-courses';
+    if (requested_user_id)
+        readUrl += '?user_id=' + requested_user_id;
 
-
-    $http.get('/orders/read-courses').then(
+    $http.get(readUrl).then(
         function success(response) {
-            console.log("got books")
+            $scope.gotCourses = true;
             $scope.courses = response.data;
-        },
-        function error(response) {
-            // TODO: handle properly
-            console.log("Couldn't get recipients", response);
         }
     );
 
@@ -183,18 +189,41 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", function(
     $scope.master = {};
     $scope.book = {};
     $scope.submitted = false;
+    $scope.isAutoFilled = false;
 
     $scope.addAuthor = function(author) {
         $scope.authors.push({name: ""});
 
     };
 
-    $scope.autofill = function() {
-        if ($scope.book.isbn) {
-            $http.get('/books/book-by-isbn?isbn13=' + $scope.book.isbn).then(
+    $scope.isbnChanged = function(book) {
+        if ($scope.isAutoFilled) {
+            $scope.isAutoFilled = false;
+            $scope.authors = [];
+            $scope.book = angular.copy($scope.master);
+            $scope.book['isbn13'] = book['isbn13'];
+        }
+        var stripped = stripHyphens(book['isbn13']);
+        if (ISBN13_REGEXP.test(stripped)) {
+            $scope.autoFill();
+        }
+    };
+
+    $scope.autoFill = function() {
+        if ($scope.book.isbn13) {
+            var stripped = stripHyphens($scope.book.isbn13);
+            $http.get('/books/book-by-isbn?isbn13=' + stripped).then(
                 function success(response) {
                     var data = response.data[0];
-                    $scope.book['publisher'] = data.publisher;
+                    if (data) {
+                        $scope.book['title'] = data.title;
+                        $scope.book['edition'] = data.edition;
+                        $scope.book['publisher'] = data.publisher;
+                        $scope.authors = data.authors;
+
+                        $scope.isAutoFilled = true;
+                    }
+
                     console.log("got book", response.data);
                 },
                 function error(response) {
@@ -203,7 +232,7 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", function(
                 }
             );
         }
-    }
+    };
 
     $scope.removeAuthor = function(index) {
         if (index >= 0 && index < $scope.authors.length) {
@@ -220,6 +249,7 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", function(
             $scope.master["isNew"] = true;
             var bookData = {};
             bookData['book'] = $scope.master;
+            bookData['book']['isbn13'] = stripHyphens(book['isbn13'])
             CartService.cartBooks.push(bookData);
             $scope.master = {};
             $scope.authors = [];
@@ -233,6 +263,7 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", function(
             form.$setPristine();
             form.$setUntouched();
         }
+        $scope.isAutoFilled = false;
         $scope.book = angular.copy($scope.master);
     };
 

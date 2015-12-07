@@ -4,28 +4,29 @@
     <div class="form-group" ng-class="{'has-error': (submitted || form.isbn13.$touched) && (form.isbn13.$error.isbn13 || form.isbn13.$error.required)}">
         <label for="isbn13">ISBN 13</label>
         <input
+                ng-change="isbnChanged(book)"
                 type="text"
                 class="form-control"
                 name="isbn13"
                 placeholder="ISBN 13"
-                ng-model="book.isbn"
+                ng-model="book.isbn13"
                 required isbn13>
 
         <div ng-show="submitted || form.isbn13.$touched">
             <div ng-show="form.isbn13.$error.required"><p class="text-danger">Required</p></div>
             <div ng-show="form.isbn13.$error.isbn13"><p class="text-danger">Invalid ISBN</p></div>
         </div>
+
+        <div ng-show="isAutoFilled">
+            <h3 class="text-muted">This form is auto filled!</h3>
+        </div>
     </div>
 
-    <button type="button" class="btn btn-primary"
-            ng-click="autofill()">
-        <i class="fa fa-plus"></i> Auto fill
-    </button>
-
     <div class="form-group" ng-class="{'has-error': (submitted || form.bookTitle.$touched) && form.bookTitle.$error.required}">
-        <label for="bookTitle">Book Title</label>
+        <label for="title">Book Title</label>
         <input
                 type="text"
+                ng-disabled="isAutoFilled"
                 class="form-control"
                 name="bookTitle"
                 placeholder="Book Title"
@@ -41,6 +42,7 @@
         <label for="author1">Author</label>
         <input
                 type="text"
+                ng-disabled="isAutoFilled"
                 class="form-control"
                 name="author1"
                 placeholder="Author"
@@ -54,6 +56,7 @@
         <div class="input-group" ng-repeat="author in authors" style="margin-top: 10px"  ng-show="!$first">
             <input
                     type="text"
+                    ng-disabled="isAutoFilled"
                     class="form-control"
                     placeholder="Author"
                     ng-model="author.name">
@@ -64,13 +67,16 @@
     </div>
 
     <div style="margin-top: 10px;margin-bottom: 10px">
-        <button class="btn btn-info" ng-click="addAuthor()">Add Author</button>
+        <button class="btn btn-info"
+                ng-click="addAuthor()"
+                ng-disabled="isAutoFilled">Add Author</button>
     </div>
 
     <div class="form-group" ng-class="{'has-error': (submitted || form.publisher.$touched) && form.publisher.$error.required}">
         <label for="publisher">Publisher</label>
         <input
                 type="text"
+                ng-disabled="isAutoFilled"
                 class="form-control"
                 name="publisher"
                 placeholder="Publisher"
@@ -84,23 +90,20 @@
 
 
 
-    <div class="form-group" ng-class="{'has-error': (submitted || form.edition.$touched) && form.edition.$error.required}">
+    <div class="form-group">
         <label for="edition">Edition</label>
             <input
                     type="text"
+                    ng-disabled="isAutoFilled"
                     class="form-control"
                     name="edition"
                     placeholder="Edition"
-                    ng-model="book.edition"
-                    required="">
+                    ng-model="book.edition">
 
-        <div ng-show="submitted || form.edition.$touched">
-            <div ng-show="form.edition.$error.required"><p class="text-danger">Required</p></div>
-        </div>
     </div>
 
     <div class="form-group" ng-class="{'has-error': submitted && form.req.$error.required}">
-        <label for="required">Required</label>
+        <label for="required">Required for Course</label>
             </br>
 
             <label class="radio-inline"><input

@@ -5,10 +5,6 @@ app.controller('RolesController', function($scope, $http) {
     $http.get('/users/all-roles').then(
         function(response){
             $scope.roles = response.data;
-        },
-        function(response){
-            // TODO: handle this properly.
-            console.log("Error getting users");
         }
     );
 
@@ -24,10 +20,6 @@ app.controller('RolesController', function($scope, $http) {
                         break;
                     }
                 }
-            },
-            function(response){
-                // TODO: handle this properly.
-                console.log("Error adding department");
             }
         );
     };
@@ -66,10 +58,6 @@ app.controller('AddPermissionController', function($scope, $http) {
             function(response){
                 $scope.role.permissions.push(selectedPermission);
                 $scope.role.addingPermission = false;
-            },
-            function(response){
-                // TODO: handle this properly.
-                console.log("Error adding department");
             }
         );
     };

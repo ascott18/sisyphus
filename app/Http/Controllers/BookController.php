@@ -117,8 +117,6 @@ class BookController extends Controller
 
         if($request->input('course_name'))
             $query = $query->where('course_name', 'LIKE', '%'.$request->input('course_name').'%');
-        if($request->input('ordered_by'))
-            $query = $query->where('ordered_by_name', 'LIKE', '%'.$request->input('ordered_by_name').'%');
 
         return $query;
     }
@@ -180,6 +178,20 @@ class BookController extends Controller
 
         return response()->json($orders);
     }
+
+    /*
+    public function getCover(Request $request) {
+        $googleResponse = json_decode(file_get_contents("https://www.googleapis.com/books/v1/volumes?q=isbn:".$request->input('isbn')));
+
+        $coverImage = file_get_contents($googleResponse->items[0]->volumeInfo->imageLinks->thumbnail);
+
+        return response()->json(array (
+            "image" => base64_encode($coverImage)
+            )
+        );
+
+    }
+    */
 
     /** GET: /books/show/{id}
      * Display the specified resource.
