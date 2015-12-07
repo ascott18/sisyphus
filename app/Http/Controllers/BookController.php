@@ -88,6 +88,9 @@ class BookController extends Controller
     private function buildDetailSearchQuery($request, $query) {
         if($request->input('section')) {
             $searchArray = preg_split("/[\s-]/", $request->input('section'));
+            foreach($searchArray as $key => $field) {       // strip leading zeros from search terms
+                $searchArray[$key] = ltrim($field, '0');
+            }
             if(count($searchArray) == 2) {
                 // we need to use an anonymous function so the subquery does not override the book_id limit from parent
                 $query = $query->where(function($sQuery) use ($searchArray){
