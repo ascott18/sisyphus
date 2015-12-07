@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Cache;
 use App\Models\Book;
 use Illuminate\Http\Request;
 
@@ -184,19 +185,30 @@ class BookController extends Controller
         return response()->json($orders);
     }
 
-    /*
-    public function getCover(Request $request) {
-        $googleResponse = json_decode(file_get_contents("https://www.googleapis.com/books/v1/volumes?q=isbn:".$request->input('isbn')));
 
-        $coverImage = file_get_contents($googleResponse->items[0]->volumeInfo->imageLinks->thumbnail);
+    public function getCover(Request $request) {
+        $this->authorize("all");
+
+        $cached = true;
+        $coverImage = Cache::get($request->input('isbn'));
+
+        if($coverImage == NULL) {
+            $cached = false;
+            $googleResponse = json_decode(file_get_contents("https://www.googleapis.com/books/v1/volumes?q=isbn:".$request->input('isbn')));
+            if(isset($googleResponse->items)) {
+                $coverImage = file_get_contents($googleResponse->items[0]->volumeInfo->imageLinks->thumbnail);
+                Cache::put($request->input('isbn'), $coverImage, 43800);
+            }
+        }
+
 
         return response()->json(array (
-            "image" => base64_encode($coverImage)
+            "image" => base64_encode($coverImage),
+                "cached" => $cached
             )
         );
 
     }
-    */
 
     /** GET: /books/show/{id}
      * Display the specified resource.
