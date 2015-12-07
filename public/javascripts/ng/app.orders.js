@@ -8,11 +8,14 @@ app.service("CartService", function () {
 app.directive('bookEditor', function() {
     return {
         restrict: 'E',
+        scope: {
+            book: '='
+        },
         templateUrl: '/javascripts/ng/templates/bookEditor.html'
     };
 });
 
-var ISBN13_REGEXP = /^\x20*(?=.{17}$)97(?:8|9)([ -])\d{1,5}\1\d{1,7}\1\d{1,6}\1\d$/;
+var ISBN13_REGEXP = /((978[\--– ])?[0-9][0-9\--– ]{10}[\--– ][0-9xX])|((978)?[0-9]{9}[0-9Xx])/;
 app.directive('isbn13', function() {
     return {
         require: 'ngModel',
@@ -185,6 +188,22 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", function(
         $scope.authors.push({name: ""});
 
     };
+
+    $scope.autofill = function() {
+        if ($scope.book.isbn) {
+            $http.get('/books/book-by-isbn?isbn13=' + $scope.book.isbn).then(
+                function success(response) {
+                    var data = response.data[0];
+                    $scope.book['publisher'] = data.publisher;
+                    console.log("got book", response.data);
+                },
+                function error(response) {
+                    // TODO: handle properly
+                    console.log("Couldn't get past courses", response);
+                }
+            );
+        }
+    }
 
     $scope.removeAuthor = function(index) {
         if (index >= 0 && index < $scope.authors.length) {

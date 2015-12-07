@@ -196,5 +196,22 @@ class BookController extends Controller
         return view('books.details', ['book' => $book]);
     }
 
+    /** GET: /books/book-by-isbn13/{id}
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\View\View
+     */
+    public function getBookByIsbn(Request $request)
+    {
+        $this->authorize("all");
+
+        $isbn13 = $request->input('isbn13');
+
+        $book = Book::where('isbn13', '=', $isbn13)->with("authors")->get();
+
+        return response()->json($book);
+    }
+
 
 }

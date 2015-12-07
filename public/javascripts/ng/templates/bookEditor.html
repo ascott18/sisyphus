@@ -1,7 +1,7 @@
 
 
-<form novalidate class="simple-form" name="form">
-    <div class="form-group" ng-class="{'has-error': (submitted || form.isbn13.$touched) && form.isbn13.$error}">
+<form novalidate class="simple-form" name="form" ng-controller="NewBookController">
+    <div class="form-group" ng-class="{'has-error': (submitted || form.isbn13.$touched) && (form.isbn13.$error.isbn13 || form.isbn13.$error.required)}">
         <label for="isbn13">ISBN 13</label>
         <input
                 type="text"
@@ -12,10 +12,15 @@
                 required isbn13>
 
         <div ng-show="submitted || form.isbn13.$touched">
-            <div ng-show="form.isbn13.$error.required">Required</div>
-            <div ng-show="form.isbn13.$error.isbn13">Invalid ISBN</div>
+            <div ng-show="form.isbn13.$error.required"><p class="text-danger">Required</p></div>
+            <div ng-show="form.isbn13.$error.isbn13"><p class="text-danger">Invalid ISBN</p></div>
         </div>
     </div>
+
+    <button type="button" class="btn btn-primary"
+            ng-click="autofill()">
+        <i class="fa fa-plus"></i> Auto fill
+    </button>
 
     <div class="form-group" ng-class="{'has-error': (submitted || form.bookTitle.$touched) && form.bookTitle.$error.required}">
         <label for="bookTitle">Book Title</label>
@@ -28,7 +33,7 @@
                 required="">
 
         <div ng-show="submitted || form.bookTitle.$touched">
-            <div ng-show="form.bookTitle.$error.required">Required</div>
+            <div ng-show="form.bookTitle.$error.required"><p class="text-danger">Required</p></div>
         </div>
     </div>
 
@@ -43,7 +48,7 @@
                 required="">
 
         <div ng-show="submitted || form.author1.$touched">
-            <div ng-show="form.author1.$error.required">Required</div>
+            <div ng-show="form.author1.$error.required"><p class="text-danger">Required</p></div>
         </div>
 
         <div class="input-group" ng-repeat="author in authors" style="margin-top: 10px"  ng-show="!$first">
@@ -73,7 +78,7 @@
                 required="">
 
         <div ng-show="submitted || form.publisher.$touched">
-            <div ng-show="form.publisher.$error.required">Required</div>
+            <div ng-show="form.publisher.$error.required"><p class="text-danger">Required</p></div>
         </div>
     </div>
 
@@ -90,7 +95,7 @@
                     required="">
 
         <div ng-show="submitted || form.edition.$touched">
-            <div ng-show="form.edition.$error.required">Required</div>
+            <div ng-show="form.edition.$error.required"><p class="text-danger">Required</p></div>
         </div>
     </div>
 
@@ -116,7 +121,7 @@
             </label>
 
         <div ng-show="submitted">
-            <div ng-show="form.req.$error.required">Required</div>
+            <div ng-show="form.req.$error.required"><p class="text-danger">Required</p></div>
         </div>
     </div>
 

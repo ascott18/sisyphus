@@ -164,12 +164,25 @@
                 </button>
             </div>
 
-            <h3>Cart Details</h3>
-            <div ng-controller="NewBookController">
-                <div ng-repeat="bookData in cartBooks">
-                    <book-details book="bookData.book"></book-details>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><i class="fa fa-book fa-fw"></i> Book Details</h3>
+                </div>
+                <div class="panel-body" ng-controller="NewBookController">
+                    <ul class="list-group">
+
+
+                                <li class="list-group-item cursor-pointer"
+                                    ng-repeat="bookData in cartBooks">
+                                    <book-details book="bookData.book"></book-details>
+                                </li>
+
+                    </ul>
+
+
                 </div>
             </div>
+
 
             <div class="row">
                 <button class="btn btn-success pull-right"
