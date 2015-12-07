@@ -55,7 +55,9 @@
             </div>
             <div class="panel-body">
                 <div class="table-responsive">
-                    <table st-pipe="bdc.callServer" st-table="bdc.displayed" class="table table-bordered table-hover table-striped">
+                    <table st-pipe="bdc.callServer" st-table="bdc.displayed"
+                           class="table table-bordered table-hover table-striped"
+                           empty-placeholder>
                         <thead>
                         <tr>
                             <th st-sort="section">Course</th>

@@ -27,14 +27,12 @@
 
                             <dt>Order Due Date</dt>
                             <dd>{{ $term->order_due_date->toFormattedDateString() }}</dd>
-
                         </dl>
-
-
 
                         <a href="/terms/check/{{$term->term_id}}" class="btn btn-primary">View Checksheet</a>
                     </div>
 
+                    @can('edit-terms')
                     <form action="/terms/details/{{$term->term_id}}" method="POST">
                         {!! csrf_field() !!}
 
@@ -60,6 +58,7 @@
                             Save <i class="fa fa-arrow-right"></i>
                         </button>
                     </form>
+                    @endcan
 
                 </div>
             </div>
@@ -72,7 +71,9 @@
                     <?php  $courses = $term->courses()->paginate(10); ?>
 
                     <div ng-controller="TermsTableController as ttc" class="table-responsive">
-                        <table st-pipe="ttc.callServerDetail" st-table="ttc.displayed" class="table table-bordered table-hover table-striped">
+                        <table st-pipe="ttc.callServerDetail" st-table="ttc.displayed"
+                               class="table table-bordered table-hover table-striped"
+                               empty-placeholder="No courses found for this term.">
                             <thead>
                             <tr>
                                 <th st-sort="section">Section</th>
@@ -96,8 +97,6 @@
                                         </a>
                                     </td>
                                 </tr>
-
-
                             </tbody>
 
                             <tfoot>

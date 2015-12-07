@@ -15,7 +15,8 @@
                 <div class="panel-body">
 
                     <div ng-controller="TermsTableController as tc" class="table-responsive">
-                        <table  st-pipe="tc.callServer" st-table="tc.displayed" class="table table-bordered table-hover table-striped">
+                        <table  st-pipe="tc.callServer" st-table="tc.displayed" class="table table-bordered table-hover table-striped"
+                                empty-placeholder>
                             <thead>
                             <tr>
                                 <th st-sort="term">Term</th>
@@ -43,7 +44,11 @@
 
                                     <td> [[ term.orderStartDate ]] </td>
                                     <td> [[ term.orderDueDate ]] </td>
-                                    <td style="width: 1%"> <a href="/terms/details/[[ term.term_id ]]" class="btn btn-sm btn-primary">Details&nbsp; <i class="fa fa-arrow-right"></i></a> </td>
+                                    <td style="width: 1%">
+                                        <a href="/terms/details/[[ term.term_id ]]" class="btn btn-sm btn-primary">
+                                            Details&nbsp; <i class="fa fa-arrow-right"></i>
+                                        </a>
+                                    </td>
 
                                 </tr>
                             </tbody>

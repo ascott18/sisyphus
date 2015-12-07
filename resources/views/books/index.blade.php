@@ -14,7 +14,9 @@
 
 
                     <div ng-controller="BooksController as mc" class="table-responsive">
-                        <table st-pipe="mc.callServer" st-table="mc.displayed" class="table table-bordered table-hover table-striped">
+                        <table st-pipe="mc.callServer" st-table="mc.displayed"
+                               class="table table-bordered table-hover table-striped"
+                               empty-placeholder>
                             <thead>
                             <tr>
                                 <th st-sort="title">Title</th>

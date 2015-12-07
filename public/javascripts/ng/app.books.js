@@ -1,5 +1,5 @@
 
-var app = angular.module('sisyphus', ['sisyphus.helpers', 'sisyphus.helpers.isbnHyphenate', 'smart-table', 'filters']);
+var app = angular.module('sisyphus', ['sisyphus.helpers', 'sisyphus.helpers.isbnHyphenate', 'smart-table']);
 
 
 app.controller('BooksController', function($scope, $http) {

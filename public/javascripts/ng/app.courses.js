@@ -1,5 +1,5 @@
 
-var app = angular.module('sisyphus', ['sisyphus.helpers', 'smart-table', 'filters']);
+var app = angular.module('sisyphus', ['sisyphus.helpers', 'smart-table', 'sisyphus.helpers.isbnHyphenate']);
 
 
 angular.module('filters', []).filter('zpad', function() {

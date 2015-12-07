@@ -23,6 +23,47 @@ app.filter('zpad', function() {
     };
 });
 
+app.directive('emptyPlaceholder', ['$http',
+    function($http){
+       return {
+           link: function(scope, element, attr) {
+               var text = attr.emptyPlaceholder || "No results found.";
+               var table = $(element);
+               console.log(table, element);
+               var tbody = table.find("tbody");
+               var hasStartedRequest = false;
+               var hasFinishedRequest = false;
+               scope.$watchGroup(
+                   [
+                       function () { return tbody.children().length; },
+                       function () { return $http.pendingRequests.length > 0; }
+                   ],
+                   function (newValues, oldValues) {
+                       if (newValues[1] && !hasStartedRequest) {
+                           hasStartedRequest = true;
+                           return;
+                       }
+                       if (!newValues[1] && hasStartedRequest) {
+                           hasFinishedRequest = true;
+                       }
+                       if (!hasFinishedRequest){
+                           return;
+                       }
+
+                       if (newValues[1] && !hasStartedRequest)
+                       console.log(newValues, oldValues);
+                       //if (newValue !== oldValue) {
+                       table.siblings(".empty-table-placeholder").remove();
+                           if (newValues[0] == 0) {
+                               table.after("<h2 class='text-muted empty-table-placeholder'>" +  text + "</h2>");
+                           }
+                       //}
+                   }
+               );
+           }
+       }
+   }
+]);
 
 app.directive('ngConfirmClick', [
 function(){

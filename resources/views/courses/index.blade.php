@@ -13,7 +13,9 @@
                 </div>
                 <div class="panel-body">
                     <div ng-controller="CoursesController as cc" class="table-responsive">
-                        <table st-pipe="cc.callServer" st-table="cc.displayed" class="table table-bordered table-hover table-striped">
+                        <table st-pipe="cc.callServer" st-table="cc.displayed"
+                               class="table table-bordered table-hover table-striped"
+                               empty-placeholder>
                             <thead>
                             <tr>
                                 <th st-sort="section">Section</th>
@@ -60,5 +62,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
     <script src="/javascripts/ng/smart-table/smart-table.min.js"></script>
     <script src="/javascripts/ng/app.js"></script>
+    <script src="/javascripts/ng/helper.isbnHyphenate.js"></script>
     <script src="/javascripts/ng/app.courses.js"></script>
 @stop
