@@ -1,17 +1,5 @@
 
-var app = angular.module('sisyphus', ['sisyphus.helpers', 'smart-table', 'filters']);
-
-
-angular.module('filters', []).filter('zpad', function() {
-    return function(input, n) {
-        if(input === undefined)
-            input = ""
-        if(input.length >= n)
-            return input
-        var zeros = "0".repeat(n);
-        return (zeros + input).slice(-1 * n)
-    };
-});
+var app = angular.module('sisyphus', ['sisyphus.helpers', 'sisyphus.helpers.isbnHyphenate', 'smart-table', 'filters']);
 
 
 app.controller('BooksController', function($scope, $http) {
@@ -51,10 +39,6 @@ app.controller('BooksController', function($scope, $http) {
                 tableState.pagination.number = response.data.per_page;                                  // update how many per page based on laravel response
                 ctrl.displayed = response.data.data;                                                    // get return data
                 ctrl.isLoading=false;
-            },
-            function error(response) {
-                // TODO: handle properly
-                console.log("Couldn't get book list", response);
             }
         );
 
@@ -140,10 +124,6 @@ app.controller('BookDetailsController', function($scope, $http) {
                 tableState.pagination.number = response.data.per_page;
                 ctrl.displayed = response.data.data;
                 ctrl.isLoading=false;
-            },
-            function error(response) {
-                // TODO: handle properly
-                console.log("Couldn't get book details", response);
             }
         );
     }

@@ -31,19 +31,19 @@
                             </thead>
                             <tbody>
 
-                            <tr ng-repeat="book in mc.displayed">
+                            <tr ng-cloak ng-repeat="book in mc.displayed">
                                 <td>
                                     <div>
                                         [[ book.title ]]
                                     </div>
                                     <div class="text-muted">
                                         <span ng-repeat="author in book.authors">
-                                            [[ author.last_name]] [[ (author.first_name != '') ? ( ',' + author.first_name):('') ]] [[ $last ? '' : '|']]
+                                            [[ author.name]] [[ $last ? '' : '|']]
                                         </span>
                                     </div>
                                 </td>
                                 <td>[[ book.publisher ]]</td>
-                                <td>[[ book.isbn13 ]]</td>
+                                <td>[[ book.isbn13 | isbnHyphenate]]</td>
                                 <td>
                                     <a href="/books/show/[[ book.book_id ]]" class="btn btn-sm btn-info" role="button">
                                         Details <i class="fa fa-arrow-right"></i>
@@ -72,5 +72,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
     <script src="/javascripts/ng/smart-table/smart-table.min.js"></script>
     <script src="/javascripts/ng/app.js"></script>
+    <script src="/javascripts/ng/helper.isbnHyphenate.js"></script>
     <script src="/javascripts/ng/app.books.js"></script>
 @stop

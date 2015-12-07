@@ -38,10 +38,6 @@ app.controller('CoursesController', function($scope, $http) {
                 tableState.pagination.number = response.data.per_page;                            // update entries per page with laravel response
                 ctrl.displayed = response.data.data;                                              // save laravel response data
                 ctrl.isLoading=false;
-            },
-            function error(response) {
-                // TODO: handle properly
-                console.log("Couldn't get recipients", response);
             }
         );
 

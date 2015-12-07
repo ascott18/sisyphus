@@ -17,6 +17,7 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
 
 
+
     @yield('scripts-head')
 </head>
 <body ng-app="sisyphus">
@@ -39,10 +40,14 @@
                 <div >
                     <img src="/images/logoWhite.svg" class="pull-left" >
 
-                    <h2>Textbook Orders</h2>
-
-
-
+                    <h2>Textbook Orders
+                        @inject('auth', 'App\Providers\AuthServiceProvider')
+                        @if ($auth->getIsDebuggingUnauthorizedAction())
+                            <p style="position: absolute; font-size: 0.7em; width: 100%">
+                                <i class="fa fa-bug fa-spin"></i> (debugging unauthorized action) <i class="fa fa-bug fa-spin"></i>
+                            </p>
+                        @endif
+                    </h2>
                 </div>
             </a>
         </div>
@@ -52,7 +57,7 @@
 
             <ul class="nav navbar-right top-nav">
                 <li >
-                    <span id="userName"><i class="fa fa-user"></i> Welcome, {{ session('net_id') }}! </span>
+                    <span id="userName"><i class="fa fa-user"></i> Welcome, {{ Auth::user()->net_id }}! </span>
                 </li>
             </ul>
 
@@ -61,7 +66,9 @@
                 <li><a href="/"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a></li>
                 <li><a href="/books"><i class="fa fa-fw fa-book"></i> Books</a></li>
                 <li><a href="/orders"><i class="fa fa-fw fa-shopping-cart"></i> Orders</a></li>
-                <li><a href="/courses"><i class="fa fa-fw fa-pencil"></i> Courses</a></li>
+                @can('view-course-list')
+                    <li><a href="/courses"><i class="fa fa-fw fa-pencil"></i> Courses</a></li>
+                @endcan
                 @can('send-messages')
                     <li><a href="/messages"><i class="fa fa-fw fa-envelope"></i> Messages</a></li>
                 @endcan
@@ -105,12 +112,18 @@
             </div>
             @endif
 
+            <div ng-cloak ng-repeat="error in appErrors"
+                    class="alert alert-danger alert-dismissible" role="alert">
+                <button type="button" class="close" aria-label="Close" ng-click="appErrors.splice(appErrors.indexOf(error), 1)"><span aria-hidden="true">&times;</span></button>
+                <strong>Error!</strong> <span ng-repeat="message in error.messages"><br>[[message]]</span>
+            </div>
+
             @yield('content')
 
-            <!-- /.row-->
             <hr>
             <footer>
                 <p>&copy; 2015 - Eastern Washington University</p>
+                <p class="text-muted">made with <i class="fa fa-heart" style="color: #8b001d;"></i> by EWU Computer Science students</p>
             </footer>
         </div>
     </div>

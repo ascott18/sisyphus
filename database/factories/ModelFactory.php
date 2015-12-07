@@ -45,8 +45,7 @@ $factory->define(App\Models\Book::class, function (Faker\Generator $faker) {
 
 $factory->define(App\Models\Author::class, function (Faker\Generator $faker) {
     return [
-        'first_name' => $faker->firstName,
-        'last_name' => $faker->lastName,
+        'name' => $faker->lastName,
     ];
 });
 

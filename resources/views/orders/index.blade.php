@@ -5,17 +5,31 @@
 
 @section('content')
 
+    <script>requested_user_id = {{$user_id}}</script>
+
 <div>
-    <div class="row" ng-controller="OrdersController">
+    <div ng-cloak class="row" ng-controller="OrdersController">
         <div class="col-lg-12" ng-show="getStage() == STAGE_SELECT_COURSE">
 
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="fa fa-pencil fa-fw"></i>My Courses</h3>
                 </div>
-                <div class="panel-body">
+                <div ng-show="gotCourses" class="panel-body">
 
-                    <table class="list-group" style="width: 100%">
+                    <h3 ng-hide="courses.length" class="text-muted">
+                        @if (count($openTerms) == 0)
+                            No terms are open for ordering.
+                        @else
+                            No courses found for the terms currently open for ordering:
+                        <ul>
+                            @foreach($openTerms as $term)
+                                <li>{{$term->termName()}} {{ $term->year }}</li>
+                            @endforeach
+                        </ul>
+                        @endif
+                    </h3>
+                    <table ng-show="courses.length" class="list-group" style="width: 100%">
                         <thead>
                             <th style="width: 100%"></th>
                             <th ></th>
@@ -39,7 +53,7 @@
                                         </div>
 
                                         <span ng-repeat="order in course.orders">
-                                            <span class="text-muted">[[order.book.isbn13]]</span>: [[order.book.title]]
+                                            <span class="text-muted">[[order.book.isbn13 | isbnHyphenate]]</span>: [[order.book.title]]
                                             </br>
                                         </span>
                                     </p>
@@ -155,18 +169,12 @@
                                         <small >
                                             <span class="text-muted" > Ordered by Stuart Glenn Steiner for Fall 2014</span>
                                         </small>
-
                                     </li>
                                 </ul>
-
                             </div>
                         </div>
-
                     </div>
-
                 </div>
-
-
             </div>
 
             <div class="col-md-6">
@@ -186,7 +194,7 @@
 
                         <h4 class="list-group-item-heading no-pad-bottom">[[book.title]]</h4>
                         <small >
-                            <span class="text-muted" >1234567891234</span>
+                            <span class="text-muted" > [[book.isbn | isbnHyphenate]] </span>
                             <br>
                             <span class="text-muted" > Author Name, Author2 Name</span>
                         </small>
@@ -220,5 +228,6 @@
 @section('scripts-head')
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
     <script src="/javascripts/ng/app.js"></script>
+    <script src="/javascripts/ng/helper.isbnHyphenate.js"></script>
     <script src="/javascripts/ng/app.orders.js"></script>
 @stop

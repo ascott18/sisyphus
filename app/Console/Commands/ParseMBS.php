@@ -265,22 +265,40 @@ EOL;
                     foreach ($course['books'] as $book ) {
                         $bookNumProcessing++;
 
-                        $isbn = str_replace("-", "", $book[$bookRegGroups['ISBN']]);
+                        $isbn = trim(str_replace("-", "", $book[$bookRegGroups['ISBN']]));
+                        $title = title_case($book[$bookRegGroups['Title']]);
+                        $publisher = title_case($book[$bookRegGroups['Publisher']]);
 
-                        $dbBook = Book::firstOrNew(['isbn13' => $isbn]);
-                        $dbBook->title = title_case($book[$bookRegGroups['Title']]);
-                        $dbBook->publisher = title_case($book[$bookRegGroups['Publisher']]);
+                        if ($isbn == "None")
+                        {
+                            // If the ISBN is "None" (and it certainly can be! isn't that fun!),
+                            // we need to match it by other things instead.
+                            $dbBook = Book::firstOrNew(['isbn13' => "", 'title' => $title, 'publisher' => $publisher]);
+                        }
+                        elseif (preg_match("/^[0-9]{13}$/", $isbn))
+                        {
+                            $dbBook = Book::firstOrNew(['isbn13' => $isbn]);
+                            $dbBook->title = $title;
+                            $dbBook->publisher = $publisher;
+                        }
+                        else
+                        {
+                            echo "Unrecognized ISBN found: $isbn ($title)";
+                            exit;
+                        }
+
                         // TODO: save edition (there is no DB field yet)
                         $dbBook->save();
 
                         Author::firstOrCreate([
-                            'last_name' => title_case($book[$bookRegGroups['Author']]),
+                            'name' => trim(title_case($book[$bookRegGroups['Author']])),
                             'book_id' => $dbBook->book_id,
                         ]);
 
                         $dbOrder = new Order;
                         $dbOrder->book_id = $dbBook->book_id;
                         $dbOrder->course_id = $dbCourse->course_id;
+                        $dbOrder->placed_by = $dbCourse->user_id; // TODO: make this a dummy user instead?
                         $dbOrder->save();
                     }
                 }

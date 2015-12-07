@@ -2,29 +2,38 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Term;
 use \Illuminate\Http\Request;
 use App\Models\Author;
 use App\Models\Book;
 use App\Models\User;
 use App\Models\Order;
+use Illuminate\Http\Response;
 use App\Models\Course;
-use League\Flysystem\NotSupportedException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class OrderController extends Controller
 {
 
     /** GET: /orders/
      *
+     * @param Request $request
      * @return \Illuminate\View\View
      */
-    public function getIndex()
+    public function getIndex(Request $request)
     {
-        $this->authorize("all");
+        $targetUser = $request->user();
 
-        $courses = User::orderByRaw("RAND()")->first()->courses();
+        if ($request->user_id){
+            $targetUser = User::findOrFail($request->user_id);
+        }
 
-        return view('orders.index', ['courses' => $courses->get()]);
+        $this->authorize('place-order-for-user', $targetUser);
+
+        $openTerms = Term::currentTerms()->get();
+
+        return view('orders.index', ['user_id' => $targetUser->user_id, 'openTerms' => $openTerms]);
     }
 
 
@@ -36,6 +45,9 @@ class OrderController extends Controller
      */
     public function getCreate($course_id)
     {
+        // TODO: pretty sure this action isn't even used.
+        throw new AccessDeniedHttpException("This action is obsolete, maybe?. Remove this throw if it is actually used.");
+
         // TODO: authorize this correctly based on the course passed in.
         $this->authorize("all");
 
@@ -50,26 +62,43 @@ class OrderController extends Controller
 
     public function postNoBook(Request $request)
     {
-        // TODO: authorize this correctly based on the course passed in.
-        $this->authorize("all");
-
         $course_id=$request->get("course_id");
         $course = Course::findOrFail($course_id);
 
-        $this->authorize('place-order', $course);
+        $this->authorize('place-order-for-course', $course);
+
+        if (count($course->orders)){
+            return response()->json([
+                'success' => false,
+                'message' => "This course already has orders placed for it."],
+                Response::HTTP_BAD_REQUEST);
+        }
 
         $course->no_book=true;
         $course->save();
+
+        return ['success' => true];
     }
 
-    public function getReadCourses()
+    public function getReadCourses(Request $request)
     {
-        // TODO: get the courses of the currently logged in user.
-        // (or all the courses that the user is able to see if the user is more privileged.
-        $this->authorize("all");
+        $user = $targetUser = $request->user();
 
-        $courses = User::findOrFail(77)->courses()->with("orders.book")->getResults();
-        return response()->json($courses);
+        if ($request->user_id){
+            $targetUser = User::findOrFail($request->user_id);
+        }
+
+        $this->authorize('place-order-for-user', $targetUser);
+
+        $courses = $targetUser->currentCourses()->with("orders.book")->get();
+        $retCourses = [];
+
+        foreach ($courses as $course) {
+            if ($user->can('place-order-for-course', $course))
+                $retCourses[] = $course;
+        }
+
+        return response()->json($retCourses);
     }
 
     /**

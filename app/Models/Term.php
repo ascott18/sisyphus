@@ -111,7 +111,13 @@ class Term extends Model
             return "Concluded";
         }
 
-        return "Not yet started";
+        $daysUntilStart = $this->order_start_date->diffInDays(Carbon::now());
+        if ($daysUntilStart <= 100)
+        {
+            return "Starts in $daysUntilStart days";
+        }
+
+        return "Will start eventually";
     }
 
     /**
@@ -122,6 +128,18 @@ class Term extends Model
     public function courses()
     {
         return $this->hasMany('App\Models\Course', 'term_id', 'term_id');
+    }
+
+    /**
+     * Gets the terms for which orders are currently in progress.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public static function currentTerms()
+    {
+        return static::
+            where('order_due_date', '>=', Carbon::now())->
+            where('order_start_date', '<=', Carbon::now());
     }
 
 
