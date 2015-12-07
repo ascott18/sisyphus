@@ -3,17 +3,24 @@
  */
 var app = angular.module('sisyphus', ['sisyphus.helpers', 'smart-table', 'filters']);
 
+app.directive('bookEditor', function() {
+    return {
+        restrict: 'E',
+        templateUrl: '/javascripts/ng/templates/bookEditor.html'
+    };
+});
+
 app.controller("EditBookController", ["$scope", "$http", function($scope, $http) {
     $scope.authors= [];
     $scope.book = {};
 
     $scope.setBook = function(book) {
         $scope.book = book;
-    }
+    };
 
     $scope.addAuthors= function(authors){
         $scope.authors=authors;
-    }
+    };
 
     $scope.addAuthor = function(author) {
         $scope.authors.push({name: ""});

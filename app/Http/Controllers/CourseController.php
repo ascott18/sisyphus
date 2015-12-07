@@ -20,8 +20,12 @@ class CourseController extends Controller
         // TODO: this should not be authorized to all. it needs its own permission.
         $this->authorize("all");
 
-        return view('courses.index');
+        $terms = Term::all();
+
+
+        return view('courses.index',['terms' => $terms]);
     }
+
 
 
     /**
@@ -56,6 +60,7 @@ class CourseController extends Controller
 
         if($request->input('name'))
             $query = $query->where('course_name', 'LIKE', '%'.$request->input('name').'%');
+
 
         return $query;
     }
@@ -102,6 +107,10 @@ class CourseController extends Controller
         $this->authorize("all");
 
         $query = Course::query();
+
+        if($request->input('term_id')) {
+            $query = $query->where('term_id', '=', $request->input('term_id'));
+        }
 
         $query = $this->buildSearchQuery($request, $query);
 

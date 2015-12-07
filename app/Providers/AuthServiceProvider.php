@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Book;
 use App\Models\Course;
 use App\Models\Message;
 use App\Models\Order;

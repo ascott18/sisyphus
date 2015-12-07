@@ -10,12 +10,19 @@
 
     <div class="row">
         <div class="col-lg-12">
-            <div class="panel panel-default">
+            <div class="panel panel-default"  ng-controller="CoursesController as cc">
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="fa fa-pencil fa-fw"></i> All Courses</h3>
                 </div>
+                    Select Term:</br>
+                    <select ng-model="TermSelected" ng-change="updateTerm(TermSelected)">
+                        <option value="">ALL</option>
+                    @foreach($terms as $term)
+                        <option value="<?php echo $term->term_id;?>">{{$term->termName()}} {{$term->year}}</option>
+                    @endforeach
+                    </select>
                 <div class="panel-body">
-                    <div ng-controller="CoursesController as cc" class="table-responsive">
+                    <div class="table-responsive">
                         <table st-pipe="cc.callServer" st-table="cc.displayed" class="table table-bordered table-hover table-striped">
                             <thead>
                             <tr>
