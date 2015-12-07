@@ -31,8 +31,10 @@ class BookController extends Controller
             $query = $query->where('title', 'LIKE', '%'.$request->input('title').'%');
         if($request->input('publisher'))
             $query = $query->where('publisher', 'LIKE', '%'.$request->input('publisher').'%');
-        if($request->input('isbn13'))
-            $query = $query->where('isbn13', 'LIKE', '%'.$request->input('isbn13').'%');
+        if($request->input('isbn13')) {
+            $isbn = str_replace("-", "", $request->input('isbn13'));
+            $query = $query->where('isbn13', 'LIKE', '%' . $isbn . '%');
+        }
 
 
         return $query;
@@ -170,7 +172,7 @@ class BookController extends Controller
         if($request->input('book_id'))
             $query = $query->where('book_id', '=', $request->input('book_id')); // find the book ID
 
-        $query = $query->join('courses', 'orders.course_id' , '=', 'courses.course_id'); // need to join the courses into the dataset
+        $query = $query->join('courses', 'orders.course_id', '=', 'courses.course_id'); // need to join the courses into the dataset
 
         $query = $this->buildDetailSearchQuery($request, $query); // build the search terms query
 
