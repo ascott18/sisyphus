@@ -26,7 +26,6 @@ app.controller('TermsTableController', function($scope, $http) {
         if(tableState.sort.predicate) {
             getRequestString += '&sort=' + encodeURIComponent(tableState.sort.predicate);      // build sort
             if(tableState.sort.reverse) {
-                if (predicateObject.term)
                 getRequestString += '&dir=desc';
             }
         }
