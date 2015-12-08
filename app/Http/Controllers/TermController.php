@@ -62,17 +62,20 @@ class TermController extends Controller
      * @return \Illuminate\Database\Eloquent\Builder
      */
     private function buildTermSearchQuery($request, $query) {
-        if($request->input('term')) {
+        if($request->input("term")) {
             $termList = $this->searchTermNames($request->input('term'));
-            if (count($termList) > 0) {
-                #print_r($termList);
-                for ($j = 0; $j < count($termList); $j++) {
-                    $query = $query->orWhere("term_number", "=", $termList[$j]);
+
+            $query = $query->Where(function($sQuery) use ($termList) {
+                for($i=0; $i<count($termList); $i++) {
+                    $sQuery = $sQuery->orWhere("term_number", "=", $termList[$i]);            // this will take entire search into term field
                 }
-            } else {
-                $query = $query->where('year', '=', $request->input('term'));
-            }
+            });
         }
+
+        if($request->input("year")) {
+            $query = $query->where("year", "=", $request->input("year"));              // this will search for matching year
+        }
+
         return $query;
     }
 
@@ -176,6 +179,9 @@ class TermController extends Controller
     private function buildDetailSearchQuery($request, $query) {
         if($request->input('section')) {
             $searchArray = preg_split("/[\s-]/", $request->input('section'));
+            foreach($searchArray as $key => $field) { // strip leading zeros from searches
+                $searchArray[$key] = ltrim($field, '0');
+            }
             if(count($searchArray) == 2) {
                 $query = $query->where('department', 'LIKE', '%'.$searchArray[0].'%')
                     ->where('course_number', 'LIKE', '%'.$searchArray[1].'%')

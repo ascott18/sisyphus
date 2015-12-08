@@ -1,5 +1,5 @@
 
-var app = angular.module('sisyphus', ['sisyphus.helpers']);
+var app = angular.module('sisyphus', ['sisyphus.helpers', 'sisyphus.helpers.isbnHyphenate']);
 
 app.service("CartService", function () {
     this.cartBooks = [
@@ -9,36 +9,8 @@ app.service("CartService", function () {
     ];
 });
 
-app.controller('Controller', ['$scope', function($scope) {
-    $scope.customer = {
-        name: 'Naomi',
-        address: '1600 Amphitheatre'
-    };
-}]);
-
-app.directive('bookEditor', function() {
-    return {
-        restrict: 'E',
-        templateUrl: '/javascripts/ng/templates/bookEditor.html'
-    };
-});
-
-app.directive('cart', function() {
-    return {
-        templateUrl: '/javascripts/ng/templates/cart.html'
-    };
-});
-
-app.directive('bookDetails', function() {
-   return {
-       scope: {
-           book: '='
-       },
-       templateUrl: '/javascripts/ng/templates/bookDetails.html'
-   }
-});
-
-app.controller('OrdersController',['$scope', '$http', 'CartService', function($scope, $http, CartService){
+app.controller('OrdersController', ['$scope', '$http', 'CartService',
+    function($scope, $http, CartService){
 
     $scope.STAGE_SELECT_COURSE = 1;
     $scope.STAGE_SELECT_BOOKS = 2;
@@ -66,23 +38,17 @@ app.controller('OrdersController',['$scope', '$http', 'CartService', function($s
         $http.post('/orders/no-book', {course_id: course.course_id}).then(
             function success(response){
                 course.no_book=true;
-                // TODO: handle this properly - display a little thing that says "Saving" or "Saved"?
-                console.log("Saved!", response);
-            },
-            function error(response){
-                // TODO: handle this properly.
-                console.log("Not Saved!", response);
             })
     };
 
-    $http.get('/orders/read-courses').then(
+    var readUrl = '/orders/read-courses';
+    if (requested_user_id)
+        readUrl += '?user_id=' + requested_user_id;
+
+    $http.get(readUrl).then(
         function success(response) {
-            console.log("got books")
+            $scope.gotCourses = true;
             $scope.courses = response.data;
-        },
-        function error(response) {
-            // TODO: handle properly
-            console.log("Couldn't get recipients", response);
         }
     );
 

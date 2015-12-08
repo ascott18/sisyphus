@@ -1,7 +1,7 @@
 /**
  * Created by Admin00 on 11/16/2015.
  */
-var app = angular.module('sisyphus', ['sisyphus.helpers', 'smart-table', 'filters']);
+var app = angular.module('sisyphus', ['sisyphus.helpers', 'sisyphus.helpers.isbnHyphenate', 'smart-table']);
 
 app.directive('bookEditor', function() {
     return {
@@ -9,50 +9,6 @@ app.directive('bookEditor', function() {
         templateUrl: '/javascripts/ng/templates/bookEditor.html'
     };
 });
-
-app.controller("EditBookController", ["$scope", "$http", function($scope, $http) {
-    $scope.authors= [];
-    $scope.book = {};
-
-    $scope.setBook = function(book) {
-        $scope.book = book;
-    };
-
-    $scope.addAuthors= function(authors){
-        $scope.authors=authors;
-    };
-
-    $scope.addAuthor = function(author) {
-        $scope.authors.push({name: ""});
-
-    };
-
-    $scope.removeAuthor = function(index) {
-        if (index >= 0 && index < $scope.authors.length) {
-            $scope.authors.splice(index, 1);
-        }
-    };
-
-
-
-
-}]);
-
-
-
-
-
-angular.module('filters', []).filter('zpad', function() {
-    return function(input, n) {
-        if(input === undefined)
-            input = ""
-        if(input.length >= n)
-            return input
-        var zeros = "0".repeat(n);
-        return (zeros + input).slice(-1 * n)
-    };
-});
-
 
 app.controller('BooksController', function($scope, $http) {
     var ctrl = this;
@@ -91,10 +47,6 @@ app.controller('BooksController', function($scope, $http) {
                 tableState.pagination.number = response.data.per_page;                                  // update how many per page based on laravel response
                 ctrl.displayed = response.data.data;                                                    // get return data
                 ctrl.isLoading=false;
-            },
-            function error(response) {
-                // TODO: handle properly
-                console.log("Couldn't get book list", response);
             }
         );
 
@@ -105,6 +57,44 @@ app.controller('BookDetailsController', function($scope, $http) {
     var ctrl = this;
 
     $scope.book_id = book_id_init;
+    $scope.book_isbn_13 = book_isbn_13_init;
+
+    /* TODO: We need a missing thumbnail image */
+    $scope.book_cover_img = "";
+
+    /*
+    $scope.getLaravelImage = function() {
+        $http.get("/books/cover?isbn=" + $scope.book_isbn_13).then (
+            function success(response){
+                $scope.book_cover_img = "data:image/jpeg;base64," + response.data.image;
+            },
+            function error(response) {
+                // TODO: handle properly
+                console.log("Couldn't get book details", response);
+            }
+        )
+    }
+    */
+
+    $scope.getBookCoverImage = function() {
+        $http.get("https://www.googleapis.com/books/v1/volumes?q=isbn:" + $scope.book_isbn_13).then(
+            function success(response){
+                if(response.data.items) {
+                    $scope.book_cover_img = response.data.items[0].volumeInfo.imageLinks.thumbnail;
+                } else {
+                    $scope.book_cover_img = "/images/coverNotAvailable.jpg";
+                }
+            },
+            function error(response) {
+                // TODO: handle properly
+                console.log("Couldn't get book details", response);
+            }
+        );
+    }
+
+    //$scope.getLaravelImage();
+    $scope.getBookCoverImage();
+
 
     this.displayed = [];
 
@@ -142,12 +132,7 @@ app.controller('BookDetailsController', function($scope, $http) {
                 tableState.pagination.number = response.data.per_page;
                 ctrl.displayed = response.data.data;
                 ctrl.isLoading=false;
-            },
-            function error(response) {
-                // TODO: handle properly
-                console.log("Couldn't get book details", response);
             }
         );
-
     }
 });

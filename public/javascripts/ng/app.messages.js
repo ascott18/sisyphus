@@ -28,11 +28,6 @@ var saveMessage = function($http, message) {
     $http.post('/messages/save-message', message).then(
         function success(response){
             // TODO: handle this properly - display a little thing that says "Saving" or "Saved"?
-            console.log("Saved!", response);
-        },
-        function error(response){
-            // TODO: handle this properly.
-            console.log("Not Saved!", response);
         })
 };
 
@@ -109,10 +104,6 @@ app.controller('MessagesController', function($scope, $timeout, $http){
                 });
 
                 if (after) after();
-            },
-            function error(response) {
-                // TODO: handle properly
-                console.log("Couldn't get messages", response);
             }
         );
     };
@@ -132,11 +123,6 @@ app.controller('MessagesController', function($scope, $timeout, $http){
                 {
                     $scope.reloadMessages();
                 }
-            },
-            function error(response){
-                // TODO: handle this properly.
-                console.log("Not Deleted!", response);
-                $scope.reloadMessages();
             })
     };
 
@@ -149,10 +135,6 @@ app.controller('MessagesController', function($scope, $timeout, $http){
                 $scope.messages.push(message);
                 $scope.selectMessage(message);
 
-            },
-            function error(response){
-                // TODO: handle this properly.
-                console.log("Not Added!", response);
             });
     };
 
@@ -185,7 +167,6 @@ app.controller('MessagesController', function($scope, $timeout, $http){
             function error(response){
                 // TODO: handle this properly.
                 $scope.sendingMessages = false;
-                console.log("Not Sent!", response);
             });
     };
 
@@ -222,10 +203,6 @@ app.controller('MessagesController', function($scope, $timeout, $http){
     $http.get('/messages/all-recipients').then(
         function success(response) {
             $scope.recipients = response.data;
-        },
-        function error(response) {
-            // TODO: handle properly
-            console.log("Couldn't get recipients", response);
         }
     );
 

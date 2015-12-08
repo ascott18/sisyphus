@@ -1,6 +1,5 @@
 
-var app = angular.module('sisyphus', ['sisyphus.helpers', 'smart-table']);
-
+var app = angular.module('sisyphus', ['sisyphus.helpers', 'smart-table', 'sisyphus.helpers.isbnHyphenate']);
 
 app.controller('CoursesController', function($scope, $http) {
     var ctrl1 = this;
@@ -60,10 +59,6 @@ app.controller('CoursesController', function($scope, $http) {
                 tableState.pagination.number = response.data.per_page;                            // update entries per page with laravel response
                 ctrl1.displayed = response.data.data;                                              // save laravel response data
                 ctrl1.isLoading=false;
-            },
-            function error(response) {
-                // TODO: handle properly
-                console.log("Couldn't get recipients", response);
             }
         );
 

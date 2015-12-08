@@ -1,12 +1,9 @@
 @extends('layouts.master')
 
-
-
+@section('area', 'Books')
+@section('page', 'All Books')
 
 @section('content')
-
-    @include('shared.partial.header', ['headerText'=>'Books', 'subHeaderText'=>'All Books'])
-
     <div class="row">
         <div class="col-lg-12">
             <div class="panel panel-default">
@@ -17,13 +14,15 @@
 
 
                     <div ng-controller="BooksController as mc" class="table-responsive">
-                        <table st-pipe="mc.callServer" st-table="mc.displayed" class="table table-bordered table-hover table-striped">
+                        <table st-pipe="mc.callServer" st-table="mc.displayed"
+                               class="table table-bordered table-hover table-striped"
+                               empty-placeholder>
                             <thead>
                             <tr>
                                 <th st-sort="title">Title</th>
                                 <th st-sort="publisher">Publisher</th>
                                 <th st-sort="isbn13">ISBN</th>
-                                <th>Details</th>
+                                <th width="110px">Details</th>
                             </tr>
                             <tr>
                                 <th><input type="text" class="form-control" placeholder="Search..." st-search="title"/></th>
@@ -34,22 +33,22 @@
                             </thead>
                             <tbody>
 
-                            <tr ng-repeat="book in mc.displayed">
+                            <tr ng-cloak ng-repeat="book in mc.displayed">
                                 <td>
                                     <div>
                                         [[ book.title ]]
                                     </div>
                                     <div class="text-muted">
                                         <span ng-repeat="author in book.authors">
-                                            [[ author.last_name]] [[ (author.first_name != '') ? ( ',' + author.first_name):('') ]] [[ $last ? '' : '|']]
+                                            [[ author.name]] [[ $last ? '' : '|']]
                                         </span>
                                     </div>
                                 </td>
                                 <td>[[ book.publisher ]]</td>
-                                <td>[[ book.isbn13 ]]</td>
+                                <td>[[ book.isbn13 | isbnHyphenate]]</td>
                                 <td>
-                                    <a href="/books/show/[[ book.book_id ]]" class="btn btn-info" role="button">
-                                        <i class="fa fa-info-circle"></i> Details
+                                    <a href="/books/show/[[ book.book_id ]]" class="btn btn-sm btn-info" role="button">
+                                        Details <i class="fa fa-arrow-right"></i>
                                     </a>
                                 </td>
                             </tr>
@@ -72,8 +71,9 @@
 @stop
 
 @section('scripts-head')
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+    <script src="/javascripts/angular.min.js"></script>
     <script src="/javascripts/ng/smart-table/smart-table.min.js"></script>
     <script src="/javascripts/ng/app.js"></script>
+    <script src="/javascripts/ng/helper.isbnHyphenate.js"></script>
     <script src="/javascripts/ng/app.books.js"></script>
 @stop

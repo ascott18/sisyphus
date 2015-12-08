@@ -1,9 +1,9 @@
 @extends('layouts.master')
 
+@section('area', 'Requests')
+@section('page', 'Create a request')
 
 @section('content')
-    @include('shared.partial.header', ['headerText'=>'Requests', 'subHeaderText'=>'Create a request'])
-
 
     <div class="row" ng-controller="OrdersController">
         {{ $user->last_name }}, {{ $user->first_name }}<br/>
@@ -132,7 +132,7 @@
 @stop
 
 @section('scripts-head')
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+    <script src="/javascripts/angular.min.js"></script>
     <script src="/javascripts/ng/app.js"></script>
     <script src="/javascripts/ng/app.orders.js"></script>
 @stop

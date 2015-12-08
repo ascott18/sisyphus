@@ -1,9 +1,9 @@
 @extends('layouts.master')
 
+@section('area', 'Users')
+@section('page', 'User Management')
 
 @section('content')
-
-    @include('shared.partial.header', ['headerText'=>'Users', 'subHeaderText'=>'Management'])
 
     <style>
         .role-input select {
@@ -160,7 +160,7 @@
 
 
 @section('scripts-head')
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+    <script src="/javascripts/angular.min.js"></script>
     <script src="/javascripts/ng/smart-table/smart-table.min.js"></script>
     <script src="/javascripts/ui-bootstrap-tpls-0.14.3.min.js"></script>
     <script src="/javascripts/ng/app.js"></script>

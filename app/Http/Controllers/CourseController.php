@@ -17,8 +17,7 @@ class CourseController extends Controller
      */
     public function getIndex()
     {
-        // TODO: this should not be authorized to all. it needs its own permission.
-        $this->authorize("all");
+        $this->authorize("view-course-list");
 
         $terms = Term::all();
 
@@ -26,6 +25,22 @@ class CourseController extends Controller
         return view('courses.index',['terms' => $terms]);
     }
 
+
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param $id integer The id of the course to display details for.
+     * @return \Illuminate\Http\Response
+     */
+    public function getDetails($id)
+    {
+        $course = Course::findOrFail($id);
+
+        $this->authorize("view-course", $course);
+
+        return view('courses.details', ['course' => $course]);
+    }
 
 
     /**
@@ -38,6 +53,9 @@ class CourseController extends Controller
     private function buildSearchQuery($request, $query) {
         if($request->input('section')) {
             $searchArray = preg_split("/[\s-]/", $request->input('section'));
+            foreach($searchArray as $key => $field) {
+                $searchArray[$key] = ltrim($field, '0');
+            }
             if(count($searchArray) == 2) {
                 $query = $query->where('department', 'LIKE', '%'.$searchArray[0].'%')
                     ->where('course_number', 'LIKE', '%'.$searchArray[1].'%')
@@ -103,10 +121,19 @@ class CourseController extends Controller
      */
     public function getCourseList(Request $request)
     {
-        // TODO: this should not be authorized to all. it needs its own permission.
-        $this->authorize("all");
+        $this->authorize("view-course-list");
 
         $query = Course::query();
+
+        if ($request->user()->may('view-dept-courses'))
+        {
+            $departments = $request->user()->departments()->lists('department');
+            $query = $query->whereIn('department', $departments);
+        }
+        elseif (!$request->user()->may('view-all-courses'))
+        {
+            $query = $query->where('user_id', $request->user()->user_id);
+        }
 
         if($request->input('term_id')) {
             $query = $query->where('term_id', '=', $request->input('term_id'));

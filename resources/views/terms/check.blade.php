@@ -1,5 +1,5 @@
 <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
-<div class="pull-right"><?php echo date("d/m/Y, h:i:s a");?></div>
+<div class="pull-right"><?php echo date("m/d/Y, h:i:s a");?></div>
 <h1>Book Order Check Sheet</h1>
 
 <style>
@@ -44,14 +44,15 @@
                     @foreach($course->orders as $order)
                         <?php $book = $order->book?>
                         <tr>
-                            <td>{{ $course->department }} {{ str_pad($course->course_number, 3, "0", STR_PAD_LEFT) }}
-                                -{{ $course->course_section }} {{$course->course_name}}</td>
+                            <td>{{ $course->department }}
+                                {{ str_pad($course->course_number, 3, "0", STR_PAD_LEFT) }}-{{ $course->course_section }}
+                                {{$course->course_name}}</td>
                             <td>{{$user->last_name}}, {{$user->first_name}}</td>
                             <td>{{$book->title}}</td>
                             <td>
                                 <?php $index = 0; ?>
                                 @foreach($book->authors as $author)
-                                    {{$author->last_name}}, {{$author->first_name}}
+                                    {{$author->name}}
                                     @if ($index++ != count($book->authors)-1)
                                         |
                                     @endif

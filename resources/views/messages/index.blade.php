@@ -1,7 +1,9 @@
 @extends('layouts.master')
 
+@section('area', 'Messages')
+@section('page', 'Send Messages')
+
 @section('content')
-    @include('shared.partial.header', ['headerText'=>'Messages', 'subHeaderText'=>'Create and send'])
 
     <div class="row" ng-controller="MessagesController" xmlns="http://www.w3.org/1999/html">
         <div ng-show="stage == STAGE_COMPOSE">
@@ -176,7 +178,7 @@
 @section('scripts-head')
     <link rel='stylesheet' href='/javascripts/ng/text/textAngular.css'>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+    <script src="/javascripts/angular.min.js"></script>
 
     <script src='/javascripts/ng/text/textAngular-rangy.min.js'></script>
     <script src='/javascripts/ng/text/textAngular-sanitize.min.js'></script>

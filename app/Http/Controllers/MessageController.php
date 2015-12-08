@@ -88,7 +88,7 @@ class MessageController extends Controller
             $message = new Message();
             $message->subject = "EWU Textbook Requests";
             $message->body = "<h3>New Message</h3>";
-            $message->owner_user_id = session('user_id');
+            $message->owner_user_id = Auth::user()->user_id;
             $message->save();
         }
         else
@@ -97,7 +97,7 @@ class MessageController extends Controller
             $this->authorize('touch-message', $message);
 
             $message = $message->replicate();
-            $message->owner_user_id = session('user_id');
+            $message->owner_user_id = Auth::user()->user_id;
             $message->subject = $message->subject . " Copy";
             $message->save();
         }

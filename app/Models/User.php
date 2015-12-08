@@ -48,6 +48,18 @@ class User extends Model implements AuthenticatableContract,
         return $this->hasMany('App\Models\Course', 'user_id', 'user_id');
     }
 
+    /**
+     * Gets the users courses for which orders are currently open.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function currentCourses()
+    {
+        $currentTermsIds = Term::currentTerms()->select('term_id')->get()->values();
+
+        return $this->courses()->whereIn('term_id', $currentTermsIds);
+    }
+
 
     public function departments()
     {

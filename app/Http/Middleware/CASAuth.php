@@ -44,44 +44,49 @@ class CASAuth {
      */
     public function handle($request, Closure $next)
     {
-        $cas = app('cas');
-
-        // This will throw an exception if authentication fails,
-        // and will immediately redirect to login.ewu.edu if authentication is needed.
-        $cas->authenticate();
-
-
-        // If we get here, the user is authenticated with CAS.
-
-        $net_id = $cas->getCurrentUser();
-
-        $user = \App\Models\User::where(['net_id' => $net_id])->first();
-
-        if (is_null($user))
+        // TODO: Do we want to check this?
+        // If we do check this, we will only auth with CAS when the session expires (config.session.lifetime)
+        // If we don't check this, we will auth with CAS every single request. Both have their merits, i guess.
+        if ($this->auth->guest())
         {
-            if (!$this->isPretending())
+            $cas = app('cas');
+
+            // This will throw an exception if authentication fails,
+            // and will immediately redirect to login.ewu.edu if authentication is needed.
+            $cas->authenticate();
+
+
+            // If we get here, the user is authenticated with CAS.
+            $net_id = $cas->getCurrentUser();
+
+            $oldUser = $this->auth->user();
+
+            $user = \App\Models\User::where(['net_id' => $net_id])->first();
+
+            if (is_null($user))
             {
-                $attributes = $cas->getAttributes();
-            }
-            else
-            {
-                $attributes = [
-                    'Ewuid' => "00123456",
-                ];
+                if (!$this->isPretending())
+                {
+                    $attributes = $cas->getAttributes();
+                }
+                else
+                {
+                    $attributes = [
+                        'Ewuid' => "00123456",
+                    ];
+                }
+
+                $user = new \App\Models\User();
+                $user->net_id = $net_id;
+                $user->ewu_id = $attributes['Ewuid'];
+                $user->save();
             }
 
-            $user = new \App\Models\User();
-            $user->net_id = $net_id;
-            $user->ewu_id = $attributes['Ewuid'];
-            $user->save();
+            if (!$oldUser || $oldUser['net_id'] != $net_id)
+            {
+                $this->auth->login($user);
+            }
         }
-
-        // Second parameter is to prevent persistent logins.
-        // We want to auth with CAS every time, in case the user has logged out.
-        $this->auth->login($user, false);
-
-        $this->session->put('user_id', $user->user_id);
-        $this->session->put('net_id', $net_id);
 
         return $next($request);
     }
