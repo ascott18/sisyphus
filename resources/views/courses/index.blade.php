@@ -11,13 +11,17 @@
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="fa fa-pencil fa-fw"></i> All Courses</h3>
                 </div>
-                    Select Term:</br>
-                    <select ng-model="TermSelected" ng-change="updateTerm(TermSelected)">
-                        <option value="">ALL</option>
-                    @foreach($terms as $term)
-                        <option value="<?php echo $term->term_id;?>">{{$term->termName()}} {{$term->year}}</option>
-                    @endforeach
+                <div class="form-group col-md-12">
+                    <br>
+                    <label>Select Term:
+                    <select class="form-control" ng-model="TermSelected" ng-change="updateTerm(TermSelected)">
+                        <option value="">All Terms</option>
+                        @foreach($terms as $term)
+                            <option value="<?php echo $term->term_id;?>">{{$term->termName()}} {{$term->year}}</option>
+                        @endforeach
                     </select>
+                    </label>
+                </div>
                 <div class="panel-body">
                     <div class="table-responsive">
                         <table st-pipe="cc.callServer" st-table="cc.displayed"
