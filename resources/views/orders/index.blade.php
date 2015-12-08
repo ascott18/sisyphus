@@ -214,7 +214,7 @@
 
         <div class="col-lg-12" ng-show="getStage() == STAGE_CONFIRMATION">
 
-            <h1>OMG! You totes placed an order!</h1>
+            <h1>Order successfully placed! Thank you!</h1>
         </div>
 
 

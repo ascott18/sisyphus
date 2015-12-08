@@ -213,7 +213,7 @@ class BookController extends Controller
         return view('books.details', ['book' => $book]);
     }
 
-    
+
     public function getEdit($id)
     {
 

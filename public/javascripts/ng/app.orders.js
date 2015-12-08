@@ -68,7 +68,7 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService',
 
     $scope.cartBooks = CartService.cartBooks;
 
-    $scope.stage = $scope.STAGE_SELECT_BOOKS;
+    $scope.stage = $scope.STAGE_SELECT_COURSE;
 
     $scope.selectedCourse;
 
