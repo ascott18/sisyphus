@@ -29,6 +29,10 @@ body {
     display: table-cell;
 }
 
+.empty-table-placeholder {
+    margin: -20px 10px 10px;
+}
+
 
 .navbar-brand {
     position: fixed;
@@ -49,6 +53,10 @@ body {
 
 .top-nav {
     margin-top: 10px;
+}
+
+.nav-tabs li:first-child{
+    margin-left: 10px;
 }
 
 

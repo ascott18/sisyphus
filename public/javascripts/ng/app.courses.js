@@ -1,5 +1,5 @@
 
-var app = angular.module('sisyphus', ['sisyphus.helpers', 'smart-table']);
+var app = angular.module('sisyphus', ['sisyphus.helpers', 'smart-table', 'sisyphus.helpers.isbnHyphenate']);
 
 app.controller('CoursesController', function($scope, $http) {
     var ctrl = this;

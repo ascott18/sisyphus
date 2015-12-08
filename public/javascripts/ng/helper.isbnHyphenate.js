@@ -6,7 +6,7 @@ app.filter('isbnHyphenate', function() {
         if(!input)
             input = "";
 
-        return ISBN.asIsbn13(input, true)
+        return ISBN.asIsbn13(input, true) || input
     };
 });
 

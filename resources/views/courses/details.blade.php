@@ -104,7 +104,7 @@
                                         {{ $order->book->title }}
                                     </td>
                                     <td>
-                                        {{ $order->book->isbn13 }}
+                                        [["{{ $order->book->isbn13 }}" | isbnHyphenate ]]
                                     </td>
                                     <td>
                                         {{ $order->book->publisher }}
@@ -129,8 +129,9 @@
 
 @section('scripts-head')
 
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+    <script src="/javascripts/angular.min.js"></script>
     <script src="/javascripts/ng/smart-table/smart-table.min.js"></script>
     <script src="/javascripts/ng/app.js"></script>
+    <script src="/javascripts/ng/helper.isbnHyphenate.js"></script>
     <script src="/javascripts/ng/app.books.js"></script>
 @stop
