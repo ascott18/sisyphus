@@ -68,7 +68,7 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService',
 
     $scope.cartBooks = CartService.cartBooks;
 
-    $scope.stage = $scope.STAGE_SELECT_COURSE;
+    $scope.stage = $scope.STAGE_SELECT_BOOKS;
 
     $scope.selectedCourse;
 
@@ -236,7 +236,7 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", function(
 
     $scope.removeAuthor = function(index) {
         if (index >= 0 && index < $scope.authors.length) {
-            $scope.authors.splice(index, 1);
+                $scope.authors.splice(index, 1);
         }
     };
 

@@ -159,27 +159,11 @@
                     <cart></cart>
                 </div>
 
-                {{--<ul class="list-group">--}}
-                    {{--<li class="list-group-item cursor-pointer"--}}
-                        {{--ng-cloak--}}
-                        {{--ng-repeat="book in cartBooks">--}}
 
-                        {{--<div class="pull-right">--}}
-                            {{--<button class="btn btn-xs btn-danger"--}}
-                                    {{--ng-click="deleteBookFromCart(book)">--}}
-                                {{--<i class="fa fa-fw fa-times"></i>--}}
-                            {{--</button>--}}
-                        {{--</div>--}}
+                        
 
-                        {{--<h4 class="list-group-item-heading no-pad-bottom">[[book.title]]</h4>--}}
-                        {{--<small >--}}
-                            {{--<span class="text-muted" > [[book.isbn | isbnHyphenate]] </span>--}}
-                            {{--<br>--}}
-                            {{--<span class="text-muted" > Author Name, Author2 Name</span>--}}
-                        {{--</small>--}}
+                </ul>
 
-                    {{--</li>--}}
-                {{--</ul>--}}
 
 
                 <h3 class="text-muted" ng-show="cartBooks.length == 0">There are no books in the cart.</h3>

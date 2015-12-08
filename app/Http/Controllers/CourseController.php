@@ -19,8 +19,12 @@ class CourseController extends Controller
     {
         $this->authorize("view-course-list");
 
-        return view('courses.index');
+        $terms = Term::all();
+
+
+        return view('courses.index',['terms' => $terms]);
     }
+
 
 
     /**
@@ -75,6 +79,7 @@ class CourseController extends Controller
         if($request->input('name'))
             $query = $query->where('course_name', 'LIKE', '%'.$request->input('name').'%');
 
+
         return $query;
     }
 
@@ -128,6 +133,10 @@ class CourseController extends Controller
         elseif (!$request->user()->may('view-all-courses'))
         {
             $query = $query->where('user_id', $request->user()->user_id);
+        }
+
+        if($request->input('term_id')) {
+            $query = $query->where('term_id', '=', $request->input('term_id'));
         }
 
         $query = $this->buildSearchQuery($request, $query);
