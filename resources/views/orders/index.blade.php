@@ -61,7 +61,7 @@
 
                                 <td style="vertical-align: top">
                                     <span ng-if="!course.no_book">
-                                    <a ng-click="setStage(2)"
+                                    <a ng-click="placeRequestForCourse(course)"
                                        class="btn btn-primary"
                                        style="width:100%; margin-bottom:5px">
                                         Place a request <i class="fa fa-arrow-right fa-fw"></i>
@@ -90,16 +90,18 @@
 
 
             <div class="col-md-6">
+                <h2>Books</h2>
+
                 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-
-
                     <div>
-
-
                         <!-- Nav tabs -->
-                        <ul class="nav nav-tabs" role="tablist">
-                            <li role="presentation" class="active"><a href="#newbook" aria-controls="newbook" role="tab" data-toggle="tab">New Book</a></li>
-                            <li role="presentation"><a href="#pastbooks" aria-controls="pastbooks" role="tab" data-toggle="tab">Past Books</a></li>
+                        <ul class="nav nav-pills" role="tablist">
+                            <li role="presentation" class="active"><a href="#newbook" aria-controls="newbook" role="tab" data-toggle="tab">
+                                    <i class="fa fa-star"></i> Enter a New Book
+                                </a></li>
+                            <li role="presentation"><a href="#pastbooks" aria-controls="pastbooks" role="tab" data-toggle="tab">
+                                    <i class="fa fa-history"></i> Select a Past Book
+                                </a></li>
                         </ul>
 
                         <!-- Tab panes -->
@@ -118,21 +120,28 @@
 
                                 </br>
 
-                                <ul class="list-group">
-                                    <li class="list-group-item cursor-pointer"
+                                <h3 class="text-muted"
+                                        ng-show="selectedCourse.pastBooks.length == 0">
+                                    There are no known past books for this course.
+                                </h3>
+
+                                <ul class="list-group"
+                                        ng-show="selectedCourse.pastBooks.length > 0">
+                                    <li class="list-group-item"
                                         ng-cloak
-                                        ng-repeat="book in pastBooks |orderBy: (book.mine?0:1):true">
+                                        ng-repeat="data in selectedCourse.pastBooks | orderBy: (book.mine?0:1):true">
 
                                         <div class="pull-right">
                                             <button class="btn btn-xs btn-primary"
-                                                    ng-click="addBookToCart(book)">
+                                                    ng-click="addBookToCart(data)">
                                                 <i class="fa fa-fw fa-plus"></i>
                                             </button>
                                         </div>
 
-                                        <h4 class="list-group-item-heading no-pad-bottom">[[book.title]]</h4>
+                                        <h4 class="list-group-item-heading no-pad-bottom">[[data.book.title]]</h4>
                                         <small >
-                                            <span class="text-muted" > Ordered by Stuart Glenn Steiner for Fall 2014</span>
+                                            <span class="text-muted" > Ordered by [[data.order.placed_by.first_name]] [[data.order.placed_by.last_name]] for
+                                                [[data.course.term.term_name]] [[data.course.term.year]]</span>
                                         </small>
                                     </li>
                                 </ul>
@@ -144,24 +153,21 @@
 
             <div class="col-md-6">
 
-                <h3>Cart</h3>
+                <h2>Cart</h2>
+
                 <div ng-controller="NewBookController">
                     <cart></cart>
                 </div>
 
 
-                        <h4 class="list-group-item-heading no-pad-bottom">[[book.title]]</h4>
-                        <small >
-                            <span class="text-muted" > [[book.isbn | isbnHyphenate]] </span>
-                            <br>
-                            <span class="text-muted" > Author Name, Author2 Name</span>
-                        </small>
+                        
 
-                    </li>
                 </ul>
 
 
-                <div class="row">
+
+                <h3 class="text-muted" ng-show="cartBooks.length == 0">There are no books in the cart.</h3>
+                <div class="row" ng-show="cartBooks.length > 0">
                     <button class="btn btn-success pull-right"
                             ng-click="setStage(3)"
                             style="margin: 20px;">
@@ -182,12 +188,20 @@
                 </button>
             </div>
 
-            <h3>Book Details</h3>
-            <div ng-controller="NewBookController">
-                <div ng-repeat="book in cartBooks">
-                    <book-details book="book"></book-details>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><i class="fa fa-book fa-fw"></i> Book Details</h3>
+                </div>
+                <div class="panel-body" ng-controller="NewBookController">
+                    <ul class="list-group">
+                        <li class="list-group-item"
+                            ng-repeat="bookData in cartBooks">
+                            <book-details book="bookData.book"></book-details>
+                        </li>
+                    </ul>
                 </div>
             </div>
+
 
             <div class="row">
                 <button class="btn btn-success pull-right"
@@ -196,6 +210,11 @@
                     <i class="fa fa-check"></i> Submit
                 </button>
             </div>
+        </div>
+
+        <div class="col-lg-12" ng-show="getStage() == STAGE_CONFIRMATION">
+
+            <h1>OMG! You totes placed an order!</h1>
         </div>
 
 

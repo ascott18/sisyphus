@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Term;
+use Auth;
 use \Illuminate\Http\Request;
 use App\Models\Author;
 use App\Models\Book;
@@ -101,28 +102,94 @@ class OrderController extends Controller
         return response()->json($retCourses);
     }
 
+
+    /**
+     * @param $id int course id to get books for.
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getPastCourses($id)
+    {
+        $this->authorize("all");
+
+        $course = Course::findOrFail($id);
+        $courses =
+            Course::
+            where(['department' => $course->department, 'course_number' => $course->course_number])
+            ->where('course_id', '!=', $id)
+            ->with([
+                    "term",
+                    "orders.book.authors",
+                    'orders.placedBy'=>function($query){
+                        return $query->select('user_id', 'first_name', 'last_name');
+                    }])
+            ->get();
+
+        foreach ($courses as $course) {
+            $course->term->term_name = $course->term->termName();
+        }
+
+        return response()->json($courses);
+    }
+
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function postStore(Request $request)
+    public function postSubmitOrder(Request $request)
     {
-        // TODO: pretty sure this action isn't even used.
-        throw new AccessDeniedHttpException("This action is obsolete. Update it, or remove it.");
-
         $params = $request->all();
 
-        $book = Book::create([
-            'title' => $params['bookTitle'],
-            'isbn13' => $params['isbn13'],
-            'publisher' => $params['publisher'],
-        ]);
+        $course = Course::findOrFail($params['course_id']);
+        $this->authorize("place-order-for-course", $course);
 
-        // TODO: THIS SUCKS
-        $book->authors()->save(new Author([
-            'first_name' => $params['author1'],
-        ]));
+
+
+        foreach ($params['cart'] as $bookData) {
+
+            $book = $bookData['book'];
+
+            if (isset($book['isNew']) && $book['isNew']) {
+
+                $isbn = $book['isbn13'];
+
+                $db_book = null;
+
+                if ($isbn) {
+                    $db_book = Book::where('isbn13', '=', $isbn)->first();
+                }
+
+                if (!$db_book){
+                    $db_book = Book::create([
+                        'title' => $book['title'],
+                        'isbn13' => $isbn,
+                        'publisher' => $book['publisher'],
+                    ]);
+
+                    foreach ($book['authors'] as $author) {
+                        $db_book->authors()->save(new Author([
+                            'first_name' => $author['name']
+                        ]));
+                    }
+                }
+
+            }
+            else {
+                $db_book = Book::findOrFail($book['book_id']);
+            }
+
+            $user_id = Auth::user()->user_id;
+            Order::create([
+                'placed_by' => $user_id,
+                'course_id' => $params['course_id'],
+                'required' => $book['required'],
+                'book_id' => $db_book->book_id
+            ]);
+
+        }
+
+
+
     }
 }

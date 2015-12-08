@@ -1,1 +1,27 @@
-<div>Hello, {{book.title}}!</div>
+
+
+<dl class="dl-horizontal">
+    <dt>Title</dt>
+    <dd>
+        [[book.title]]
+    </dd>
+
+    <dt>Authors</dt>
+    <dd ng-repeat="author in book.authors">
+        <span>[[author.name]]</span>
+    </dd>
+    <dt>Publisher</dt>
+    <dd>
+        [[book.publisher]]
+    </dd>
+    <dt>ISBN 13</dt>
+    <dd>
+        [[book.isbn13 | isbnHyphenate]]
+    </dd>
+
+    <dt>Required</dt>
+    <dd>
+        [[book.required ? "Yes" : "No"]]
+    </dd>
+</dl>
+
