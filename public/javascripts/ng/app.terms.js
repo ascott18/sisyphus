@@ -1,4 +1,4 @@
-var app = angular.module('sisyphus', ['sisyphus.helpers', 'ui.bootstrap', 'smart-table', 'filters']);
+var app = angular.module('sisyphus', ['sisyphus.helpers', 'ui.bootstrap', 'smart-table']);
 
 
 app.controller('TermsController', function($scope) {
@@ -26,7 +26,6 @@ app.controller('TermsTableController', function($scope, $http) {
         if(tableState.sort.predicate) {
             getRequestString += '&sort=' + encodeURIComponent(tableState.sort.predicate);      // build sort
             if(tableState.sort.reverse) {
-                if (predicateObject.term)
                 getRequestString += '&dir=desc';
             }
         }

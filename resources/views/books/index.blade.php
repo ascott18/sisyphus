@@ -14,7 +14,9 @@
 
 
                     <div ng-controller="BooksController as mc" class="table-responsive">
-                        <table st-pipe="mc.callServer" st-table="mc.displayed" class="table table-bordered table-hover table-striped">
+                        <table st-pipe="mc.callServer" st-table="mc.displayed"
+                               class="table table-bordered table-hover table-striped"
+                               empty-placeholder>
                             <thead>
                             <tr>
                                 <th st-sort="title">Title</th>
@@ -69,7 +71,7 @@
 @stop
 
 @section('scripts-head')
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+    <script src="/javascripts/angular.min.js"></script>
     <script src="/javascripts/ng/smart-table/smart-table.min.js"></script>
     <script src="/javascripts/ng/app.js"></script>
     <script src="/javascripts/ng/helper.isbnHyphenate.js"></script>

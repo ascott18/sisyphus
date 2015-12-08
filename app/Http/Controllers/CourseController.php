@@ -49,6 +49,9 @@ class CourseController extends Controller
     private function buildSearchQuery($request, $query) {
         if($request->input('section')) {
             $searchArray = preg_split("/[\s-]/", $request->input('section'));
+            foreach($searchArray as $key => $field) {
+                $searchArray[$key] = ltrim($field, '0');
+            }
             if(count($searchArray) == 2) {
                 $query = $query->where('department', 'LIKE', '%'.$searchArray[0].'%')
                     ->where('course_number', 'LIKE', '%'.$searchArray[1].'%')
