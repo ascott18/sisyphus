@@ -40,7 +40,7 @@ class User extends Model implements AuthenticatableContract,
      *
      * @var array
      */
-    protected $fillable = ['name', 'email'];
+    protected $fillable = [];
 
 
     public function courses()

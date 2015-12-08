@@ -90,16 +90,18 @@
 
 
             <div class="col-md-6">
+                <h2>Books</h2>
+
                 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-
-
                     <div>
-
-
                         <!-- Nav tabs -->
-                        <ul class="nav nav-tabs" role="tablist">
-                            <li role="presentation" class="active"><a href="#newbook" aria-controls="newbook" role="tab" data-toggle="tab">New Book</a></li>
-                            <li role="presentation"><a href="#pastbooks" aria-controls="pastbooks" role="tab" data-toggle="tab">Past Books</a></li>
+                        <ul class="nav nav-pills" role="tablist">
+                            <li role="presentation" class="active"><a href="#newbook" aria-controls="newbook" role="tab" data-toggle="tab">
+                                    <i class="fa fa-star"></i> Enter a New Book
+                                </a></li>
+                            <li role="presentation"><a href="#pastbooks" aria-controls="pastbooks" role="tab" data-toggle="tab">
+                                    <i class="fa fa-history"></i> Select a Past Book
+                                </a></li>
                         </ul>
 
                         <!-- Tab panes -->
@@ -118,10 +120,16 @@
 
                                 </br>
 
-                                <ul class="list-group">
-                                    <li class="list-group-item cursor-pointer"
+                                <h3 class="text-muted"
+                                        ng-show="selectedCourse.pastBooks.length == 0">
+                                    There are no known past books for this course.
+                                </h3>
+
+                                <ul class="list-group"
+                                        ng-show="selectedCourse.pastBooks.length > 0">
+                                    <li class="list-group-item"
                                         ng-cloak
-                                        ng-repeat="data in selectedCourse.pastBooks |orderBy: (book.mine?0:1):true">
+                                        ng-repeat="data in selectedCourse.pastBooks | orderBy: (book.mine?0:1):true">
 
                                         <div class="pull-right">
                                             <button class="btn btn-xs btn-primary"
@@ -132,7 +140,8 @@
 
                                         <h4 class="list-group-item-heading no-pad-bottom">[[data.book.title]]</h4>
                                         <small >
-                                            <span class="text-muted" > Ordered by Stuart Glenn Steiner for Fall 2014</span>
+                                            <span class="text-muted" > Ordered by [[data.order.placed_by.first_name]] [[data.order.placed_by.last_name]] for
+                                                [[data.course.term.term_name]] [[data.course.term.year]]</span>
                                         </small>
                                     </li>
                                 </ul>
@@ -144,7 +153,7 @@
 
             <div class="col-md-6">
 
-                <h3>Cart</h3>
+                <h2>Cart</h2>
 
                 <div ng-controller="NewBookController">
                     <cart></cart>
@@ -173,8 +182,8 @@
                 {{--</ul>--}}
 
 
-
-                <div class="row">
+                <h3 class="text-muted" ng-show="cartBooks.length == 0">There are no books in the cart.</h3>
+                <div class="row" ng-show="cartBooks.length > 0">
                     <button class="btn btn-success pull-right"
                             ng-click="setStage(3)"
                             style="margin: 20px;">
@@ -201,16 +210,11 @@
                 </div>
                 <div class="panel-body" ng-controller="NewBookController">
                     <ul class="list-group">
-
-
-                                <li class="list-group-item cursor-pointer"
-                                    ng-repeat="bookData in cartBooks">
-                                    <book-details book="bookData.book"></book-details>
-                                </li>
-
+                        <li class="list-group-item"
+                            ng-repeat="bookData in cartBooks">
+                            <book-details book="bookData.book"></book-details>
+                        </li>
                     </ul>
-
-
                 </div>
             </div>
 

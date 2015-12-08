@@ -99,10 +99,10 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService',
                         var bookData = {};
                         bookData['book'] = order.book;
                         bookData['course'] = pastCourse;
+                        bookData['order'] = order;
                         pastBooks.push(bookData);
                     }
                 }
-
 
                 course['pastBooks'] = pastBooks;
                 $scope.selectedCourse = course;
@@ -249,7 +249,7 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", function(
             $scope.master["isNew"] = true;
             var bookData = {};
             bookData['book'] = $scope.master;
-            bookData['book']['isbn13'] = stripHyphens(book['isbn13'])
+            bookData['book']['isbn13'] = stripHyphens(bookData['book']['isbn13']);
             CartService.cartBooks.push(bookData);
             $scope.master = {};
             $scope.authors = [];

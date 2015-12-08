@@ -83,7 +83,7 @@ class AuthServiceProvider extends ServiceProvider
                         $this->isDebuggingUnauthorizedAction = true;
                     }
                     $runningBefore = false;
-                     return true;
+                    // return true;
                 }
                 $runningBefore = false;
             }

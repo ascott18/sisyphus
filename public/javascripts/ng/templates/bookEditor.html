@@ -38,7 +38,7 @@
         </div>
     </div>
 
-    <div class="form-group" ng-class="{'has-error': (submitted || form.author1.$touched) && form.author1.$error.required}">
+    <div class="form-group clearfix" ng-class="{'has-error': (submitted || form.author1.$touched) && form.author1.$error.required}">
         <label for="author1">Author</label>
         <input
                 type="text"
@@ -53,6 +53,7 @@
             <div ng-show="form.author1.$error.required"><p class="text-danger">Required</p></div>
         </div>
 
+
         <div class="input-group" ng-repeat="author in authors" style="margin-top: 10px"  ng-show="!$first">
             <input
                     type="text"
@@ -60,16 +61,16 @@
                     class="form-control"
                     placeholder="Author"
                     ng-model="author.name">
-                        <span class="input-group-addon" ng-click="removeAuthor($index)">
+                        <span class="input-group-addon cursor-pointer" ng-click="removeAuthor($index)">
                             <i class="fa fa-times"></i>
                         </span>
         </div>
-    </div>
 
-    <div style="margin-top: 10px;margin-bottom: 10px">
-        <button class="btn btn-info"
-                ng-click="addAuthor()"
-                ng-disabled="isAutoFilled">Add Author</button>
+        <div class="pull-right" style="margin-top: 10px;margin-bottom: 10px">
+            <button class="btn btn-info"
+                    ng-click="addAuthor()"
+                    ng-disabled="isAutoFilled"><i class="fa fa-plus"></i> Add Additional Author</button>
+        </div>
     </div>
 
     <div class="form-group" ng-class="{'has-error': (submitted || form.publisher.$touched) && form.publisher.$error.required}">
@@ -110,7 +111,7 @@
                     type="radio"
                     ng-model="book.required"
                     name="req"
-                    value="Yes"
+                    ng-value="true"
                     required=""/> Yes
             </label>
 
@@ -119,7 +120,7 @@
                     type="radio"
                     ng-model="book.required"
                     name="req"
-                    value="No"
+                    ng-value="false"
                     required=""/> No
             </label>
 

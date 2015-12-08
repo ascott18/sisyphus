@@ -23,7 +23,7 @@ class Order extends Model
      *
      * @var array
      */
-    protected $fillable = ['course_id', 'book_id'];
+    protected $fillable = ['course_id', 'placed_by', 'book_id', 'required'];
 
     public function book()
     {
