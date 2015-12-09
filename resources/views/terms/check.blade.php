@@ -67,8 +67,9 @@
                     @endforeach
                 @else
                     <tr>
-                        <td>{{ $course->department }} {{ str_pad($course->course_number, 3, "0", STR_PAD_LEFT) }}
-                            -{{ $course->course_section }} {{$course->course_name}}</td>
+                        <td>{{ $course->department }}
+                            {{ str_pad($course->course_number, 3, "0", STR_PAD_LEFT) }}-{{ $course->course_section }}
+                            {{$course->course_name}}</td>
                         <td>{{$user->last_name}}, {{$user->first_name}}</td>
                         <td>No Book</td>
                         <td></td>

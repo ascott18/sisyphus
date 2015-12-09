@@ -29,7 +29,7 @@
                                empty-placeholder>
                             <thead>
                             <tr>
-                                <th st-sort="section">Section</th>
+                                <th width="170px" st-sort="section">Section</th>
                                 <th st-sort="course_name">Name</th>
                                 <th width="110px">Details</th>
                             </tr>

@@ -38,7 +38,7 @@
                         <tbody>
                             <tr class="list-group-item" ng-repeat="course in courses">
                                 <td style="width: 100%">
-                                    <h4 class="list-group-item-heading">[[course.department]] [[course.course_number]]-[[course.course_section]] [[course.course_name]]</h4>
+                                    <h4 class="list-group-item-heading">[[course.department]] [[course.course_number | zpad:3]]-[[course.course_section | zpad:2]] [[course.course_name]]</h4>
 
                                     <p style="margin-left: 3em">
                                         <div ng-show="courseNeedsOrders(course)">
