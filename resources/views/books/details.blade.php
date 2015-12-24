@@ -13,7 +13,7 @@
 
             </div>
             <div class="panel-body">
-                <div class="col-md-6">
+                <div class="col-sm-6">
                     {{--<a href="/books/edit/{{ $book->book_id }}" class="btn btn-info " role="button">--}}
                         {{--<i class="fa fa-info-circle"></i> Edit--}}
                     {{--</a>--}}
@@ -46,7 +46,7 @@
                     </dd>
                     </dl>
                 </div>
-                <div class="col-md-6">
+                <div class="col-sm-6">
                     <img ng-src="[[ book_cover_img ]]"/>
                 </div>
 

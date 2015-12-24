@@ -42,7 +42,7 @@
                             <input type="hidden" name="order_start_date" ng-value="order_start_date | date:'yyyy-MM-dd'">
 
                             <uib-datepicker ng-model="order_start_date"
-                                            ng-init="order_start_date = ('{{$term->order_start_date->toFormattedDateString()}}')"
+                                            ng-init="order_start_date = createDate('{{$term->order_start_date->toFormattedDateString()}}')"
                                             max-date="order_due_date"
                                             show-weeks="false"></uib-datepicker>
                         </div>
