@@ -3,14 +3,12 @@ var app = angular.module('sisyphus', ['sisyphus.helpers', 'smart-table', 'sisyph
 
 app.controller('CoursesController', function($scope, $http) {
     var ctrl1 = this;
-    $scope.term="";
     $scope.stCtrl=null;
 
-    $scope.updateTerm=function(value)
+    $scope.updateTerm=function()
     {
-        $scope.term=value;
         $scope.stCtrl.pipe();
-    }
+    };
 
     this.displayed = [];
 
@@ -32,9 +30,9 @@ app.controller('CoursesController', function($scope, $http) {
 
         var getRequestString = '/courses/course-list?page=' + page;                                 // set course list uri
 
-        if($scope.term!="")
+        if($scope.TermSelected!="")
         {
-            getRequestString+= '&term_id=' + $scope.term;
+            getRequestString+= '&term_id=' + $scope.TermSelected;
         }
 
 

@@ -10,21 +10,21 @@
 
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title"><i class="fa fa-pencil fa-fw"></i> Manage Terms</h3>
+                    <h3 class="panel-title"><i class="fa fa-calendar fa-fw"></i> Manage Terms</h3>
                 </div>
                 <div class="panel-body">
 
                     <div ng-controller="TermsTableController as tc" class="table-responsive">
-                        <table  st-pipe="tc.callServer" st-table="tc.displayed" class="table table-bordered table-hover table-striped"
+                        <table  st-pipe="tc.callServer" st-table="tc.displayed" class="table table-hover"
                                 empty-placeholder>
                             <thead>
                             <tr>
                                 <th st-sort="term">Term</th>
-                                <th>Year</th>
+                                <th st-sort="term_id" st-sort-default="reverse">Year</th>
                                 <th>Status</th>
                                 <th st-sort="order_start_date">Order Start Date</th>
                                 <th st-sort="order_due_date">Order Due Date</th>
-                                <th>Details</th>
+                                <th width="1%"></th>
                             </tr>
                             <tr>
                                 <th><input type="text" class="form-control" placeholder="Search..." st-search="term"/></th>
@@ -53,7 +53,7 @@
                                 </tr>
                             </tbody>
                             <tfoot>
-                            <td class="text-center" st-pagination="" st-items-by-page="10" colspan="6">
+                            <td class="text-center" st-pagination="" st-items-by-page="15" colspan="6">
                             </td>
                             </tfoot>
                         </table>

@@ -61,14 +61,13 @@
             <div class="panel-body">
                 <div class="table-responsive">
                     <table st-pipe="bdc.callServer" st-table="bdc.displayed"
-                           class="table table-bordered table-hover table-striped"
+                           class="table table-hover"
                            empty-placeholder>
                         <thead>
                         <tr>
                             <th st-sort="section">Course</th>
                             <th st-sort="course_name">Course Name</th>
-                            <th width="160px">Details</th>
-                            {{--<th st-sort="quantity_requested">Quantity Requested</th>--}}
+                            <th width="1%"></th>
                         </tr>
                         <tr>
                             <th><input type="text" class="form-control" placeholder="Search..." st-search="section"/></th>

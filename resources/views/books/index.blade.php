@@ -15,14 +15,14 @@
 
                     <div ng-controller="BooksController as mc" class="table-responsive">
                         <table st-pipe="mc.callServer" st-table="mc.displayed"
-                               class="table table-bordered table-hover table-striped"
+                               class="table table-hover"
                                empty-placeholder>
                             <thead>
                             <tr>
                                 <th st-sort="title">Title</th>
                                 <th st-sort="publisher">Publisher</th>
                                 <th st-sort="isbn13">ISBN</th>
-                                <th width="110px">Details</th>
+                                <th width="1%"></th>
                             </tr>
                             <tr>
                                 <th><input type="text" class="form-control" placeholder="Search..." st-search="title"/></th>

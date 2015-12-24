@@ -9,7 +9,7 @@
         <div class="col-lg-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title"><i class="fa fa-pencil fa-fw"></i> Course Details</h3>
+                    <h3 class="panel-title"><i class="fa fa-university fa-fw"></i> Course Details</h3>
                 </div>
                 <div class="panel-body">
 
@@ -87,13 +87,13 @@
                     @elseif (!count($course->orders))
                         <h3 class="text-muted">There are no orders placed for this course.</h3>
                     @else
-                        <table class="table table-bordered table-hover table-striped">
+                        <table class="table table-hover">
                             <thead>
                             <tr>
                                 <th>Title</th>
                                 <th>ISBN</th>
                                 <th>Publisher</th>
-                                <th width="140px"></th>
+                                <th width="1%"></th>
                             </tr>
                             </thead>
                             <tbody>

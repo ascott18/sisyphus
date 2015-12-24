@@ -13,87 +13,88 @@
 
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title"><i class="fa fa-pencil fa-fw"></i>My Courses</h3>
+                    <h3 class="panel-title"><i class="fa fa-university fa-fw"></i> My Courses</h3>
                 </div>
-                <div ng-show="gotCourses" class="panel-body">
+                <div class="panel-body">
+                    <div ng-show="gotCourses">
+                        <h3 ng-hide="courses.length" class="text-muted">
+                            @if (count($openTerms) == 0)
+                                No terms are open for ordering.
+                            @else
+                                No courses found for the terms currently open for ordering:
+                            <ul>
+                                @foreach($openTerms as $term)
+                                    <li>{{$term->termName()}} {{ $term->year }}</li>
+                                @endforeach
+                            </ul>
+                            @endif
+                        </h3>
+                        <table ng-show="courses.length" class="list-group" style="width: 100%">
+                            <thead>
+                                <th style="width: 100%"></th>
+                                <th ></th>
+                            </thead>
 
-                    <h3 ng-hide="courses.length" class="text-muted">
-                        @if (count($openTerms) == 0)
-                            No terms are open for ordering.
-                        @else
-                            No courses found for the terms currently open for ordering:
-                        <ul>
-                            @foreach($openTerms as $term)
-                                <li>{{$term->termName()}} {{ $term->year }}</li>
-                            @endforeach
-                        </ul>
-                        @endif
-                    </h3>
-                    <table ng-show="courses.length" class="list-group" style="width: 100%">
-                        <thead>
-                            <th style="width: 100%"></th>
-                            <th ></th>
-                        </thead>
+                            <tbody>
+                                <tr class="list-group-item" ng-repeat="course in courses">
+                                    <td style="width: 100%">
+                                        <h4 class="list-group-item-heading">[[course.department]] [[course.course_number | zpad:3]]-[[course.course_section | zpad:2]] [[course.course_name]]</h4>
 
-                        <tbody>
-                            <tr class="list-group-item" ng-repeat="course in courses">
-                                <td style="width: 100%">
-                                    <h4 class="list-group-item-heading">[[course.department]] [[course.course_number | zpad:3]]-[[course.course_section | zpad:2]] [[course.course_name]]</h4>
+                                        <p style="margin-left: 3em">
+                                            <div ng-show="courseNeedsOrders(course)">
+                                                </br>
+                                                <span class="well well-sm" style="background-color: #fcf8e3; border-color: #fbeed5">
+                                                    No requests submitted - please let us know what you need!
+                                                </span>
+                                            </div>
+                                            <div ng-show="course.no_book">
+                                                </br>
+                                                You selected that you didn't need a book
+                                            </div>
 
-                                    <p style="margin-left: 3em">
-                                        <div ng-show="courseNeedsOrders(course)">
-                                            </br>
-                                            <span class="well well-sm" style="background-color: #fcf8e3; border-color: #fbeed5">
-                                                No requests submitted - please let us know what you need!
+                                            <span ng-repeat="order in course.orders">
+                                                <span class="text-muted">[[order.book.isbn13 | isbnHyphenate]]</span>: [[order.book.title]]
+                                                </br>
                                             </span>
-                                        </div>
-                                        <div ng-show="course.no_book">
-                                            </br>
-                                            You selected that you didn't need a book
-                                        </div>
+                                        </p>
+                                    </td>
 
-                                        <span ng-repeat="order in course.orders">
-                                            <span class="text-muted">[[order.book.isbn13 | isbnHyphenate]]</span>: [[order.book.title]]
-                                            </br>
+                                    <td style="vertical-align: top">
+                                        <span ng-if="!course.no_book">
+                                        <a ng-click="placeRequestForCourse(course)"
+                                           class="btn btn-primary"
+                                           style="width:100%; margin-bottom:5px">
+                                            Place a request <i class="fa fa-arrow-right fa-fw"></i>
+                                        </a>
+                                            <span ng-if="course.orders.length == 0">
+                                                <br>
+                                                <button
+                                                        ng-confirm-click="noBook(course)"
+                                                        ng-confirm-click-message="Are you sure you don't want a book?"
+                                                        class="btn btn-danger"
+                                                        style="width:100%">
+                                                    <i class="fa fa-times"></i> No book needed</button>
+                                            </span>
                                         </span>
-                                    </p>
-                                </td>
-
-                                <td style="vertical-align: top">
-                                    <span ng-if="!course.no_book">
-                                    <a ng-click="placeRequestForCourse(course)"
-                                       class="btn btn-primary"
-                                       style="width:100%; margin-bottom:5px">
-                                        Place a request <i class="fa fa-arrow-right fa-fw"></i>
-                                    </a>
-                                        <span ng-if="course.orders.length == 0">
-                                            <br>
-                                            <button
-                                                    ng-confirm-click="noBook(course)"
-                                                    ng-confirm-click-message="Are you sure you don't want a book?"
-                                                    class="btn btn-danger"
-                                                    style="width:100%">
-                                                <i class="fa fa-times"></i> No book needed</button>
-                                        </span>
-                                    </span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
 
 
-        <div class="col-lg-12" ng-show="getStage() == STAGE_SELECT_BOOKS" ng-controller="NewBookController">
-
-
+        <div ng-show="getStage() == STAGE_SELECT_BOOKS" ng-controller="NewBookController">
 
             <div class="col-md-6">
-                <h2>Books</h2>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><i class="fa fa-book fa-fw"></i> Select Books</h3>
+                    </div>
+                    <div class="panel-body">
 
-                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-                    <div>
                         <!-- Nav tabs -->
                         <ul class="nav nav-pills" role="tablist">
                             <li role="presentation" class="active"><a href="#newbook" aria-controls="newbook" role="tab" data-toggle="tab">
@@ -153,26 +154,24 @@
 
             <div class="col-md-6">
 
-                <h2>Cart</h2>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><i class="fa fa-shopping-cart fa-fw"></i> Cart</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div ng-controller="NewBookController">
+                            <cart></cart>
+                        </div>
 
-                <div ng-controller="NewBookController">
-                    <cart></cart>
-                </div>
-
-
-                        
-
-                </ul>
-
-
-
-                <h3 class="text-muted" ng-show="cartBooks.length == 0">There are no books in the cart.</h3>
-                <div class="row" ng-show="cartBooks.length > 0">
-                    <button class="btn btn-success pull-right"
-                            ng-click="setStage(3)"
-                            style="margin: 20px;">
-                        <i class="fa fa-arrow-right"></i> Review Order
-                    </button>
+                        <h3 class="text-muted" ng-show="cartBooks.length == 0">There are no books in the cart.</h3>
+                        <div class="row" ng-show="cartBooks.length > 0">
+                            <button class="btn btn-success pull-right"
+                                    ng-click="setStage(3)"
+                                    style="margin: 20px;">
+                                <i class="fa fa-arrow-right"></i> Review Order
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 

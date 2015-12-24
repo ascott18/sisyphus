@@ -44,7 +44,7 @@ app.filter('notInArray', function($filter){
 
 app.controller('AddPermissionController', function($scope, $http) {
     $scope.allPermissions = allPermissions;
-    $scope.selectedPermission = allPermissions[0];
+    $scope.selectedPermission = null;
 
     $scope.addPermission = function(){
         var selectedPermission = $scope.selectedPermission;

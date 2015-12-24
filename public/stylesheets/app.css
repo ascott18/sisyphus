@@ -1,6 +1,33 @@
 body {
     padding-bottom: 20px;
     margin-top: 50px;
+    background-color: #fff
+}
+
+
+.table > thead > tr:not(:last-child) > * {
+    border: none;
+    padding-bottom: 5px;
+}
+.table > thead > tr:last-child > * {
+    border-top: none;
+    padding-top: 0;
+}
+
+.table td > .btn {
+    margin: -5px 0;
+}
+
+.table tbody td {
+    vertical-align: middle;
+}
+
+.table th[st-sort]{
+    cursor: pointer;
+}
+
+.panel-title {
+    font-size: 20px;
 }
 
 .navbar {
@@ -173,7 +200,6 @@ input[type="checkbox"].input-validation-error {
 
 #page-wrapper {
     width: 100%;
-    background-color: #fff
 }
 
 #page-wrapper > div {
@@ -378,3 +404,9 @@ ul.alert-dropdown {
 .st-sort-descent:after{
     content: '\25BC';
 }
+
+
+
+
+
+

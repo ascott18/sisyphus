@@ -29,7 +29,7 @@ app.directive('emptyPlaceholder', ['$http',
            link: function(scope, element, attr) {
                var text = attr.emptyPlaceholder || "No results found.";
                var table = $(element);
-               console.log(table, element);
+
                var tbody = table.find("tbody");
                var hasStartedRequest = false;
                var hasFinishedRequest = false;
@@ -50,20 +50,28 @@ app.directive('emptyPlaceholder', ['$http',
                            return;
                        }
 
-                       if (newValues[1] && !hasStartedRequest)
-                       console.log(newValues, oldValues);
-                       //if (newValue !== oldValue) {
                        table.siblings(".empty-table-placeholder").remove();
-                           if (newValues[0] == 0) {
-                               table.after("<h2 class='text-muted empty-table-placeholder'>" +  text + "</h2>");
-                           }
-                       //}
+                       if (newValues[0] == 0) {
+                           table.after("<h2 class='text-muted empty-table-placeholder'>" +  text + "</h2>");
+                       }
                    }
                );
            }
        }
    }
 ]);
+
+app.directive('initData', function() {
+    return {
+        restrict: 'A',
+        link: function($scope, element, attrs) {
+            if ( attrs.ngBind !== undefined)
+            {
+                $scope[attrs.ngBind] = attrs.initdata ? attrs.initdata : element.text();
+            }
+        }
+    };
+});
 
 app.directive('ngConfirmClick', [
 function(){

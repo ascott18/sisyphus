@@ -19,10 +19,10 @@ class CourseController extends Controller
     {
         $this->authorize("view-course-list");
 
-        $terms = Term::all();
+        $terms = Term::orderBy('term_id', 'DESC')->get();
+        $currentTerm = Term::currentTerms()->first();
 
-
-        return view('courses.index',['terms' => $terms]);
+        return view('courses.index', ['terms' => $terms, 'currentTermId' => $currentTerm ? $currentTerm->term_id : '']);
     }
 
 
@@ -140,10 +140,14 @@ class CourseController extends Controller
         }
 
         $query = $this->buildSearchQuery($request, $query);
-
         $query = $this->buildSortQuery($request, $query);
+        $query = $query->with("term");
 
         $courses = $query->paginate(10);
+
+        foreach ($courses as $course) {
+            $course->term->term_name = $course->term->termName();
+        }
 
         return response()->json($courses);
     }

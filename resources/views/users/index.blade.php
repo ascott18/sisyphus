@@ -44,7 +44,7 @@
 
                     <div class="table-responsive">
                         <table st-pipe="uc.callServer" st-table="users"
-                               class="table table-bordered table-hover table-striped">
+                               class="table table-hover">
                             <thead>
                             <tr>
                                 <th st-sort="last_name">Last Name</th>
