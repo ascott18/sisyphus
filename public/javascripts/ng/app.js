@@ -1,5 +1,5 @@
 
-var app = angular.module('sisyphus.helpers', []);
+var app = angular.module('sisyphus.helpers', ['smart-table']);
 
 app.config(function($interpolateProvider) {
     $interpolateProvider.startSymbol('[[');
@@ -9,6 +9,18 @@ app.config(function($interpolateProvider) {
 app.config(function($httpProvider) {
     $httpProvider.defaults.headers.common = { 'X-Requested-With' : 'XMLHttpRequest' }
 });
+
+app.run(['$templateCache', 'stConfig', function($templateCache, stConfig) {
+    stConfig.pagination.template = 'stPaginationTemplate';
+    $templateCache.put('stPaginationTemplate',
+        '<nav ng-if="numPages && pages.length >= 2"><ul class="pagination">' +
+        '<li ng-class="{ disabled : currentPage == 1 }"><a ng-click="selectPage(1)">&laquo; First</a></li>' +
+        //'<li ng-class="{ disabled : currentPage == 1 }"><a ng-click="selectPage(currentPage-1)">&lsaquo;</a></li>' +
+        '<li ng-repeat="page in pages" ng-class="{active: page==currentPage}"><a ng-click="selectPage(page)">{{page}}</a></li>' +
+        //'<li ng-class="{ disabled : currentPage == numPages }"><a ng-click="selectPage(currentPage+1)">&rsaquo;</a></li>' +
+        '<li ng-class="{ disabled : currentPage == numPages }"><a ng-click="selectPage(numPages)">Last &raquo;</a></li>' +
+        '</ul></nav>');
+}]);
 
 
 

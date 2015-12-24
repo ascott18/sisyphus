@@ -169,7 +169,7 @@ class Term extends Model
         }
 
         $daysUntilStart = $this->order_start_date->diffInDays(Carbon::now());
-        if ($daysUntilStart <= 100)
+        if ($daysUntilStart <= 200)
         {
             return "Starts in $daysUntilStart days";
         }

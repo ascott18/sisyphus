@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Course;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Term;
 use Illuminate\Database\Query\Builder;
@@ -13,13 +14,21 @@ class CourseController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request
      * @return \Illuminate\Http\Response
      */
-    public function getIndex()
+    public function getIndex(Request $request)
     {
         $this->authorize("view-course-list");
 
-        $terms = Term::orderBy('term_id', 'DESC')->get();
+        $user = $request->user();
+
+        $terms = Term::whereIn('term_id', function($query) use ($user) {
+                static::buildFilteredCourseQuery($query->from('courses'), $user)->select('term_id');
+        })
+            ->orderBy('term_id', 'DESC')
+            ->get();
+
         $currentTerm = Term::currentTerms()->first();
 
         return view('courses.index', ['terms' => $terms, 'currentTermId' => $currentTerm ? $currentTerm->term_id : '']);
@@ -113,6 +122,20 @@ class CourseController extends Controller
         return $query;
     }
 
+    protected static function buildFilteredCourseQuery($query, User $user){
+        if ($user->may('view-dept-courses'))
+        {
+            $departments = $user->departments()->lists('department');
+            $query = $query->whereIn('department', $departments);
+        }
+        elseif (!$user->may('view-all-courses'))
+        {
+            $query = $query->where('user_id', $user->user_id);
+        }
+
+        return $query;
+    }
+
     /** GET: /courses/course-list?page={}&{sort=}&{dir=}&{section=}&{name=}
      * Searches the book list
      *
@@ -123,17 +146,7 @@ class CourseController extends Controller
     {
         $this->authorize("view-course-list");
 
-        $query = Course::query();
-
-        if ($request->user()->may('view-dept-courses'))
-        {
-            $departments = $request->user()->departments()->lists('department');
-            $query = $query->whereIn('department', $departments);
-        }
-        elseif (!$request->user()->may('view-all-courses'))
-        {
-            $query = $query->where('user_id', $request->user()->user_id);
-        }
+        $query = static::buildFilteredCourseQuery(Course::query(), $request->user());
 
         if($request->input('term_id')) {
             $query = $query->where('term_id', '=', $request->input('term_id'));

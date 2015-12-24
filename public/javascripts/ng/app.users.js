@@ -1,5 +1,5 @@
 
-var app = angular.module('sisyphus', ['sisyphus.helpers', 'ui.bootstrap', 'smart-table']);
+var app = angular.module('sisyphus', ['sisyphus.helpers', 'smart-table']);
 
 app.controller('UsersController', function($scope, $http) {
     $scope.removeDepartment = function(user, department){

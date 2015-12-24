@@ -1,5 +1,5 @@
 
-var app = angular.module('sisyphus', ['sisyphus.helpers', 'ui.bootstrap']);
+var app = angular.module('sisyphus', ['sisyphus.helpers']);
 
 app.controller('RolesController', function($scope, $http) {
     $http.get('/users/all-roles').then(

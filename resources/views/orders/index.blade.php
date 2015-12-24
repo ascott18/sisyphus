@@ -228,8 +228,6 @@
 
 
 @section('scripts-head')
-    <script src="/javascripts/angular.min.js"></script>
-    <script src="/javascripts/ng/app.js"></script>
     <script src="/javascripts/ng/helper.isbnHyphenate.js"></script>
     <script src="/javascripts/ng/app.orders.js"></script>
 @stop
