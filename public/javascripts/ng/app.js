@@ -13,7 +13,7 @@ app.config(function($httpProvider) {
 app.run(['$templateCache', 'stConfig', function($templateCache, stConfig) {
     stConfig.pagination.template = 'stPaginationTemplate';
     $templateCache.put('stPaginationTemplate',
-        '<nav ng-if="numPages && pages.length >= 2"><ul class="pagination">' +
+        '<nav ng-if="numPages && pages.length >= 2"><ul class="pagination cursor-pointer">' +
         '<li ng-class="{ disabled : currentPage == 1 }"><a ng-click="selectPage(1)">&laquo; First</a></li>' +
         //'<li ng-class="{ disabled : currentPage == 1 }"><a ng-click="selectPage(currentPage-1)">&lsaquo;</a></li>' +
         '<li ng-repeat="page in pages" ng-class="{active: page==currentPage}"><a ng-click="selectPage(page)">{{page}}</a></li>' +

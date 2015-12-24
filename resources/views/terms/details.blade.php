@@ -14,7 +14,7 @@
                 </div>
                 <div class="panel-body">
 
-                    <div class="col-lg-4">
+                    <div class="col-lg-4 col-md-12">
                         <dl class="dl-horizontal">
                             <dt>Term</dt>
                             <dd>{{ $term->termName() }}</dd>
@@ -37,7 +37,7 @@
                         {!! csrf_field() !!}
 
 
-                        <div class="col-lg-4">
+                        <div class="col-lg-4 col-md-6">
                             <h3>Order Start Date</h3>
                             <input type="hidden" name="order_start_date" ng-value="order_start_date | date:'yyyy-MM-dd'">
 
@@ -47,7 +47,7 @@
                                             show-weeks="false"></uib-datepicker>
                         </div>
 
-                        <div class="col-lg-4">
+                        <div class="col-lg-4 col-md-6">
                             <h3>Order Due Date</h3>
                             <input type="hidden" name="order_due_date" ng-value="order_due_date  | date:'yyyy-MM-dd'">
                             <uib-datepicker ng-model="order_due_date"
@@ -57,7 +57,7 @@
                         </div>
 
                         <button type="submit" class="btn btn-success pull-right">
-                            <i class="fa fa-check"></i> Save
+                            <i class="fa fa-check"></i> Save Dates
                         </button>
                     </form>
                     @endcan
