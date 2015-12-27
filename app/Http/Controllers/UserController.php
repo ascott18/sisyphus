@@ -142,8 +142,6 @@ class UserController extends Controller
         $user_id = $request->get('user_id');
         $department = $request->get('department');
 
-        // TODO: validation on $department
-
         $user = User::findOrFail($user_id);
 
         $user_department = $user->departments()->where(['department' => $department])->first();

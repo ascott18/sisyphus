@@ -169,7 +169,7 @@ class OrderController extends Controller
 
                     foreach ($book['authors'] as $author) {
                         $db_book->authors()->save(new Author([
-                            'first_name' => $author['name']
+                            'name' => $author['name']
                         ]));
                     }
                 }
