@@ -35,7 +35,6 @@ class CourseController extends Controller
     }
 
 
-
     /**
      * Display a listing of the resource.
      *
@@ -49,6 +48,70 @@ class CourseController extends Controller
         $this->authorize("view-course", $course);
 
         return view('courses.details', ['course' => $course]);
+    }
+
+
+    /**
+     * Display the page to edit the course.
+     *
+     * @param $id integer The id of the course to edit.
+     * @return \Illuminate\Http\Response
+     */
+    public function getEdit($id)
+    {
+        $course = Course::findOrFail($id);
+
+        $this->authorize("edit-course", $course);
+
+        // All users, from which we will select a professor.
+        $users = User::all(['first_name', 'last_name', 'user_id']);
+
+        return view('courses.edit', ['panelTitle' => 'Edit Course', 'course' => $course, 'users' => $users]);
+    }
+
+
+    public function postEdit(Request $request, $id)
+    {
+        $dbCourse = Course::findOrFail($id);
+
+        $this->authorize("edit-course", $dbCourse);
+
+        $course = $request->except('course.term_id')['course'];
+
+        $dbCourse->update($course);
+        $dbCourse->save();
+
+        return redirect('courses/details/' . $dbCourse->course_id);
+    }
+
+
+    /**
+     * Display the page to create a course.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getCreate($term_id)
+    {
+        $this->authorize("create-course");
+
+        // All users, from which we will select a professor.
+        $users = User::all(['first_name', 'last_name', 'user_id']);
+
+        $term = Term::findOrFail($term_id);
+
+        return view('courses.edit', ['panelTitle' => 'New Course', 'users' => $users, 'term_id' => $term_id, 'term_name' => $term->displayName()]);
+    }
+
+
+    public function postCreate(Request $request)
+    {
+        $this->authorize("create-course");
+
+        $course = $request->get('course');
+
+        $dbCourse = Course::create($course);
+
+        return redirect('courses/details/' . $dbCourse->course_id);
     }
 
 

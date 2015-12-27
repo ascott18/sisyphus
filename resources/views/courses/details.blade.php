@@ -13,6 +13,14 @@
                 </div>
                 <div class="panel-body">
 
+                    @can('edit-course', $course)
+                    <div class="col-md-12">
+                        <a class="btn btn-primary" href="/courses/edit/{{ $course->course_id }}" role="button">
+                            <i class="fa fa-pencil"></i> Edit
+                        </a>
+                    </div>
+                    @endcan
+
                     <dl class="col-md-4 dl-horizontal">
                         <dt>Title</dt>
                         <dd>
@@ -38,7 +46,7 @@
                     <dl class="col-md-4 dl-horizontal">
                         <dt>Term</dt>
                         <dd>
-                            {{ $course->term->termName() }} {{ $course->term->year }}
+                            <a href="/terms/details/{{ $course->term->term_id }}">{{ $course->term->displayName() }}</a>
                         </dd>
 
                         <dt>Order Period</dt>
@@ -128,7 +136,7 @@
 @stop
 
 @section('scripts-head')
-
     <script src="/javascripts/ng/helper.isbnHyphenate.js"></script>
-    <script src="/javascripts/ng/app.books.js"></script>
+    <script src="/javascripts/ng/pagination/dirPagination.js"></script>
+    <script src="/javascripts/ng/app.courses.js"></script>
 @stop

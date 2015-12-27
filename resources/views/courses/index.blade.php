@@ -7,7 +7,7 @@
 
     <div class="row">
         <div class="col-lg-12">
-            <div class="panel panel-default"  ng-controller="CoursesController as cc">
+            <div class="panel panel-default"  ng-controller="CoursesIndexController as cc">
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="fa fa-university fa-fw"></i> All Courses</h3>
                 </div>
@@ -74,5 +74,6 @@
 
 @section('scripts-head')
     <script src="/javascripts/ng/helper.isbnHyphenate.js"></script>
+    <script src="/javascripts/ng/pagination/dirPagination.js"></script>
     <script src="/javascripts/ng/app.courses.js"></script>
 @stop

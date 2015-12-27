@@ -23,6 +23,25 @@ app.run(['$templateCache', 'stConfig', function($templateCache, stConfig) {
 }]);
 
 
+// Filters the source array by splitting the query string on whitespace/commas, and then
+// runs the array through the 'filter' filter for each segment of the query.
+// basically, its a more intelligent search.
+app.filter('filterSplit', function($filter){
+    return function(input, query) {
+        if (!query || query.length == 0)
+            return input;
+
+        query = query.split(/[\s,]+/);
+        if (query.length == 0)
+            return input;
+
+        for (var i = 0; i < query.length; i++){
+            input = $filter('filter')(input, query[i])
+        }
+
+        return input;
+    };
+});
 
 app.filter('zpad', function() {
     return function(input, n) {

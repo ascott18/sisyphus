@@ -15,6 +15,12 @@
                 <div class="panel-body">
 
                     <div class="col-lg-4 col-md-12">
+
+                        @can('create-course')
+                            <a href="/courses/create/{{$term->term_id}}" class="btn btn-primary"><i class="fa fa-plus"></i> Create Course</a>
+                        @endcan
+                        <a href="/terms/check/{{$term->term_id}}" class="btn btn-primary">View Checksheet</a>
+
                         <dl class="dl-horizontal">
                             <dt>Term</dt>
                             <dd>{{ $term->termName() }}</dd>
@@ -28,8 +34,6 @@
                             <dt>Order Due Date</dt>
                             <dd>{{ $term->order_due_date->toFormattedDateString() }}</dd>
                         </dl>
-
-                        <a href="/terms/check/{{$term->term_id}}" class="btn btn-primary">View Checksheet</a>
                     </div>
 
                     @can('edit-terms')

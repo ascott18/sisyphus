@@ -122,6 +122,16 @@ class Term extends Model
     }
 
     /**
+     * Gets the full display name of this term.
+     *
+     * @return string
+     */
+    public function displayName()
+    {
+        return $this->termName() . ' ' . $this->year;
+    }
+
+    /**
      * Check if this term's ordering period has started (it may be complete or in progress)
      *
      * @return string

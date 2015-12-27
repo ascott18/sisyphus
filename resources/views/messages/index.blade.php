@@ -135,16 +135,12 @@
                         <div class="list-group-item cursor-pointer"
                              ng-class="{active: isRecipientSelected(recipient)}"
                              ng-click="toggleRecipient(recipient)"
-                             dir-paginate="recipient in recipients | filter: recipientSearch | orderBy: 'last_name' | itemsPerPage:10">
+                             dir-paginate="recipient in recipients | filterSplit: recipientSearch | orderBy: 'last_name' | itemsPerPage:10">
 
                              <span>[[recipient.last_name]], [[recipient.first_name]]</span>
                         </div>
                     </div>
-
-                    <dir-pagination-controls>
-
-                    </dir-pagination-controls>
-
+                    <dir-pagination-controls></dir-pagination-controls>
 
                     <button class="btn btn-success btn-md pull-right"
                             ng-click="sendMessages()"

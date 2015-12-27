@@ -1,7 +1,7 @@
 
-var app = angular.module('sisyphus', ['sisyphus.helpers', 'smart-table', 'sisyphus.helpers.isbnHyphenate']);
+var app = angular.module('sisyphus', ['sisyphus.helpers', 'smart-table', 'angularUtils.directives.dirPagination', 'sisyphus.helpers.isbnHyphenate']);
 
-app.controller('CoursesController', function($scope, $http) {
+app.controller('CoursesIndexController', function($scope, $http) {
     var ctrl1 = this;
     $scope.stCtrl=null;
 
@@ -60,5 +60,34 @@ app.controller('CoursesController', function($scope, $http) {
             }
         );
 
+    }
+});
+
+
+app.controller('CoursesModifyController', function($filter, $scope) {
+    $scope.getSelectedUser = function(){
+        for(var i = 0; i < $scope.users.length; i++){
+            if ($scope.users[i].user_id == $scope.course.user_id){
+                return i;
+            }
+        }
+    };
+
+    $scope.userSearchOnBlur = function(query){
+        var filteredUsers = $filter('filterSplit')($scope.users, query);
+        if (filteredUsers.length == 1){
+            $scope.course.user_id = filteredUsers[0].user_id;
+        }
+    };
+
+
+
+    $scope.submit = function(form, e){
+        if (form.$valid)
+            form.submit();
+        else{
+            form.$setSubmitted(true);
+            e.preventDefault();
+        }
     }
 });
