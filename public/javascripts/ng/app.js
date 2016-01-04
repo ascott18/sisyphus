@@ -1,5 +1,5 @@
 
-var app = angular.module('sisyphus.helpers', []);
+var app = angular.module('sisyphus.helpers', ['smart-table']);
 
 app.config(function($interpolateProvider) {
     $interpolateProvider.startSymbol('[[');
@@ -10,7 +10,38 @@ app.config(function($httpProvider) {
     $httpProvider.defaults.headers.common = { 'X-Requested-With' : 'XMLHttpRequest' }
 });
 
+app.run(['$templateCache', 'stConfig', function($templateCache, stConfig) {
+    stConfig.pagination.template = 'stPaginationTemplate';
+    $templateCache.put('stPaginationTemplate',
+        '<nav ng-if="numPages && pages.length >= 2"><ul class="pagination cursor-pointer">' +
+        '<li ng-class="{ disabled : currentPage == 1 }"><a ng-click="selectPage(1)">&laquo; First</a></li>' +
+        //'<li ng-class="{ disabled : currentPage == 1 }"><a ng-click="selectPage(currentPage-1)">&lsaquo;</a></li>' +
+        '<li ng-repeat="page in pages" ng-class="{active: page==currentPage}"><a ng-click="selectPage(page)">{{page}}</a></li>' +
+        //'<li ng-class="{ disabled : currentPage == numPages }"><a ng-click="selectPage(currentPage+1)">&rsaquo;</a></li>' +
+        '<li ng-class="{ disabled : currentPage == numPages }"><a ng-click="selectPage(numPages)">Last &raquo;</a></li>' +
+        '</ul></nav>');
+}]);
 
+
+// Filters the source array by splitting the query string on whitespace/commas, and then
+// runs the array through the 'filter' filter for each segment of the query.
+// basically, its a more intelligent search.
+app.filter('filterSplit', function($filter){
+    return function(input, query) {
+        if (!query || query.length == 0)
+            return input;
+
+        query = query.split(/[\s,]+/);
+        if (query.length == 0)
+            return input;
+
+        for (var i = 0; i < query.length; i++){
+            input = $filter('filter')(input, query[i])
+        }
+
+        return input;
+    };
+});
 
 app.filter('zpad', function() {
     return function(input, n) {
@@ -29,7 +60,7 @@ app.directive('emptyPlaceholder', ['$http',
            link: function(scope, element, attr) {
                var text = attr.emptyPlaceholder || "No results found.";
                var table = $(element);
-               console.log(table, element);
+
                var tbody = table.find("tbody");
                var hasStartedRequest = false;
                var hasFinishedRequest = false;
@@ -50,20 +81,28 @@ app.directive('emptyPlaceholder', ['$http',
                            return;
                        }
 
-                       if (newValues[1] && !hasStartedRequest)
-                       console.log(newValues, oldValues);
-                       //if (newValue !== oldValue) {
                        table.siblings(".empty-table-placeholder").remove();
-                           if (newValues[0] == 0) {
-                               table.after("<h2 class='text-muted empty-table-placeholder'>" +  text + "</h2>");
-                           }
-                       //}
+                       if (newValues[0] == 0) {
+                           table.after("<h2 class='text-muted empty-table-placeholder'>" +  text + "</h2>");
+                       }
                    }
                );
            }
        }
    }
 ]);
+
+app.directive('initData', function() {
+    return {
+        restrict: 'A',
+        link: function($scope, element, attrs) {
+            if ( attrs.ngBind !== undefined)
+            {
+                $scope[attrs.ngBind] = attrs.initdata ? attrs.initdata : element.text();
+            }
+        }
+    };
+});
 
 app.directive('ngConfirmClick', [
 function(){

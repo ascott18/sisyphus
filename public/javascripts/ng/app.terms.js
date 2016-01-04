@@ -2,10 +2,10 @@ var app = angular.module('sisyphus', ['sisyphus.helpers', 'ui.bootstrap', 'smart
 
 
 app.controller('TermsController', function($scope) {
-
-    $scope.order_start_date = order_start_date_init;
-    $scope.order_due_date = order_due_date_init;
-
+    // Can't use 'new' in angular expressions, so we just do this instead.
+    $scope.createDate = function(date){
+        return new Date(date);
+    }
 });
 
 app.controller('TermsTableController', function($scope, $http) {
@@ -13,12 +13,11 @@ app.controller('TermsTableController', function($scope, $http) {
     var ctrl = this;
     this.displayed = [];
     this.callServer = function callServer(tableState) {
-        console.log("server called");
 
         ctrl.isLoading = true;
         var pagination = tableState.pagination;
         var start = pagination.start || 0;
-        var end = pagination.number || 10;
+        var end = pagination.number || 15;
 
         var page = (start/end)+1;
 
@@ -47,7 +46,6 @@ app.controller('TermsTableController', function($scope, $http) {
     }
 
     this.callServerDetail = function callServer(tableState) {
-        console.log("server called");
         ctrl.isLoading = true;
 
         var pagination = tableState.pagination;
@@ -57,7 +55,7 @@ app.controller('TermsTableController', function($scope, $http) {
 
         var getRequestString = '/terms/term-detail-list?&page=' + page;                                 // term list uri
 
-        getRequestString += '&term_id=' + term_id_init;                                               // get term id
+        getRequestString += '&term_id=' + $scope.term_id;                                               // get term id
 
         if(tableState.sort.predicate) {
             getRequestString += '&sort=' + encodeURIComponent(tableState.sort.predicate);               // build sort

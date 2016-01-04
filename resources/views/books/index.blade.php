@@ -15,14 +15,14 @@
 
                     <div ng-controller="BooksController as mc" class="table-responsive">
                         <table st-pipe="mc.callServer" st-table="mc.displayed"
-                               class="table table-bordered table-hover table-striped"
+                               class="table table-hover"
                                empty-placeholder>
                             <thead>
                             <tr>
                                 <th st-sort="title">Title</th>
                                 <th st-sort="publisher">Publisher</th>
                                 <th st-sort="isbn13">ISBN</th>
-                                <th width="110px">Details</th>
+                                <th width="1%"></th>
                             </tr>
                             <tr>
                                 <th><input type="text" class="form-control" placeholder="Search..." st-search="title"/></th>
@@ -71,9 +71,6 @@
 @stop
 
 @section('scripts-head')
-    <script src="/javascripts/angular.min.js"></script>
-    <script src="/javascripts/ng/smart-table/smart-table.min.js"></script>
-    <script src="/javascripts/ng/app.js"></script>
     <script src="/javascripts/ng/helper.isbnHyphenate.js"></script>
     <script src="/javascripts/ng/app.books.js"></script>
 @stop

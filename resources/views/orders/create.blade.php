@@ -11,7 +11,7 @@
         <i class="fa fa-spinner fa-spin fa-5x" style="margin-left: 48%" ng-show="stage == null"></i>
         <label for="table"><h2>Please select course:</h2></label>
 
-        <table class="table table-bordered table-hover table-striped" name="table">
+        <table class="table table-hover" name="table">
             <thead>
             <tr>
                 <th>Course Name</th>
@@ -132,7 +132,5 @@
 @stop
 
 @section('scripts-head')
-    <script src="/javascripts/angular.min.js"></script>
-    <script src="/javascripts/ng/app.js"></script>
     <script src="/javascripts/ng/app.orders.js"></script>
 @stop

@@ -10,9 +10,13 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title"><i class="fa fa-book fa-fw"></i> Book Details</h3>
+
             </div>
             <div class="panel-body">
-                <div class="col-md-6">
+                <div class="col-sm-6">
+                    {{--<a href="/books/edit/{{ $book->book_id }}" class="btn btn-info " role="button">--}}
+                        {{--<i class="fa fa-info-circle"></i> Edit--}}
+                    {{--</a>--}}
                     <dl class="dl-horizontal">
                         <dt>Title</dt>
                     <dd>
@@ -42,9 +46,10 @@
                     </dd>
                     </dl>
                 </div>
-                <div class="col-md-6">
+                <div class="col-sm-6">
                     <img ng-src="[[ book_cover_img ]]"/>
                 </div>
+
             </div>
         </div>
 
@@ -56,14 +61,13 @@
             <div class="panel-body">
                 <div class="table-responsive">
                     <table st-pipe="bdc.callServer" st-table="bdc.displayed"
-                           class="table table-bordered table-hover table-striped"
+                           class="table table-hover"
                            empty-placeholder>
                         <thead>
                         <tr>
                             <th st-sort="section">Course</th>
                             <th st-sort="course_name">Course Name</th>
-                            <th width="160px">Details</th>
-                            {{--<th st-sort="quantity_requested">Quantity Requested</th>--}}
+                            <th width="1%"></th>
                         </tr>
                         <tr>
                             <th><input type="text" class="form-control" placeholder="Search..." st-search="section"/></th>
@@ -107,11 +111,8 @@
         book_isbn_13_init = new String('{{ $book->isbn13 }}');
     </script>
 
-    <script src="/javascripts/angular.min.js"></script>
-    <script src="/javascripts/ng/smart-table/smart-table.min.js"></script>
     <script src="http://crypto-js.googlecode.com/svn/tags/3.0.2/build/rollups/hmac-sha256.js"></script>
     <script src="http://crypto-js.googlecode.com/svn/tags/3.0.2/build/components/enc-base64.js"></script> <!-- tmp? -->
-    <script src="/javascripts/ng/app.js"></script>
     <script src="/javascripts/ng/helper.isbnHyphenate.js"></script>
     <script src="/javascripts/ng/app.books.js"></script>
 @stop

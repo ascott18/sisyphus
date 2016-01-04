@@ -21,6 +21,25 @@ class ParseCourseCsv extends Command implements SelfHandling
      */
     protected $signature = 'parseCourseCsv {termNumber} {year} {file}';
 
+    protected $title_transforms_post = [
+        "Ii" => "II",
+        "Iii" => "III",
+        "Iv" => "IV",
+        ".net" => ".NET",
+        "Adst" => "ADST",
+        "U.s." => "U.S.",
+        "Directed Study " => "Directed Study: ",
+    ];
+
+    protected $title_transforms_pre = [
+        "DS/" => "Directed Study ",
+        "DIR ST" => "Directed Study ",
+    ];
+
+    protected $user_transforms = [
+        "chrisFrankPeters" => "cpeters",
+        "thomasBraceCapaul" => "tcapaul",
+    ];
 
     /**
      * Execute the command.
@@ -47,11 +66,15 @@ class ParseCourseCsv extends Command implements SelfHandling
             if (count($csv) > 5 && is_numeric($csv[1])){
                 $numParsed++;
 
-                $dept = $csv[2];
+                $dept = trim($csv[2]);
                 $courseNumber = $csv[3];
                 $section = $csv[4];
                 $title = $csv[7];
                 $prof = $csv[19];
+
+                $title = strtr($title, $this->title_transforms_pre);
+                $title = title_case($title);
+                $title = strtr($title, $this->title_transforms_post);
 
                 $prof = str_replace(" (P)", "", $prof);
                 $prof = explode(",", $prof)[0];
@@ -59,6 +82,7 @@ class ParseCourseCsv extends Command implements SelfHandling
                 $profNames = explode(" ", $prof);
 
                 $fake_net_id = camel_case($prof);
+                $fake_net_id = strtr($fake_net_id, $this->user_transforms);
 
                 // TODO: this isn't how we're going to seed users.
                 // Or courses for that matter. This whole file exists only
@@ -77,7 +101,7 @@ class ParseCourseCsv extends Command implements SelfHandling
                 $course->department = $dept;
                 $course->course_number = $courseNumber;
                 $course->course_section = $section;
-                $course->course_name = title_case($title);
+                $course->course_name = $title;
                 $course->user_id = $user->user_id;
                 $course->term_id = $term->term_id;
                 $course->save();

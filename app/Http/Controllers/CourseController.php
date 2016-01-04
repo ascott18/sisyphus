@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Course;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Term;
 use Illuminate\Database\Query\Builder;
@@ -13,13 +14,24 @@ class CourseController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request
      * @return \Illuminate\Http\Response
      */
-    public function getIndex()
+    public function getIndex(Request $request)
     {
         $this->authorize("view-course-list");
 
-        return view('courses.index');
+        $user = $request->user();
+
+        $terms = Term::whereIn('term_id', function($query) use ($user) {
+                static::buildFilteredCourseQuery($query->from('courses'), $user)->select('term_id');
+        })
+            ->orderBy('term_id', 'DESC')
+            ->get();
+
+        $currentTerm = Term::currentTerms()->first();
+
+        return view('courses.index', ['terms' => $terms, 'currentTermId' => $currentTerm ? $currentTerm->term_id : '']);
     }
 
 
@@ -36,6 +48,70 @@ class CourseController extends Controller
         $this->authorize("view-course", $course);
 
         return view('courses.details', ['course' => $course]);
+    }
+
+
+    /**
+     * Display the page to edit the course.
+     *
+     * @param $id integer The id of the course to edit.
+     * @return \Illuminate\Http\Response
+     */
+    public function getEdit($id)
+    {
+        $course = Course::findOrFail($id);
+
+        $this->authorize("edit-course", $course);
+
+        // All users, from which we will select a professor.
+        $users = User::all(['first_name', 'last_name', 'user_id']);
+
+        return view('courses.edit', ['panelTitle' => 'Edit Course', 'course' => $course, 'users' => $users]);
+    }
+
+
+    public function postEdit(Request $request, $id)
+    {
+        $dbCourse = Course::findOrFail($id);
+
+        $this->authorize("edit-course", $dbCourse);
+
+        $course = $request->except('course.term_id')['course'];
+
+        $dbCourse->update($course);
+        $dbCourse->save();
+
+        return redirect('courses/details/' . $dbCourse->course_id);
+    }
+
+
+    /**
+     * Display the page to create a course.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getCreate($term_id)
+    {
+        $this->authorize("create-course");
+
+        // All users, from which we will select a professor.
+        $users = User::all(['first_name', 'last_name', 'user_id']);
+
+        $term = Term::findOrFail($term_id);
+
+        return view('courses.edit', ['panelTitle' => 'New Course', 'users' => $users, 'term_id' => $term_id, 'term_name' => $term->displayName()]);
+    }
+
+
+    public function postCreate(Request $request)
+    {
+        $this->authorize("create-course");
+
+        $course = $request->get('course');
+
+        $dbCourse = Course::create($course);
+
+        return redirect('courses/details/' . $dbCourse->course_id);
     }
 
 
@@ -75,6 +151,7 @@ class CourseController extends Controller
         if($request->input('name'))
             $query = $query->where('course_name', 'LIKE', '%'.$request->input('name').'%');
 
+
         return $query;
     }
 
@@ -108,6 +185,20 @@ class CourseController extends Controller
         return $query;
     }
 
+    protected static function buildFilteredCourseQuery($query, User $user){
+        if ($user->may('view-dept-courses'))
+        {
+            $departments = $user->departments()->lists('department');
+            $query = $query->whereIn('department', $departments);
+        }
+        elseif (!$user->may('view-all-courses'))
+        {
+            $query = $query->where('user_id', $user->user_id);
+        }
+
+        return $query;
+    }
+
     /** GET: /courses/course-list?page={}&{sort=}&{dir=}&{section=}&{name=}
      * Searches the book list
      *
@@ -118,23 +209,21 @@ class CourseController extends Controller
     {
         $this->authorize("view-course-list");
 
-        $query = Course::query();
+        $query = static::buildFilteredCourseQuery(Course::query(), $request->user());
 
-        if ($request->user()->may('view-dept-courses'))
-        {
-            $departments = $request->user()->departments()->lists('department');
-            $query = $query->whereIn('department', $departments);
-        }
-        elseif (!$request->user()->may('view-all-courses'))
-        {
-            $query = $query->where('user_id', $request->user()->user_id);
+        if($request->input('term_id')) {
+            $query = $query->where('term_id', '=', $request->input('term_id'));
         }
 
         $query = $this->buildSearchQuery($request, $query);
-
         $query = $this->buildSortQuery($request, $query);
+        $query = $query->with("term");
 
         $courses = $query->paginate(10);
+
+        foreach ($courses as $course) {
+            $course->term->term_name = $course->term->termName();
+        }
 
         return response()->json($courses);
     }

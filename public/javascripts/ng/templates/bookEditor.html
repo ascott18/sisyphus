@@ -18,7 +18,7 @@
         </div>
 
         <div ng-show="isAutoFilled">
-            <h3 class="text-muted">This form is auto filled!</h3>
+            <h3 class="text-muted">We already have data for that ISBN:</h3>
         </div>
     </div>
 
@@ -129,7 +129,7 @@
         </div>
     </div>
 
-    <button type="button" class="btn btn-primary"
+    <button type="button" class="btn btn-primary pull-right"
             ng-click="addNewBookToCart(book,form)"
             ng-disabled="form.$invalid">
         <i class="fa fa-plus"></i> Add to Cart

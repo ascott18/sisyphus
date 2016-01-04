@@ -225,6 +225,16 @@ class BookController extends Controller
         return view('books.details', ['book' => $book]);
     }
 
+
+    public function getEdit($id)
+    {
+
+        $book = Book::findOrFail($id);
+        $this->authorize("edit-book",$book);
+
+        return view('books.edit', ['book' => $book]);
+    }
+
     /** GET: /books/book-by-isbn13/{id}
      * Display the specified resource.
      *
@@ -241,6 +251,5 @@ class BookController extends Controller
 
         return response()->json($book);
     }
-
 
 }

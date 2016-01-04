@@ -236,7 +236,7 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", function(
 
     $scope.removeAuthor = function(index) {
         if (index >= 0 && index < $scope.authors.length) {
-            $scope.authors.splice(index, 1);
+                $scope.authors.splice(index, 1);
         }
     };
 

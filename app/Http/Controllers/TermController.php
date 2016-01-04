@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -19,9 +20,16 @@ class TermController extends Controller
     {
         $this->authorize("view-terms");
 
-        $terms = Term::orderBy('order_due_date', 'DESC')->paginate(10);
+        $maxYear = Term::max('year');
+        $thisYear = Carbon::now()->year;
 
-        return view('terms.index', ['terms' => $terms]);
+        if ($maxYear <= $thisYear){
+            for($year = $maxYear + 1; $year <= $thisYear + 1; $year++){
+                Term::createTermsForYear($year);
+            }
+        }
+
+        return view('terms.index');
     }
 
 
@@ -123,9 +131,8 @@ class TermController extends Controller
 
         $query = $this->buildTermSortQuery($request, $query);
 
-        //print_r($query->toSql());
 
-        $terms = $query->paginate(10);
+        $terms = $query->paginate(15);
 
 
         foreach($terms as $term) {

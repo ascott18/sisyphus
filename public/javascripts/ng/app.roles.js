@@ -1,5 +1,5 @@
 
-var app = angular.module('sisyphus', ['sisyphus.helpers', 'ui.bootstrap']);
+var app = angular.module('sisyphus', ['sisyphus.helpers']);
 
 app.controller('RolesController', function($scope, $http) {
     $http.get('/users/all-roles').then(
@@ -44,7 +44,7 @@ app.filter('notInArray', function($filter){
 
 app.controller('AddPermissionController', function($scope, $http) {
     $scope.allPermissions = allPermissions;
-    $scope.selectedPermission = allPermissions[0];
+    $scope.selectedPermission = null;
 
     $scope.addPermission = function(){
         var selectedPermission = $scope.selectedPermission;

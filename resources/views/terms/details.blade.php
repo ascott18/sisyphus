@@ -10,11 +10,17 @@
 
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title"><i class="fa fa-calendar fa-fw"></i>Term Settings</h3>
+                    <h3 class="panel-title"><i class="fa fa-calendar fa-fw"></i> Term Settings</h3>
                 </div>
                 <div class="panel-body">
 
-                    <div class="col-lg-4">
+                    <div class="col-lg-4 col-md-12">
+
+                        @can('create-course')
+                            <a href="/courses/create/{{$term->term_id}}" class="btn btn-primary"><i class="fa fa-plus"></i> Create Course</a>
+                        @endcan
+                        <a href="/terms/check/{{$term->term_id}}" class="btn btn-primary">View Checksheet</a>
+
                         <dl class="dl-horizontal">
                             <dt>Term</dt>
                             <dd>{{ $term->termName() }}</dd>
@@ -28,8 +34,6 @@
                             <dt>Order Due Date</dt>
                             <dd>{{ $term->order_due_date->toFormattedDateString() }}</dd>
                         </dl>
-
-                        <a href="/terms/check/{{$term->term_id}}" class="btn btn-primary">View Checksheet</a>
                     </div>
 
                     @can('edit-terms')
@@ -37,25 +41,27 @@
                         {!! csrf_field() !!}
 
 
-                        <div class="col-lg-4">
+                        <div class="col-lg-4 col-md-6">
                             <h3>Order Start Date</h3>
                             <input type="hidden" name="order_start_date" ng-value="order_start_date | date:'yyyy-MM-dd'">
 
                             <uib-datepicker ng-model="order_start_date"
+                                            ng-init="order_start_date = createDate('{{$term->order_start_date->toFormattedDateString()}}')"
                                             max-date="order_due_date"
                                             show-weeks="false"></uib-datepicker>
                         </div>
 
-                        <div class="col-lg-4">
+                        <div class="col-lg-4 col-md-6">
                             <h3>Order Due Date</h3>
                             <input type="hidden" name="order_due_date" ng-value="order_due_date  | date:'yyyy-MM-dd'">
                             <uib-datepicker ng-model="order_due_date"
+                                            ng-init="order_due_date = createDate('{{$term->order_due_date->toFormattedDateString()}}')"
                                             min-date="order_start_date"
                                             show-weeks="false"></uib-datepicker>
                         </div>
 
                         <button type="submit" class="btn btn-success pull-right">
-                            Save <i class="fa fa-arrow-right"></i>
+                            <i class="fa fa-check"></i> Save Dates
                         </button>
                     </form>
                     @endcan
@@ -65,20 +71,21 @@
 
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title"><i class="fa fa-pencil fa-fw"></i> Term Courses</h3>
+                    <h3 class="panel-title"><i class="fa fa-university fa-fw"></i> Term Courses</h3>
                 </div>
                 <div class="panel-body">
                     <?php  $courses = $term->courses()->paginate(10); ?>
 
-                    <div ng-controller="TermsTableController as ttc" class="table-responsive">
+                    <div ng-controller="TermsTableController as ttc" class="table-responsive"
+                            ng-init="term_id = {{$term->term_id}}">
                         <table st-pipe="ttc.callServerDetail" st-table="ttc.displayed"
-                               class="table table-bordered table-hover table-striped"
+                               class="table table-hover"
                                empty-placeholder="No courses found for this term.">
                             <thead>
                             <tr>
                                 <th st-sort="section">Section</th>
                                 <th st-sort="course_name">Name</th>
-                                <th width="110px">Details</th>
+                                <th width="1%"></th>
                             </tr>
                             <tr>
                                 <th><input type="text" class="form-control" placeholder="Search..." st-search="section"/></th>
@@ -116,15 +123,6 @@
 
 
 @section('scripts-head')
-    <script>
-        order_start_date_init = new Date('{{$term->order_start_date->toFormattedDateString()}}');
-        order_due_date_init = new Date('{{$term->order_due_date->toFormattedDateString()}}');
-        term_id_init = {{$term->term_id}};
-    </script>
-
-    <script src="/javascripts/angular.min.js"></script>
     <script src="/javascripts/ui-bootstrap-tpls-0.14.3.min.js"></script>
-    <script src="/javascripts/ng/smart-table/smart-table.min.js"></script>
-    <script src="/javascripts/ng/app.js"></script>
     <script src="/javascripts/ng/app.terms.js"></script>
 @stop

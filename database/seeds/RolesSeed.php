@@ -48,6 +48,8 @@ class RolesSeed extends Seeder
         makePerm('view-all-courses', "View All Courses");
         makePerm('view-dept-courses', "View Department Courses");
 
+        makePerm('edit-courses', "Edit Courses");
+
         makePerm('edit-books', "Edit Books");
 
         makePerm('manage-users', "Manage Users");

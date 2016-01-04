@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Book;
 use App\Models\Course;
 use App\Models\Message;
 use App\Models\Order;
@@ -157,6 +158,14 @@ class AuthServiceProvider extends ServiceProvider
 
         $gate->define('view-course-list', function (User $user) {
             return $user->may('view-course-list');
+        });
+
+        $gate->define('edit-course', function (User $user) {
+            return $user->may('edit-courses');
+        });
+
+        $gate->define('create-course', function (User $user) {
+            return $user->may('edit-courses');
         });
 
 

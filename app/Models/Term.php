@@ -51,6 +51,63 @@ class Term extends Model
         40 => 'Fall'
     ];
 
+    /**
+     * The logical date ordering of the term numbers.
+     *
+     * @var array
+     */
+    public static $termOrdering = [
+        10, 20, 25, 30, 35, 40, 15
+    ];
+
+
+    /**
+     * Creates terms in the database for the given year.
+     *
+     * @param $year int The year to create terms in the database for.
+     */
+    public static function createTermsForYear($year)
+    {
+        foreach (static::$termOrdering as $term_number) {
+            if (static::where([
+                'term_number' => $term_number,
+                'year' => $year])->count() == 0)
+            {
+
+                switch ($term_number){
+                    case 10: // Winter
+                        $start = Carbon::create($year - 1, 10, 01);
+                        break;
+                    case 20: // Spring
+                    case 25: // Spring Semester
+                        $start = Carbon::create($year, 1, 01);
+                        break;
+                    case 30: // Summer
+                    case 35: // Summer semester
+                        $start = Carbon::create($year, 4, 01);
+                        break;
+                    case 40: // Fall
+                    case 15: // Fall semester
+                        $start = Carbon::create($year, 7, 01);
+                        break;
+                }
+
+                // TODO: figure out what these dates should look like, roughly, from the bookstore.
+
+                $term = new static([
+                    'order_start_date' => $start->copy(),
+                    'order_due_date' => $start->copy()->addMonths(1)->addDays(20),
+                ]);
+
+                // Add these manually - they shouldn't be mass assignable.
+                $term->term_number = $term_number;
+                $term->year = $year;
+
+                $term->save();
+            }
+        }
+    }
+
 
     /**
      * Gets the name of the term_number of this model.
@@ -62,6 +119,16 @@ class Term extends Model
         $term = $this->term_number;
 
         return array_key_exists($term, self::$termNumbers) ? self::$termNumbers[$term] : 'BAD_TERM';
+    }
+
+    /**
+     * Gets the full display name of this term.
+     *
+     * @return string
+     */
+    public function displayName()
+    {
+        return $this->termName() . ' ' . $this->year;
     }
 
     /**
@@ -112,7 +179,7 @@ class Term extends Model
         }
 
         $daysUntilStart = $this->order_start_date->diffInDays(Carbon::now());
-        if ($daysUntilStart <= 100)
+        if ($daysUntilStart <= 200)
         {
             return "Starts in $daysUntilStart days";
         }

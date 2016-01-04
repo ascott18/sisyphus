@@ -1,6 +1,14 @@
-
+/**
+ * Created by Admin00 on 11/16/2015.
+ */
 var app = angular.module('sisyphus', ['sisyphus.helpers', 'sisyphus.helpers.isbnHyphenate', 'smart-table']);
 
+app.directive('bookEditor', function() {
+    return {
+        restrict: 'E',
+        templateUrl: '/javascripts/ng/templates/bookEditor.html'
+    };
+});
 
 app.controller('BooksController', function($scope, $http) {
     var ctrl = this;

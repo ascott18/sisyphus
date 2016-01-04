@@ -9,9 +9,17 @@
         <div class="col-lg-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title"><i class="fa fa-pencil fa-fw"></i> Course Details</h3>
+                    <h3 class="panel-title"><i class="fa fa-university fa-fw"></i> Course Details</h3>
                 </div>
                 <div class="panel-body">
+
+                    @can('edit-course', $course)
+                    <div class="col-md-12">
+                        <a class="btn btn-primary" href="/courses/edit/{{ $course->course_id }}" role="button">
+                            <i class="fa fa-pencil"></i> Edit
+                        </a>
+                    </div>
+                    @endcan
 
                     <dl class="col-md-4 dl-horizontal">
                         <dt>Title</dt>
@@ -38,7 +46,7 @@
                     <dl class="col-md-4 dl-horizontal">
                         <dt>Term</dt>
                         <dd>
-                            {{ $course->term->termName() }} {{ $course->term->year }}
+                            <a href="/terms/details/{{ $course->term->term_id }}">{{ $course->term->displayName() }}</a>
                         </dd>
 
                         <dt>Order Period</dt>
@@ -87,13 +95,13 @@
                     @elseif (!count($course->orders))
                         <h3 class="text-muted">There are no orders placed for this course.</h3>
                     @else
-                        <table class="table table-bordered table-hover table-striped">
+                        <table class="table table-hover">
                             <thead>
                             <tr>
                                 <th>Title</th>
                                 <th>ISBN</th>
                                 <th>Publisher</th>
-                                <th width="140px"></th>
+                                <th width="1%"></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -128,10 +136,7 @@
 @stop
 
 @section('scripts-head')
-
-    <script src="/javascripts/angular.min.js"></script>
-    <script src="/javascripts/ng/smart-table/smart-table.min.js"></script>
-    <script src="/javascripts/ng/app.js"></script>
     <script src="/javascripts/ng/helper.isbnHyphenate.js"></script>
-    <script src="/javascripts/ng/app.books.js"></script>
+    <script src="/javascripts/ng/pagination/dirPagination.js"></script>
+    <script src="/javascripts/ng/app.courses.js"></script>
 @stop

@@ -7,25 +7,38 @@
 
     <div class="row">
         <div class="col-lg-12">
-            <div class="panel panel-default">
+            <div class="panel panel-default"  ng-controller="CoursesIndexController as cc">
                 <div class="panel-heading">
-                    <h3 class="panel-title"><i class="fa fa-pencil fa-fw"></i> All Courses</h3>
+                    <h3 class="panel-title"><i class="fa fa-university fa-fw"></i> All Courses</h3>
                 </div>
                 <div class="panel-body">
-                    <div ng-controller="CoursesController as cc" class="table-responsive">
+                    <div class="table-responsive">
                         <table st-pipe="cc.callServer" st-table="cc.displayed"
-                               class="table table-bordered table-hover table-striped"
+                               class="table table-hover"
                                empty-placeholder>
                             <thead>
                             <tr>
-                                <th st-sort="section">Section</th>
+                                <th width="170px" st-sort="section">Section</th>
+                                <th width="250px" st-sort="term_id">Term</th>
                                 <th st-sort="course_name">Name</th>
-                                <th width="110px">Details</th>
+                                <th width="1%"></th>
                             </tr>
                             <tr>
-                                <th><input type="text" class="form-control" placeholder="Search..." st-search="section"/></th>
-                                <td><input type="text" class="form-control" placeholder="Search..." st-search="name"/></td>
-                                <td></td>
+                                <th>
+                                    <input type="text" class="form-control" placeholder="Search..." st-search="section"/>
+                                </th>
+                                <th>
+                                    <select class="form-control" ng-init="TermSelected = '{{$currentTermId}}'" ng-model="TermSelected" ng-change="updateTerm()">
+                                        <option value="">All Terms</option>
+                                        @foreach($terms as $term)
+                                            <option value="{{$term->term_id}}">{{$term->termName()}} {{$term->year}}</option>
+                                        @endforeach
+                                    </select>
+                                </th>
+                                <th>
+                                    <input type="text" class="form-control" placeholder="Search..." st-search="name"/>
+                                </th>
+                                <th></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -34,6 +47,7 @@
                                 <td>
                                     [[ course.department ]] [[ course.course_number | zpad:3 ]]-[[ course.course_section | zpad:2 ]]
                                 </td>
+                                <td>[[ course.term.term_name ]] [[ course.term.year ]]</td>
                                 <td>[[ course.course_name ]]</td>
                                 <td><a class="btn btn-sm btn-info" href="/courses/details/[[course.course_id]]" role="button">
                                         Details <i class="fa fa-arrow-right"></i>
@@ -59,9 +73,7 @@
 @stop
 
 @section('scripts-head')
-    <script src="/javascripts/angular.min.js"></script>
-    <script src="/javascripts/ng/smart-table/smart-table.min.js"></script>
-    <script src="/javascripts/ng/app.js"></script>
     <script src="/javascripts/ng/helper.isbnHyphenate.js"></script>
+    <script src="/javascripts/ng/pagination/dirPagination.js"></script>
     <script src="/javascripts/ng/app.courses.js"></script>
 @stop
