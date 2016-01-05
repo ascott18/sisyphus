@@ -155,7 +155,7 @@
                                     @endcan
 
                                     <td>
-                                        <a class="btn btn-sm btn-primary" href="/books/show/{{ $order->book->book_id }}" role="button">
+                                        <a class="btn btn-sm btn-primary" href="/books/details/{{ $order->book->book_id }}" role="button">
                                             Book Details <i class="fa fa-arrow-right"></i>
                                         </a>
                                     </td>

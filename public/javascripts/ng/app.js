@@ -189,6 +189,7 @@ app.factory('RequestsErrorHandler', ['$q', '$rootScope', function($q, $rootScope
                 else if (rejection.data.response && rejection.data.response.message )
                 {
                     $rootScope.appErrors.push({
+                        title: "Error - " + rejection.data.response.statusName,
                         messages: [rejection.data.response.message]
                     });
                 }
