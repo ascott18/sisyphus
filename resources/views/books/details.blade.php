@@ -14,9 +14,9 @@
             </div>
             <div class="panel-body">
                 <div class="col-sm-6">
-                    {{--<a href="/books/edit/{{ $book->book_id }}" class="btn btn-info " role="button">--}}
-                        {{--<i class="fa fa-info-circle"></i> Edit--}}
-                    {{--</a>--}}
+                    <a href="/books/edit/{{ $book->book_id }}" class="btn btn-primary " role="button">
+                        Edit <i class="fa fa-arrow-right"></i>
+                    </a>
                     <dl class="dl-horizontal">
                         <dt>Title</dt>
                     <dd>

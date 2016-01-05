@@ -172,11 +172,6 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService',
             function success(response){
                 $scope.setStage($scope.STAGE_CONFIRMATION);
                 console.log("Saved!", response);
-            },
-            function error(response){
-                // TODO: handle this properly.
-                alert("notsaved!");
-                console.log("Not Saved!", response);
             });
     }
 

@@ -53,6 +53,50 @@ app.controller('BooksController', function($scope, $http) {
     }
 });
 
+app.controller('EditBookController', function($scope, $http) {
+    $scope.authors = [];
+    $scope.master = {};
+    $scope.book = {};
+    $scope.submitted = false;
+
+    $scope.addAuthor = function(author) {
+        $scope.authors.push({name: ""});
+
+    };
+
+    $scope.removeAuthor = function(index) {
+        if (index >= 0 && index < $scope.authors.length) {
+            $scope.authors.splice(index, 1);
+        }
+    };
+
+    $scope.reset = function(form) {
+        $scope.submitted = false;
+        if (form) {
+            form.$setPristine();
+            form.$setUntouched();
+        }
+        $scope.book = angular.copy($scope.master);
+    };
+
+    $scope.setBook = function(book) {
+        $scope.book = book;
+    };
+
+    $scope.addAuthors = function(authors) {
+        $scope.authors = authors;
+    };
+
+    $scope.save = function() {
+        $http.post('/books/edit', {book: $scope.book, authors: $scope.authors}).then(
+            function success(response){
+                console.log("Saved!", response);
+            });
+    };
+
+    $scope.reset();
+});
+
 app.controller('BookDetailsController', function($scope, $http) {
     var ctrl = this;
 

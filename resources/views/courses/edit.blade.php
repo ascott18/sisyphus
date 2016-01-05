@@ -1,6 +1,7 @@
 @extends('layouts.master')
 
 @section('area', 'Courses')
+@section('action', isset($course) ? "Edit" : "Create")
 @section('page', isset($course) ? $course->displayIdentifier() : "New Course")
 
 @section('content')
