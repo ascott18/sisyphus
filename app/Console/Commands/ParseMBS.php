@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Bus\SelfHandling;
 
@@ -259,6 +260,7 @@ EOL;
 
                     if ($course['noText']) {
                         $dbCourse->no_book = true;
+                        $dbCourse->no_book_marked = Carbon::now();
                         $dbCourse->save();
                     }
 
@@ -268,6 +270,7 @@ EOL;
                         $isbn = trim(str_replace("-", "", $book[$bookRegGroups['ISBN']]));
                         $title = title_case($book[$bookRegGroups['Title']]);
                         $publisher = title_case($book[$bookRegGroups['Publisher']]);
+                        $edition = $book[$bookRegGroups['Edition']];
 
                         if ($isbn == "None")
                         {
@@ -287,7 +290,7 @@ EOL;
                             exit;
                         }
 
-                        // TODO: save edition (there is no DB field yet)
+                        $dbBook->edition = $edition;
                         $dbBook->save();
 
                         Author::firstOrCreate([

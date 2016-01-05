@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -12,6 +13,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property int term_id The id of the term that the course belongs to, referencing the terms table.
  * @property int user_id The id of user that teaches the course.
  * @property integer course_id The database primary key for this model.
+ * @property boolean no_book Whether this course has been marked as not needing a book.
+ * @property Carbon no_book_marked The time at which this course was marked as not needing a book.
  */
 class Course extends Model
 {

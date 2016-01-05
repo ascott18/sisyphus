@@ -25,6 +25,6 @@
 
     <div ng-show="form.$submitted || form['{{$nameIndexerEscaped}}'].$touched">
         <span class="text-danger" ng-show="form['{{$nameIndexerEscaped}}'].$error.required">{{$label}} is required.</span>
-        <span class="text-danger" ng-show="form['{{$nameIndexerEscaped}}'].$error.pattern">{{$label}} is invalid.</span>
+        <span class="text-danger" ng-show="form['{{$nameIndexerEscaped}}'].$error.pattern">{{$label}} {{ isset($pattern) ? $pattern : 'is invalid'}}.</span>
     </div>
 </div>

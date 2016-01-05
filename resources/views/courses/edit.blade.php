@@ -23,10 +23,14 @@
                             <h4>{{$term_name}}</h4>
                         @endif
 
-                        @include('input.generic', ['name' => 'course.course_name', 'label' => 'Title', 'attrs' => ['required' => 'true']])
-                        @include('input.generic', ['name' => 'course.department', 'label' => 'Department', 'attrs' => ['required' => 'true', 'pattern' => '[A-Z]+']])
-                        @include('input.generic', ['name' => 'course.course_number', 'label' => 'Number', 'attrs' => ['required' => 'true', 'pattern' => '\d+']])
-                        @include('input.generic', ['name' => 'course.course_section', 'label' => 'Section', 'attrs' => ['required' => 'true', 'pattern' => '\d+']])
+                        @include('input.generic', ['name' => 'course.course_name', 'label' => 'Title',
+                            'attrs' => ['required' => 'true']])
+                        @include('input.generic', ['name' => 'course.department', 'label' => 'Department',
+                            'attrs' => ['required' => 'true', 'pattern' => '[A-Z]{2,10}'], 'pattern' => 'must be 2-10 uppercase characters'])
+                        @include('input.generic', ['name' => 'course.course_number', 'label' => 'Number',
+                            'attrs' => ['required' => 'true', 'pattern' => '\d+'], 'pattern' => 'must be a number'])
+                        @include('input.generic', ['name' => 'course.course_section', 'label' => 'Section',
+                            'attrs' => ['required' => 'true', 'pattern' => '\d+'], 'pattern' => 'must be a number'])
                     </div>
 
                     <div class="col-md-6"

@@ -11,6 +11,14 @@ use Illuminate\Database\Query\Builder;
 
 class CourseController extends Controller
 {
+    const CourseValidation = [
+        'course.department' => 'required|min:2|max:10',
+        'course.course_name' => 'required',
+        'course.course_number' => 'required|integer',
+        'course.course_section' => 'required|integer',
+        'course.user_id' => 'required|exists:users,user_id',
+    ];
+
     /**
      * Display a listing of the resource.
      *
@@ -23,15 +31,17 @@ class CourseController extends Controller
 
         $user = $request->user();
 
+        $currentTerm = Term::currentTerms()->first();
+        $currentTermId = $currentTerm ? $currentTerm->term_id : '';
+
         $terms = Term::whereIn('term_id', function($query) use ($user) {
                 static::buildFilteredCourseQuery($query->from('courses'), $user)->select('term_id');
         })
+            ->orWhere('term_id', '=', $currentTermId)
             ->orderBy('term_id', 'DESC')
             ->get();
 
-        $currentTerm = Term::currentTerms()->first();
-
-        return view('courses.index', ['terms' => $terms, 'currentTermId' => $currentTerm ? $currentTerm->term_id : '']);
+        return view('courses.index', ['terms' => $terms, 'currentTermId' => $currentTermId]);
     }
 
 
@@ -46,6 +56,9 @@ class CourseController extends Controller
         $course = Course::findOrFail($id);
 
         $this->authorize("view-course", $course);
+
+        // We will show deleted orders in red on this screen.
+        $course->orders = $course->orders()->withTrashed()->get();
 
         return view('courses.details', ['course' => $course]);
     }
@@ -75,6 +88,7 @@ class CourseController extends Controller
         $dbCourse = Course::findOrFail($id);
 
         $this->authorize("edit-course", $dbCourse);
+        $this->validate($request, static::CourseValidation);
 
         $course = $request->except('course.term_id')['course'];
 
@@ -106,6 +120,7 @@ class CourseController extends Controller
     public function postCreate(Request $request)
     {
         $this->authorize("create-course");
+        $this->validate($request, static::CourseValidation);
 
         $course = $request->get('course');
 

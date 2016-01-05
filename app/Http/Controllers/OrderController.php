@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Term;
 use Auth;
+use Carbon\Carbon;
 use \Illuminate\Http\Request;
 use App\Models\Author;
 use App\Models\Book;
@@ -11,6 +12,7 @@ use App\Models\User;
 use App\Models\Order;
 use Illuminate\Http\Response;
 use App\Models\Course;
+use Redirect;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -37,30 +39,6 @@ class OrderController extends Controller
         return view('orders.index', ['user_id' => $targetUser->user_id, 'openTerms' => $openTerms]);
     }
 
-
-    /** GET /orders/create/1
-     * Show the form for creating a new resource.
-     *
-     * @param int $course_id The courseId to create an order for.
-     * @return \Illuminate\Http\Response
-     */
-    public function getCreate($course_id)
-    {
-        // TODO: pretty sure this action isn't even used.
-        throw new AccessDeniedHttpException("This action is obsolete, maybe?. Remove this throw if it is actually used.");
-
-        // TODO: authorize this correctly based on the course passed in.
-        $this->authorize("all");
-
-        $course = Course::findOrFail($course_id);
-
-        $this->authorize('place-order', $course);
-
-        $user = User::find($course->user_id)->first();
-
-        return view('orders.create', ['user' => $user]);
-    }
-
     public function postNoBook(Request $request)
     {
         $course_id=$request->get("course_id");
@@ -75,10 +53,37 @@ class OrderController extends Controller
                 Response::HTTP_BAD_REQUEST);
         }
 
-        $course->no_book=true;
+        $course->no_book = true;
+        $course->no_book_marked = Carbon::now();
         $course->save();
 
         return ['success' => true];
+    }
+
+    public function postDelete(Request $request, $order_id)
+    {
+        $order = Order::findOrFail($order_id);
+
+        $this->authorize('edit-order', $order);
+
+        $order->deleted_by = $request->user()->user_id;
+        $order->save();
+        $order->delete();
+
+        return Redirect::back();
+    }
+
+    public function postUndelete(Request $request, $order_id)
+    {
+        $order = Order::withTrashed()->findOrFail($order_id);
+
+        $this->authorize('edit-order', $order);
+
+        $order->deleted_by = null;
+        $order->save();
+        $order->restore();
+
+        return Redirect::back();
     }
 
     public function getReadCourses(Request $request)
@@ -144,7 +149,7 @@ class OrderController extends Controller
         $course = Course::findOrFail($params['course_id']);
         $this->authorize("place-order-for-course", $course);
 
-
+        //TODO: validate incoming data
 
         foreach ($params['cart'] as $bookData) {
 

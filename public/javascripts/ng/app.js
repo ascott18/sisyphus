@@ -110,9 +110,17 @@ function(){
         link: function (scope, element, attr) {
             var msg = attr.ngConfirmClickMessage || "Are you sure?";
             var clickAction = attr.ngConfirmClick;
-            element.bind('click',function (event) {
-                if ( window.confirm(msg) ) {
-                    scope.$eval(clickAction)
+            element.bind('click', function (event) {
+                var confirmed = window.confirm(msg);
+
+                if (confirmed)
+                {
+                    if (clickAction == 'submit'){
+                        $(element).parent('form').submit()
+                    }
+                    else{
+                        scope.$eval(clickAction);
+                    }
                 }
             });
         }

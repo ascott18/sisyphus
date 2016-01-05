@@ -101,15 +101,28 @@
                                 <th>Title</th>
                                 <th>ISBN</th>
                                 <th>Publisher</th>
+                                <th>Required</th>
+                                @can('edit-order', $course->orders->first())
+                                    <th width="1%"></th>
+                                @endcan
                                 <th width="1%"></th>
                             </tr>
                             </thead>
                             <tbody>
 
                             @foreach($course->orders as $order)
-                                <tr>
+                                <tr class=" {{ $order->deleted_at != null ? "danger" : "" }}">
                                     <td>
                                         {{ $order->book->title }}
+                                        <br><span class="text-muted">
+                                            Placed by {{$order->placedBy->first_name}} {{$order->placedBy->last_name}} on {{$order->created_at->toDateString()}}
+                                        </span>
+
+                                        @if ($order->deleted_at != null)
+                                            <br><span class="text-muted">
+                                                Deleted by {{$order->deletedBy->first_name}} {{$order->deletedBy->last_name}} on {{$order->deleted_at->toDateString()}}
+                                            </span>
+                                        @endif
                                     </td>
                                     <td>
                                         [["{{ $order->book->isbn13 }}" | isbnHyphenate ]]
@@ -117,8 +130,32 @@
                                     <td>
                                         {{ $order->book->publisher }}
                                     </td>
+                                    <td>
+                                        {{ $order->required ? "Yes" : "No" }}
+                                    </td>
 
-                                    <td><a class="btn btn-sm btn-info" href="/books/show/{{ $order->book->book_id }}" role="button">
+                                    @can('edit-order', $order)
+                                    <td>
+                                        @if ($order->deleted_at == null)
+                                            <form action="/orders/delete/{{$order->order_id}}" method="POST" name="form">
+                                                {!! csrf_field() !!}
+                                                <button type="button" class="btn btn-sm btn-danger" role="button" ng-confirm-click="submit" >
+                                                    <i class="fa fa-times"></i> Delete Order
+                                                </button>
+                                            </form>
+                                        @else
+                                            <form action="/orders/undelete/{{$order->order_id}}" method="POST" name="form">
+                                                {!! csrf_field() !!}
+                                                <button type="button" class="btn btn-sm btn-default" role="button" ng-confirm-click="submit" >
+                                                    <i class="fa fa-history"></i> Restore Order
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </td>
+                                    @endcan
+
+                                    <td>
+                                        <a class="btn btn-sm btn-primary" href="/books/show/{{ $order->book->book_id }}" role="button">
                                             Book Details <i class="fa fa-arrow-right"></i>
                                         </a>
                                     </td>

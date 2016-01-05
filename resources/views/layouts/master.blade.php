@@ -113,6 +113,18 @@
             </div>
             @endif
 
+
+            @if (count($errors) > 0)
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                    <button type="button" class="close" aria-label="Close" ng-click="appErrors.splice(appErrors.indexOf(error), 1)"><span aria-hidden="true">&times;</span></button>
+                    <ul>
+                    @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <div ng-cloak ng-repeat="error in appErrors"
                     class="alert alert-danger alert-dismissible" role="alert">
                 <button type="button" class="close" aria-label="Close" ng-click="appErrors.splice(appErrors.indexOf(error), 1)"><span aria-hidden="true">&times;</span></button>

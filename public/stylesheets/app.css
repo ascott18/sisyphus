@@ -14,7 +14,8 @@ body {
     padding-top: 0;
 }
 
-.table td > .btn {
+.table td > .btn,
+.table td > form > .btn {
     margin: -5px 0;
 }
 
