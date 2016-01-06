@@ -107,7 +107,7 @@
                             <tbody>
 
                             @foreach($course->orders as $order)
-                                <tr>
+                                <tr ng-cloak>
                                     <td>
                                         {{ $order->book->title }}
                                     </td>
