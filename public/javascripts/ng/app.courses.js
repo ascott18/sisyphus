@@ -4,19 +4,31 @@ var app = angular.module('sisyphus', ['sisyphus.helpers', 'smart-table', 'angula
 app.controller('CoursesIndexController', function($scope, $http) {
     var ctrl1 = this;
     $scope.stCtrl=null;
+    $scope.stTableRef=null;
 
     $scope.updateTerm=function()
     {
-        $scope.stCtrl.pipe();
+        if($scope.stCtrl)
+            $scope.stCtrl.pipe();
+
+        if($scope.stTableRef)
+            $scope.stTableRef.pagination.start = 0;
     };
 
     this.displayed = [];
 
     this.callServer = function callServer(tableState, ctrl) {
+
+
         ctrl1.isLoading = true;
         if(!$scope.stCtrl&&ctrl)
         {
             $scope.stCtrl=ctrl;
+        }
+
+        if(!$scope.stTableRef&&tableState)
+        {
+            $scope.stTableRef=tableState;
         }
 
         if(!tableState&&$scope.stCtrl){
