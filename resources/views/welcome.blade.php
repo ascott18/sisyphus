@@ -97,16 +97,18 @@
 <!-- /.row--><!-- Morris Charts CSS-->
 
 <div class="row">
-    <div class="col-lg-8">
+    @foreach($chartData as $term)
+    <div class="col-lg-6">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title"><i class="fa fa-bar-chart-o fa-fw"></i> Area Chart</h3>
+                <h3 class="panel-title"><i class="fa fa-bar-chart-o fa-fw"></i> {{$term['name']}}</h3>
             </div>
             <div class="panel-body">
-                <div id="morris-area-chart"></div>
+                <div id="order-chart-{{$term['term_id']}}"></div>
             </div>
         </div>
     </div>
+    @endforeach
     <div class="col-lg-4">
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -166,6 +168,32 @@
     <!-- Morris Charts JavaScript-->
     <script src="javascripts/plugins/morris/raphael.min.js"></script>
     <script src="javascripts/plugins/morris/morris.min.js"></script>
-    <script src="javascripts/plugins/morris/morris-data.js"></script>
+    {{--<script src="javascripts/plugins/morris/morris-data.js"></script>--}}
+
+    <script>
+    $(function() {
+        @foreach($chartData as $term)
+            var data = {!! json_encode($term['data']) !!}
+
+            // Area Chart
+            Morris.Area({
+                element: 'order-chart-{{$term['term_id']}}',
+                data: data,
+                xkey: 'date',
+                ykeys: ['orders', 'nobook'],
+                labels: ['Courses Ordered', 'Courses with No Book'],
+                ymax: 'auto {{$term['course_count'] + (4 - $term['course_count']%4)}}',
+                yLabelFormat: function(y){return y != Math.round(y)?'':y;}, // Hide decimal labels
+                pointSize: 0,
+                hideHover: 'auto',
+                continuousLine: true,
+                smooth: false,
+                lineWidth: 0,
+                resize: true
+            });
+        @endforeach
+    });
+
+    </script>
 
 @stop

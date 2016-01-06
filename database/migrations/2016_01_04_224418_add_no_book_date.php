@@ -13,7 +13,7 @@ class AddNoBookDate extends Migration
     public function up()
     {
         Schema::table('courses', function(Blueprint $table) {
-            $table->timestamp('no_book_marked');
+            $table->timestamp('no_book_marked')->nullable();
         });
         Schema::table('orders', function(Blueprint $table) {
             $table->softDeletes();

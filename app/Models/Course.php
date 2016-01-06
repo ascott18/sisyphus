@@ -59,4 +59,22 @@ class Course extends Model
     {
         return $this->hasOne('App\Models\Term', 'term_id', 'term_id');
     }
+
+
+    public function scopeVisible($query, User $user = null){
+        if ($user == null)
+            $user = \Auth::user();
+
+        if ($user->may('view-dept-courses'))
+        {
+            $departments = $user->departments()->lists('department');
+            $query = $query->whereIn('department', $departments);
+        }
+        elseif (!$user->may('view-all-courses'))
+        {
+            $query = $query->where('user_id', $user->user_id);
+        }
+
+        return $query;
+    }
 }

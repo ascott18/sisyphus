@@ -59,6 +59,7 @@ EOL;
         if ($term[1] == "S") $termName = "Spring";
         $termNumber = array_search($termName, Term::$termNumbers);
         $dbTerm = Term::where(['term_number' => $termNumber, 'year' => "20$term[2]"])->firstOrFail();
+        $termPeriodDayLength = $dbTerm->order_due_date->diffInDays($dbTerm->order_start_date);
 
         // From the page header, calculate the column widths.
         // This only works for the left-aligned columns.
@@ -260,7 +261,8 @@ EOL;
 
                     if ($course['noText']) {
                         $dbCourse->no_book = true;
-                        $dbCourse->no_book_marked = Carbon::now();
+                        // TODO: this date is fake data.
+                        $dbCourse->no_book_marked = $dbTerm->order_start_date->copy()->addDays(rand(0, $termPeriodDayLength));
                         $dbCourse->save();
                     }
 
@@ -302,6 +304,11 @@ EOL;
                         $dbOrder->book_id = $dbBook->book_id;
                         $dbOrder->course_id = $dbCourse->course_id;
                         $dbOrder->placed_by = $dbCourse->user_id; // TODO: make this a dummy user instead?
+                        $dbOrder->save();
+
+
+                        // TODO: this date is fake data.
+                        $dbOrder->created_at = $dbTerm->order_start_date->copy()->addDays(rand(0, $termPeriodDayLength));
                         $dbOrder->save();
                     }
                 }

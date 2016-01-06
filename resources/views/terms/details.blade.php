@@ -33,6 +33,9 @@
 
                             <dt>Order Due Date</dt>
                             <dd>{{ $term->order_due_date->toFormattedDateString() }}</dd>
+
+                            <dt>Status</dt>
+                            <dd>{{ $term->getStatusDisplayString() }}</dd>
                         </dl>
                     </div>
 
