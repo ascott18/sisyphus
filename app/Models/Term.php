@@ -223,4 +223,15 @@ class Term extends Model
     }
 
 
+    /**
+     * Gets the terms which ended within the given number of days.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public static function scopeCurrentOrPast($query)
+    {
+        return $query->where('order_start_date', '<=', Carbon::today());
+    }
+
+
 }

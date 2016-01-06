@@ -60,6 +60,12 @@ class Course extends Model
         return $this->hasOne('App\Models\Term', 'term_id', 'term_id');
     }
 
+    public function scopeResponded($query){
+        return $query->where(function($query){
+            return $query->where('no_book', '!=', 0)
+                ->orWhere(\DB::raw('(SELECT COUNT(*) FROM orders WHERE courses.course_id = orders.order_id)', '>', 0));
+        });
+    }
 
     public function scopeVisible($query, User $user = null){
         if ($user == null)
@@ -68,7 +74,10 @@ class Course extends Model
         if ($user->may('view-dept-courses'))
         {
             $departments = $user->departments()->lists('department');
-            $query = $query->whereIn('department', $departments);
+            $query = $query->where(function($query) use ($departments, $user) {
+                $query = $query->whereIn('department', $departments);
+                return $query = $query->orWhere('user_id', $user->user_id);
+            });
         }
         elseif (!$user->may('view-all-courses'))
         {

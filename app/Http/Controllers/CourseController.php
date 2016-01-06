@@ -14,8 +14,8 @@ class CourseController extends Controller
     const CourseValidation = [
         'course.department' => 'required|min:2|max:10',
         'course.course_name' => 'required',
-        'course.course_number' => 'required|integer',
-        'course.course_section' => 'required|integer',
+        'course.course_number' => 'required|numeric',
+        'course.course_section' => 'required|numeric',
         'course.user_id' => 'required|exists:users,user_id',
     ];
 

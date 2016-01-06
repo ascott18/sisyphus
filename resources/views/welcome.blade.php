@@ -101,7 +101,10 @@
     <div class="col-lg-6">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title"><i class="fa fa-bar-chart-o fa-fw"></i> {{$term['name']}}</h3>
+                <h3 class="panel-title">
+                    <i class="fa fa-bar-chart-o fa-fw"></i> {{$term['name']}}
+                </h3>
+                <small>{{$term['status']}} - {{$term['current_count']}} of {{$term['course_count']}} courses responded</small>
             </div>
             <div class="panel-body">
                 <div id="order-chart-{{$term['term_id']}}"></div>
@@ -109,19 +112,6 @@
         </div>
     </div>
     @endforeach
-    <div class="col-lg-4">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title"><i class="fa fa-long-arrow-right fa-fw"></i> Donut Chart</h3>
-            </div>
-            <div class="panel-body">
-                <div id="morris-donut-chart"></div>
-                <div class="text-right">
-                    <a href="#">View Details <i class="fa fa-arrow-circle-right"></i></a>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 

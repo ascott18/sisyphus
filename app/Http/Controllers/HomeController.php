@@ -8,6 +8,8 @@ use Carbon\Carbon;
 
 class HomeController extends Controller
 {
+    const NUM_TERM_CHARTS = 2;
+
     /** GET: /
      *
      * @return \Illuminate\View\View
@@ -16,9 +18,11 @@ class HomeController extends Controller
     {
         $this->authorize("all");
 
-        $terms = Term::currentTerms()->get();
-        if (count($terms) == 0)
-            $terms = Term::recentTerms(45)->get();
+        $terms = Term::currentOrPast()
+            ->where(\DB::raw('(SELECT COUNT(*) FROM courses where courses.term_id = terms.term_id)'), '>', 0)
+            ->orderBy('term_id', 'DESC')
+            ->take(static::NUM_TERM_CHARTS)
+            ->get();
 
         $termData = [];
 
@@ -67,6 +71,8 @@ class HomeController extends Controller
                 $start->addDays(1);
             }
 
+            $currentCount = $lastRow['orders'] + $lastRow['nobook'];
+
             // For everything from now until the end of the term, display nothing.
             if ($start->diffInDays($end) > 1){
                 $dateString = $start->toDateString();
@@ -86,7 +92,9 @@ class HomeController extends Controller
 
             $termData[] = [
                 'name' => $term->displayName(),
+                'status' => $term->getStatusDisplayString(),
                 'term_id' => $term->term_id,
+                'current_count' => $currentCount,
                 'course_count' => $courseCount,
                 'data' => $results
             ];

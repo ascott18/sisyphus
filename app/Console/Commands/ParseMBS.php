@@ -220,6 +220,7 @@ EOL;
             // Course numbers can be in ugly formats like "210 & 211",
             // so expand those out.
             $courseNumbers = $this->decipherNumbers($deptCourses[2]);
+            $department = $deptCourses[1];
 
             foreach ($courseNumbers as $courseNumber) {
                 $courseNumber = trim($courseNumber);
@@ -248,7 +249,7 @@ EOL;
 
                     $dbCourse = Course::where([
                         'term_id' => $dbTerm->term_id,
-                        'department' => $deptCourses[1],
+                        'department' => $department,
                         'course_number' => $courseNumber,
                         'course_section' => $sectionNumber,
                     ])->first();

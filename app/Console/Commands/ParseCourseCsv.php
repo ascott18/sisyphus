@@ -41,6 +41,26 @@ class ParseCourseCsv extends Command implements SelfHandling
         "thomasBraceCapaul" => "tcapaul",
     ];
 
+    // TODO: when this blacklisting makes it into the real data harvesting,
+    // make this list configurable by administrators.
+    protected $ignoredNumbers = [
+        199, // Directed & Independent study
+        299, // Directed & Independent study
+        399, // Directed & Independent study
+        499, // Directed & Independent study
+        599, // Directed & Independent study
+
+        295, // Internship
+        395, // Internship
+        495, // Internship
+        595, // Internship
+        694, // Internship/practicum for some departments
+        695, // Internship
+
+        600, // Thesis
+        601, // Research
+    ];
+
     /**
      * Execute the command.
      *
@@ -63,14 +83,23 @@ class ParseCourseCsv extends Command implements SelfHandling
         foreach ($data as $row) {
             $csv = str_getcsv ( $row );
 
-            if (count($csv) > 5 && is_numeric($csv[1])){
-                $numParsed++;
+            // Not a data row
+            if (count($csv) <= 5 || !is_numeric($csv[1]))
+                continue;
 
-                $dept = trim($csv[2]);
-                $courseNumber = $csv[3];
-                $section = $csv[4];
-                $title = $csv[7];
-                $prof = $csv[19];
+            $courseNumber = $csv[3];
+            $dept = trim($csv[2]);
+            $section = $csv[4];
+            $prof = $csv[19];
+            $title = $csv[7];
+
+            if (!is_numeric($csv[18])) {
+                // Check the XL Remaining - some courses are messed up and are missing a column)
+                echo "Skipped $dept $courseNumber-$section: $title (Professor: $prof) due to probably wrong professor name.\n";
+            }
+            else if (!in_array($courseNumber, $this->ignoredNumbers))
+            {
+                $numParsed++;
 
                 $title = strtr($title, $this->title_transforms_pre);
                 $title = title_case($title);
