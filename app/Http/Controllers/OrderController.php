@@ -36,7 +36,7 @@ class OrderController extends Controller
 
         $openTerms = Term::currentTerms()->get();
 
-        return view('orders.index', ['user_id' => $targetUser->user_id, 'openTerms' => $openTerms]);
+        return view('orders.index', ['targetUser' => $targetUser, 'openTerms' => $openTerms]);
     }
 
     public function postNoBook(Request $request)

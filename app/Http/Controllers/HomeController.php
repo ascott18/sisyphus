@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\Term;
+use Cache;
 use Carbon\Carbon;
 
 class HomeController extends Controller
 {
+    const CACHE_MINUTES = 1;
     const NUM_TERM_CHARTS = 2;
+    const NUM_RESPONSE_STATS = 10;
 
     /** GET: /
      *
@@ -18,16 +21,42 @@ class HomeController extends Controller
     {
         $this->authorize("all");
 
-        $terms = Term::currentOrPast()
-            ->where(\DB::raw('(SELECT COUNT(*) FROM courses where courses.term_id = terms.term_id)'), '>', 0)
-            ->orderBy('term_id', 'DESC')
-            ->take(static::NUM_TERM_CHARTS)
-            ->get();
+        return view('welcome', static::getCachedDashboardData());
+    }
 
-        $termData = [];
+    private static function getCachedDashboardData(){
+        // Cache this for 10 minutes.
+        return Cache::remember('dashboard-' . \Auth::user()->user_id, static::CACHE_MINUTES, function() {
+            return [
+                'chartData' => static::getChartData(),
+                'responseStats' => static::getResponseStats(),
+                'cacheMins' => static::CACHE_MINUTES,
+                'openTermsCount' => Term::currentTerms()->count(),
+            ];
+        });
+    }
 
-        foreach ($terms as $term) {
+    private static function getChartData(){
+
+        $chartData = [];
+
+        $i = 0;
+        $numChartsFound = 0;
+        while ($numChartsFound < static::NUM_TERM_CHARTS) {
+            $term = Term::currentOrPast()
+                ->orderBy('term_id', 'DESC')
+                ->skip($i++)
+                ->first();
+
+            if ($term == null)
+                break;
+
             $courseCount = Course::visible()->where('term_id', '=', $term->term_id)->count();
+
+            if ($courseCount == 0)
+                continue;
+
+            $numChartsFound++;
 
             $orderReport = Course::visible()->where('term_id', '=', $term->term_id)
                 ->join('orders', function ($join) {
@@ -40,7 +69,7 @@ class HomeController extends Controller
                 ->select(\DB::raw('count(*) as count, DATE(orders.created_at) as date'))
                 ->get();
 
-            $ordersByDate = $this->getAccumulationsFromReport($orderReport);
+            $ordersByDate = static::getAccumulationsFromReport($orderReport);
 
 
             $noBookReport = Course::visible()->where('term_id', '=', $term->term_id)
@@ -50,7 +79,7 @@ class HomeController extends Controller
                 ->select(\DB::raw('count(courses.no_book_marked) as count, DATE(courses.no_book_marked) as date'))
                 ->get();
 
-            $noBookByDate = $this->getAccumulationsFromReport($noBookReport);
+            $noBookByDate = static::getAccumulationsFromReport($noBookReport);
 
             $start = $term->order_start_date;
             $end = $term->order_due_date;
@@ -90,7 +119,7 @@ class HomeController extends Controller
                 ];
             }
 
-            $termData[] = [
+            $chartData[] = [
                 'name' => $term->displayName(),
                 'status' => $term->getStatusDisplayString(),
                 'term_id' => $term->term_id,
@@ -100,10 +129,54 @@ class HomeController extends Controller
             ];
         }
 
-        return view('welcome', ['chartData' => $termData]);
+        return $chartData;
     }
 
-    private function getAccumulationsFromReport($reportData)
+
+    private static function getResponseStats(){
+
+        $data = [];
+
+        $i = 0;
+        $numChartsFound = 0;
+        while ($numChartsFound < static::NUM_RESPONSE_STATS) {
+            $term = Term::currentOrPast()
+                ->orderBy('term_id')
+                ->skip($i++)
+                ->first();
+
+            if ($term == null)
+                break;
+
+            $courseCount = Course::visible()->where('term_id', '=', $term->term_id)->count();
+
+            if ($courseCount == 0)
+                continue;
+
+            $numChartsFound++;
+
+            $coursesResponded = Course::visible()
+                ->where('term_id', '=', $term->term_id)
+                ->where(function($query) use ($term){
+                    return $query
+                        ->whereRaw('UNIX_TIMESTAMP(courses.no_book_marked) != 0 OR (SELECT COUNT(*) FROM orders where orders.course_id = courses.course_id) > 0');
+                })
+
+                ->count();
+
+            $data[] = [
+                'name' => $term->displayName(),
+                'responded' => $coursesResponded,
+                'total' => $courseCount,
+                'percent' => intval($coursesResponded/$courseCount*100),
+                'order_due_date' => $term->order_due_date->toDateString()
+            ];
+        }
+
+        return $data;
+    }
+
+    private static function getAccumulationsFromReport($reportData)
     {
         $result = [];
         $total = 0;

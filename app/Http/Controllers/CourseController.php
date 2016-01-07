@@ -33,10 +33,9 @@ class CourseController extends Controller
 
         $currentTerm = Term::currentTerms()->first();
         $currentTermId = $currentTerm ? $currentTerm->term_id : '';
+        $userTerms = Course::visible($user)->select('term_id')->get();
 
-        $terms = Term::whereIn('term_id', function($query) use ($user) {
-                static::buildFilteredCourseQuery($query->from('courses'), $user)->select('term_id');
-        })
+        $terms = Term::whereIn('term_id', $userTerms)
             ->orWhere('term_id', '=', $currentTermId)
             ->orderBy('term_id', 'DESC')
             ->get();
@@ -224,7 +223,7 @@ class CourseController extends Controller
     {
         $this->authorize("view-course-list");
 
-        $query = static::buildFilteredCourseQuery(Course::query(), $request->user());
+        $query = Course::visible($request->user());
 
         if($request->input('term_id')) {
             $query = $query->where('term_id', '=', $request->input('term_id'));
