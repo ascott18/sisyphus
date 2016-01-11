@@ -11,6 +11,18 @@ use Illuminate\Http\Response;
 
 class UserController extends Controller
 {
+
+    /**
+     * The permissions that must always be available to at least one user.
+     * We will not allow any action that would leave any of these permissions orphaned.
+     *
+     * @var array
+     */
+    public static $essentialPermissions = [
+        'manage-users',
+        'manage-roles',
+    ];
+
     /**
      * Display a listing of the resource.
      *
@@ -177,14 +189,14 @@ class UserController extends Controller
 
         if ($currentRole != null && $currentRole->users()->where('users.user_id', '!=', $user->user_id)->count() == 0){
             // Removing this user from the role would leave the role with no users.
-            // Check that doing so will not cause there to be no users with an essential permission.
+            // Check that doing so will not cause there to be any essential permissions without users.
 
             $permissions = $currentRole->permissions;
             foreach ($permissions as $permission ) {
                 if (in_array($permission->name, static::$essentialPermissions)){
                     // This role has an essential permission, so we need to make sure that
-                    // removing this role from this user will not leave one of those permissions
-                    // being orphaned.
+                    // removing this role from this user will not cause that permissions
+                    // to be orphaned.
 
                     $rolesWithPermission = $permission->roles;
                     $someoneHasPermission = false;
@@ -220,10 +232,6 @@ class UserController extends Controller
     }
 
 
-
-
-
-
     /**
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -241,10 +249,6 @@ class UserController extends Controller
         return ['success' => true];
     }
 
-    public static $essentialPermissions = [
-        'manage-users',
-        'manage-roles',
-    ];
 
     /**
      * @param Request $request
@@ -267,6 +271,8 @@ class UserController extends Controller
             $otherRolesWithPermission = $permission->roles()->where('roles.id', '!=', $role->id)->get();
 
             if (count($otherRolesWithPermission) == 0){
+                // There are no other roles that have this permission,
+                // so we definitely can't remove it from this role.
                 return response()->json([
                     'success' => false,
                     'message' => "The $permission->display_name permission is an essential permission. You can't remove it from all roles."],
@@ -281,6 +287,8 @@ class UserController extends Controller
                     }
                 }
                 if (!$someoneHasPermission){
+                    // All other roles that have this permission do not have any user in
+                    // that role, so we can't allow the permission to be removed from this role.
                     return response()->json([
                         'success' => false,
                         'message' => "Removing the $permission->display_name permission would leave no users with it."],
