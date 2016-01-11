@@ -34,10 +34,10 @@
         <div class="panel panel-green">
             <div class="panel-heading">
                 <div class="row">
-                    <div class="col-xs-3"><i class="fa fa-shopping-cart fa-5x"></i></div>
+                    <div class="col-xs-3"><i class="fa fa-book fa-5x"></i></div>
                     <div class="col-xs-9 text-right">
-                        <div class="huge">124</div>
-                        <div>Completed Orders!</div>
+                        <div class="huge">{{$newBookCount}}</div>
+                        <div>New Books (30 days)</div>
                     </div>
                 </div>
             </div>
@@ -94,7 +94,7 @@
 </div>
 
 <div class="row">
-    <div class="col-lg-12">
+    <div class="col-lg-6">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">
@@ -103,6 +103,19 @@
             </div>
             <div class="panel-body">
                 <div id="response-chart"></div>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-lg-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <i class="fa fa-line-chart fa-fw"></i> Course Activity
+                </h3>
+            </div>
+            <div class="panel-body">
+                <div id="activity-chart"></div>
             </div>
         </div>
 
@@ -164,6 +177,20 @@
                     row.total + " Courses<br>" +
                     row.responded + " Responses<br>";
             }
+        })
+
+        var data = {!! json_encode($activityStats) !!}
+        Morris.Line({
+            element: 'activity-chart',
+            data: data,
+            xkey: 'date',
+            ykeys: ['count'],
+            labels: ['Courses with Activity'],
+            yLabelFormat: function(y){return y != Math.round(y)?'':y;}, // Hide decimal labels
+            hideHover: 'auto',
+            resize: true,
+            dateFormat: function (x) { return moment(x).format('dddd, MMMM Do') },
+            xLabelFormat: function (x) { return moment(x).format('ddd MMMM Do') }
         })
     });
 

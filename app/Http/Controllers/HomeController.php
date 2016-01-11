@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Book;
 use App\Models\Course;
 use App\Models\Term;
 use Cache;
@@ -9,9 +10,10 @@ use Carbon\Carbon;
 
 class HomeController extends Controller
 {
-    const CACHE_MINUTES = 1;
+    const CACHE_MINUTES = 5;
     const NUM_TERM_CHARTS = 2;
-    const NUM_RESPONSE_STATS = 10;
+    const NUM_RESPONSE_STATS = 15;
+    const ACTIVITY_STATS_DAYS = 30;
 
     /** GET: /
      *
@@ -25,13 +27,15 @@ class HomeController extends Controller
     }
 
     private static function getCachedDashboardData(){
-        // Cache this for 10 minutes.
+        // Cache this for x minutes.
         return Cache::remember('dashboard-' . \Auth::user()->user_id, static::CACHE_MINUTES, function() {
             return [
                 'chartData' => static::getChartData(),
                 'responseStats' => static::getResponseStats(),
                 'cacheMins' => static::CACHE_MINUTES,
                 'openTermsCount' => Term::currentTerms()->count(),
+                'activityStats' => static::getActivityStats(),
+                'newBookCount' => Book::where('created_at', '>=', Carbon::now()->subDays(30))->count()
             ];
         });
     }
@@ -132,7 +136,6 @@ class HomeController extends Controller
         return $chartData;
     }
 
-
     private static function getResponseStats(){
 
         $data = [];
@@ -175,6 +178,46 @@ class HomeController extends Controller
 
         return $data;
     }
+
+    private static function getActivityStats(){
+
+        $start = Carbon::today()->subDays(static::ACTIVITY_STATS_DAYS);
+
+        $activityReport = Course::visible()
+            ->join('orders', function ($join) {
+                $join
+                    ->on('orders.course_id', '=', 'courses.course_id')
+                    ->on('courses.no_book_marked', 'IS', \DB::raw('NULL'));
+            })
+            ->groupBy('date')
+            ->orderBy('date')
+            ->having('date', '>=', $start)
+            ->select(\DB::raw('count(*) as count,
+                DATE(CASE WHEN no_book_marked is not NULL
+                    THEN no_book_marked
+                    ELSE orders.created_at end) as date'))
+            ->get();
+
+        while ($start < Carbon::today()){
+            $f = $activityReport->filter(function($value) use ($start){
+                return $value['date'] == $start->toDateString();
+            });
+
+            $count = count($f);
+
+            if ($count == 0){
+                $activityReport[] = [
+                    'date' => $start->toDateString(),
+                    'count' => 0
+                ];
+            }
+
+            $start->addDays(1);
+        }
+
+        return $activityReport;
+    }
+
 
     private static function getAccumulationsFromReport($reportData)
     {

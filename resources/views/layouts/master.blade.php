@@ -163,6 +163,7 @@
 </script>
 
 <script src="/javascripts/bootstrap.js"></script>
+<script src="/javascripts/moment.min.js"></script>
 
 
 @yield('scripts')
