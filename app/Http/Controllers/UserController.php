@@ -278,7 +278,7 @@ class UserController extends Controller
                     'message' => "The $permission->display_name permission is an essential permission. You can't remove it from all roles."],
                     Response::HTTP_BAD_REQUEST);
             }
-            else{
+            else {
                 $someoneHasPermission = false;
                 foreach ($otherRolesWithPermission as $role) {
                     if ($role->users()->count() > 0){

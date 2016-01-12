@@ -216,7 +216,7 @@ class CourseController extends Controller
     /** GET: /courses/course-list?page={}&{sort=}&{dir=}&{section=}&{name=}
      * Searches the book list
      *
-     * @param \Illuminate\Database\Eloquent\Builder
+     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function getCourseList(Request $request)

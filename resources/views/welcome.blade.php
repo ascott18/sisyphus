@@ -30,6 +30,7 @@
     </div>
 
 
+    @can('edit-books')
     <div class="col-lg-3 col-xs-6">
         <div class="panel panel-green">
             <div class="panel-heading">
@@ -51,6 +52,8 @@
             </a>
         </div>
     </div>
+    @endcan
+
     <div class="col-lg-3 col-xs-6">
         <div class="panel panel-red">
             <div class="panel-heading">
