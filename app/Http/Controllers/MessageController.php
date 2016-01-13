@@ -73,7 +73,7 @@ class MessageController extends Controller
         $departments = $user->departments()->lists('department');
 
 
-        $maySendAll = !$user->may('send-all-message');
+        $maySendAll = $user->may('send-all-message');
 
         $usersWithCourses = User
             ::whereIn('users.user_id', function($query) use ($maySendAll, $departments, $currentTermIds){
