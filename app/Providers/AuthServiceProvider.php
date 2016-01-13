@@ -158,7 +158,7 @@ class AuthServiceProvider extends ServiceProvider
 
 
         $gate->define('view-course-list', function (User $user) {
-            return $user->may('view-course-list');
+            return true; // $user->may('view-course-list');
         });
 
         $gate->define('edit-course', function (User $user) {
