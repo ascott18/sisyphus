@@ -181,6 +181,7 @@ class BookController extends Controller
 
         foreach ($orders as $order) {
             $order->course->term['term_name'] = $order->course->term->displayName();
+            $order->course['canView'] = $request->user()->can('view-course', $order->course);
         }
 
 

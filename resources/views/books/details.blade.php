@@ -88,7 +88,8 @@
                                 <td>[[ order.course_name ]]</td>
                                 <td>[[ order.required ? "Yes" : "No" ]]</td>
 
-                                <td><a class="btn btn-sm btn-info" href="/courses/details/[[order.course_id]]" role="button">
+                                <td>
+                                    <a ng-if="order.course.canView" class="btn btn-sm btn-info" href="/courses/details/[[order.course_id]]" role="button">
                                         Course Details <i class="fa fa-arrow-right"></i>
                                     </a>
                                 </td>

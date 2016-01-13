@@ -97,6 +97,7 @@
 </div>
 
 <div class="row">
+    @if(count($responseStats))
     <div class="col-lg-6">
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -108,8 +109,9 @@
                 <div id="response-chart"></div>
             </div>
         </div>
-
     </div>
+    @endif
+
     <div class="col-lg-6">
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -163,24 +165,26 @@
             });
         @endforeach
 
-        var data = {!! json_encode($responseStats) !!}
-        Morris.Line({
-            element: 'response-chart',
-            data: data,
-            xkey: 'name',
-            parseTime:false,
-            ykeys: ['percent'],
-            labels: ['Responses Received'],
-            ymax: 100,
-            hideHover: 'auto',
-            postUnits: '%',
-            resize: true,
-            hoverCallback: function (index, options, content, row) {
-                return content + "<br>" +
-                    row.total + " Courses<br>" +
-                    row.responded + " Responses<br>";
-            }
-        })
+        @if(count($responseStats))
+            var data = {!! json_encode($responseStats) !!}
+            Morris.Line({
+                element: 'response-chart',
+                data: data,
+                xkey: 'name',
+                parseTime:false,
+                ykeys: ['percent'],
+                labels: ['Responses Received'],
+                ymax: 100,
+                hideHover: 'auto',
+                postUnits: '%',
+                resize: true,
+                hoverCallback: function (index, options, content, row) {
+                    return content + "<br>" +
+                        row.total + " Courses<br>" +
+                        row.responded + " Responses<br>";
+                }
+            });
+        @endif
 
         var data = {!! json_encode($activityStats) !!}
         Morris.Line({
@@ -194,7 +198,7 @@
             resize: true,
             dateFormat: function (x) { return moment(x).format('dddd, MMMM Do') },
             xLabelFormat: function (x) { return moment(x).format('ddd MMMM Do') }
-        })
+        });
     });
 
     </script>
