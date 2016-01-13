@@ -73,25 +73,22 @@ class MessageController extends Controller
         $departments = $user->departments()->lists('department');
 
 
-        $maySendAll = $user->may('send-all-message');
+        $maySendAll = $user->may('send-all-messages');
 
-        $usersWithCourses = User
-            ::whereIn('users.user_id', function($query) use ($maySendAll, $departments, $currentTermIds){
-                $query = $query->from('courses');
-                if (!$maySendAll){
-                    $query = $query->whereIn('department', $departments);
-                }
-                $query = $query->whereIn('term_id', $currentTermIds)
-                ->distinct()
-                ->select('user_id');
-                return $query;
-            })
-            ->where('users.net_id', '!=', 'tba')
+        $query = User
+            ::where('users.net_id', '!=', 'tba')
             ->select(DB::raw(
                 "users.first_name, users.last_name, users.user_id,
                 COUNT(courses.no_book_marked IS NOT NULL OR (SELECT 1 FROM `orders` WHERE courses.course_id=orders.course_id LIMIT 1) > 0) as coursesResponded,
                 COUNT(course_id) as courseCount"))
             ->join('courses', 'courses.user_id', '=', 'users.user_id')
+            ->whereIn('courses.term_id', $currentTermIds);
+
+        if (!$maySendAll){
+            $query = $query->whereIn('department', $departments);
+        }
+
+        $usersWithCourses = $query
             ->groupBy('users.user_id')
             ->get();
 
