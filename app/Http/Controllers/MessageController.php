@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
+use App\Models\Term;
 use App\Models\User;
 use Auth;
 use Carbon\Carbon;
@@ -28,17 +30,17 @@ class MessageController extends Controller
     }
 
 
-    /** GET: /messages/all
+    /** GET: /messages/all-messages
      *
      * Returns all messages to the user.
      *
      * @return \Illuminate\Http\Response An array of all messages as JSON.
      */
-    public function getAll()
+    public function getAllMessages()
     {
         $this->authorize('send-messages');
 
-        return response()->json(Message::where('owner_user_id', '=', Auth::user()->user_id)->get());
+        return Auth::user()->messages;
     }
 
     /** GET: /messages/all-recipients
@@ -47,7 +49,7 @@ class MessageController extends Controller
      *
      * @return \Illuminate\Http\Response An array of all users as JSON.
      */
-    public function getAllRecipients()
+    public function getAllRecipients(Request $request)
     {
         $this->authorize('send-messages');
 
@@ -59,12 +61,41 @@ class MessageController extends Controller
         // TODO: restrict this query to courses from the current term only.
         // TODO: restrict this to only users that the current user should be able to send messages to.
         // TODO: have least_num_orders skip courses that are marked as no book.
-        $usersWithCourses = DB::select( DB::raw(
-            "SELECT DISTINCT(users.user_id), first_name, last_name,
-             MIN((SELECT count(*) FROM `orders` WHERE courses.course_id=orders.course_id)) as least_num_orders
-             FROM `courses` JOIN `users` ON courses.user_id = users.user_id GROUP BY users.user_id"));
 
-        return response()->json($usersWithCourses);
+
+        $terms = Term::currentTerms()->get();
+        $currentTermIds = [];
+        foreach ($terms as $term) {
+            $currentTermIds[] = $term->term_id;
+            $term['display_name'] = $term->displayName();
+        }
+
+        $user = $request->user();
+        $departments = $user->departments()->lists('department');
+
+
+        $usersWithCourses = User
+            ::whereIn('users.user_id', function($query) use ($departments, $currentTermIds){
+                    $query->from('courses')
+                    ->whereIn('department', $departments)
+                    ->whereIn('term_id', $currentTermIds)
+                    ->distinct()
+                    ->select('user_id');
+            })
+            ->where('users.net_id', '!=', 'tba')
+            ->select(DB::raw(
+                "users.first_name, users.last_name, users.user_id,
+                COUNT(courses.no_book_marked IS NOT NULL OR (SELECT 1 FROM `orders` WHERE courses.course_id=orders.course_id LIMIT 1) > 0) as coursesResponded,
+                COUNT(course_id) as courseCount"))
+            ->join('courses', 'courses.user_id', '=', 'users.user_id')
+            ->groupBy('users.user_id')
+            ->get();
+
+
+        return [
+            'users' => $usersWithCourses,
+            'terms' => $terms
+        ];
     }
 
 

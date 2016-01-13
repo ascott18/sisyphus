@@ -39,9 +39,11 @@
 
                         <h4 class="list-group-item-heading no-pad-bottom">[[message.subject]]</h4>
                         <small >
-                            <span class="text-muted" ng-show="message['last_sent']">Sent On</span>
-                            <span class="text-muted" ng-show="!message['last_sent']">Never Sent</span>
-                            <span ng-bind="message.last_sent | date:'MMMM dd, yyyy'"></span>
+                            <span ng-show="moment(message['last_sent']).unix()">
+                                <span class="text-muted">Sent On</span>
+                                <span ng-bind="message.last_sent | date:'MMMM dd, yyyy'"></span>
+                            </span>
+                            <span class="text-muted" ng-show="!moment(message['last_sent']).unix()">Never Sent</span>
                         </small>
 
                     </li>
@@ -126,11 +128,19 @@
                                 All
                             </button>
                             <button class="btn btn-default" ng-click="selectUsersMissingOrders()">
-                                Missing Orders
+                                Missing Responses
                             </button>
                         </div>
                     </div>
 
+                    <div>
+                        <h4 ng-if="recipients.length == 0" class="text-muted">
+                            Nobody was found that teaches during these open terms:
+                            <ul>
+                                <li ng-repeat="term in terms">[[term.display_name]]</li>
+                            </ul>
+                        </h4>
+                    </div>
                     <div class="list-group">
                         <div class="list-group-item cursor-pointer"
                              ng-class="{active: isRecipientSelected(recipient)}"
@@ -138,6 +148,7 @@
                              dir-paginate="recipient in recipients | filterSplit: recipientSearch | orderBy: 'last_name' | itemsPerPage:10">
 
                              <span>[[recipient.last_name]], [[recipient.first_name]]</span>
+                             <span class="pull-right">[[recipient.coursesResponded]] / [[recipient.courseCount]] courses responded</span>
                         </div>
                     </div>
                     <dir-pagination-controls></dir-pagination-controls>
