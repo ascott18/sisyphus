@@ -16,7 +16,7 @@
 
                     <div class="col-lg-4 col-md-12">
 
-                        @can('create-course')
+                        @can('create-courses')
                             <a href="/courses/create/{{$term->term_id}}" class="btn btn-primary"><i class="fa fa-plus"></i> Create Course</a>
                         @endcan
                         <a href="/terms/check/{{$term->term_id}}" class="btn btn-primary">View Checksheet</a>

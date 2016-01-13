@@ -161,12 +161,25 @@ class AuthServiceProvider extends ServiceProvider
             return true; // $user->may('view-course-list');
         });
 
-        $gate->define('edit-course', function (User $user) {
-            return $user->may('edit-courses');
+        $gate->define('edit-course', function (User $user, Course $course) {
+            return $user->can('view-course', $course) && $user->may('edit-courses');
         });
 
-        $gate->define('create-course', function (User $user) {
-            return $user->may('edit-courses');
+        $gate->define('create-courses', function (User $user) {
+            return $user->may('create-all-courses') || $user->may('create-dept-courses');
+        });
+
+        $gate->define('create-course', function (User $user, Course $course) {
+            if ($user->may('create-all-courses')) {
+                return true;
+            }
+
+            if ($user->may('create-dept-courses') &&
+                $user->departments()->where('department', '=', $course->department)->count()){
+                return true;
+            }
+
+            return false;
         });
 
 
@@ -225,23 +238,23 @@ class AuthServiceProvider extends ServiceProvider
             return $user->may('edit-terms');
         });
 
-        $gate->define('send-messages', function (User $user) {
-            return $user->may('send-messages-to-all')
-            || $user->may('send-messages-to-department');
-        });
-
         $gate->define('touch-message', function (User $user, Message $message) {
             return $message->owner_user_id == $user->user_id;
         });
 
+        $gate->define('send-messages', function (User $user) {
+            return $user->may('send-all-messages')
+            || $user->may('send-dept-messages');
+        });
+
         $gate->define('send-message-to-user', function (User $user, User $recipient) {
-            if ($user->may('send-messages-to-all'))
+            if ($user->may('send-all-messages'))
                 return true;
 
             $userDepartments = $user->departments();
 
             // TODO: test if this works
-            if ($user->may('send-messages-to-department') &&
+            if ($user->may('send-dept-messages') &&
                 $recipient->courses()->whereIn('department', $userDepartments)->first() != null){
                 return true;
             }

@@ -105,7 +105,7 @@ class CourseController extends Controller
      */
     public function getCreate($term_id)
     {
-        $this->authorize("create-course");
+        $this->authorize("create-courses");
 
         // All users, from which we will select a professor.
         $users = User::all(['first_name', 'last_name', 'user_id']);
@@ -118,12 +118,18 @@ class CourseController extends Controller
 
     public function postCreate(Request $request)
     {
-        $this->authorize("create-course");
+        $this->authorize("create-courses");
+
         $this->validate($request, static::$CourseValidation);
 
         $course = $request->get('course');
+        $dbCourse = new Course($course);
 
-        $dbCourse = Course::create($course);
+        // Authorize that the user can indeed create this course before actually saving it.
+        $this->authorize("create-course", $dbCourse);
+
+        // They can indeed create this course, so it is now safe to save to the database.
+        $dbCourse->save();
 
         return redirect('courses/details/' . $dbCourse->course_id);
     }
