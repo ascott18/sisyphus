@@ -62,25 +62,29 @@ class MessageController extends Controller
         // TODO: restrict this to only users that the current user should be able to send messages to.
         // TODO: have least_num_orders skip courses that are marked as no book.
 
-
+        $user = $request->user();
         $terms = Term::currentTerms()->get();
+
         $currentTermIds = [];
         foreach ($terms as $term) {
             $currentTermIds[] = $term->term_id;
             $term['display_name'] = $term->displayName();
         }
-
-        $user = $request->user();
         $departments = $user->departments()->lists('department');
 
 
+        $maySendAll = !$user->may('send-all-message');
+
         $usersWithCourses = User
-            ::whereIn('users.user_id', function($query) use ($departments, $currentTermIds){
-                    $query->from('courses')
-                    ->whereIn('department', $departments)
-                    ->whereIn('term_id', $currentTermIds)
-                    ->distinct()
-                    ->select('user_id');
+            ::whereIn('users.user_id', function($query) use ($maySendAll, $departments, $currentTermIds){
+                $query = $query->from('courses');
+                if (!$maySendAll){
+                    $query = $query->whereIn('department', $departments);
+                }
+                $query = $query->whereIn('term_id', $currentTermIds)
+                ->distinct()
+                ->select('user_id');
+                return $query;
             })
             ->where('users.net_id', '!=', 'tba')
             ->select(DB::raw(
