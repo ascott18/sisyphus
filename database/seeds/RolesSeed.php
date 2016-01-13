@@ -82,7 +82,8 @@ class RolesSeed extends Seeder
             p('edit-books'),
             p('place-all-orders'),
             p('edit-all-orders'),
-            p('view-all-orders')
+            p('view-all-orders'),
+            p('view-all-courses'),
         ]);
 
         makeRole('dept-sec', "Department Secretary")->attachPermissions([

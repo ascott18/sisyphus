@@ -11,7 +11,7 @@ use Illuminate\Database\Query\Builder;
 
 class CourseController extends Controller
 {
-    const CourseValidation = [
+    public static $CourseValidation = [
         'course.department' => 'required|min:2|max:10',
         'course.course_name' => 'required',
         'course.course_number' => 'required|numeric',
@@ -87,7 +87,7 @@ class CourseController extends Controller
         $dbCourse = Course::findOrFail($id);
 
         $this->authorize("edit-course", $dbCourse);
-        $this->validate($request, static::CourseValidation);
+        $this->validate($request, static::$CourseValidation);
 
         $course = $request->except('course.term_id')['course'];
 
@@ -119,7 +119,7 @@ class CourseController extends Controller
     public function postCreate(Request $request)
     {
         $this->authorize("create-course");
-        $this->validate($request, static::CourseValidation);
+        $this->validate($request, static::$CourseValidation);
 
         $course = $request->get('course');
 
