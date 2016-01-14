@@ -135,16 +135,14 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService',
             });
     };
 
-    var readUrl = '/orders/read-courses';
-    if (requested_user_id)
-        readUrl += '?user_id=' + requested_user_id;
-
-    $http.get(readUrl).then(
-        function success(response) {
-            $scope.gotCourses = true;
-            $scope.courses = response.data;
-        }
-    );
+    //var readUrl = '/orders/read-courses';
+    //
+    //$http.get(readUrl).then(
+    //    function success(response) {
+    //        $scope.gotCourses = true;
+    //        $scope.courses = response.data;
+    //    }
+//    );
 
 
 

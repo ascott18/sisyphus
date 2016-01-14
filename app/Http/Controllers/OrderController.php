@@ -39,6 +39,24 @@ class OrderController extends Controller
         return view('orders.index', ['targetUser' => $targetUser, 'openTerms' => $openTerms]);
     }
 
+    public function getCreate($course_id)
+    {
+        $course = Course::findOrFail($course_id);
+
+        $this->authorize('view-course', $course);
+
+        $courses = Course::orderable()
+            ->where('department', '=', $course->department)
+            ->where('course_number', '=', $course->course_number)
+            ->where('term_id', '=', $course->term_id)
+            ->with("orders.book")
+            ->get();
+
+        $openTerms = Term::currentTerms()->get();
+
+        return view('orders.index', ['openTerms' => $openTerms, 'courses' => $courses, 'course' => $course]);
+    }
+
     public function postNoBook(Request $request)
     {
         $course_id=$request->get("course_id");

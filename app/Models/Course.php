@@ -67,11 +67,21 @@ class Course extends Model
         });
     }
 
+
+
     public function scopeVisible($query, User $user = null){
+        return $this->scopeHelper($query, $user, 'view-all-courses', 'view-dept-courses');
+    }
+
+    public function scopeOrderable($query, User $user = null){
+        return $this->scopeHelper($query, $user, 'place-all-orders', 'place-dept-orders');
+    }
+
+    private function scopeHelper($query, User $user = null, $allPermission, $deptPermission){
         if ($user == null)
             $user = \Auth::user();
 
-        if ($user->may('view-dept-courses'))
+        if ($user->may($deptPermission))
         {
             $departments = $user->departments()->lists('department');
             $query = $query->where(function($query) use ($departments, $user) {
@@ -79,7 +89,7 @@ class Course extends Model
                 return $query = $query->orWhere('user_id', $user->user_id);
             });
         }
-        elseif (!$user->may('view-all-courses'))
+        elseif (!$user->may($allPermission))
         {
             $query = $query->where('user_id', $user->user_id);
         }

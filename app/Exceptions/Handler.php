@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Session\TokenMismatchException;
 use Illuminate\Support\Facades\Config;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -56,7 +57,7 @@ class Handler extends ExceptionHandler
             $response = [
                 'success' => false,
                 'status' => $status,
-                'statusName' => Response::$statusTexts[$status],
+                'statusName' => $status == 419 ? "Authentication Timeout" : Response::$statusTexts[$status],
                 'message' => $e->getMessage(),
             ];
 
@@ -97,6 +98,9 @@ class Handler extends ExceptionHandler
         elseif ($e instanceof NotFoundHttpException && $e->getMessage() == "Controller method not found.")
         {
             $e = new NotFoundHttpException("Page not found.", $e);
+        }
+        elseif ($e instanceof TokenMismatchException){
+            $e = new HttpException(419, "Session token mismatched. Please refresh the page and try again.", $e);
         }
 
         return parent::render($request, $e);

@@ -122,12 +122,12 @@ class AuthServiceProvider extends ServiceProvider
             return false;
         });
 
-        $gate->define('place-order-for-course', function (User $user, Course $course) {
-            if ($user->may('place-all-orders')) {
+        $courseFilter = function (User $user, Course $course, $allPermission, $deptPermission) {
+            if ($user->may($allPermission)) {
                 return true;
             }
 
-            if ($user->may('place-dept-orders') &&
+            if ($user->may($deptPermission) &&
                 $user->departments()->where('department', '=', $course->department)->count()){
                 return true;
             }
@@ -137,23 +137,14 @@ class AuthServiceProvider extends ServiceProvider
             }
 
             return false;
+        };
+
+        $gate->define('place-order-for-course', function (User $user, Course $course) use ($courseFilter) {
+            return $courseFilter($user, $course, 'place-all-orders', 'place-dept-orders');
         });
 
-        $gate->define('view-course', function (User $user, Course $course) {
-            if ($user->may('view-all-courses')) {
-                return true;
-            }
-
-            if ($user->may('view-dept-courses') &&
-                $user->departments()->where('department', '=', $course->department)->count()){
-                return true;
-            }
-
-            if ($user->user_id == $course->user_id){
-                return true;
-            }
-
-            return false;
+        $gate->define('view-course', function (User $user, Course $course) use ($courseFilter) {
+            return $courseFilter($user, $course, 'view-all-courses', 'view-dept-courses');
         });
 
 
