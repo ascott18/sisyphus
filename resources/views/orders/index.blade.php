@@ -191,7 +191,7 @@
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="fa fa-book fa-fw"></i> Book Details</h3>
                 </div>
-                <div class="panel-body" ng-controller="NewBookController">
+                <div class="panel-body">
                     <ul class="list-group">
                         <li class="list-group-item"
                             ng-repeat="bookData in cartBooks">
@@ -199,12 +199,24 @@
                         </li>
                     </ul>
                 </div>
+
             </div>
-
-
+            <div ng-if="(courses | filter:similarCourses).length>0">
+                Would you like to order the same book(s) for these sections?
+                <div ng-repeat="course in courses | filter:similarCourses ">
+                    [[course.department]] [[course.course_number]]-[[course.course_section]] [[course.course_name]]
+                </div>
+                <div class="row">
+                    <button class="btn btn-success pull-right"
+                            ng-click="submitOrders(true)"
+                            style="margin: 20px;">
+                        <i class="fa fa-check"></i> Submit for all sections
+                    </button>
+                </div>
+            </div>
             <div class="row">
                 <button class="btn btn-success pull-right"
-                        ng-click="submitOrders()"
+                        ng-click="submitOrders(false)"
                         style="margin: 20px;">
                     <i class="fa fa-check"></i> Submit
                 </button>

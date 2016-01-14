@@ -140,55 +140,53 @@ class OrderController extends Controller
     public function postSubmitOrder(Request $request)
     {
         $params = $request->all();
+        foreach($params['courses'] as $section) {
+            $course = Course::findOrFail($section['course_id']);
+            $this->authorize("place-order-for-course", $course);
 
-        $course = Course::findOrFail($params['course_id']);
-        $this->authorize("place-order-for-course", $course);
 
+            foreach ($params['cart'] as $bookData) {
 
+                $book = $bookData['book'];
 
-        foreach ($params['cart'] as $bookData) {
+                if (isset($book['isNew']) && $book['isNew']) {
 
-            $book = $bookData['book'];
+                    $isbn = $book['isbn13'];
 
-            if (isset($book['isNew']) && $book['isNew']) {
+                    $db_book = null;
 
-                $isbn = $book['isbn13'];
-
-                $db_book = null;
-
-                if ($isbn) {
-                    $db_book = Book::where('isbn13', '=', $isbn)->first();
-                }
-
-                if (!$db_book){
-                    $db_book = Book::create([
-                        'title' => $book['title'],
-                        'isbn13' => $isbn,
-                        'publisher' => $book['publisher'],
-                    ]);
-
-                    foreach ($book['authors'] as $author) {
-                        $db_book->authors()->save(new Author([
-                            'name' => $author['name']
-                        ]));
+                    if ($isbn) {
+                        $db_book = Book::where('isbn13', '=', $isbn)->first();
                     }
+
+                    if (!$db_book) {
+                        $db_book = Book::create([
+                            'title' => $book['title'],
+                            'isbn13' => $isbn,
+                            'publisher' => $book['publisher'],
+                        ]);
+
+                        foreach ($book['authors'] as $author) {
+                            $db_book->authors()->save(new Author([
+                                'name' => $author['name']
+                            ]));
+                        }
+                    }
+
+                } else {
+                    $db_book = Book::findOrFail($book['book_id']);
                 }
 
-            }
-            else {
-                $db_book = Book::findOrFail($book['book_id']);
-            }
+                $user_id = Auth::user()->user_id;
+                Order::create([
+                    'placed_by' => $user_id,
+                    'course_id' => $course['course_id'],
+                    'required' => $book['required'],
+                    'book_id' => $db_book->book_id
+                ]);
 
-            $user_id = Auth::user()->user_id;
-            Order::create([
-                'placed_by' => $user_id,
-                'course_id' => $params['course_id'],
-                'required' => $book['required'],
-                'book_id' => $db_book->book_id
-            ]);
-
+            }
         }
-
 
 
     }

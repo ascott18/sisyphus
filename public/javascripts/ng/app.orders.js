@@ -58,8 +58,8 @@ app.directive('bookDetails', function() {
    }
 });
 
-app.controller('OrdersController', ['$scope', '$http', 'CartService',
-    function($scope, $http, CartService){
+app.controller('OrdersController', ['$scope', '$http', 'CartService', '$filter',
+    function($scope, $http, CartService, $filter){
 
     $scope.STAGE_SELECT_COURSE = 1;
     $scope.STAGE_SELECT_BOOKS = 2;
@@ -166,9 +166,14 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService',
         }
     };
 
-    $scope.submitOrders = function() {
-
-        $http.post('/orders/submit-order', {course_id:$scope.selectedCourse.course_id, cart:CartService.cartBooks}).then(
+    $scope.submitOrders = function(value) {
+        var sections=[];
+        if(value)
+        {
+            sections=($filter('filter')($scope.courses, $scope.similarCourses));
+        }
+        sections.push($scope.selectedCourse)
+        $http.post('/orders/submit-order', {courses:sections, cart:CartService.cartBooks}).then(
             function success(response){
                 $scope.setStage($scope.STAGE_CONFIRMATION);
                 console.log("Saved!", response);
@@ -179,6 +184,17 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService',
                 console.log("Not Saved!", response);
             });
     }
+        $scope.similarCourses=function(value)
+        {
+            if($scope.selectedCourse==null)
+            {
+                return true;
+            }
+            if(value.department==$scope.selectedCourse.department&&value.course_number==$scope.selectedCourse.course_number&&value.course_section!=$scope.selectedCourse.course_section)
+            {
+                return true;
+            }
+        }
 
 }]);
 
@@ -190,6 +206,7 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", function(
     $scope.book = {};
     $scope.submitted = false;
     $scope.isAutoFilled = false;
+
 
     $scope.addAuthor = function(author) {
         $scope.authors.push({name: ""});
