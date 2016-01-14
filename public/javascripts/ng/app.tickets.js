@@ -1,5 +1,93 @@
 
-var app = angular.module('sisyphus', ['sisyphus.helpers', 'smart-table']);
+var app = angular.module('sisyphus', ['sisyphus.helpers', 'angularUtils.directives.dirPagination', 'textAngular']);
+
+
+app.config(function($provide) {
+    $provide.decorator('taOptions', ['taRegisterTool', '$delegate', function (taRegisterTool, taOptions) {
+        taOptions.toolbar = [
+            ['h1', 'h2', 'h3', 'pre', 'p'],
+            ['bold', 'italics', 'underline', 'strikeThrough', 'clear'],
+            ['ul', 'ol'],
+            ['undo', 'redo'],
+            ['justifyLeft', 'justifyCenter', 'justifyRight', 'indent', 'outdent'],
+            ['insertLink']
+
+            // All available options.
+            //['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'pre', 'quote'],
+            //['bold', 'italics', 'underline', 'strikeThrough', 'ul', 'ol', 'redo', 'undo', 'clear'],
+            //['justifyLeft', 'justifyCenter', 'justifyRight', 'indent', 'outdent'],
+            //['html', 'insertImage', 'insertLink', 'insertVideo', 'wordcount', 'charcount']
+        ];
+
+        return taOptions;
+    }]);
+});
+
+app.controller('TicketController', function($scope, $http) {
+
+    $scope.ticket = {};
+
+    $scope.createTicket = function(ticket){
+        $http.post('/tickets/create', ticket).then(
+            function success(response){
+                var ticket = response.data;
+
+                $scope.ticket = ticket;
+            });
+    };
+
+    $scope.submitTicket = function(){
+
+        $http.post('/messages/send-messages', request).then(
+            function success(response){
+                $scope.sendingMessages = false;
+                $scope.setStage($scope.STAGE_SENT);
+                $scope.selectNoUsers();
+                $scope.reloadMessages();
+            },
+            function error(response){
+                // TODO: handle this properly.
+                $scope.sendingMessages = false;
+            });
+    };
+
+
+
+
+
+
+    // RECIPIENTS
+
+    $scope.recipients = [];
+
+    $scope.toggleRecipient = function(recipient){
+        recipient.selected = !recipient.selected;
+    };
+
+    $scope.isRecipientSelected = function(recipient){
+        return recipient.selected;
+    };
+
+    function selector(predicate){
+        return function() {angular.forEach($scope.recipients, function(recipient){
+            recipient.selected = predicate(recipient);
+        })};
+    }
+
+
+    // Recipient selection functions
+    $scope.selectUsersMissingOrders = selector(function(r){return r.least_num_orders == 0});
+    $scope.selectAllUsers = selector(function(){return true});
+    $scope.selectNoUsers = selector(function(){return false});
+
+    // Go fetch all possible recipients of the messages.
+    $http.get('/messages/all-recipients').then(
+        function success(response) {
+            $scope.recipients = response.data;
+        }
+    );
+});
+
 
 app.controller('TicketsIndexController', function($scope, $http) {
     var ctrl1 = this;
