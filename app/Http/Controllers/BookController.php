@@ -167,8 +167,7 @@ class BookController extends Controller
     {
         $this->authorize("all");
 
-        $query = \App\Models\Order::query();
-
+        $query = \App\Models\Order::query()->with("course.term");
 
         if($request->input('book_id'))
             $query = $query->where('book_id', '=', $request->input('book_id')); // find the book ID
@@ -176,10 +175,14 @@ class BookController extends Controller
         $query = $query->join('courses', 'orders.course_id', '=', 'courses.course_id'); // need to join the courses into the dataset
 
         $query = $this->buildDetailSearchQuery($request, $query); // build the search terms query
-
         $query = $this->buildDetailSortQuery($request, $query); // build the sort query
 
         $orders = $query->paginate(10); // get paginated result
+
+        foreach ($orders as $order) {
+            $order->course->term['term_name'] = $order->course->term->displayName();
+        }
+
 
         return response()->json($orders);
     }
@@ -198,13 +201,13 @@ class BookController extends Controller
     }
     */
 
-    /** GET: /books/show/{id}
+    /** GET: /books/details/{id}
      * Display the specified resource.
      *
      * @param  int  $id
      * @return \Illuminate\View\View
      */
-    public function getShow($id)
+    public function getDetails($id)
     {
         $this->authorize("all");
 

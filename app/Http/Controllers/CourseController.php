@@ -11,6 +11,14 @@ use Illuminate\Database\Query\Builder;
 
 class CourseController extends Controller
 {
+    const CourseValidation = [
+        'course.department' => 'required|min:2|max:10',
+        'course.course_name' => 'required',
+        'course.course_number' => 'required|numeric',
+        'course.course_section' => 'required|numeric',
+        'course.user_id' => 'required|exists:users,user_id',
+    ];
+
     /**
      * Display a listing of the resource.
      *
@@ -23,15 +31,16 @@ class CourseController extends Controller
 
         $user = $request->user();
 
-        $terms = Term::whereIn('term_id', function($query) use ($user) {
-                static::buildFilteredCourseQuery($query->from('courses'), $user)->select('term_id');
-        })
+        $currentTerm = Term::currentTerms()->first();
+        $currentTermId = $currentTerm ? $currentTerm->term_id : '';
+        $userTerms = Course::visible($user)->select('term_id')->get();
+
+        $terms = Term::whereIn('term_id', $userTerms)
+            ->orWhere('term_id', '=', $currentTermId)
             ->orderBy('term_id', 'DESC')
             ->get();
 
-        $currentTerm = Term::currentTerms()->first();
-
-        return view('courses.index', ['terms' => $terms, 'currentTermId' => $currentTerm ? $currentTerm->term_id : '']);
+        return view('courses.index', ['terms' => $terms, 'currentTermId' => $currentTermId]);
     }
 
 
@@ -46,6 +55,9 @@ class CourseController extends Controller
         $course = Course::findOrFail($id);
 
         $this->authorize("view-course", $course);
+
+        // We will show deleted orders in red on this screen.
+        $course->orders = $course->orders()->withTrashed()->get();
 
         return view('courses.details', ['course' => $course]);
     }
@@ -75,6 +87,7 @@ class CourseController extends Controller
         $dbCourse = Course::findOrFail($id);
 
         $this->authorize("edit-course", $dbCourse);
+        $this->validate($request, static::CourseValidation);
 
         $course = $request->except('course.term_id')['course'];
 
@@ -106,6 +119,7 @@ class CourseController extends Controller
     public function postCreate(Request $request)
     {
         $this->authorize("create-course");
+        $this->validate($request, static::CourseValidation);
 
         $course = $request->get('course');
 
@@ -202,14 +216,14 @@ class CourseController extends Controller
     /** GET: /courses/course-list?page={}&{sort=}&{dir=}&{section=}&{name=}
      * Searches the book list
      *
-     * @param \Illuminate\Database\Eloquent\Builder
+     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function getCourseList(Request $request)
     {
         $this->authorize("view-course-list");
 
-        $query = static::buildFilteredCourseQuery(Course::query(), $request->user());
+        $query = Course::visible($request->user());
 
         if($request->input('term_id')) {
             $query = $query->where('term_id', '=', $request->input('term_id'));

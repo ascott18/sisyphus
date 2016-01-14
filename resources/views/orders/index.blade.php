@@ -5,7 +5,7 @@
 
 @section('content')
 
-    <script>requested_user_id = {{$user_id}}</script>
+    <script>requested_user_id = {{$targetUser->user_id}}</script>
 
 <div>
     <div ng-cloak class="row" ng-controller="OrdersController">
@@ -13,7 +13,9 @@
 
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title"><i class="fa fa-university fa-fw"></i> My Courses</h3>
+                    <h3 class="panel-title"><i class="fa fa-university fa-fw"></i>
+                        {{$targetUser->user_id == Auth::user()->user_id ? "My Courses" : "Courses for " . $targetUser->first_name . ' ' . $targetUser->last_name}}
+                    </h3>
                 </div>
                 <div class="panel-body">
                     <div ng-show="gotCourses">

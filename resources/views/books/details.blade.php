@@ -65,22 +65,28 @@
                            empty-placeholder>
                         <thead>
                         <tr>
+                            <th>Term</th>
                             <th st-sort="section">Course</th>
                             <th st-sort="course_name">Course Name</th>
+                            <th>Required</th>
                             <th width="1%"></th>
                         </tr>
                         <tr>
+                            <th></th>
                             <th><input type="text" class="form-control" placeholder="Search..." st-search="section"/></th>
                             <th><input type="text" class="form-control" placeholder="Search..." st-search="course_name"/></th>
+                            <th></th>
                             <th></th>
                         </tr>
                         </thead>
                         <tbody>
                             <tr ng-repeat="order in bdc.displayed">
+                                <td>[[ order.course.term.term_name ]]</td>
                                 <td>
                                     [[ order.department ]] [[ order.course_number | zpad:3 ]]-[[ order.course_section | zpad:2 ]]
                                 </td>
                                 <td>[[ order.course_name ]]</td>
+                                <td>[[ order.required ? "Yes" : "No" ]]</td>
 
                                 <td><a class="btn btn-sm btn-info" href="/courses/details/[[order.course_id]]" role="button">
                                         Course Details <i class="fa fa-arrow-right"></i>
@@ -92,7 +98,7 @@
                         </tbody>
                         <tfoot>
                         <tr>
-                            <td class="text-center" st-pagination="" st-items-by-page="10" colspan="4">
+                            <td class="text-center" st-pagination="" st-items-by-page="10" colspan="5">
                             </td>
                         </tr>
                         </tfoot>

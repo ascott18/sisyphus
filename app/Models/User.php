@@ -43,6 +43,16 @@ class User extends Model implements AuthenticatableContract,
     protected $fillable = [];
 
 
+    public function getFirstLast()
+    {
+        return "$this->first_name $this->last_name";
+    }
+
+    public function getLastFirst()
+    {
+        return "$this->last_name, $this->first_name";
+    }
+
     public function courses()
     {
         return $this->hasMany('App\Models\Course', 'user_id', 'user_id');
@@ -72,6 +82,11 @@ class User extends Model implements AuthenticatableContract,
     public function role()
     {
         return $this->roles()->first();
+    }
+
+    public function tickets()
+    {
+        return $this->hasMany('App\Models\Ticket', 'user_id', 'user_id');
     }
 
 }

@@ -11,6 +11,18 @@ use Illuminate\Http\Response;
 
 class UserController extends Controller
 {
+
+    /**
+     * The permissions that must always be available to at least one user.
+     * We will not allow any action that would leave any of these permissions orphaned.
+     *
+     * @var array
+     */
+    public static $essentialPermissions = [
+        'manage-users',
+        'manage-roles',
+    ];
+
     /**
      * Display a listing of the resource.
      *
@@ -167,6 +179,43 @@ class UserController extends Controller
         $role = $request->get('role');
 
         $user = User::findOrFail($user_id);
+        $currentRole = $user->role();
+
+        // Detect if the role isn't actually changing, and return success if so.
+        if ($currentRole == null ? $role == "" : $currentRole->name == $role)
+        {
+            return ['success' => true];
+        }
+
+        if ($currentRole != null && $currentRole->users()->where('users.user_id', '!=', $user->user_id)->count() == 0){
+            // Removing this user from the role would leave the role with no users.
+            // Check that doing so will not cause there to be any essential permissions without users.
+
+            $permissions = $currentRole->permissions;
+            foreach ($permissions as $permission ) {
+                if (in_array($permission->name, static::$essentialPermissions)){
+                    // This role has an essential permission, so we need to make sure that
+                    // removing this role from this user will not cause that permissions
+                    // to be orphaned.
+
+                    $rolesWithPermission = $permission->roles;
+                    $someoneHasPermission = false;
+                    foreach ($rolesWithPermission as $roleWithPermission) {
+                        if ($roleWithPermission->users()->where('users.user_id', '!=', $user->user_id)->count() > 0){
+                            $someoneHasPermission = true;
+                            break;
+                        }
+                    }
+                    if (!$someoneHasPermission){
+                        return response()->json([
+                            'success' => false,
+                            'message' => "Removing the $currentRole->display_name role from $user->net_id would leave no users with the $permission->display_name permission."],
+                            Response::HTTP_BAD_REQUEST);
+                    }
+                }
+            }
+        }
+
 
         if ($role === ""){
             // If the role is the empty string, we're making this user a "Faculty" user (no roles)
@@ -181,10 +230,6 @@ class UserController extends Controller
         }
         return ['success' => true];
     }
-
-
-
-
 
 
     /**
@@ -204,6 +249,7 @@ class UserController extends Controller
         return ['success' => true];
     }
 
+
     /**
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -215,8 +261,45 @@ class UserController extends Controller
         $role = Role::findOrFail($request->get('role_id'));
         $permission = Permission::findOrFail($request->get('permission_id'));
 
-        if ($role->hasPermission($permission->name))
-            $role->detachPermission($permission);
+
+        // Silently succeed if the role doesn't actually have this permission.
+        if (!$role->hasPermission($permission->name))
+            return ['success' => true];
+
+        // Guard against accidental removal of an essential permission.
+        if (in_array($permission->name, static::$essentialPermissions)){
+            $otherRolesWithPermission = $permission->roles()->where('roles.id', '!=', $role->id)->get();
+
+            if (count($otherRolesWithPermission) == 0){
+                // There are no other roles that have this permission,
+                // so we definitely can't remove it from this role.
+                return response()->json([
+                    'success' => false,
+                    'message' => "The $permission->display_name permission is an essential permission. You can't remove it from all roles."],
+                    Response::HTTP_BAD_REQUEST);
+            }
+            else {
+                $someoneHasPermission = false;
+                foreach ($otherRolesWithPermission as $role) {
+                    if ($role->users()->count() > 0){
+                        $someoneHasPermission = true;
+                        break;
+                    }
+                }
+                if (!$someoneHasPermission){
+                    // All other roles that have this permission do not have any user in
+                    // that role, so we can't allow the permission to be removed from this role.
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Removing the $permission->display_name permission would leave no users with it."],
+                        Response::HTTP_BAD_REQUEST);
+                }
+            }
+        }
+
+
+        // Everything is in order. Actually remove the permission from the role.
+        $role->detachPermission($permission);
 
         return ['success' => true];
     }

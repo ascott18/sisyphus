@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Bus\SelfHandling;
 
@@ -58,6 +59,7 @@ EOL;
         if ($term[1] == "S") $termName = "Spring";
         $termNumber = array_search($termName, Term::$termNumbers);
         $dbTerm = Term::where(['term_number' => $termNumber, 'year' => "20$term[2]"])->firstOrFail();
+        $termPeriodDayLength = $dbTerm->order_due_date->diffInDays($dbTerm->order_start_date);
 
         // From the page header, calculate the column widths.
         // This only works for the left-aligned columns.
@@ -218,6 +220,7 @@ EOL;
             // Course numbers can be in ugly formats like "210 & 211",
             // so expand those out.
             $courseNumbers = $this->decipherNumbers($deptCourses[2]);
+            $department = $deptCourses[1];
 
             foreach ($courseNumbers as $courseNumber) {
                 $courseNumber = trim($courseNumber);
@@ -246,7 +249,7 @@ EOL;
 
                     $dbCourse = Course::where([
                         'term_id' => $dbTerm->term_id,
-                        'department' => $deptCourses[1],
+                        'department' => $department,
                         'course_number' => $courseNumber,
                         'course_section' => $sectionNumber,
                     ])->first();
@@ -259,6 +262,8 @@ EOL;
 
                     if ($course['noText']) {
                         $dbCourse->no_book = true;
+                        // TODO: this date is fake data.
+                        $dbCourse->no_book_marked = $dbTerm->order_start_date->copy()->addDays(rand(0, $termPeriodDayLength));
                         $dbCourse->save();
                     }
 
@@ -268,6 +273,7 @@ EOL;
                         $isbn = trim(str_replace("-", "", $book[$bookRegGroups['ISBN']]));
                         $title = title_case($book[$bookRegGroups['Title']]);
                         $publisher = title_case($book[$bookRegGroups['Publisher']]);
+                        $edition = $book[$bookRegGroups['Edition']];
 
                         if ($isbn == "None")
                         {
@@ -287,7 +293,7 @@ EOL;
                             exit;
                         }
 
-                        // TODO: save edition (there is no DB field yet)
+                        $dbBook->edition = $edition;
                         $dbBook->save();
 
                         Author::firstOrCreate([
@@ -299,6 +305,11 @@ EOL;
                         $dbOrder->book_id = $dbBook->book_id;
                         $dbOrder->course_id = $dbCourse->course_id;
                         $dbOrder->placed_by = $dbCourse->user_id; // TODO: make this a dummy user instead?
+                        $dbOrder->save();
+
+
+                        // TODO: this date is fake data.
+                        $dbOrder->created_at = $dbTerm->order_start_date->copy()->addDays(rand(0, $termPeriodDayLength));
                         $dbOrder->save();
                     }
                 }

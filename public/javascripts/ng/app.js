@@ -110,9 +110,17 @@ function(){
         link: function (scope, element, attr) {
             var msg = attr.ngConfirmClickMessage || "Are you sure?";
             var clickAction = attr.ngConfirmClick;
-            element.bind('click',function (event) {
-                if ( window.confirm(msg) ) {
-                    scope.$eval(clickAction)
+            element.bind('click', function (event) {
+                var confirmed = window.confirm(msg);
+
+                if (confirmed)
+                {
+                    if (clickAction == 'submit'){
+                        $(element).parent('form').submit()
+                    }
+                    else{
+                        scope.$eval(clickAction);
+                    }
                 }
             });
         }
@@ -181,6 +189,7 @@ app.factory('RequestsErrorHandler', ['$q', '$rootScope', function($q, $rootScope
                 else if (rejection.data.response && rejection.data.response.message )
                 {
                     $rootScope.appErrors.push({
+                        title: "Error - " + rejection.data.response.statusName,
                         messages: [rejection.data.response.message]
                     });
                 }

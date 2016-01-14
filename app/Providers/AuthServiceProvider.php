@@ -6,6 +6,7 @@ use App\Models\Book;
 use App\Models\Course;
 use App\Models\Message;
 use App\Models\Order;
+use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
@@ -192,6 +193,10 @@ class AuthServiceProvider extends ServiceProvider
         });
 
 
+        $gate->define('edit-books', function (User $user) {
+            return $user->may('edit-books');
+        });
+
         $gate->define('edit-book', function (User $user, Book $book) {
             if ($user->may('edit-books')) {
                 return true;
@@ -242,6 +247,14 @@ class AuthServiceProvider extends ServiceProvider
             }
 
             return false;
+        });
+
+
+
+
+        $gate->define('view-ticket', function (User $user, Ticket $ticket) {
+            // TODO: make this correct (check department, and have permissions for viewing department tickets, etc).
+            return $ticket->user_id == $user->user_id;
         });
     }
 

@@ -24,6 +24,8 @@ Route::controller('terms', 'TermController');
 
 Route::controller('users', 'UserController');
 
+Route::controller('tickets', 'TicketController');
+
 Route::controller('/', 'HomeController');
 
 

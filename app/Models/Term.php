@@ -138,7 +138,7 @@ class Term extends Model
      */
     public function haveOrdersStarted()
     {
-        return Carbon::now() > $this->order_start_date;
+        return Carbon::today() >= $this->order_start_date;
     }
 
     /**
@@ -148,7 +148,7 @@ class Term extends Model
      */
     public function haveOrdersConcluded()
     {
-        return Carbon::now() > $this->order_due_date;
+        return Carbon::today() > $this->order_due_date;
     }
 
     /**
@@ -170,7 +170,7 @@ class Term extends Model
     {
         if ($this->areOrdersInProgress())
         {
-            return "In Progress - " . $this->order_due_date->diffInDays(Carbon::now()) . " days left";
+            return "In Progress - " . $this->order_due_date->diffInDays(Carbon::today()) . " days left";
         }
 
         if ($this->haveOrdersConcluded())
@@ -178,7 +178,7 @@ class Term extends Model
             return "Concluded";
         }
 
-        $daysUntilStart = $this->order_start_date->diffInDays(Carbon::now());
+        $daysUntilStart = $this->order_start_date->diffInDays(Carbon::today());
         if ($daysUntilStart <= 200)
         {
             return "Starts in $daysUntilStart days";
@@ -205,8 +205,32 @@ class Term extends Model
     public static function currentTerms()
     {
         return static::
-            where('order_due_date', '>=', Carbon::now())->
-            where('order_start_date', '<=', Carbon::now());
+        where('order_due_date', '>=', Carbon::today())->
+        where('order_start_date', '<=', Carbon::today());
+    }
+
+
+    /**
+     * Gets the terms which ended within the given number of days.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public static function recentTerms($days)
+    {
+        return static::
+        where('order_due_date', '>=', Carbon::today()->subDays($days))->
+        where('order_due_date', '<=', Carbon::today());
+    }
+
+
+    /**
+     * Gets the terms which ended within the given number of days.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public static function scopeCurrentOrPast($query)
+    {
+        return $query->where('order_start_date', '<=', Carbon::today());
     }
 
 

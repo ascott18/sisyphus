@@ -80,6 +80,7 @@
                 @can('manage-users')
                     <li><a href="/users"><i class="fa fa-fw fa-group"></i> Users</a></li>
                 @endcan
+                <li><a href="/tickets"><i class="fa fa-fw fa-life-ring"></i> Tickets</a></li>
 
                 {{--<li><a href="tables.html"><i class="fa fa-fw fa-table"></i> Tables</a></li>--}}
                 {{--<li><a href="forms.html"><i class="fa fa-fw fa-edit"></i> Forms</a></li>--}}
@@ -107,16 +108,28 @@
             @if (array_key_exists('area', View::getSections()))
             <div class="row">
                 <div class="col-lg-12">
-                    <h5 class="page-header text-muted">@yield('area') / @yield('page')
-                    </h5>
+                    <h4 class="page-header text-muted">@yield('area') / @yield('page')
+                    </h4>
                 </div>
             </div>
+            @endif
+
+
+            @if (count($errors) > 0)
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                    <button type="button" class="close" aria-label="Close" ng-click="appErrors.splice(appErrors.indexOf(error), 1)"><span aria-hidden="true">&times;</span></button>
+                    <ul>
+                    @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
             @endif
 
             <div ng-cloak ng-repeat="error in appErrors"
                     class="alert alert-danger alert-dismissible" role="alert">
                 <button type="button" class="close" aria-label="Close" ng-click="appErrors.splice(appErrors.indexOf(error), 1)"><span aria-hidden="true">&times;</span></button>
-                <strong>Error!</strong> <span ng-repeat="message in error.messages"><br>[[message]]</span>
+                <strong>[[error.title || "Error!"]]</strong> <span ng-repeat="message in error.messages"><br>[[message]]</span>
             </div>
 
             @yield('content')
@@ -151,6 +164,7 @@
 </script>
 
 <script src="/javascripts/bootstrap.js"></script>
+<script src="/javascripts/moment.min.js"></script>
 
 
 @yield('scripts')
