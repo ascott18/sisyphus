@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string publisher The publisher of the book. varchar(255)
  * @property string isbn13 The ISBN13 of the book, without hyphens. varchar(13)
  * @property string title The title of the book. varchar(100)
+ * @property string edition The edition of the book.
  */
 class Book extends Model
 {
@@ -18,8 +19,7 @@ class Book extends Model
      */
     protected $primaryKey = 'book_id';
 
-
-    protected $fillable = array('title', 'isbn13', 'publisher');
+    protected $guarded = array('book_id');
 
     public function authors()
     {

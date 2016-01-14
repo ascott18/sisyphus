@@ -6,7 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>@yield('page') - EWU Textbook Requests </title>
+    <title>
+        @if (array_key_exists('action', View::getSections()))
+            @yield('action')
+        @endif
+        @yield('page') - EWU Textbook Requests
+    </title>
 
     <!-- Bootstrap Core CSS-->
     <link href="/stylesheets/bootstrap.css" rel="stylesheet">
@@ -108,8 +113,14 @@
             @if (array_key_exists('area', View::getSections()))
             <div class="row">
                 <div class="col-lg-12">
-                    <h4 class="page-header text-muted">@yield('area') / @yield('page')
-                    </h4>
+
+                    <h5 class="page-header text-muted">
+                        @yield('area') /
+                        @if (array_key_exists('action', View::getSections()))
+                            @yield('action') /
+                        @endif
+                        @yield('page')
+                    </h5>
                 </div>
             </div>
             @endif

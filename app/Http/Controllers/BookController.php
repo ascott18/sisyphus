@@ -244,4 +244,21 @@ class BookController extends Controller
         return response()->json($book);
     }
 
+    public function postEdit(Request $request) {
+
+        $book = $request->get('book');
+        $authors = $request->get('authors');
+
+        $db_book = Book::findOrFail($book['book_id']);
+        $this->authorize("edit-book", $db_book);
+
+        $db_book->update($book);
+
+        $db_book->authors()->delete();
+
+        foreach ($authors as $author) {
+            $db_book->authors()->create($author);
+        }
+    }
+
 }

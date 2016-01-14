@@ -1,15 +1,22 @@
 @extends('layouts.master')
 
-
-
+@section('area', 'Books')
+@section('action', "Edit")
+@section('page', $book->title)
 
 @section('content')
-    @include('shared.partial.header', ['headerText'=>'Books', 'subHeaderText'=> 'Edit '.$book->isbn13])
 
 
     <div class="col-md-6" ng-controller="EditBookController">
 
         <div class="panel-group" aria-multiselectable="true" ng-init="setBook({{$book}})">
+
+
+
+            <div class="form-group">
+                <label for="isbn13">ISBN 13</label>
+                <input type="text" class="form-control" ng-disabled=true name="isbn13" ng-model="book.isbn13">
+            </div>
 
             <div class="form-group">
                 <label for="bookTitle">Book Title</label>
@@ -18,11 +25,11 @@
 
             <div class="form-group" ng-init="addAuthors({{$book->authors}})">
                 <label for="author1">Author</label>
-                <input type="text" class="form-control" name="author1" ng-model="authors[0].first_name">
+                <input type="text" class="form-control" name="author1" ng-model="authors[0].name">
 
 
                 <div class="input-group" ng-repeat="author in authors" style="margin-top: 10px" ng-show="!$first">
-                    <input type="text" class="form-control" ng-model="author.first_name">
+                    <input type="text" class="form-control" ng-model="author.name">
 
                 <span class="input-group-addon" ng-click="removeAuthor($index)">
                     <i class="fa fa-times"></i>
@@ -40,17 +47,12 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="isbn13">ISBN 13</label>
-                    <input type="text" class="form-control" name="isbn13" ng-model="book.isbn13">
-                </div>
-
-                <div class="form-group">
                     <label for="edition">Edition</label>
                     <input type="text" class="form-control" name="edition" ng-model="book.edition">
                 </div>
 
                 <button class="btn btn-success"
-                        ng-click="addNewBookToCart(book)">
+                        ng-click="save(book)">
                     <i class="fa fa-plus"></i> Save
                 </button>
 
@@ -65,8 +67,6 @@
 @stop
 
 @section('scripts-head')
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
-    <script src="/javascripts/ng/smart-table/smart-table.min.js"></script>
-    <script src="/javascripts/ng/app.js"></script>
+    <script src="/javascripts/ng/helper.isbnHyphenate.js"></script>
     <script src="/javascripts/ng/app.books.js"></script>
 @stop
