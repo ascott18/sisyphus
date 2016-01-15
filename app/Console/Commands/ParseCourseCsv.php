@@ -12,7 +12,7 @@ use \App\Models\Author;
 use \App\Models\Term;
 use \App\Models\User;
 
-class ParseCourseCsv extends Command implements SelfHandling
+class ParseCourseCsv extends Command
 {
     /**
      * The name and signature of the console command.
