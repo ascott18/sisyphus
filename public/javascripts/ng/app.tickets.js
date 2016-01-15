@@ -27,6 +27,19 @@ app.controller('TicketController', function($scope, $http) {
 
     $scope.ticket = {};
 
+    var unloadListener = function (e) {
+        var confirmationMessage = 'If you leave before submitting, your changes will be lost.';
+
+        (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+        return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+    };
+
+    window.addEventListener("beforeunload", unloadListener);
+
+
+
+
+
     $scope.createTicket = function(ticket){
         $http.post('/tickets/create', ticket).then(
             function success(response){
@@ -37,55 +50,8 @@ app.controller('TicketController', function($scope, $http) {
     };
 
     $scope.submitTicket = function(){
-
-        $http.post('/messages/send-messages', request).then(
-            function success(response){
-                $scope.sendingMessages = false;
-                $scope.setStage($scope.STAGE_SENT);
-                $scope.selectNoUsers();
-                $scope.reloadMessages();
-            },
-            function error(response){
-                // TODO: handle this properly.
-                $scope.sendingMessages = false;
-            });
+        window.removeEventListener("beforeunload", unloadListener);
     };
-
-
-
-
-
-
-    // RECIPIENTS
-
-    $scope.recipients = [];
-
-    $scope.toggleRecipient = function(recipient){
-        recipient.selected = !recipient.selected;
-    };
-
-    $scope.isRecipientSelected = function(recipient){
-        return recipient.selected;
-    };
-
-    function selector(predicate){
-        return function() {angular.forEach($scope.recipients, function(recipient){
-            recipient.selected = predicate(recipient);
-        })};
-    }
-
-
-    // Recipient selection functions
-    $scope.selectUsersMissingOrders = selector(function(r){return r.least_num_orders == 0});
-    $scope.selectAllUsers = selector(function(){return true});
-    $scope.selectNoUsers = selector(function(){return false});
-
-    // Go fetch all possible recipients of the messages.
-    $http.get('/messages/all-recipients').then(
-        function success(response) {
-            $scope.recipients = response.data;
-        }
-    );
 });
 
 

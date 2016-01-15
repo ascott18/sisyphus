@@ -13,26 +13,29 @@
         <div class="col-md-8">
             <h3>New Ticket</h3>
 
-            <div class="form-group" >
-                <label>Subject:</label>
-                <input type="text" class="form-control" ng-model="ticket.subject">
-            </div>
+            <form name="form">
+                <div class="form-group" >
+                    <label>Subject:</label>
+                    <input type="text" class="form-control" ng-model="ticket.subject">
+                </div>
 
 
 
-            <label>Body:</label>
-            </br>
+                <label>Body:</label>
+                </br>
 
-            <div text-angular ng-model="ticket.body">
-            </div>
+                <div class="form-group" text-angular ng-model="ticket.body">
+                </div>
 
-            <br>
+                <br>
 
-            <button type="button" class="btn btn-success pull-right"
-                    ng-click="submitTicket()"
-                    ng-disabled="form.$invalid">
-                <i class="fa fa-plus"></i> Submit Ticket
-            </button>
+                <a type="button" class="btn btn-success pull-right"
+                        ng-click="submitTicket()"
+                        href="/tickets/index">
+                    <i class="fa fa-plus"></i> Submit Ticket
+                </a>
+            </form>
+
 
         </div>
 
