@@ -28,10 +28,10 @@
                             <dt>Year</dt>
                             <dd>{{ $term->year }}</dd>
 
-                            <dt>Order Start Date</dt>
+                            <dt>Request Start Date</dt>
                             <dd>{{ $term->order_start_date->toFormattedDateString() }}</dd>
 
-                            <dt>Order Due Date</dt>
+                            <dt>Request Due Date</dt>
                             <dd>{{ $term->order_due_date->toFormattedDateString() }}</dd>
 
                             <dt>Status</dt>
@@ -45,7 +45,7 @@
 
 
                         <div class="col-lg-4 col-md-6">
-                            <h3>Order Start Date</h3>
+                            <h3>Request Start Date</h3>
                             <input type="hidden" name="order_start_date" ng-value="order_start_date | date:'yyyy-MM-dd'">
 
                             <uib-datepicker ng-model="order_start_date"
@@ -55,7 +55,7 @@
                         </div>
 
                         <div class="col-lg-4 col-md-6">
-                            <h3>Order Due Date</h3>
+                            <h3>Request Due Date</h3>
                             <input type="hidden" name="order_due_date" ng-value="order_due_date  | date:'yyyy-MM-dd'">
                             <uib-datepicker ng-model="order_due_date"
                                             ng-init="order_due_date = createDate('{{$term->order_due_date->toFormattedDateString()}}')"

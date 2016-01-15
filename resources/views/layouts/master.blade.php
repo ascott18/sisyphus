@@ -42,7 +42,7 @@
                 <div >
                     <img src="/images/logoWhite.svg" class="pull-left" >
 
-                    <h2>Textbook Orders
+                    <h2>Textbook Requests
                         @inject('auth', 'App\Providers\AuthServiceProvider')
                         @if ($auth->getIsDebuggingUnauthorizedAction())
                             <p style="position: absolute; font-size: 0.7em; width: 100%">
@@ -67,7 +67,7 @@
             <ul class="nav navbar-nav side-nav">
                 <li><a href="/"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a></li>
                 <li><a href="/books"><i class="fa fa-fw fa-book"></i> Books</a></li>
-                <li><a href="/orders"><i class="fa fa-fw fa-shopping-cart"></i> Orders</a></li>
+                <li><a href="/requests"><i class="fa fa-fw fa-shopping-cart"></i> Requests</a></li>
                 @can('view-course-list')
                     <li><a href="/courses"><i class="fa fa-fw fa-university"></i> Courses</a></li>
                 @endcan

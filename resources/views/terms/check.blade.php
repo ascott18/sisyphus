@@ -1,6 +1,6 @@
 <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
 <div class="pull-right"><?php echo date("m/d/Y, h:i:s a");?></div>
-<h1>Book Order Check Sheet</h1>
+<h1>Book Request Check Sheet</h1>
 
 <style>
     td, th{font-family: sans-serif;font-size:10pt;}

@@ -56,7 +56,7 @@
 
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title"><i class="fa fa-history fa-fw"></i> Past Orders</h3>
+                <h3 class="panel-title"><i class="fa fa-history fa-fw"></i> Past Requests</h3>
             </div>
             <div class="panel-body">
                 <div class="table-responsive">

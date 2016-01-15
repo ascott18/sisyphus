@@ -19,7 +19,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 class OrderController extends Controller
 {
 
-    /** GET: /orders/
+    /** GET: /requests/
      *
      * @param Request $request
      * @return \Illuminate\View\View
@@ -29,7 +29,11 @@ class OrderController extends Controller
         $this->authorize('place-order-for-user', $request->user());
 
         $openTerms = Term::currentTerms()->get();
-        $openTermIds = $openTerms->lists('term_id');
+        foreach ($openTerms as $term) {
+            $term['term_name'] = $term->termName();
+        }
+
+        $openTermIds = $openTerms->pluck('term_id');
 
         $courses = $request->user()->courses()
             ->whereIn('term_id', $openTermIds)
@@ -67,7 +71,7 @@ class OrderController extends Controller
 
     public function postNoBook(Request $request)
     {
-        $course_id=$request->get("course_id");
+        $course_id = $request->get("course_id");
         $course = Course::findOrFail($course_id);
 
         $this->authorize('place-order-for-course', $course);
@@ -201,10 +205,11 @@ class OrderController extends Controller
                     'required' => $book['required'],
                     'book_id' => $db_book->book_id
                 ]);
-
             }
+
+            $course->no_book = false;
+            $course->no_book_marked = null;
+            $course->save();
         }
-
-
     }
 }

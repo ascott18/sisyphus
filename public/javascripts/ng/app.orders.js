@@ -83,7 +83,7 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', '$filter',
 
         $scope.selectedCourse = course;
 
-        $http.get('/orders/past-courses/' + course.course_id).then(
+        $http.get('/requests/past-courses/' + course.course_id).then(
             function success(response) {
                 console.log("got courses", response.data);
                 var pastCourses = response.data;
@@ -108,6 +108,14 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', '$filter',
 
     };
 
+    $scope.deleteOrder = function(course, order)
+    {
+        $http.post('/requests/delete/' + order.order_id).then(
+            function success(response){
+                course.orders.splice(course.orders.indexOf(order), 1);
+            });
+    };
+
     $scope.courseNeedsOrders = function(course)
     {
         return course.orders.length == 0 && !course.no_book
@@ -115,7 +123,7 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', '$filter',
 
     $scope.noBook = function(course)
     {
-        $http.post('/orders/no-book', {course_id: course.course_id}).then(
+        $http.post('/requests/no-book', {course_id: course.course_id}).then(
             function success(response){
                 course.no_book=true;
                 course.orders = [];
@@ -151,7 +159,7 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', '$filter',
             }
         }
 
-        $http.post('/orders/submit-order', {courses:sections, cart:CartService.cartBooks}).then(
+        $http.post('/requests/submit-order', {courses:sections, cart:CartService.cartBooks}).then(
             function success(){
                 $scope.additionalCourses = null;
                 $scope.setStage($scope.STAGE_ORDER_SUCCESS);

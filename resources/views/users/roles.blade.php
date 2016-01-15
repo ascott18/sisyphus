@@ -40,13 +40,14 @@
                                         [[ role.display_name ]]
                                     </td>
                                     <td >
-
-                                        <span ng-repeat="permission in role.permissions | orderBy: 'display_name'">
-                                            <i class="fa fa-times text-danger cursor-pointer"
-                                               ng-confirm-click="removePermission(role, permission)"
-                                               ng-confirm-click-message="Are you sure you want to remove the [[permission.display_name]] permission from the [[role.display_name]] role?"></i>
-                                            [[permission.display_name]] <br>
-                                        </span>
+                                        <ul style="list-style-type: none;">
+                                            <li ng-repeat="permission in role.permissions | orderBy: 'display_name'">
+                                                <i class="fa fa-times text-danger cursor-pointer"
+                                                   ng-confirm-click="removePermission(role, permission)"
+                                                   ng-confirm-click-message="Are you sure you want to remove the [[permission.display_name]] permission from the [[role.display_name]] role?"></i>
+                                                [[permission.display_name]]
+                                            </li>
+                                        </ul>
                                     </td>
                                     <td>
                                         <button class="btn btn-sm btn-default "

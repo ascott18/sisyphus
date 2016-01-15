@@ -29,7 +29,9 @@ class EnsureActionAuthorized
     {
         $response = $next($request);
 
-        if (!$this->authProvider->getHasControllerAttemptedAuthorization()){
+
+        if ((!isset($response->exception) || $response->exception == null)
+            && !$this->authProvider->getHasControllerAttemptedAuthorization()){
             $message = "Controller did not attempt any authorization.";
 
             if (config("app.debug")){
