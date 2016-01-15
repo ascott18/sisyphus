@@ -83,18 +83,20 @@
                 </div>
                 <div class="panel-body">
                     @if ($course->canPlaceOrder())
-                        <a href="/orders?user_id={{$course->user->user_id}}" class="btn btn-primary" role="button">
+                        <a href="/orders/create/{{$course->course_id}}" class="btn btn-primary" role="button">
                             Place an order <i class="fa fa-arrow-right"></i>
                         </a>
-                        <br>
-                        <br>
                     @endif
 
+                    {{-- being no_book and having orders are no mutually exclusive. A course might be no_book and also have deleted orders, which are listed here.--}}
                     @if ($course->no_book)
                         <h3 class="text-muted">It was reported that this class does not need a book.</h3>
                     @elseif (!count($course->orders))
                         <h3 class="text-muted">There are no orders placed for this course.</h3>
-                    @else
+                    @endif
+                    @if (count($course->orders))
+                        <br>
+                        <br>
                         <table class="table table-hover">
                             <thead>
                             <tr>
@@ -120,7 +122,7 @@
 
                                         @if ($order->deleted_at != null)
                                             <br><span class="text-muted">
-                                                Deleted by {{$order->deletedBy->first_name}} {{$order->deletedBy->last_name}} on {{$order->deleted_at->toDateString()}}
+                                                <span class="text-danger">Deleted</span> by {{$order->deletedBy->first_name}} {{$order->deletedBy->last_name}} on {{$order->deleted_at->toDateString()}}
                                             </span>
                                         @endif
                                     </td>
@@ -141,13 +143,6 @@
                                                 {!! csrf_field() !!}
                                                 <button type="button" class="btn btn-sm btn-danger" role="button" ng-confirm-click="submit" >
                                                     <i class="fa fa-times"></i> Delete Order
-                                                </button>
-                                            </form>
-                                        @else
-                                            <form action="/orders/undelete/{{$order->order_id}}" method="POST" name="form">
-                                                {!! csrf_field() !!}
-                                                <button type="button" class="btn btn-sm btn-default" role="button" ng-confirm-click="submit" >
-                                                    <i class="fa fa-history"></i> Restore Order
                                                 </button>
                                             </form>
                                         @endif

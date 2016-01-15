@@ -84,10 +84,6 @@ app.controller('BookDetailsController', function($scope, $http) {
                 } else {
                     $scope.book_cover_img = "/images/coverNotAvailable.jpg";
                 }
-            },
-            function error(response) {
-                // TODO: handle properly
-                console.log("Couldn't get book details", response);
             }
         );
     }

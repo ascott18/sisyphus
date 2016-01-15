@@ -26,17 +26,21 @@ class OrderController extends Controller
      */
     public function getIndex(Request $request)
     {
-        $targetUser = $request->user();
-
-        if ($request->user_id){
-            $targetUser = User::findOrFail($request->user_id);
-        }
-
-        $this->authorize('place-order-for-user', $targetUser);
+        $this->authorize('place-order-for-user', $request->user());
 
         $openTerms = Term::currentTerms()->get();
+        $openTermIds = $openTerms->lists('term_id');
 
-        return view('orders.index', ['targetUser' => $targetUser, 'openTerms' => $openTerms]);
+        $courses = $request->user()->courses()
+            ->whereIn('term_id', $openTermIds)
+            ->with([
+                'orders.book',
+                'user' => function($query){
+                    return $query->select('first_name', 'last_name');
+                }])
+            ->get();
+
+        return view('orders.index', ['openTerms' => $openTerms, 'courses' => $courses]);
     }
 
     public function getCreate($course_id)
@@ -49,7 +53,11 @@ class OrderController extends Controller
             ->where('department', '=', $course->department)
             ->where('course_number', '=', $course->course_number)
             ->where('term_id', '=', $course->term_id)
-            ->with("orders.book")
+            ->with([
+                'orders.book',
+                'user' => function($query){
+                    return $query->select('user_id', 'first_name', 'last_name');
+                }])
             ->get();
 
         $openTerms = Term::currentTerms()->get();
@@ -64,11 +72,10 @@ class OrderController extends Controller
 
         $this->authorize('place-order-for-course', $course);
 
-        if (count($course->orders)){
-            return response()->json([
-                'success' => false,
-                'message' => "This course already has orders placed for it."],
-                Response::HTTP_BAD_REQUEST);
+        foreach ($course->orders as $order) {
+            $order->deleted_by = $request->user()->user_id;
+            $order->save();
+            $order->delete();
         }
 
         $course->no_book = true;
@@ -87,19 +94,6 @@ class OrderController extends Controller
         $order->deleted_by = $request->user()->user_id;
         $order->save();
         $order->delete();
-
-        return Redirect::back();
-    }
-
-    public function postUndelete(Request $request, $order_id)
-    {
-        $order = Order::withTrashed()->findOrFail($order_id);
-
-        $this->authorize('edit-order', $order);
-
-        $order->deleted_by = null;
-        $order->save();
-        $order->restore();
 
         return Redirect::back();
     }

@@ -64,14 +64,11 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', '$filter',
     $scope.STAGE_SELECT_COURSE = 1;
     $scope.STAGE_SELECT_BOOKS = 2;
     $scope.STAGE_REVIEW_ORDERS = 3;
-    $scope.STAGE_CONFIRMATION = 4;
+    $scope.STAGE_ORDER_SUCCESS = 4;
 
     $scope.cartBooks = CartService.cartBooks;
 
     $scope.stage = $scope.STAGE_SELECT_COURSE;
-
-    $scope.selectedCourse;
-
 
     $scope.getStage = function(){
         return $scope.stage;
@@ -106,10 +103,6 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', '$filter',
 
                 course['pastBooks'] = pastBooks;
                 $scope.selectedCourse = course;
-            },
-            function error(response) {
-                // TODO: handle properly
-                console.log("Couldn't get past courses", response);
             }
         );
 
@@ -120,30 +113,14 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', '$filter',
         return course.orders.length == 0 && !course.no_book
     };
 
-    $scope.noBook= function(course)
+    $scope.noBook = function(course)
     {
         $http.post('/orders/no-book', {course_id: course.course_id}).then(
             function success(response){
                 course.no_book=true;
-
-                // TODO: handle this properly - display a little thing that says "Saving" or "Saved"?
-                console.log("Saved!", response);
-            },
-            function error(response){
-                // TODO: handle this properly.
-                console.log("Not Saved!", response);
+                course.orders = [];
             });
     };
-
-    //var readUrl = '/orders/read-courses';
-    //
-    //$http.get(readUrl).then(
-    //    function success(response) {
-    //        $scope.gotCourses = true;
-    //        $scope.courses = response.data;
-    //    }
-//    );
-
 
 
     $scope.deleteBookFromCart = function(bookData) {
@@ -164,35 +141,63 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', '$filter',
         }
     };
 
-    $scope.submitOrders = function(value) {
-        var sections=[];
-        if(value)
-        {
-            sections=($filter('filter')($scope.courses, $scope.similarCourses));
+    $scope.submitOrders = function() {
+        var sections = [];
+        sections.push($scope.selectedCourse);
+
+        if ($scope.additionalCourses != null) {
+            for (var i = 0; i < $scope.additionalCourses.length; i++){
+                sections.push($scope.additionalCourses[i]);
+            }
         }
-        sections.push($scope.selectedCourse)
+
         $http.post('/orders/submit-order', {courses:sections, cart:CartService.cartBooks}).then(
-            function success(response){
-                $scope.setStage($scope.STAGE_CONFIRMATION);
-                console.log("Saved!", response);
-            },
-            function error(response){
-                // TODO: handle this properly.
-                alert("notsaved!");
-                console.log("Not Saved!", response);
+            function success(){
+                $scope.additionalCourses = null;
+                $scope.setStage($scope.STAGE_ORDER_SUCCESS);
             });
-    }
-        $scope.similarCourses=function(value)
+    };
+
+    $scope.toggleAdditionalCourseSelected = function(course){
+        if ($scope.additionalCourses == null)
+            $scope.additionalCourses = [];
+
+        var existingItemIndex = $scope.additionalCourses.indexOf(course);
+
+        if (existingItemIndex >= 0)
+            $scope.additionalCourses.splice(existingItemIndex, 1);
+        else
+            $scope.additionalCourses.push(course);
+    };
+
+    $scope.isAdditionalCourseSelected = function(course){
+        if ($scope.additionalCourses == null)
+            return false;
+
+        return $scope.additionalCourses.indexOf(course) >= 0;
+    };
+
+    $scope.similarCourses = function(value)
+    {
+        if ($scope.selectedCourse == null)
         {
-            if($scope.selectedCourse==null)
-            {
-                return true;
-            }
-            if(value.department==$scope.selectedCourse.department&&value.course_number==$scope.selectedCourse.course_number&&value.course_section!=$scope.selectedCourse.course_section)
-            {
-                return true;
-            }
+            return true;
         }
+
+        if (value.department == $scope.selectedCourse.department
+            && value.course_number == $scope.selectedCourse.course_number
+            && value.course_section != $scope.selectedCourse.course_section)
+        {
+            return true;
+        }
+    };
+
+    $scope.getNumAdditionalCoursesSelected = function(){
+        if ($scope.additionalCourses == null)
+            return 0;
+
+        return $scope.additionalCourses.length;
+    };
 
 }]);
 
@@ -240,10 +245,6 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", function(
                     }
 
                     console.log("got book", response.data);
-                },
-                function error(response) {
-                    // TODO: handle properly
-                    console.log("Couldn't get past courses", response);
                 }
             );
         }
