@@ -26,7 +26,7 @@ class OrderController extends Controller
      */
     public function getIndex(Request $request)
     {
-        $this->authorize('place-order-for-user', $request->user());
+        $this->authorize('all');
 
         $openTerms = Term::currentTerms()->get();
         foreach ($openTerms as $term) {
@@ -51,8 +51,10 @@ class OrderController extends Controller
     {
         $course = Course::findOrFail($course_id);
 
-        $this->authorize('view-course', $course);
+        $this->authorize('place-order-for-course', $course);
 
+        // Grab all the courses that are similar to the one requested.
+        // Similar means same department and course number, and offered during the same term.
         $courses = Course::orderable()
             ->where('department', '=', $course->department)
             ->where('course_number', '=', $course->course_number)
@@ -61,7 +63,7 @@ class OrderController extends Controller
                 'orders.book',
                 'user' => function($query){
                     return $query->select('user_id', 'first_name', 'last_name');
-                }])
+            }])
             ->get();
 
         $openTerms = Term::currentTerms()->get();
@@ -94,33 +96,13 @@ class OrderController extends Controller
         $order = Order::findOrFail($order_id);
 
         $this->authorize('edit-order', $order);
+        $this->authorize('place-order-for-course', $order->course);
 
         $order->deleted_by = $request->user()->user_id;
         $order->save();
         $order->delete();
 
         return Redirect::back();
-    }
-
-    public function getReadCourses(Request $request)
-    {
-        $user = $targetUser = $request->user();
-
-        if ($request->user_id){
-            $targetUser = User::findOrFail($request->user_id);
-        }
-
-        $this->authorize('place-order-for-user', $targetUser);
-
-        $courses = $targetUser->currentCourses()->with("orders.book")->get();
-        $retCourses = [];
-
-        foreach ($courses as $course) {
-            if ($user->can('place-order-for-course', $course))
-                $retCourses[] = $course;
-        }
-
-        return response()->json($retCourses);
     }
 
 

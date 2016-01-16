@@ -11,13 +11,14 @@ use Zizaco\Entrust\EntrustRole;
  */
 class Role extends EntrustRole
 {
+    protected $guarded = [];
+
     /**
      * Many-to-Many relations with the permission model.
      * Wrapper around the absurdly named "perms" that this library provides by default.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-
     public function permissions()
     {
         return $this->perms();

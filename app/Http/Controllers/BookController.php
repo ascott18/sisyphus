@@ -71,8 +71,15 @@ class BookController extends Controller
 
         $query = Book::query();
 
-        $query = $this->buildBookSearchQuery($request, $query);
+        $user = $request->user();
+        if ($user->may('view-all-books')){
 
+        }
+        elseif ($user->may('view-dept-books')){
+
+        }
+
+        $query = $this->buildBookSearchQuery($request, $query);
         $query = $this->buildBookSortQuery($request, $query);
 
         $books = $query->paginate(10);

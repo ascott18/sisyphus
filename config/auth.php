@@ -2,6 +2,15 @@
 
 return [
 
+
+    /*
+     * This is needed for Entrust - it is from laravel 5.1 but was removed in 5.2.
+     * We will declare it anyway so that Entrust doesn't break.
+     */
+
+    'model' => App\Models\User::class,
+
+
     /*
     |--------------------------------------------------------------------------
     | Authentication Defaults

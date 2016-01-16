@@ -81,19 +81,19 @@ class Course extends Model
         if ($user == null)
             $user = \Auth::user();
 
-        if ($user->may($deptPermission))
+        if (!$user->may($allPermission))
+        {
+            return $query;
+        }
+        elseif ($user->may($deptPermission))
         {
             $departments = $user->departments()->lists('department');
             $query = $query->where(function($query) use ($departments, $user) {
                 $query = $query->whereIn('department', $departments);
-                return $query = $query->orWhere('user_id', $user->user_id);
+                return $query = $query->orWhere('user_id', '=', $user->user_id);
             });
         }
-        elseif (!$user->may($allPermission))
-        {
-            $query = $query->where('user_id', $user->user_id);
-        }
 
-        return $query;
+        return $query = $query->where('user_id', '=', $user->user_id);
     }
 }

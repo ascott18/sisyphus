@@ -140,6 +140,9 @@ class AuthServiceProvider extends ServiceProvider
         };
 
         $gate->define('place-order-for-course', function (User $user, Course $course) use ($courseFilter) {
+            if (!$user->can('view-course', $course))
+                return false;
+            
             return $courseFilter($user, $course, 'place-all-orders', 'place-dept-orders');
         });
 

@@ -23,6 +23,30 @@ app.controller('RolesController', function($scope, $http) {
             }
         );
     };
+
+    $scope.deleteRole = function(role){
+        $http.post('/users/delete-role', {
+            role_id: role.id
+        }).then(
+            function(){
+                $scope.roles.splice($scope.roles.indexOf(role), 1);
+            }
+        );
+    };
+
+    $scope.createRole = function(newRoleName){
+        $http.post('/users/create-role', {
+            name: newRoleName
+        }).then(
+            function(response){
+                var newRole = response.data.role;
+                newRole['numUsers'] = 0;
+                newRole['permissions'] = [];
+                $scope.roles.push(newRole);
+                $scope.creatingRole = false;
+            }
+        );
+    }
 });
 
 app.filter('notInArray', function($filter){

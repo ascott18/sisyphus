@@ -63,6 +63,10 @@ class RolesSeed extends Seeder
         makePerm('send-dept-messages', "Department - Send Messages");
 
 
+        makePerm('view-all-books', "All - View Books");
+        makePerm('view-dept-books', "Department - View Books");
+
+
         makeRole('admin', "Administrator")->attachPermissions([
             p('manage-users'),
             p('manage-roles'),
@@ -76,6 +80,7 @@ class RolesSeed extends Seeder
             p('view-all-orders'),
             p('view-all-courses'),
             p('create-all-courses'),
+            p('view-all-books'),
         ]);
 
         makeRole('store', "Bookstore Staff")->attachPermissions([
@@ -85,6 +90,7 @@ class RolesSeed extends Seeder
             p('edit-all-orders'),
             p('view-all-orders'),
             p('view-all-courses'),
+            p('view-all-books'),
         ]);
 
         makeRole('dept-sec', "Department Secretary")->attachPermissions([
@@ -93,6 +99,7 @@ class RolesSeed extends Seeder
             p('view-dept-courses'),
             p('create-dept-courses'),
             p('send-dept-messages'),
+            p('view-dept-books'),
             p('edit-courses'),
         ]);
 
