@@ -101,12 +101,12 @@
                                             <br>
                                             You selected that you didn't need a book
                                         </div>
-
                                     </div>
 
                                     <ul style="list-style-type: none">
                                         <li ng-repeat="order in course.orders">
                                             <i class="fa fa-times text-danger cursor-pointer"
+                                               title="Delete Order"
                                                ng-confirm-click="deleteOrder(course, order)"
                                                ng-confirm-click-message="Are you sure you want to delete the order for [[order.book.title]]?"></i>
                                             <span class="text-muted">[[order.book.isbn13 | isbnHyphenate]]</span>: [[order.book.title]]

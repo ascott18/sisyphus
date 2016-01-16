@@ -95,7 +95,6 @@ class OrderController extends Controller
     {
         $order = Order::findOrFail($order_id);
 
-        $this->authorize('edit-order', $order);
         $this->authorize('place-order-for-course', $order->course);
 
         $order->deleted_by = $request->user()->user_id;
@@ -146,7 +145,6 @@ class OrderController extends Controller
         foreach($params['courses'] as $section) {
             $course = Course::findOrFail($section['course_id']);
             $this->authorize("place-order-for-course", $course);
-
 
             foreach ($params['cart'] as $bookData) {
 

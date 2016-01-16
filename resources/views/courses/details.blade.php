@@ -114,7 +114,7 @@
                                 <th>ISBN</th>
                                 <th>Publisher</th>
                                 <th>Required</th>
-                                @can('edit-order', $course->orders->first())
+                                @can('place-order-for-course', $course)
                                     <th width="1%"></th>
                                 @endcan
                                 <th width="1%"></th>
@@ -146,7 +146,7 @@
                                         {{ $order->required ? "Yes" : "No" }}
                                     </td>
 
-                                    @can('edit-order', $order)
+                                    @can('place-order-for-course', $course)
                                     <td>
                                         @if ($order->deleted_at == null)
                                             <form action="/requests/delete/{{$order->order_id}}" method="POST" name="form">

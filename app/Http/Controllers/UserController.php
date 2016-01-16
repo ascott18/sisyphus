@@ -156,14 +156,28 @@ class UserController extends Controller
     public function postCreateRole(Request $request)
     {
         $this->authorize('manage-roles');
+
+        // Check that the displayed name isn't taken.
         $this->validate($request, [
-            'name' => "required"
+            'name' => "required|unique:roles,display_name"
+        ]);
+
+        // Save the display name and the slugged name, and then
+        // replace the name in the request with the slug so that we can
+        // use laravel's validation to ensure uniqueness.
+        $name = $request->get('name');
+        $nameSlug = str_slug($request->get('name'));
+        $request->replace(['name' => $nameSlug]);
+
+        // Check that the slug isn't taken.
+        $this->validate($request, [
+            'name' => "required|unique:roles,name"
         ]);
 
 
-        $name = $request->get('name');
+        // If we got here, everything is fine.
         $role = Role::create([
-            'name' => str_slug($name),
+            'name' => $nameSlug,
             'display_name' => $name
         ]);
 

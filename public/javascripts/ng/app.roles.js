@@ -44,6 +44,7 @@ app.controller('RolesController', function($scope, $http) {
                 newRole['permissions'] = [];
                 $scope.roles.push(newRole);
                 $scope.creatingRole = false;
+                $scope.newRoleName = '';
             }
         );
     }

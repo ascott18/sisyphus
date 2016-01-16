@@ -38,7 +38,6 @@ class RolesSeed extends Seeder
 
 
         makePerm('place-all-orders', "All - Place Orders");
-        makePerm('edit-all-orders', "All - Edit Orders");
         makePerm('view-all-orders', "All - View Orders");
 
         makePerm('place-dept-orders', "Department - Place Orders");
@@ -66,6 +65,8 @@ class RolesSeed extends Seeder
         makePerm('view-all-books', "All - View Books");
         makePerm('view-dept-books', "Department - View Books");
 
+        makePerm('order-outside-period', "Visible - Order for Non-current Terms");
+
 
         makeRole('admin', "Administrator")->attachPermissions([
             p('manage-users'),
@@ -76,18 +77,17 @@ class RolesSeed extends Seeder
             p('edit-courses'),
             p('send-all-messages'),
             p('place-all-orders'),
-            p('edit-all-orders'),
             p('view-all-orders'),
             p('view-all-courses'),
             p('create-all-courses'),
             p('view-all-books'),
+            p('order-outside-period'),
         ]);
 
         makeRole('store', "Bookstore Staff")->attachPermissions([
             p('view-terms'),
             p('edit-books'),
             p('place-all-orders'),
-            p('edit-all-orders'),
             p('view-all-orders'),
             p('view-all-courses'),
             p('view-all-books'),

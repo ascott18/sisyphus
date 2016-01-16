@@ -114,14 +114,6 @@ class AuthServiceProvider extends ServiceProvider
             return false;
         });
 
-        $gate->define('edit-order', function (User $user, Order $order) {
-            if ($user->may('edit-all-orders')) {
-                return true;
-            }
-
-            return false;
-        });
-
         $courseFilter = function (User $user, Course $course, $allPermission, $deptPermission) {
             if ($user->may($allPermission)) {
                 return true;
@@ -142,7 +134,10 @@ class AuthServiceProvider extends ServiceProvider
         $gate->define('place-order-for-course', function (User $user, Course $course) use ($courseFilter) {
             if (!$user->can('view-course', $course))
                 return false;
-            
+
+            if (!$course->term->areOrdersInProgress() && !$user->may('order-outside-period'))
+                return false;
+
             return $courseFilter($user, $course, 'place-all-orders', 'place-dept-orders');
         });
 
