@@ -177,7 +177,10 @@
                                                 [[termData.term.term_name]] [[termData.term.year]]:
                                                 <span ng-repeat="data in termData.orderData">
                                                     [[data.course.user.first_name]] [[data.course.user.last_name]]
-                                                    ([[data.numSections]] Sections)
+                                                    ( <ng-pluralize count="data.numSections" when="{
+                                                        'one': '{} Section',
+                                                        'other': '{} Sections'}">
+                                                    </ng-pluralize> )
                                                     [[$last ? '' : ($index==book.authors.length-2) ? ', and ' : ', ']]
                                                 </span>
                                             </span>
