@@ -29,7 +29,7 @@ class CourseController extends Controller
     {
         $this->authorize("view-course-list");
 
-        $user = $request->user(); 
+        $user = $request->user();
 
         $currentTermIds = Term::currentTerms()->pluck('term_id');
         $userTermIds = Course::visible($user)->distinct()->pluck('term_id');

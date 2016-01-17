@@ -46,6 +46,7 @@ body {
 }
 .panel-list .panel-list-item:last-child {
     margin-bottom: -15px;
+    border-bottom: 0;
 }
 
 .panel-list .panel-list-item.active {

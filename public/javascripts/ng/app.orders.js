@@ -43,13 +43,46 @@ app.directive('isbn13', function() {
 });
 
 
-app.directive('bookDetails', function() {
+app.directive('bookDetails', function($http) {
    return {
        restrict: 'E',
+       transclude: true,
        scope: {
            book: '='
        },
-       templateUrl: '/javascripts/ng/templates/bookDetails.html'
+       templateUrl: '/javascripts/ng/templates/bookDetails.html',
+       link: function(scope, element, attrs) {
+
+           $(element).find(".smallImage").on('mouseover',function(){
+               $(element).find(".largeImage").css("display", "");
+           });
+           $(element).find(".largeImage").on('mouseleave',function(){
+               $(element).find(".largeImage").hide();
+           });
+
+           scope.lastIsbn = '';
+           scope.getBookCoverImage = function() {
+               var isbn = scope.book.isbn13;
+               if (isbn != scope.lastIsbn)
+               {
+                   scope.lastIsbn = isbn;
+                   scope.thumbnail = '';
+
+                   $http.get("https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn, {cache: true}).then(
+                       function success(response){
+                           if(response.data.items) {
+                               scope.thumbnail = response.data.items[0].volumeInfo.imageLinks.thumbnail;
+                           } else {
+                               scope.thumbnail = "/images/coverNotAvailable.jpg";
+                           }
+                       }
+                   );
+               }
+               else {
+                   return scope.thumbnail;
+               }
+           }
+       }
    }
 });
 

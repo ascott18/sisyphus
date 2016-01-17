@@ -171,11 +171,12 @@
                                             </button>
                                         </div>
 
-                                        <h4 class="list-group-item-heading no-pad-bottom">[[data.book.title]]</h4>
-                                        <small >
-                                            <span class="text-muted" > Requested by [[data.order.placed_by.first_name]] [[data.order.placed_by.last_name]] for
-                                                [[data.course.term.term_name]] [[data.course.term.year]]</span>
-                                        </small>
+
+                                        <book-details book="data.book">
+                                            <br>
+                                            Requested by [[data.order.placed_by.first_name]] [[data.order.placed_by.last_name]] for
+                                            [[data.course.term.term_name]] [[data.course.term.year]], Section [[data.course.course_section | zpad:2 ]]
+                                        </book-details>
                                     </div>
                             </div>
                         </div>
@@ -191,6 +192,11 @@
                     </div>
                     <div class="panel-body panel-list"
                          ng-controller="NewBookController">
+
+                        <h3 class="text-muted" ng-show="cartBooks.length == 0">
+                            There are no books in the cart.
+                        </h3>
+
                         <div class="panel-list-item"
                             ng-cloak
                             ng-repeat="bookData in cartBooks">
@@ -202,52 +208,33 @@
                                 </button>
                             </div>
 
-                            <h4 class="list-group-item-heading no-pad-bottom">[[bookData.book.title]]</h4>
-                            <small >
-                                <span class="text-muted" >[[bookData.book.isbn13 | isbnHyphenate]]</span>
-                                <br>
-                                <div ng-repeat="author in bookData.book.authors">
-                                    <span class="text-muted" >[[author.name]]</span>
-                                </div>
+                            <book-details book="bookData.book"></book-details>
 
-                            </small>
-
-                        </div>
-
-                        <h3 class="text-muted" ng-show="cartBooks.length == 0">There are no books in the cart.</h3>
-                        <div ng-show="cartBooks.length > 0">
-                            <button class="btn btn-success pull-right"
-                                    ng-click="setStage(3)"
-                                    style="margin: 20px;">
-                                <i class="fa fa-arrow-right"></i> Review Request
-                            </button>
                         </div>
                     </div>
                 </div>
+
+                <button class="btn btn-success pull-right"
+                        ng-disabled="cartBooks.length == 0"
+                        ng-click="setStage(3)">
+                    Review Request <i class="fa fa-arrow-right"></i>
+                </button>
             </div>
         </div>
 
         <div ng-show="getStage() == STAGE_REVIEW_ORDERS">
-            <div class="row">
-                <button class="btn btn-primary pull-left"
-                        ng-click="setStage(2)"
-                        style="margin: 20px;">
-                    <i class="fa fa-arrow-left"></i> Back
-                </button>
-            </div>
+
 
             <div ng-class="(courses | filter:similarCourses).length>0 ? 'col-md-6' : 'col-md-12'">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title"><i class="fa fa-book fa-fw"></i> Book Details</h3>
+                        <h3 class="panel-title"><i class="fa fa-shopping-cart fa-fw"></i> Cart</h3>
                     </div>
-                    <div class="panel-body">
-                        <ul class="list-group">
-                            <li class="list-group-item"
-                                ng-repeat="bookData in cartBooks">
-                                <book-details book="bookData.book"></book-details>
-                            </li>
-                        </ul>
+                    <div class="panel-body panel-list">
+                        <div class="panel-list-item"
+                            ng-repeat="bookData in cartBooks">
+                            <book-details book="bookData.book"></book-details>
+                        </div>
                     </div>
 
                 </div>
@@ -261,41 +248,45 @@
                     </div>
 
 
-                    <div class="panel-body">
+                    <div class="panel-body panel-list">
 
-                        <h5 class="text-muted">
+                        <h5 class="text-muted" style="margin-top: 0; margin-bottom: 30px;">
                             Select any additional courses that you would like to place this request for.
                         </h5>
 
-                        <div class="list-group">
-                            <div class="list-group-item active">
+                        <div class="panel-list-item active">
 
-                                [[selectedCourse.department]] [[selectedCourse.course_number]]-[[selectedCourse.course_section]]
-                                <span style="left: 50%; position: absolute">[[selectedCourse.user.last_name]], [[selectedCourse.user.first_name]]</span>
-                            </div>
+                            [[selectedCourse.department]] [[selectedCourse.course_number]]-[[selectedCourse.course_section]]
+                            <span style="left: 50%; position: absolute">[[selectedCourse.user.last_name]], [[selectedCourse.user.first_name]]</span>
+                        </div>
 
-                            <div class="list-group-item cursor-pointer"
-                                 ng-class="{active: isAdditionalCourseSelected(course)}"
-                                 ng-click="toggleAdditionalCourseSelected(course)"
-                                 ng-repeat="course in courses | filter:similarCourses ">
+                        <div class="panel-list-item cursor-pointer"
+                             ng-class="{active: isAdditionalCourseSelected(course)}"
+                             ng-click="toggleAdditionalCourseSelected(course)"
+                             ng-repeat="course in courses | filter:similarCourses ">
 
-                                [[course.department]] [[course.course_number]]-[[course.course_section]]
-                                <span style="left: 50%; position: absolute">[[course.user.last_name]], [[course.user.first_name]]</span>
-                            </div>
+                            [[course.department]] [[course.course_number]]-[[course.course_section]]
+                            <span style="left: 50%; position: absolute">[[course.user.last_name]], [[course.user.first_name]]</span>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-12">
                 <button class="btn btn-success pull-right"
-                        ng-click="submitOrders()"
-                        style="margin: 20px;">
+                        ng-click="submitOrders()">
                     <i class="fa fa-check"></i>
                     Submit
-                    <ng-pluralize count="getNumAdditionalCoursesSelected()"
+                    <ng-pluralize count="getNumAdditionalCoursesSelected() + 1"
                                   when="{0: 'Request',
+                                         'one': 'Request',
                                          'other': '{} Requests'}">
                     </ng-pluralize>
+                </button>
+
+                <button class="btn btn-primary pull-right "
+                        ng-click="setStage(2)"
+                        style="margin-right: 15px;">
+                    <i class="fa fa-arrow-left"></i> Make Revisions
                 </button>
             </div>
         </div>
