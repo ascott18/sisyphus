@@ -165,6 +165,7 @@
 
 <script src="/javascripts/bootstrap.js"></script>
 <script src="/javascripts/moment.min.js"></script>
+<script src="/javascripts/linq.min.js"></script>
 
 
 @yield('scripts')

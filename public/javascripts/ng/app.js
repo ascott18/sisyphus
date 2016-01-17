@@ -47,6 +47,7 @@ app.filter('zpad', function() {
     return function(input, n) {
         if(input === undefined)
             input = "";
+        input = input.toString();
         if(input.length >= n)
             return input;
         var zeros = "0".repeat(n);

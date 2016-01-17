@@ -35,7 +35,14 @@ class OrderController extends Controller
 
         $openTermIds = $openTerms->pluck('term_id');
 
-        $courses = $request->user()->courses()
+        // If the user can place orders for everyone, don't return courses for everything here
+        // because it would almost certainly crash their browser if we did.
+        if ($request->user()->may('place-all-orders'))
+            $query = $request->user()->courses();
+        else
+            $query = Course::orderable();
+
+        $courses = $query
             ->whereIn('term_id', $openTermIds)
             ->with([
                 'orders.book',
@@ -121,7 +128,7 @@ class OrderController extends Controller
             ->with([
                     "term",
                     "orders.book.authors",
-                    'orders.placedBy'=>function($query){
+                    'user' => function($query){
                         return $query->select('user_id', 'first_name', 'last_name');
                     }])
             ->get();

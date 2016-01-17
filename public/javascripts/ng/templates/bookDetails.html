@@ -1,27 +1,25 @@
 
 
-<div class="clearfix">
+<div style="display: table-row;">
 
-    <div class="pull-left" >
+    <div>
         <img class="smallImage" width="60" ng-src="[[ getBookCoverImage() ]]"/>
         <img class="largeImage" ng-src="[[ getBookCoverImage() ]]"
              style="display: none; position: absolute; left: 15px;"/>
     </div>
-    <div class="pull-left" style="padding-left: 10px">
-    <h4 class="list-group-item-heading no-pad-bottom">[[book.title]]</h4>
-    <small >
-        <span class="text-muted" >
-            [[book.isbn13 | isbnHyphenate]] &mdash; [[book.publisher]]
-            <br>
-            by <span ng-repeat="author in book.authors">
-                [[author.name]][[$last ? '' : ($index==book.authors.length-2) ? ', and ' : ', ']]
+    <div style="padding-left: 10px; display: table-cell; vertical-align: top;">
+        <h4 class="list-group-item-heading no-pad-bottom">[[book.title]]</h4>
+        <small >
+            <span class="text-muted" >
+                [[book.isbn13 | isbnHyphenate]] &mdash; [[book.publisher]]
+                <br>
+                by <span ng-repeat="author in book.authors">
+                    [[author.name]][[$last ? '' : ($index==book.authors.length-2) ? ', and ' : ', ']]
+                </span>
+                <ng-transclude>
+                </ng-transclude>
             </span>
-            <ng-transclude>
-            </ng-transclude>
-        </span>
-
-
-    </small>
+        </small>
     </div>
 </div>
 

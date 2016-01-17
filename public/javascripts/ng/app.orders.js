@@ -115,22 +115,35 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', '$filter',
             function success(response) {
                 console.log("got courses", response.data);
                 var pastCourses = response.data;
-                var pastBooks = [];
 
-                for (var i = 0; i < pastCourses.length; i++) {
-                    var pastCourse = pastCourses[i];
-                    for (var j = 0; j < pastCourse.orders.length; j++) {
-                        var order = pastCourse.orders[j];
-                        var bookData = {};
-                        bookData['book'] = order.book;
-                        bookData['course'] = pastCourse;
-                        bookData['order'] = order;
-                        pastBooks.push(bookData);
-                    }
-                }
+                var pastBooks = Enumerable
+                    .From(pastCourses)
+                    // Select an object for each order that has the course, the order, and the book on it.
+                    .SelectMany("$.orders", "course,order => {course:course, order:order, book:order.book}")
+                    // Group these objects by the book id, selecting a new object for each book that
+                    // contains the book, and the collection of the previously selected objects
+                    // that belong to each book.
+                    .GroupBy("$.book.book_id", "", function(key, groupings){
+                        var courseGrouper = "data => '' + data.course.user_id + ' ' + data.course.term_id";
+                        return {
+                            book: groupings.First().book,
+                            terms: groupings
+                                .Distinct(courseGrouper)
+                                .Do(function(grouping){
+                                    grouping['numSections'] = groupings
+                                        .Count(function(data){
+                                            return data.course.user_id == grouping.course.user_id && data.course.term_id == grouping.course.term_id
+                                        })
+                                })
+                                .GroupBy("$.course.term_id", "", "{term:$$.First().course.term, orderData: $$.ToArray()}")
+                                .ToArray()
+                        }
+                    })
+                    .ToArray();
+
+                console.log(pastBooks);
 
                 course['pastBooks'] = pastBooks;
-                $scope.selectedCourse = course;
             }
         );
 

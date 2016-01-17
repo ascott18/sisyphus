@@ -162,20 +162,25 @@
                                     <div class="panel-list-item"
                                         ng-cloak
                                         ng-show="selectedCourse.pastBooks.length > 0"
-                                        ng-repeat="data in selectedCourse.pastBooks | orderBy: (book.mine?0:1):true">
+                                        ng-repeat="bookData in selectedCourse.pastBooks">
 
                                         <div class="pull-right">
                                             <button class="btn btn-xs btn-primary"
-                                                    ng-click="addBookToCart(data)">
+                                                    ng-click="addBookToCart(bookData)">
                                                 <i class="fa fa-fw fa-plus"></i>
                                             </button>
                                         </div>
 
-
-                                        <book-details book="data.book">
-                                            <br>
-                                            Requested by [[data.order.placed_by.first_name]] [[data.order.placed_by.last_name]] for
-                                            [[data.course.term.term_name]] [[data.course.term.year]], Section [[data.course.course_section | zpad:2 ]]
+                                        <book-details book="bookData.book">
+                                            <span ng-repeat="termData in bookData.terms">
+                                                <br>
+                                                [[termData.term.term_name]] [[termData.term.year]]:
+                                                <span ng-repeat="data in termData.orderData">
+                                                    [[data.course.user.first_name]] [[data.course.user.last_name]]
+                                                    ([[data.numSections]] Sections)
+                                                    [[$last ? '' : ($index==book.authors.length-2) ? ', and ' : ', ']]
+                                                </span>
+                                            </span>
                                         </book-details>
                                     </div>
                             </div>
@@ -256,7 +261,7 @@
 
                         <div class="panel-list-item active">
 
-                            [[selectedCourse.department]] [[selectedCourse.course_number]]-[[selectedCourse.course_section]]
+                            [[selectedCourse.department]] [[selectedCourse.course_number | zpad:3]]-[[selectedCourse.course_section | zpad:2]]
                             <span style="left: 50%; position: absolute">[[selectedCourse.user.last_name]], [[selectedCourse.user.first_name]]</span>
                         </div>
 
@@ -265,7 +270,7 @@
                              ng-click="toggleAdditionalCourseSelected(course)"
                              ng-repeat="course in courses | filter:similarCourses ">
 
-                            [[course.department]] [[course.course_number]]-[[course.course_section]]
+                            [[course.department]] [[course.course_number | zpad:3]]-[[course.course_section | zpad:2]]
                             <span style="left: 50%; position: absolute">[[course.user.last_name]], [[course.user.first_name]]</span>
                         </div>
                     </div>
