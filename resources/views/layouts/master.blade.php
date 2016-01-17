@@ -136,7 +136,7 @@
 
             <hr>
             <footer>
-                <p>&copy; 2015 - Eastern Washington University</p>
+                <p>&copy; 2016 - Eastern Washington University</p>
                 <p class="text-muted">made with <i class="fa fa-heart" style="color: #8b001d;"></i> by EWU Computer Science students</p>
             </footer>
         </div>

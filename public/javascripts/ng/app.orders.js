@@ -42,11 +42,6 @@ app.directive('isbn13', function() {
     };
 });
 
-app.directive('cart', function() {
-    return {
-        templateUrl: '/javascripts/ng/templates/cart.html'
-    };
-});
 
 app.directive('bookDetails', function() {
    return {

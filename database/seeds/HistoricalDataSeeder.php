@@ -18,6 +18,7 @@ class HistoricalDataSeeder extends Seeder
             ["Summer", 2015],
             ["Fall", 2015],
             ["Winter", 2016],
+            ["Spring", 2016],
             ["Spring Semester", 2016],
         ];
 
