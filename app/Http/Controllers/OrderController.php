@@ -118,9 +118,11 @@ class OrderController extends Controller
      */
     public function getPastCourses($id)
     {
-        $this->authorize("all");
-
         $course = Course::findOrFail($id);
+
+        $this->authorize('place-order-for-course', $course);
+
+
         $courses =
             Course::
             where(['department' => $course->department, 'course_number' => $course->course_number])
@@ -151,7 +153,7 @@ class OrderController extends Controller
         $params = $request->all();
         foreach($params['courses'] as $section) {
             $course = Course::findOrFail($section['course_id']);
-            $this->authorize("place-order-for-course", $course);
+            $this->authorize('place-order-for-course', $course);
 
             foreach ($params['cart'] as $bookData) {
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Book;
+use App\Models\Course;
 use Illuminate\Http\Request;
 
 class BookController extends Controller
@@ -69,25 +70,48 @@ class BookController extends Controller
     {
         $this->authorize("all");
 
-        $query = Book::query();
-
         $user = $request->user();
-        if ($user->may('view-all-books')){
-
+        if ($user->may('view-all-courses')){
+            $query = Book::query();
         }
-        elseif ($user->may('view-dept-books')){
-
+        else if ($user->may('view-dept-books')){
+            // Only show books that have been ordered for courses that the user
+            // either teaches, or administers as a dept secretary.
+            $query = Book::whereIn('book_id',
+                Course::visible()
+                ->join('orders', function ($join) {
+                    $join->on('orders.course_id', '=', 'courses.course_id')
+                        ->whereNull('orders.deleted_at');
+                })
+                ->select('orders.book_id')
+                ->getQuery());
+        }
+        else {
+            // I am self-join, destroyer of worlds.
+            // We do the self join here to get all the courses that are
+            // similar to the ones that the current user teaches (same number and dept).
+            // This way we get a nice set of relevant books to the user, without bombarding them with
+            // every single physics book just because they taught a physics class once five years ago.
+            $query = Book::whereIn('book_id',
+                Course::where('courses.user_id', '=', $user->user_id)
+                    ->join('courses as similarCourses', function ($join) {
+                        $join->on('courses.department', '=', 'similarCourses.department')
+                            ->on('courses.course_number', '=', 'similarCourses.course_number');
+                    })
+                    ->join('orders', function ($join) {
+                        $join->on('orders.course_id', '=', 'similarCourses.course_id')
+                            ->whereNull('orders.deleted_at');
+                    })
+                    ->select('orders.book_id')
+                    ->distinct()
+                    ->getQuery());
         }
 
         $query = $this->buildBookSearchQuery($request, $query);
         $query = $this->buildBookSortQuery($request, $query);
 
+        $query = $query->with('authors');
         $books = $query->paginate(10);
-
-
-        foreach($books as $book) {
-            $book->authors; // This is how we eager load the authors
-        }
 
         return response()->json($books);
     }

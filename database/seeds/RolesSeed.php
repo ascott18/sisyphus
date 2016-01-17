@@ -62,9 +62,6 @@ class RolesSeed extends Seeder
         makePerm('send-dept-messages', "Department - Send Messages");
 
 
-        makePerm('view-all-books', "All - View Books");
-        makePerm('view-dept-books', "Department - View Books");
-
         makePerm('order-outside-period', "Visible - Order for Non-current Terms");
 
 
@@ -80,7 +77,6 @@ class RolesSeed extends Seeder
             p('view-all-orders'),
             p('view-all-courses'),
             p('create-all-courses'),
-            p('view-all-books'),
             p('order-outside-period'),
         ]);
 
@@ -90,7 +86,6 @@ class RolesSeed extends Seeder
             p('place-all-orders'),
             p('view-all-orders'),
             p('view-all-courses'),
-            p('view-all-books'),
         ]);
 
         makeRole('dept-sec', "Department Secretary")->attachPermissions([
@@ -99,7 +94,6 @@ class RolesSeed extends Seeder
             p('view-dept-courses'),
             p('create-dept-courses'),
             p('send-dept-messages'),
-            p('view-dept-books'),
             p('edit-courses'),
         ]);
 
