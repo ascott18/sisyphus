@@ -232,76 +232,121 @@
 
         <div ng-show="getStage() == STAGE_REVIEW_ORDERS">
 
+            <form novalidate class="simple-form" name="form" >
 
-            <div ng-class="(courses | filter:similarCourses).length>0 ? 'col-md-6' : 'col-md-12'">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title"><i class="fa fa-shopping-cart fa-fw"></i> Cart</h3>
-                    </div>
-                    <div class="panel-body panel-list">
-                        <div class="panel-list-item"
-                            ng-repeat="bookData in cartBooks">
-                            <book-details book="bookData.book"></book-details>
+                <div ng-class="(courses | filter:similarCourses).length>0 ? 'col-md-12' : 'col-md-12'">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><i class="fa fa-shopping-cart fa-fw"></i> Cart</h3>
                         </div>
-                    </div>
+                        <div class="panel-body panel-list">
+                            <div class="panel-list-item clearfix"
+                                ng-repeat="bookData in cartBooks">
+                                <div class="col-md-4">
+                                    <book-details book="bookData.book"></book-details>
+                                </div>
 
+                                <div class="col-md-4">
+                                    </br>
+                                    <label for="notes[[$index]]">Notes</label>
+                                    <input type="text" id="notes[[$index]]" class="form-control" placeholder="e.g. expected enrollment: 23">
+                                    <br>
+                                </div>
+                                <div class="col-md-4">
+                                    </br>
+                                    <div class="form-group" ng-class="{'has-error': submitted && form.req[[$index]].$error.required}">
+                                        <label for="required">Required for Course?</label>
+                                        </br>
+
+                                        <label class="radio-inline"><input
+                                                    type="radio"
+                                                    ng-model="bookData.book.required"
+                                                    name="req[[$index]]"
+                                                    ng-value="true"
+                                                    required=""/> Yes
+                                        </label>
+
+
+                                        <label class="radio-inline"><input
+                                                    type="radio"
+                                                    ng-model="bookData.book.required"
+                                                    name="req[[$index]]"
+                                                    ng-value="false"
+                                                    required=""/> No
+                                        </label>
+
+                                        <div ng-show="submitted">
+                                            <div ng-show="form.req[[$index]].$error.required"><p class="text-danger">
+                                                    Please let us know if this book is required!
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-6"
-                 ng-if="(courses | filter:similarCourses).length>0">
-                <div class="panel panel-default">
+                <div class="col-lg-offset-6 col-lg-6"
+                     ng-if="(courses | filter:similarCourses).length>0">
+                    <div class="panel panel-default">
 
-                    <div class="panel-heading">
-                        <h3 class="panel-title"><i class="fa fa-university fa-fw"></i> Similar Courses</h3>
-                    </div>
-
-
-                    <div class="panel-body panel-list">
-
-                        <h5 class="text-muted" style="margin-top: 0; margin-bottom: 30px;">
-                            Select any additional courses that you would like to place this request for.
-                        </h5>
-
-                        <div class="panel-list-item active">
-
-                            [[selectedCourse.department]] [[selectedCourse.course_number | zpad:3]]-[[selectedCourse.course_section | zpad:2]]
-                            <span style="left: 50%; position: absolute">[[selectedCourse.user.last_name]], [[selectedCourse.user.first_name]]</span>
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><i class="fa fa-university fa-fw"></i> Similar Courses</h3>
                         </div>
 
-                        <div class="panel-list-item cursor-pointer"
-                             ng-class="{active: isAdditionalCourseSelected(course)}"
-                             ng-click="toggleAdditionalCourseSelected(course)"
-                             ng-repeat="course in courses | filter:similarCourses ">
 
-                            [[course.department]] [[course.course_number | zpad:3]]-[[course.course_section | zpad:2]]
-                            <span style="left: 50%; position: absolute">[[course.user.last_name]], [[course.user.first_name]]</span>
+                        <div class="panel-body panel-list">
+
+                            <h5 class="text-muted" style="margin-top: 0; margin-bottom: 30px;">
+                                Select any additional courses that you would like to place this request for.
+                            </h5>
+
+                            <div class="panel-list-item active">
+
+                                [[selectedCourse.department]] [[selectedCourse.course_number | zpad:3]]-[[selectedCourse.course_section | zpad:2]]
+                                <span style="left: 50%; position: absolute">[[selectedCourse.user.last_name]], [[selectedCourse.user.first_name]]</span>
+                            </div>
+
+                            <div class="panel-list-item cursor-pointer"
+                                 ng-class="{active: isAdditionalCourseSelected(course)}"
+                                 ng-click="toggleAdditionalCourseSelected(course)"
+                                 ng-repeat="course in courses | filter:similarCourses ">
+
+                                [[course.department]] [[course.course_number | zpad:3]]-[[course.course_section | zpad:2]]
+                                <span style="left: 50%; position: absolute">[[course.user.last_name]], [[course.user.first_name]]</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-12">
-                <button class="btn btn-success pull-right"
-                        ng-click="submitOrders()">
-                    <i class="fa fa-check"></i>
-                    Submit
-                    <ng-pluralize count="getNumAdditionalCoursesSelected() + 1"
-                                  when="{0: 'Request',
-                                         'one': 'Request',
-                                         'other': '{} Requests'}">
-                    </ng-pluralize>
-                </button>
+                <div class="col-md-12">
+                    <button class="btn btn-success pull-right"
+                            ng-click="submitOrders(form)">
+                        <i class="fa fa-check"></i>
+                        Submit
+                        <ng-pluralize count="getNumAdditionalCoursesSelected() + 1"
+                                      when="{0: 'Request',
+                                             'one': 'Request',
+                                             'other': '{} Requests'}">
+                        </ng-pluralize>
+                    </button>
 
-                <button class="btn btn-primary pull-right "
-                        ng-click="setStage(2)"
-                        style="margin-right: 15px;">
-                    <i class="fa fa-arrow-left"></i> Make Revisions
-                </button>
-            </div>
+                    <button class="btn btn-primary pull-right "
+                            ng-click="setStage(2)"
+                            style="margin-right: 15px;">
+                        <i class="fa fa-arrow-left"></i> Make Revisions
+                    </button>
+                </div>
+            </form>
         </div>
 
-        <div class="col-lg-12" ng-show="getStage() == STAGE_ORDER_SUCCESS">
-
-            <h1>Request successfully placed! Thank you!</h1>
+        <div class=" col-lg-offset-2 col-lg-8" ng-show="getStage() == STAGE_ORDER_SUCCESS">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h1 class="text-center">Request successfully placed! Thank you!</h1>
+                </div>
+            </div>
         </div>
 
 

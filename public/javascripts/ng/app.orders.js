@@ -116,34 +116,37 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', '$filter',
                 console.log("got courses", response.data);
                 var pastCourses = response.data;
 
-                var pastBooks = Enumerable
+                course['pastBooks'] = Enumerable
                     .From(pastCourses)
                     // Select an object for each order that has the course, the order, and the book on it.
                     .SelectMany("$.orders", "course,order => {course:course, order:order, book:order.book}")
                     // Group these objects by the book id, selecting a new object for each book that
-                    // contains the book, and the collection of the previously selected objects
+                    // contains that book and the collection of the previously selected objects
                     // that belong to each book.
-                    .GroupBy("$.book.book_id", "", function(key, groupings){
-                        var courseGrouper = "data => '' + data.course.user_id + ' ' + data.course.term_id";
+                    .GroupBy("$.book.book_id", "", function (key, bookGroupings) {
+                        // For each book, associate a list of terms for which that book was ordered.
                         return {
-                            book: groupings.First().book,
-                            terms: groupings
-                                .Distinct(courseGrouper)
-                                .Do(function(grouping){
-                                    grouping['numSections'] = groupings
-                                        .Count(function(data){
-                                            return data.course.user_id == grouping.course.user_id && data.course.term_id == grouping.course.term_id
+                            book: bookGroupings.First().book,
+                            terms: bookGroupings
+                                // Grab only one object for each term, per user
+                                .Distinct("bookGrouping => '' + bookGrouping.course.user_id + ' ' + bookGrouping.course.term_id")
+                                // Count the number of sections that each user ordered the book for
+                                // during this term, and associate that with the bookGrouping
+                                // for that user/term combination.
+                                .Do(function (termUserBookGrouping) {
+                                    termUserBookGrouping['numSections'] = bookGroupings
+                                        .Count(function (bookGrouping) {
+                                            return bookGrouping.course.user_id == termUserBookGrouping.course.user_id
+                                                && bookGrouping.course.term_id == termUserBookGrouping.course.term_id
                                         })
                                 })
+                                // For each term/user combination,
+                                // group by the term and associate all the groupings for that term as 'orderData'
                                 .GroupBy("$.course.term_id", "", "{term:$$.First().course.term, orderData: $$.ToArray()}")
                                 .ToArray()
                         }
                     })
                     .ToArray();
-
-                console.log(pastBooks);
-
-                course['pastBooks'] = pastBooks;
             }
         );
 
@@ -190,21 +193,30 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', '$filter',
         }
     };
 
-    $scope.submitOrders = function() {
-        var sections = [];
-        sections.push($scope.selectedCourse);
+    $scope.submitOrders = function(form) {
+        $scope.submitted = true;
 
-        if ($scope.additionalCourses != null) {
-            for (var i = 0; i < $scope.additionalCourses.length; i++){
-                sections.push($scope.additionalCourses[i]);
+        if (!$scope.submitting && form.$valid) {
+            var sections = [];
+            sections.push($scope.selectedCourse);
+
+            if ($scope.additionalCourses != null) {
+                for (var i = 0; i < $scope.additionalCourses.length; i++){
+                    sections.push($scope.additionalCourses[i]);
+                }
             }
-        }
 
-        $http.post('/requests/submit-order', {courses:sections, cart:CartService.cartBooks}).then(
-            function success(){
-                $scope.additionalCourses = null;
-                $scope.setStage($scope.STAGE_ORDER_SUCCESS);
-            });
+            $scope.submitting = true;
+            $http.post('/requests/submit-order', {courses:sections, cart:CartService.cartBooks}).then(
+                function success(){
+                    $scope.additionalCourses = null;
+                    $scope.submitting = false;
+                    $scope.setStage($scope.STAGE_ORDER_SUCCESS);
+                },
+                function failure(){
+                    $scope.submitting = false;
+                });
+        }
     };
 
     $scope.toggleAdditionalCourseSelected = function(course){
