@@ -109,7 +109,7 @@
                                             </button>
                                             <button class="btn btn-sm btn-default"
                                                     ng-click="role.addingPermission = false">
-                                                <i class="fa fa-times"></i> Cancel
+                                                <i class="fa fa-times"></i> [[addedOne ? "Done" : "Cancel"]]
                                             </button>
                                         </div>
                                     </td>

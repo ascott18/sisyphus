@@ -82,7 +82,9 @@ app.controller('AddPermissionController', function($scope, $http) {
         }).then(
             function(response){
                 $scope.role.permissions.push(selectedPermission);
-                $scope.role.addingPermission = false;
+                $scope.selectedPermission = null;
+                $scope.addedOne = true;
+                // $scope.role.addingPermission = false;
             }
         );
     };
