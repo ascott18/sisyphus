@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ticket;
+use Auth;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -25,6 +26,12 @@ class TicketController extends Controller
         return view('tickets.index');
     }
 
+    public function getCreate() {
+        $this->authorize("all");
+
+        return view('tickets.create');
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -32,7 +39,15 @@ class TicketController extends Controller
      */
     public function postCreate()
     {
-        //
+        $this->authorize("all");
+
+        $ticket = new Ticket();
+        $ticket->title = "";
+        $ticket->body = "<h3>New Ticket</h3>";
+        $ticket->user_id = Auth::user()->user_id;
+        $ticket->save();
+
+        return response()->json($ticket);
     }
 
     /**
@@ -74,5 +89,4 @@ class TicketController extends Controller
 
         return response()->json($tickets);
     }
-
 }

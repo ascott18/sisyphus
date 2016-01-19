@@ -1,5 +1,59 @@
 
-var app = angular.module('sisyphus', ['sisyphus.helpers', 'smart-table']);
+var app = angular.module('sisyphus', ['sisyphus.helpers', 'angularUtils.directives.dirPagination', 'textAngular']);
+
+
+app.config(function($provide) {
+    $provide.decorator('taOptions', ['taRegisterTool', '$delegate', function (taRegisterTool, taOptions) {
+        taOptions.toolbar = [
+            ['h1', 'h2', 'h3', 'pre', 'p'],
+            ['bold', 'italics', 'underline', 'strikeThrough', 'clear'],
+            ['ul', 'ol'],
+            ['undo', 'redo'],
+            ['justifyLeft', 'justifyCenter', 'justifyRight', 'indent', 'outdent'],
+            ['insertLink']
+
+            // All available options.
+            //['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'pre', 'quote'],
+            //['bold', 'italics', 'underline', 'strikeThrough', 'ul', 'ol', 'redo', 'undo', 'clear'],
+            //['justifyLeft', 'justifyCenter', 'justifyRight', 'indent', 'outdent'],
+            //['html', 'insertImage', 'insertLink', 'insertVideo', 'wordcount', 'charcount']
+        ];
+
+        return taOptions;
+    }]);
+});
+
+app.controller('TicketController', function($scope, $http) {
+
+    $scope.ticket = {};
+
+    var unloadListener = function (e) {
+        var confirmationMessage = 'If you leave before submitting, your changes will be lost.';
+
+        (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+        return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+    };
+
+    window.addEventListener("beforeunload", unloadListener);
+
+
+
+
+
+    $scope.createTicket = function(ticket){
+        $http.post('/tickets/create', ticket).then(
+            function success(response){
+                var ticket = response.data;
+
+                $scope.ticket = ticket;
+            });
+    };
+
+    $scope.submitTicket = function(){
+        window.removeEventListener("beforeunload", unloadListener);
+    };
+});
+
 
 app.controller('TicketsIndexController', function($scope, $http) {
     var ctrl1 = this;
