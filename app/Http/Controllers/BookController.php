@@ -276,6 +276,14 @@ class BookController extends Controller
     }
 
     public function postEdit(Request $request) {
+        $this->validate($request, [
+            'book' => 'required|array',
+            'book.book_id' => 'required|integer',
+            'book.title' => 'required|string',
+            'book.publisher' => 'required|string',
+            'authors' => 'required',
+            'authors.*' => 'string'
+        ]);
 
         $book = $request->get('book');
         $authors = $request->get('authors');
@@ -288,8 +296,10 @@ class BookController extends Controller
         $db_book->authors()->delete();
 
         foreach ($authors as $author) {
-            $db_book->authors()->create($author);
+            $db_book->authors()->create(['name' => $author]);
         }
+
+        return redirect('books/details/' . $db_book->book_id);
     }
 
 }

@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property boolean $required Whether or not the book is required for the course.
+ * @property string $notes
  */
 class Order extends Model
 {

@@ -12,8 +12,8 @@ use Illuminate\Database\Query\Builder;
 class CourseController extends Controller
 {
     public static $CourseValidation = [
-        'course.department' => 'required|min:2|max:10',
-        'course.course_name' => 'required',
+        'course.department' => 'required|string|min:2|max:10',
+        'course.course_name' => 'required|string',
         'course.course_number' => 'required|numeric',
         'course.course_section' => 'required|numeric',
     ];
@@ -96,6 +96,9 @@ class CourseController extends Controller
         // The professor of a course is nullable. Check for empty strings and manually set to null.
         if (!isset($course['user_id']) || !$course['user_id']) $course['user_id'] = null;
 
+        $course['department'] = trim($course['department']);
+        $course['course_name'] = trim($course['course_name']);
+
         $dbCourse->update($course);
         $dbCourse->save();
 
@@ -128,6 +131,10 @@ class CourseController extends Controller
         $this->validate($request, static::$CourseValidation);
 
         $course = $request->get('course');
+
+        $course['department'] = trim($course['department']);
+        $course['course_name'] = trim($course['course_name']);
+
         $dbCourse = new Course($course);
 
         // Authorize that the user can indeed create this course before actually saving it.

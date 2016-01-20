@@ -105,7 +105,7 @@ EOL;
             $courseDataReg = $courseDataReg . "(.{{$colWidth}})\\s";
             $courseRegGroups[$colName] = $groupIndex++ + 1;
 
-            if ($colName == "Professor") break;
+            if ($colName == "Capacity") break;
         }
         $courseDataReg = "/^\\s*$courseDataReg/";
 
@@ -221,6 +221,7 @@ EOL;
             // so expand those out.
             $courseNumbers = $this->decipherNumbers($deptCourses[2]);
             $department = $deptCourses[1];
+            $classCapacity = trim($course[$courseRegGroups['Capacity']]);
 
             foreach ($courseNumbers as $courseNumber) {
                 $courseNumber = trim($courseNumber);
@@ -305,6 +306,10 @@ EOL;
                         $dbOrder->book_id = $dbBook->book_id;
                         $dbOrder->course_id = $dbCourse->course_id;
                         $dbOrder->placed_by = 1; // TODO: ensure that this is the dummer user created in HistoricalDataSeeder
+                        // Don't do this - it feels weird.
+                        //if ($classCapacity){
+                        //    $dbOrder->notes = "Class Capacity: $classCapacity";
+                        //}
                         $dbOrder->save();
 
 

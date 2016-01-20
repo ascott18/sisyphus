@@ -121,6 +121,7 @@
                                 <th>ISBN</th>
                                 <th>Publisher</th>
                                 <th>Required</th>
+                                <th>Notes</th>
                                 @can('place-order-for-course', $course)
                                     <th width="1%"></th>
                                 @endcan
@@ -152,6 +153,9 @@
                                     </td>
                                     <td>
                                         {{ $order->required ? "Yes" : "No" }}
+                                    </td>
+                                    <td>
+                                        {{ $order->notes }}
                                     </td>
 
                                     @can('place-order-for-course', $course)

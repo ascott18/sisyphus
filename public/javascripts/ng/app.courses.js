@@ -102,8 +102,6 @@ app.controller('CoursesModifyController', function($filter, $scope) {
         }
     };
 
-
-
     $scope.submit = function(form, e){
         if (form.$valid)
             form.submit();
