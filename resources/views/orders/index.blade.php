@@ -251,7 +251,11 @@
                                 <div class="col-md-4">
                                     </br>
                                     <label for="notes[[$index]]">Notes</label>
-                                    <input type="text" id="notes[[$index]]" class="form-control" placeholder="e.g. expected enrollment: 23">
+                                    <input type="text"
+                                           ng-model="bookData.notes"
+                                           id="notes[[$index]]"
+                                           class="form-control"
+                                           placeholder="e.g. expected enrollment: 23">
                                     <br>
                                 </div>
                                 <div class="col-md-4">
@@ -262,7 +266,7 @@
 
                                         <label class="radio-inline"><input
                                                     type="radio"
-                                                    ng-model="bookData.book.required"
+                                                    ng-model="bookData.required"
                                                     name="req[[$index]]"
                                                     ng-value="true"
                                                     required=""/> Yes
@@ -271,7 +275,7 @@
 
                                         <label class="radio-inline"><input
                                                     type="radio"
-                                                    ng-model="bookData.book.required"
+                                                    ng-model="bookData.required"
                                                     name="req[[$index]]"
                                                     ng-value="false"
                                                     required=""/> No
