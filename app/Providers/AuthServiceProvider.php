@@ -260,6 +260,10 @@ class AuthServiceProvider extends ServiceProvider
             // TODO: make this correct (check department, and have permissions for viewing department tickets, etc).
             return $ticket->user_id == $user->user_id;
         });
+
+        $gate->define('make-reports', function (User $user) {
+           return $user->may("make-reports");
+        });
     }
 
     public function register()

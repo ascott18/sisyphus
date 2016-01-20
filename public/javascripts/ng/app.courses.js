@@ -3,9 +3,9 @@ var app = angular.module('sisyphus', ['sisyphus.helpers', 'smart-table', 'angula
 
 app.controller('CoursesIndexController', function($scope, $http) {
     var ctrl1 = this;
+
     $scope.stCtrl=null;
     $scope.stTableRef=null;
-
     $scope.updateTerm=function()
     {
         if($scope.stCtrl)
