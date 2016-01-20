@@ -250,10 +250,6 @@ class CourseController extends Controller
 
         $courses = $query->paginate(10);
 
-        foreach ($courses as $course) {
-            $course->term->term_name = $course->term->termName();
-        }
-
         return response()->json($courses);
     }
 }

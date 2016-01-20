@@ -128,21 +128,9 @@ class TermController extends Controller
         $query = Term::query();
 
         $query = $this->buildTermSearchQuery($request, $query);
-
         $query = $this->buildTermSortQuery($request, $query);
 
-
-        $terms = $query->paginate(15);
-
-
-        foreach($terms as $term) {
-            $term->termName = $term->termName();
-            $term->status = $term->getStatusDisplayString();
-            $term->orderStartDate = $term->order_start_date->toFormattedDateString(); // This is how we eager load the start date
-            $term->orderDueDate = $term->order_due_date->toFormattedDateString(); // This is how we eager load the due date
-        }
-
-        return response()->json($terms);
+        return $query->paginate(15);
     }
 
 
@@ -258,12 +246,10 @@ class TermController extends Controller
 
         $query = \App\Models\Course::query();
 
-
         if($request->input('term_id'))
             $query = $query->where('term_id', '=', $request->input('term_id')); // find the term ID
 
         $query = $this->buildDetailSearchQuery($request, $query); // build the search terms query
-
         $query = $this->buildDetailSortQuery($request, $query); // build the sort query
 
         $courses = $query->paginate(10); // get paginated result

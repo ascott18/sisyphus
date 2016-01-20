@@ -29,9 +29,6 @@ class OrderController extends Controller
         $this->authorize('all');
 
         $openTerms = Term::currentTerms()->get();
-        foreach ($openTerms as $term) {
-            $term['term_name'] = $term->termName();
-        }
 
         $openTermIds = $openTerms->pluck('term_id');
 
@@ -134,10 +131,6 @@ class OrderController extends Controller
                         return $query->select('user_id', 'first_name', 'last_name');
                     }])
             ->get();
-
-        foreach ($courses as $course) {
-            $course->term->term_name = $course->term->termName();
-        }
 
         return response()->json($courses);
     }

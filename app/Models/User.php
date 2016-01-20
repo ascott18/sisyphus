@@ -12,12 +12,21 @@ use Zizaco\Entrust\Traits\EntrustUserTrait;
 
 
 /**
- * @property  int user_id
- * @property  string net_id The user's EWU NetID.
- * @property  string email The user's email address.
- * @property  string first_name
- * @property  string last_name
- * @property  string ewu_id The user's 8-digit EWU ID.
+ * App\Models\User
+ *
+ * @property int $user_id
+ * @property string $net_id The user's EWU NetID.
+ * @property string $email The user's email address.
+ * @property string $first_name
+ * @property string $last_name
+ * @property string $ewu_id The user's 8-digit EWU ID.
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Course[] $courses
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UserDepartment[] $departments
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Ticket[] $tickets
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Message[] $messages
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Role[] $roles
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
  */
 class User extends Model implements AuthenticatableContract,
                                     AuthorizableContract

@@ -51,7 +51,7 @@
 
                         <dt>Request Period</dt>
                         <dd>
-                            {{ $course->term->getStatusDisplayString() }}
+                            {{ $course->term->status }}
                         </dd>
 
                         @if ($course->term->areOrdersInProgress())

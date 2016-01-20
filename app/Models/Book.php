@@ -5,10 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property string publisher The publisher of the book. varchar(255)
- * @property string isbn13 The ISBN13 of the book, without hyphens. varchar(13)
- * @property string title The title of the book. varchar(100)
- * @property string edition The edition of the book.
+ * App\Models\Book
+ *
+ * @property string $publisher The publisher of the book. varchar(255)
+ * @property string $isbn13 The ISBN13 of the book, without hyphens. varchar(13)
+ * @property string $title The title of the book. varchar(100)
+ * @property string $edition The edition of the book.
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Author[] $authors
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Order[] $orders
+ * @property integer $book_id
+ * @property string $asin // todo: remove this from the database.
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
  */
 class Book extends Model
 {

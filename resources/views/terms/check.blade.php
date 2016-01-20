@@ -18,7 +18,7 @@
 <div class="row">
     <div class="col-lg-12">
 
-        <div class="text-center"><h2>{{ $term->termName() }} {{ $term->year }}</h2></div>
+        <div class="text-center"><h2>{{ $term->display_name }}</h2></div>
         <?php  $courses = $term->courses;?>
         <table width="100%" cellpadding="8">
 

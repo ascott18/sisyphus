@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('area', 'Terms')
-@section('page', $term->termName() . ' ' . $term->year)
+@section('page', $term->display_name)
 
 @section('content')
 
@@ -23,7 +23,7 @@
 
                         <dl class="dl-horizontal">
                             <dt>Term</dt>
-                            <dd>{{ $term->termName() }}</dd>
+                            <dd>{{ $term->term_name }}</dd>
 
                             <dt>Year</dt>
                             <dd>{{ $term->year }}</dd>
@@ -35,7 +35,7 @@
                             <dd>{{ $term->order_due_date->toFormattedDateString() }}</dd>
 
                             <dt>Status</dt>
-                            <dd>{{ $term->getStatusDisplayString() }}</dd>
+                            <dd>{{ $term->status }}</dd>
                         </dl>
                     </div>
 

@@ -6,11 +6,20 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property Carbon order_start_date The date on which orders will be open for this term.
- * @property Carbon order_due_date The date by which book orders are due for this term.
- * @property integer year The year for which the term exists.
- * @property integer term_number The term number, which is a key in static::$termNumbers.
- * @property integer term_id The database primary key for this model.
+ * App\Models\Term
+ *
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Course[] $courses
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Term currentOrPast()
+ * @property integer $term_id The database primary key for this model.
+ * @property integer $term_number The term number, which is a key in static::$termNumbers.
+ * @property \Carbon\Carbon $order_start_date The date on which orders will be open for this term.
+ * @property \Carbon\Carbon $order_due_date The date by which book orders are due for this term.
+ * @property integer $year The year for which the term exists.
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property-read string $term_name
+ * @property-read string $display_name
+ * @property-read mixed $status
  */
 class Term extends Model
 {
@@ -35,6 +44,13 @@ class Term extends Model
      * @var array
      */
     protected $fillable = ['order_start_date', 'order_due_date'];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['term_name', 'display_name', 'status'];
 
     /**
      * A mapping of term numbers to their English name.
@@ -114,7 +130,7 @@ class Term extends Model
      *
      * @return string
      */
-    public function termName()
+    public function getTermNameAttribute()
     {
         $term = $this->term_number;
 
@@ -122,13 +138,30 @@ class Term extends Model
     }
 
     /**
-     * Gets the full display name of this term.
+     * @deprecated Use $term->term_name instead.
+     */
+    public function termName()
+    {
+        return $this->term_name;
+    }
+
+
+    /**
+     * Gets the name of the term_number of this model.
      *
      * @return string
      */
+    public function getDisplayNameAttribute()
+    {
+        return $this->term_name . ' ' . $this->year;
+    }
+
+    /**
+     * @deprecated Use $term->display_name instead.
+     */
     public function displayName()
     {
-        return $this->termName() . ' ' . $this->year;
+        return $this->display_name;
     }
 
     /**
@@ -166,7 +199,7 @@ class Term extends Model
      *
      * @return string
      */
-    public function getStatusDisplayString()
+    public function getStatusAttribute()
     {
         if ($this->areOrdersInProgress())
         {
@@ -186,6 +219,7 @@ class Term extends Model
 
         return "Will start eventually";
     }
+
 
     /**
      * Gets the courses belonging to the term.
