@@ -91,13 +91,8 @@ class CourseController extends Controller
         $this->authorize("edit-course", $dbCourse);
         $this->validate($request, static::$CourseValidation);
 
-        $course = $request->except('course.term_id')['course'];
-
-        // The professor of a course is nullable. Check for empty strings and manually set to null.
-        if (!isset($course['user_id']) || !$course['user_id']) $course['user_id'] = null;
-
-        $course['department'] = trim($course['department']);
-        $course['course_name'] = trim($course['course_name']);
+        $course = $this->cleanCourseForCreateOrEdit($request);
+        unset($course['term_id']);
 
         $dbCourse->update($course);
         $dbCourse->save();
@@ -124,16 +119,25 @@ class CourseController extends Controller
     }
 
 
-    public function postCreate(Request $request)
+    private function cleanCourseForCreateOrEdit(Request $request)
     {
-        $this->authorize("create-courses");
-
-        $this->validate($request, static::$CourseValidation);
-
         $course = $request->get('course');
 
         $course['department'] = trim($course['department']);
         $course['course_name'] = trim($course['course_name']);
+
+        // The professor of a course is nullable. Check for empty strings and manually set to null.
+        if (!isset($course['user_id']) || !$course['user_id']) $course['user_id'] = null;
+
+        return $course;
+    }
+
+    public function postCreate(Request $request)
+    {
+        $this->authorize("create-courses");
+        $this->validate($request, static::$CourseValidation);
+
+        $course = $this->cleanCourseForCreateOrEdit($request);
 
         $dbCourse = new Course($course);
 
