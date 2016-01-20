@@ -14,9 +14,9 @@
             </div>
             <div class="panel-body">
                 <div class="col-sm-6">
-                    {{--<a href="/books/edit/{{ $book->book_id }}" class="btn btn-info " role="button">--}}
-                        {{--<i class="fa fa-info-circle"></i> Edit--}}
-                    {{--</a>--}}
+                    <a href="/books/edit/{{ $book->book_id }}" class="btn btn-primary " role="button">
+                        Edit <i class="fa fa-arrow-right"></i>
+                    </a>
                     <dl class="dl-horizontal">
                         <dt>Title</dt>
                     <dd>
@@ -56,7 +56,7 @@
 
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title"><i class="fa fa-history fa-fw"></i> Past Orders</h3>
+                <h3 class="panel-title"><i class="fa fa-history fa-fw"></i> Past Requests</h3>
             </div>
             <div class="panel-body">
                 <div class="table-responsive">
@@ -114,12 +114,11 @@
 
 @section('scripts-head')
     <script>
+        // TODO: use ng-init, or just hardcode this into a function call to the getImage function.
         book_id_init = new String('{{ $book->book_id }}');
         book_isbn_13_init = new String('{{ $book->isbn13 }}');
     </script>
 
-    <script src="http://crypto-js.googlecode.com/svn/tags/3.0.2/build/rollups/hmac-sha256.js"></script>
-    <script src="http://crypto-js.googlecode.com/svn/tags/3.0.2/build/components/enc-base64.js"></script> <!-- tmp? -->
     <script src="/javascripts/ng/helper.isbnHyphenate.js"></script>
     <script src="/javascripts/ng/app.books.js"></script>
 @stop

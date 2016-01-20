@@ -50,6 +50,11 @@ class Course extends Model
         return $this->hasMany('App\Models\Order', 'course_id', 'course_id');
     }
 
+    public function books()
+    {
+        return $this->hasManyThrough('App\Models\Book', 'App\Models\Order');
+    }
+
     public function user()
     {
         return $this->hasOne('App\Models\User', 'user_id', 'user_id');
@@ -81,19 +86,23 @@ class Course extends Model
         if ($user == null)
             $user = \Auth::user();
 
-        if ($user->may($deptPermission))
+        if ($user->may($allPermission))
         {
-            $departments = $user->departments()->lists('department');
-            $query = $query->where(function($query) use ($departments, $user) {
-                $query = $query->whereIn('department', $departments);
-                return $query = $query->orWhere('user_id', $user->user_id);
+            return $query;
+        }
+        elseif ($user->may($deptPermission))
+        {
+            return $query->where(function($query) use ($user) {
+                $deptSubQuery = $user
+                    ->departments()
+                    ->select('department')
+                    ->getQuery()
+                    ->getQuery();
+                $query = $query->whereIn('department', $deptSubQuery);
+                return $query = $query->orWhere('user_id', '=', $user->user_id);
             });
         }
-        elseif (!$user->may($allPermission))
-        {
-            $query = $query->where('user_id', $user->user_id);
-        }
 
-        return $query;
+        return $query = $query->where('user_id', '=', $user->user_id);
     }
 }

@@ -12,7 +12,7 @@ use \App\Models\Order;
 use \App\Models\Author;
 use \App\Models\Term;
 
-class ParseMBS extends Command implements SelfHandling
+class ParseMBS extends Command
 {
     /**
      * The name and signature of the console command.

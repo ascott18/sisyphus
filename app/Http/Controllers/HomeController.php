@@ -66,7 +66,8 @@ class HomeController extends Controller
                 ->join('orders', function ($join) {
                     $join
                         ->on('orders.course_id', '=', 'courses.course_id')
-                        ->on('orders.created_at', '=', \DB::raw("(SELECT MIN(o.created_at) FROM orders o WHERE o.course_id = courses.course_id)"));
+                        ->on('orders.created_at', '=', \DB::raw("(SELECT MIN(o.created_at) FROM orders o WHERE o.course_id = courses.course_id AND o.deleted_at IS NOT NULL)"))
+                        ->whereNotNull('orders.deleted_at');
                 })
                 ->groupBy('date')
                 ->orderBy('date')
@@ -162,7 +163,7 @@ class HomeController extends Controller
                 ->where('term_id', '=', $term->term_id)
                 ->where(function($query) use ($term){
                     return $query
-                        ->whereRaw('UNIX_TIMESTAMP(courses.no_book_marked) != 0 OR (SELECT COUNT(*) FROM orders where orders.course_id = courses.course_id) > 0');
+                        ->whereRaw('UNIX_TIMESTAMP(courses.no_book_marked) != 0 OR (SELECT COUNT(*) FROM orders where orders.course_id = courses.course_id and orders.deleted_at IS NOT NULL) > 0');
                 })
 
                 ->count();
@@ -187,7 +188,8 @@ class HomeController extends Controller
             ->join('orders', function ($join) {
                 $join
                     ->on('orders.course_id', '=', 'courses.course_id')
-                    ->on('courses.no_book_marked', 'IS', \DB::raw('NULL'));
+                    ->on('courses.no_book_marked', 'IS', \DB::raw('NULL'))
+                    ->whereNotNull('orders.deleted_at');
             })
             ->groupBy('date')
             ->orderBy('date')

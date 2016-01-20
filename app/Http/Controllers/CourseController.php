@@ -31,16 +31,16 @@ class CourseController extends Controller
 
         $user = $request->user();
 
-        $currentTerm = Term::currentTerms()->first();
-        $currentTermId = $currentTerm ? $currentTerm->term_id : '';
-        $userTerms = Course::visible($user)->select('term_id')->get();
+        $currentTermIds = Term::currentTerms()->pluck('term_id');
+        $userTermIds = Course::visible($user)->distinct()->pluck('term_id');
 
-        $terms = Term::whereIn('term_id', $userTerms)
-            ->orWhere('term_id', '=', $currentTermId)
+        $allRelevantTermIds = $currentTermIds->merge($userTermIds)->unique();
+
+        $terms = Term::whereIn('term_id', $allRelevantTermIds)
             ->orderBy('term_id', 'DESC')
             ->get();
 
-        return view('courses.index', ['terms' => $terms, 'currentTermId' => $currentTermId]);
+        return view('courses.index', ['terms' => $terms]);
     }
 
 
@@ -184,9 +184,10 @@ class CourseController extends Controller
      * @return \Illuminate\Database\Query
      */
     private function buildSortQuery($request, $query) {
-        if($request->input('sort'))
-            if($request->input('sort') == "section"){
-                if($request->input('dir')) {
+        $column = $request->input('sort');
+        if ($column) {
+            if ($column == "section"){
+                if ($request->input('dir')) {
                     $query = $query->orderBy("department", "desc");
                     $query = $query->orderBy("course_number", "desc");
                     $query = $query->orderBy("course_section", "desc");
@@ -196,11 +197,19 @@ class CourseController extends Controller
                     $query = $query->orderBy("course_section");
                 }
             } else {
-                if($request->input('dir'))
+                if ($request->input('dir'))
                     $query = $query->orderBy($request->input('sort'), "desc");
                 else
                     $query = $query->orderBy($request->input('sort'));
+
+                // If sorting by term, sort by the dept & numbers as secondaries.
+                if ($column == 'term_id'){
+                    $query = $query->orderBy("department");
+                    $query = $query->orderBy("course_number");
+                    $query = $query->orderBy("course_section");
+                }
             }
+        }
 
         return $query;
     }

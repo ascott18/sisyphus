@@ -182,6 +182,7 @@ class MessageController extends Controller
     public function postSendMessages(Request $request)
     {
         $message = $request->get('message');
+        $currentUser = $request->user();
 
         $dbMessage = Message::findOrFail($message['message_id']);
 
@@ -198,10 +199,10 @@ class MessageController extends Controller
 
             if ($recipient && $recipient->email && Auth::user()->can('send-message-to-user', $recipient))
             {
-                Mail::queue([], [], function ($m) use ($recipient, $message) {
+                Mail::queue([], [], function ($m) use ($recipient, $message, $currentUser) {
                     $email = $recipient->email;
                     // TODO: change this from address.
-                    $m->from("postmaster@example.com", "Book Orders");
+                    $m->from($currentUser->email, "$currentUser->first_name $currentUser->last_name");
                     $m->to($email, $recipient->first_name . ' ' . $recipient->last_name);
                     $m->subject($message['subject']);
                     $m->setBody($message['body'], 'text/html');

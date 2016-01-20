@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Contracts\Bus\SelfHandling;
 use Symfony\Component\Console\Input\ArrayInput;
 
-class CommandBase extends Command implements SelfHandling
+class CommandBase extends Command
 {
     /**
      * Sets the value of a command argument.

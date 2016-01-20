@@ -100,34 +100,8 @@
                     name="edition"
                     placeholder="Edition"
                     ng-model="book.edition">
-
     </div>
 
-    <div class="form-group" ng-class="{'has-error': submitted && form.req.$error.required}">
-        <label for="required">Required for Course</label>
-            </br>
-
-            <label class="radio-inline"><input
-                    type="radio"
-                    ng-model="book.required"
-                    name="req"
-                    ng-value="true"
-                    required=""/> Yes
-            </label>
-
-
-            <label class="radio-inline"><input
-                    type="radio"
-                    ng-model="book.required"
-                    name="req"
-                    ng-value="false"
-                    required=""/> No
-            </label>
-
-        <div ng-show="submitted">
-            <div ng-show="form.req.$error.required"><p class="text-danger">Required</p></div>
-        </div>
-    </div>
 
     <button type="button" class="btn btn-primary pull-right"
             ng-click="addNewBookToCart(book,form)"

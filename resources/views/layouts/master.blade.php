@@ -6,7 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>@yield('page') - EWU Textbook Requests </title>
+    <title>
+        @if (array_key_exists('action', View::getSections()))
+            @yield('action')
+        @endif
+        @yield('page') - EWU Textbook Requests
+    </title>
 
     <!-- Bootstrap Core CSS-->
     <link href="/stylesheets/bootstrap.css" rel="stylesheet">
@@ -42,7 +47,7 @@
                 <div >
                     <img src="/images/logoWhite.svg" class="pull-left" >
 
-                    <h2>Textbook Orders
+                    <h2>Textbook Requests
                         @inject('auth', 'App\Providers\AuthServiceProvider')
                         @if ($auth->getIsDebuggingUnauthorizedAction())
                             <p style="position: absolute; font-size: 0.7em; width: 100%">
@@ -67,7 +72,7 @@
             <ul class="nav navbar-nav side-nav">
                 <li><a href="/"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a></li>
                 <li><a href="/books"><i class="fa fa-fw fa-book"></i> Books</a></li>
-                <li><a href="/orders"><i class="fa fa-fw fa-shopping-cart"></i> Orders</a></li>
+                <li><a href="/requests"><i class="fa fa-fw fa-shopping-cart"></i> Requests</a></li>
                 @can('view-course-list')
                     <li><a href="/courses"><i class="fa fa-fw fa-university"></i> Courses</a></li>
                 @endcan
@@ -111,8 +116,14 @@
             @if (array_key_exists('area', View::getSections()))
             <div class="row">
                 <div class="col-lg-12">
-                    <h4 class="page-header text-muted">@yield('area') / @yield('page')
-                    </h4>
+
+                    <h5 class="page-header text-muted">
+                        @yield('area') /
+                        @if (array_key_exists('action', View::getSections()))
+                            @yield('action') /
+                        @endif
+                        @yield('page')
+                    </h5>
                 </div>
             </div>
             @endif
@@ -139,7 +150,7 @@
 
             <hr>
             <footer>
-                <p>&copy; 2015 - Eastern Washington University</p>
+                <p>&copy; 2016 - Eastern Washington University</p>
                 <p class="text-muted">made with <i class="fa fa-heart" style="color: #8b001d;"></i> by EWU Computer Science students</p>
             </footer>
         </div>
@@ -168,6 +179,7 @@
 
 <script src="/javascripts/bootstrap.js"></script>
 <script src="/javascripts/moment.min.js"></script>
+<script src="/javascripts/linq.min.js"></script>
 
 
 @yield('scripts')

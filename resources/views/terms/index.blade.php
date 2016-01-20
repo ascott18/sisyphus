@@ -22,8 +22,8 @@
                                 <th st-sort="term">Term</th>
                                 <th st-sort="term_id" st-sort-default="reverse">Year</th>
                                 <th>Status</th>
-                                <th st-sort="order_start_date">Order Start Date</th>
-                                <th st-sort="order_due_date">Order Due Date</th>
+                                <th st-sort="order_start_date">Request Start Date</th>
+                                <th st-sort="order_due_date">Request Due Date</th>
                                 <th width="1%"></th>
                             </tr>
                             <tr>

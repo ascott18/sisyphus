@@ -54,15 +54,16 @@ class UserController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Database\Query
      */
-    private function buildSearchQuery($request, $query) {
-        if($request->input('lName'))
-            $query = $query->where('last_name', 'LIKE', '%'.$request->input('lName').'%');
-        if($request->input('fName'))
-            $query = $query->where('first_name', 'LIKE', '%'.$request->input('fName').'%');
-        if($request->input('netID'))
-            $query = $query->where('net_id', 'LIKE', '%'.$request->input('netID').'%');
-        if($request->input('email'))
-            $query = $query->where('email', 'LIKE', '%'.$request->input('email').'%');
+    private function buildSearchQuery($request, $query)
+    {
+        if ($request->input('lName'))
+            $query = $query->where('last_name', 'LIKE', '%' . $request->input('lName') . '%');
+        if ($request->input('fName'))
+            $query = $query->where('first_name', 'LIKE', '%' . $request->input('fName') . '%');
+        if ($request->input('netID'))
+            $query = $query->where('net_id', 'LIKE', '%' . $request->input('netID') . '%');
+        if ($request->input('email'))
+            $query = $query->where('email', 'LIKE', '%' . $request->input('email') . '%');
 
         return $query;
     }
@@ -75,9 +76,10 @@ class UserController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Database\Query
      */
-    private function buildSortQuery($request, $query) {
-        if($request->input('sort'))
-            if($request->input('dir'))
+    private function buildSortQuery($request, $query)
+    {
+        if ($request->input('sort'))
+            if ($request->input('dir'))
                 $query = $query->orderBy($request->input('sort'), "desc");
             else
                 $query = $query->orderBy($request->input('sort'));
@@ -117,7 +119,11 @@ class UserController extends Controller
     {
         $this->authorize('manage-roles');
 
-        return \App\Models\Role::with(['permissions'])->get();
+        $roles = \App\Models\Role::with(['permissions'])
+            ->select(\DB::raw("*, (SELECT COUNT(role_user.user_id) FROM role_user WHERE roles.id = role_user.role_id) AS numUsers"))
+            ->get();
+
+        return $roles;
     }
 
     /**
@@ -147,6 +153,84 @@ class UserController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
+    public function postCreateRole(Request $request)
+    {
+        $this->authorize('manage-roles');
+
+        // Check that the displayed name isn't taken.
+        $this->validate($request, [
+            'name' => "required|unique:roles,display_name"
+        ]);
+
+        // Save the display name and the slugged name, and then
+        // replace the name in the request with the slug so that we can
+        // use laravel's validation to ensure uniqueness.
+        $name = $request->get('name');
+        $nameSlug = str_slug($request->get('name'));
+        $request->replace(['name' => $nameSlug]);
+
+        // Check that the slug isn't taken.
+        $this->validate($request, [
+            'name' => "required|unique:roles,name"
+        ]);
+
+
+        // If we got here, everything is fine.
+        $role = Role::create([
+            'name' => $nameSlug,
+            'display_name' => $name
+        ]);
+
+        return ['success' => true, 'role' => $role];
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function postDeleteRole(Request $request)
+    {
+        $this->authorize('manage-roles');
+        $this->validate($request, [
+            'role_id' => "required"
+        ]);
+
+        $role = Role::findOrFail($request->get('role_id'));
+
+        if ($role->users()->count() > 0)
+            return response([
+                'success' => false,
+                'message' => 'Cannot delete a role that any users belong to.'],
+                Response::HTTP_BAD_REQUEST
+            );
+
+        $role->delete();
+
+        return ['success' => true];
+    }
+
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function postAddPermission(Request $request)
+    {
+        $this->authorize('manage-roles');
+
+        $role = Role::findOrFail($request->get('role_id'));
+        $permission = Permission::findOrFail($request->get('permission_id'));
+
+        if (!$role->hasPermission($permission->name))
+            $role->attachPermission($permission);
+
+        return ['success' => true];
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function postRemoveDepartment(Request $request)
     {
         $this->authorize('manage-users');
@@ -165,6 +249,7 @@ class UserController extends Controller
 
         return ['success' => true];
     }
+
 
     /**
      * @param Request $request
@@ -228,24 +313,6 @@ class UserController extends Controller
             $user->roles()->detach();
             $user->roles()->attach($dbRole);
         }
-        return ['success' => true];
-    }
-
-
-    /**
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function postAddPermission(Request $request)
-    {
-        $this->authorize('manage-roles');
-
-        $role = Role::findOrFail($request->get('role_id'));
-        $permission = Permission::findOrFail($request->get('permission_id'));
-
-        if (!$role->hasPermission($permission->name))
-            $role->attachPermission($permission);
-
         return ['success' => true];
     }
 
