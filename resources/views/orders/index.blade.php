@@ -351,6 +351,12 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                     <h1 class="text-center">Request successfully placed! Thank you!</h1>
+                    <br>
+                    <h1 class="text-center">
+                        <a href="/requests" class="btn btn-primary btn-lg">
+                            Place another request <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </h1>
                 </div>
             </div>
         </div>

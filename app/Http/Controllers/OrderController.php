@@ -187,14 +187,14 @@ class OrderController extends Controller
 
                     if (!$db_book) {
                         $db_book = Book::create([
-                            'title' => $book['title'],
-                            'isbn13' => $isbn,
-                            'publisher' => $book['publisher'],
+                            'title' => trim($book['title']),
+                            'isbn13' => trim($isbn),
+                            'publisher' => trim($book['publisher']),
                         ]);
 
                         foreach ($book['authors'] as $author) {
                             $db_book->authors()->save(new Author([
-                                'name' => $author['name']
+                                'name' => trim($author['name'])
                             ]));
                         }
                     }

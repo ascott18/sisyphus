@@ -271,9 +271,9 @@ EOL;
                         $bookNumProcessing++;
 
                         $isbn = trim(str_replace("-", "", $book[$bookRegGroups['ISBN']]));
-                        $title = title_case($book[$bookRegGroups['Title']]);
-                        $publisher = title_case($book[$bookRegGroups['Publisher']]);
-                        $edition = $book[$bookRegGroups['Edition']];
+                        $title = trim(title_case($book[$bookRegGroups['Title']]));
+                        $publisher = trim(title_case($book[$bookRegGroups['Publisher']]));
+                        $edition = trim($book[$bookRegGroups['Edition']]);
 
                         if ($isbn == "None")
                         {
