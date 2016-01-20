@@ -304,7 +304,7 @@ EOL;
                         $dbOrder = new Order;
                         $dbOrder->book_id = $dbBook->book_id;
                         $dbOrder->course_id = $dbCourse->course_id;
-                        $dbOrder->placed_by = $dbCourse->user_id; // TODO: make this a dummy user instead?
+                        $dbOrder->placed_by = 1; // TODO: ensure that this is the dummer user created in HistoricalDataSeeder
                         $dbOrder->save();
 
 

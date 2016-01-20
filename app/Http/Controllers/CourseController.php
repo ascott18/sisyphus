@@ -16,7 +16,6 @@ class CourseController extends Controller
         'course.course_name' => 'required',
         'course.course_number' => 'required|numeric',
         'course.course_section' => 'required|numeric',
-        'course.user_id' => 'required|exists:users,user_id',
     ];
 
     /**
@@ -84,12 +83,18 @@ class CourseController extends Controller
 
     public function postEdit(Request $request, $id)
     {
+        // TODO: always uppercase the department so that we don't require
+        // the user to make it uppercase when they type it in.
+
         $dbCourse = Course::findOrFail($id);
 
         $this->authorize("edit-course", $dbCourse);
         $this->validate($request, static::$CourseValidation);
 
         $course = $request->except('course.term_id')['course'];
+
+        // The professor of a course is nullable. Check for empty strings and manually set to null.
+        if (!isset($course['user_id']) || !$course['user_id']) $course['user_id'] = null;
 
         $dbCourse->update($course);
         $dbCourse->save();

@@ -176,7 +176,9 @@
                                                 <br>
                                                 [[termData.term.term_name]] [[termData.term.year]]:
                                                 <span ng-repeat="data in termData.orderData">
-                                                    [[data.course.user.first_name]] [[data.course.user.last_name]]
+                                                    <span ng-if="data.course.user">[[data.course.user.first_name]] [[data.course.user.last_name]]</span>
+                                                    <span ng-if="!data.course.user">TBA</span>
+
                                                     ( <ng-pluralize count="data.numSections" when="{
                                                         'one': '{} Section',
                                                         'other': '{} Sections'}">
@@ -306,7 +308,7 @@
                             <div class="panel-list-item active">
 
                                 [[selectedCourse.department]] [[selectedCourse.course_number | zpad:3]]-[[selectedCourse.course_section | zpad:2]]
-                                <span style="left: 50%; position: absolute">[[selectedCourse.user.last_name]], [[selectedCourse.user.first_name]]</span>
+                                <span style="left: 50%; position: absolute">[[selectedCourse.user ? selectedCourse.user.last_first_name : 'TBA']]</span>
                             </div>
 
                             <div class="panel-list-item cursor-pointer"
@@ -315,7 +317,7 @@
                                  ng-repeat="course in courses | filter:similarCourses ">
 
                                 [[course.department]] [[course.course_number | zpad:3]]-[[course.course_section | zpad:2]]
-                                <span style="left: 50%; position: absolute">[[course.user.last_name]], [[course.user.first_name]]</span>
+                                <span style="left: 50%; position: absolute">[[course.user ? course.user.last_first_name : 'TBA']]</span>
                             </div>
                         </div>
                     </div>

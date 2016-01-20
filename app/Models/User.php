@@ -27,6 +27,7 @@ use Zizaco\Entrust\Traits\EntrustUserTrait;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Role[] $roles
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
+ * @property-read string $last_first_name
  */
 class User extends Model implements AuthenticatableContract,
                                     AuthorizableContract
@@ -51,13 +52,16 @@ class User extends Model implements AuthenticatableContract,
      */
     protected $fillable = [];
 
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['last_first_name'];
 
-    public function getFirstLast()
-    {
-        return "$this->first_name $this->last_name";
-    }
 
-    public function getLastFirst()
+
+    public function getLastFirstNameAttribute()
     {
         return "$this->last_name, $this->first_name";
     }
@@ -66,19 +70,6 @@ class User extends Model implements AuthenticatableContract,
     {
         return $this->hasMany('App\Models\Course', 'user_id', 'user_id');
     }
-
-    /**
-     * Gets the users courses for which orders are currently open.
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function currentCourses()
-    {
-        $currentTermsIds = Term::currentTerms()->select('term_id')->get()->values();
-
-        return $this->courses()->whereIn('term_id', $currentTermsIds);
-    }
-
 
     public function departments()
     {

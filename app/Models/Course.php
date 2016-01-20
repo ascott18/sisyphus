@@ -45,7 +45,7 @@ class Course extends Model
 
     public function displayIdentifier()
     {
-        return $this->department . ' ' . $this->course_number . '-' . str_pad($this->course_section, 2, '0', STR_PAD_LEFT);
+        return $this->department . ' ' . str_pad($this->course_number, 3, '0', STR_PAD_LEFT) . '-' . str_pad($this->course_section, 2, '0', STR_PAD_LEFT);
     }
 
     public function canPlaceOrder()

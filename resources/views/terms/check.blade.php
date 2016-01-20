@@ -47,7 +47,7 @@
                             <td>{{ $course->department }}
                                 {{ str_pad($course->course_number, 3, "0", STR_PAD_LEFT) }}-{{ $course->course_section }}
                                 {{$course->course_name}}</td>
-                            <td>{{$user->last_name}}, {{$user->first_name}}</td>
+                            <td>{{$user ? $user->last_first_name : 'TBA'}}</td>
                             <td>{{$book->title}}</td>
                             <td>
                                 <?php $index = 0; ?>
@@ -70,7 +70,7 @@
                         <td>{{ $course->department }}
                             {{ str_pad($course->course_number, 3, "0", STR_PAD_LEFT) }}-{{ $course->course_section }}
                             {{$course->course_name}}</td>
-                        <td>{{$user->last_name}}, {{$user->first_name}}</td>
+                        <td>{{$user ? $user->last_first_name : 'TBA'}}</td>
                         <td>No Book</td>
                         <td></td>
                         <td></td>

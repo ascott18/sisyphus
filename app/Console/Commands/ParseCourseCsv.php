@@ -116,10 +116,14 @@ class ParseCourseCsv extends Command
                 // TODO: this isn't how we're going to seed users.
                 // Or courses for that matter. This whole file exists only
                 // so that we can get the MBS parsing done.
-                $user = User::firstOrNew(['net_id' => $fake_net_id]);
-                $user->first_name = $profNames[0];
-                $user->last_name = $profNames[count($profNames) - 1];
-                $user->save();
+                if ($profNames[0] == 'TBA')
+                    $user = null;
+                else{
+                    $user = User::firstOrNew(['net_id' => $fake_net_id]);
+                    $user->first_name = $profNames[0];
+                    $user->last_name = $profNames[count($profNames) - 1];
+                    $user->save();
+                }
 
                 // In particular, this is definitely only for testing.
                 // In reality, only manager-type users need departments assigned.
@@ -131,7 +135,7 @@ class ParseCourseCsv extends Command
                 $course->course_number = $courseNumber;
                 $course->course_section = $section;
                 $course->course_name = $title;
-                $course->user_id = $user->user_id;
+                $course->user_id = $user ? $user->user_id : null;
                 $course->term_id = $term->term_id;
                 $course->save();
             }
