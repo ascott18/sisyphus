@@ -9,14 +9,14 @@
         $hidden = false;
         if ($type == 'hidden') {$type = 'text'; $hidden = true;}
     ?>
-    @if(!$hidden)<label for="{{$name}}">{{ $label }}</label>
+    @if(!$hidden && $label)<label for="{{$name}}">{{ $label }}</label>
     @endif
     <input type="{{$type}}"
            @if ($hidden) style="display: none" @endif
            class="form-control"
            name="{{ $nameIndexer }}"
            id="{{ $name }}"
-           placeholder="{{ $label }}"
+           @if ($label) placeholder="{{ $label }}" @endif
            {{$type == 'hidden' ? 'ng-value' : 'ng-model'}}="{{ $name }}"
             @foreach($attrs as $attr => $value)
                 {{$attr}}="{{$value}}"

@@ -13,11 +13,10 @@ use Illuminate\Database\Query\Builder;
 class CourseController extends Controller
 {
     public static $CourseValidation = [
-        'course.department' => 'required|min:2|max:10',
-        'course.course_name' => 'required',
+        'course.department' => 'required|string|min:2|max:10',
+        'course.course_name' => 'required|string',
         'course.course_number' => 'required|numeric',
         'course.course_section' => 'required|numeric',
-        'course.user_id' => 'required|exists:users,user_id',
     ];
 
     /**
@@ -32,16 +31,16 @@ class CourseController extends Controller
 
         $user = $request->user();
 
-        $currentTerm = Term::currentTerms()->first();
-        $currentTermId = $currentTerm ? $currentTerm->term_id : '';
-        $userTerms = Course::visible($user)->select('term_id')->get();
+        $currentTermIds = Term::currentTerms()->pluck('term_id');
+        $userTermIds = Course::visible($user)->distinct()->pluck('term_id');
 
-        $terms = Term::whereIn('term_id', $userTerms)
-            ->orWhere('term_id', '=', $currentTermId)
+        $allRelevantTermIds = $currentTermIds->merge($userTermIds)->unique();
+
+        $terms = Term::whereIn('term_id', $allRelevantTermIds)
             ->orderBy('term_id', 'DESC')
             ->get();
 
-        return view('courses.index', ['terms' => $terms, 'currentTermId' => $currentTermId]);
+        return view('courses.index', ['terms' => $terms]);
     }
 
 
@@ -85,12 +84,16 @@ class CourseController extends Controller
 
     public function postEdit(Request $request, $id)
     {
+        // TODO: always uppercase the department so that we don't require
+        // the user to make it uppercase when they type it in.
+
         $dbCourse = Course::findOrFail($id);
 
         $this->authorize("edit-course", $dbCourse);
         $this->validate($request, static::$CourseValidation);
 
-        $course = $request->except('course.term_id')['course'];
+        $course = $this->cleanCourseForCreateOrEdit($request);
+        unset($course['term_id']);
 
         $dbCourse->update($course);
         $dbCourse->save();
@@ -117,13 +120,26 @@ class CourseController extends Controller
     }
 
 
+    private function cleanCourseForCreateOrEdit(Request $request)
+    {
+        $course = $request->get('course');
+
+        $course['department'] = trim($course['department']);
+        $course['course_name'] = trim($course['course_name']);
+
+        // The professor of a course is nullable. Check for empty strings and manually set to null.
+        if (!isset($course['user_id']) || !$course['user_id']) $course['user_id'] = null;
+
+        return $course;
+    }
+
     public function postCreate(Request $request)
     {
         $this->authorize("create-courses");
-
         $this->validate($request, static::$CourseValidation);
 
-        $course = $request->get('course');
+        $course = $this->cleanCourseForCreateOrEdit($request);
+
         $dbCourse = new Course($course);
 
         // Authorize that the user can indeed create this course before actually saving it.
@@ -201,9 +217,10 @@ class CourseController extends Controller
      * @return \Illuminate\Database\Query
      */
     private function buildSortQuery($request, $query) {
-        if($request->input('sort'))
-            if($request->input('sort') == "section") {
-                if($request->input('dir')) {
+        $column = $request->input('sort');
+        if ($column) {
+            if ($column == "section"){
+                if ($request->input('dir')) {
                     $query = $query->orderBy("department", "desc");
                     $query = $query->orderBy("course_number", "desc");
                     $query = $query->orderBy("course_section", "desc");
@@ -221,11 +238,19 @@ class CourseController extends Controller
                     $query = $query->orderBy('users.first_name');
                 }
             } else {
-                if($request->input('dir'))
+                if ($request->input('dir'))
                     $query = $query->orderBy($request->input('sort'), "desc");
                 else
                     $query = $query->orderBy($request->input('sort'));
+
+                // If sorting by term, sort by the dept & numbers as secondaries.
+                if ($column == 'term_id'){
+                    $query = $query->orderBy("department");
+                    $query = $query->orderBy("course_number");
+                    $query = $query->orderBy("course_section");
+                }
             }
+        }
 
         return $query;
     }

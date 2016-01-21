@@ -37,17 +37,16 @@ class RolesSeed extends Seeder
 
 
 
-        makePerm('place-all-orders', "All - Place Orders");
-        makePerm('edit-all-orders', "All - Edit Orders");
-        makePerm('view-all-orders', "All - View Orders");
+        makePerm('place-all-orders', "All - Place Requests");
+        makePerm('view-all-orders', "All - View Requests");
 
-        makePerm('place-dept-orders', "Department - Place Orders");
-        makePerm('view-dept-orders', "Department - View Orders");
+        makePerm('place-dept-orders', "Department - Place Requests");
+        makePerm('view-dept-orders', "Department - View Requests");
 
         makePerm('view-all-courses', "All - View Courses");
         makePerm('view-dept-courses', "Department - View Courses");
 
-        makePerm('edit-courses', "Visible - Edit Courses");
+        makePerm('edit-courses', "Other - Edit Visible Courses");
         makePerm('create-all-courses', "All - Create Course");
         makePerm('create-dept-courses', "Department - Create Course");
 
@@ -63,6 +62,9 @@ class RolesSeed extends Seeder
         makePerm('send-dept-messages', "Department - Send Messages");
 
 
+        makePerm('order-outside-period', "Other - Order for Non-current Terms");
+
+
         makeRole('admin', "Administrator")->attachPermissions([
             p('manage-users'),
             p('manage-roles'),
@@ -72,17 +74,16 @@ class RolesSeed extends Seeder
             p('edit-courses'),
             p('send-all-messages'),
             p('place-all-orders'),
-            p('edit-all-orders'),
             p('view-all-orders'),
             p('view-all-courses'),
             p('create-all-courses'),
+            p('order-outside-period'),
         ]);
 
         makeRole('store', "Bookstore Staff")->attachPermissions([
             p('view-terms'),
             p('edit-books'),
             p('place-all-orders'),
-            p('edit-all-orders'),
             p('view-all-orders'),
             p('view-all-courses'),
         ]);

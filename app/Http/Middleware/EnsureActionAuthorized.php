@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Providers\AuthServiceProvider;
 use Closure;
-use Illuminate\Auth\Access\UnauthorizedException;
+use Illuminate\Auth\Access\AuthorizationException;
 
 class EnsureActionAuthorized
 {
@@ -23,13 +23,15 @@ class EnsureActionAuthorized
      * @param  \Illuminate\Http\Request $request
      * @param  \Closure $next
      * @return mixed
-     * @throws UnauthorizedException
+     * @throws AuthorizationException
      */
     public function handle($request, Closure $next)
     {
         $response = $next($request);
 
-        if (!$this->authProvider->getHasControllerAttemptedAuthorization()){
+
+        if ((!isset($response->exception) || $response->exception == null)
+            && !$this->authProvider->getHasControllerAttemptedAuthorization()){
             $message = "Controller did not attempt any authorization.";
 
             if (config("app.debug")){
@@ -38,7 +40,7 @@ class EnsureActionAuthorized
                     Explicitly authorize the "all" ability if the action is truly public.';
             }
 
-            throw new UnauthorizedException($message);
+            throw new AuthorizationException($message);
         }
 
         return $response;

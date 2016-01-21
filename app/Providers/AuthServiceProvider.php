@@ -114,14 +114,6 @@ class AuthServiceProvider extends ServiceProvider
             return false;
         });
 
-        $gate->define('edit-order', function (User $user, Order $order) {
-            if ($user->may('edit-all-orders')) {
-                return true;
-            }
-
-            return false;
-        });
-
         $courseFilter = function (User $user, Course $course, $allPermission, $deptPermission) {
             if ($user->may($allPermission)) {
                 return true;
@@ -140,6 +132,12 @@ class AuthServiceProvider extends ServiceProvider
         };
 
         $gate->define('place-order-for-course', function (User $user, Course $course) use ($courseFilter) {
+            if (!$user->can('view-course', $course))
+                return false;
+
+            if (!$course->term->areOrdersInProgress() && !$user->may('order-outside-period'))
+                return false;
+
             return $courseFilter($user, $course, 'place-all-orders', 'place-dept-orders');
         });
 
@@ -167,29 +165,6 @@ class AuthServiceProvider extends ServiceProvider
 
             if ($user->may('create-dept-courses') &&
                 $user->departments()->where('department', '=', $course->department)->count()){
-                return true;
-            }
-
-            return false;
-        });
-
-
-        $gate->define('place-order-for-user', function (User $user, User $targetUser) {
-            if ($user->may('place-all-orders')) {
-                return true;
-            }
-
-            // TODO: restrict these courses to those of the current term.
-            if ($user->may('place-dept-orders')) {
-                $departments = $user->departments()->lists('department');
-                foreach ($targetUser->currentCourses as $course) {
-                    if ($departments->contains($course->department)) {
-                        return true;
-                    }
-                }
-            }
-
-            if ($user->user_id == $targetUser->user_id){
                 return true;
             }
 

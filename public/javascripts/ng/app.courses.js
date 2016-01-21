@@ -78,6 +78,16 @@ app.controller('CoursesIndexController', function($scope, $http) {
 });
 
 
+app.controller('CoursesDetailsController', function($http, $scope) {
+    $scope.noBook = function(course_id)
+    {
+        $http.post('/requests/no-book', {course_id: course_id}).then(
+            function success(response){
+                location.reload();
+            });
+    };
+});
+
 app.controller('CoursesModifyController', function($filter, $scope) {
     $scope.getSelectedUser = function(){
         for(var i = 0; i < $scope.users.length; i++){
@@ -93,8 +103,6 @@ app.controller('CoursesModifyController', function($filter, $scope) {
             $scope.course.user_id = filteredUsers[0].user_id;
         }
     };
-
-
 
     $scope.submit = function(form, e){
         if (form.$valid)

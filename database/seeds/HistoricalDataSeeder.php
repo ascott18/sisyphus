@@ -14,10 +14,16 @@ class HistoricalDataSeeder extends Seeder
      */
     public function run()
     {
+        \App\Models\User::create([
+            'first_name' => "Initial",
+            'last_name' => "Data",
+        ]);
+        
         $eaglenetFiles = [
             ["Summer", 2015],
             ["Fall", 2015],
             ["Winter", 2016],
+            ["Spring", 2016],
             ["Spring Semester", 2016],
         ];
 

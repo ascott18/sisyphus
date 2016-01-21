@@ -1,88 +1,110 @@
 @extends('layouts.master')
 
 @section('area', 'Requests')
-@section('page', 'All Requests')
-
+@if (isset($course))
+    @section('page', 'Place Request')
+@else
+    @section('page', 'My Courses')
+@endif
 @section('content')
 
-    {{--<script>requested_user_id = {{$targetUser->user_id}}</script>--}}
 
 <div>
     <div ng-cloak class="row" ng-controller="OrdersController"
-            ng-init="courses = {{$courses}}; selectedCourse = (courses | filter:{'course_id': {{$course->course_id}} })[0]; setStage({{is_null($course) ? 1 : 2}})">
+            ng-init="
+                terms = {{$openTerms}};
+                courses = {{$courses}};
+                @if (isset($course))
+                    placeRequestForCourse((courses | filter:{'course_id': {{$course->course_id}} })[0]);
+                @endif
+            ">
+
+        <div class="col-lg-12" ng-if="selectedCourse">
+            <h3 class="text-muted" style="margin-top: 0px; margin-bottom: 20px;">
+                [[selectedCourse.department]] [[selectedCourse.course_number | zpad:3]]-[[selectedCourse.course_section | zpad:2]] [[selectedCourse.course_name]]
+            </h3>
+        </div>
+
         <div class="col-lg-12" ng-show="getStage() == STAGE_SELECT_COURSE">
-
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title"><i class="fa fa-university fa-fw"></i>
-{{--                        {{$targetUser->user_id == Auth::user()->user_id ? "My Courses" : "Courses for " . $targetUser->first_name . ' ' . $targetUser->last_name}}--}}
-                    </h3>
-                </div>
-                <div class="panel-body">
-                    <div ng-show="gotCourses">
-                        <h3 ng-hide="courses.length" class="text-muted">
-                            @if (count($openTerms) == 0)
-                                No terms are open for ordering.
-                            @else
-                                No courses found for the terms currently open for ordering:
-                            <ul>
-                                @foreach($openTerms as $term)
-                                    <li>{{$term->termName()}} {{ $term->year }}</li>
-                                @endforeach
-                            </ul>
-                            @endif
+            <div class="col-lg-offset-1 col-lg-10"
+                 ng-show="courses.length == 0">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><i class="fa fa-university fa-fw"></i>
+                            <span ng-if="terms.length == 0">No Terms Open</span>
+                            <span ng-if="terms.length > 0">No Courses Available</span>
                         </h3>
-                        <table ng-show="courses.length" class="list-group" style="width: 100%">
-                            <thead>
-                                <th style="width: 100%"></th>
-                                <th ></th>
-                            </thead>
+                    </div>
+                    <div class="panel-body">
+                        <h3 ng-hide="courses.length" class="text-muted">
 
-                            <tbody>
-                                <tr class="list-group-item" ng-repeat="course in courses">
-                                    <td style="width: 100%">
-                                        <h4 class="list-group-item-heading">[[course.department]] [[course.course_number | zpad:3]]-[[course.course_section | zpad:2]] [[course.course_name]]</h4>
+                            <span ng-if="terms.length == 0">
+                                No terms are open for ordering.
+                            </span>
+                            <span ng-if="terms.length > 0">
+                                No courses found for the following terms open for ordering:
+                                <br>
+                                <br>
+                                <ul>
+                                    <li ng-repeat="term in terms">[[term.term_name]] [[ term.year ]]</li>
+                                </ul>
+                            </span>
+                        </h3>
+                    </div>
+                </div>
+            </div>
 
-                                        <p style="margin-left: 3em">
-                                            <div ng-show="courseNeedsOrders(course)">
-                                                </br>
-                                                <span class="well well-sm" style="background-color: #fcf8e3; border-color: #fbeed5">
-                                                    No requests submitted - please let us know what you need!
-                                                </span>
-                                            </div>
-                                            <div ng-show="course.no_book">
-                                                </br>
-                                                You selected that you didn't need a book
-                                            </div>
+            <div class="col-lg-offset-1 col-lg-10"
+                 ng-show="courses.length > 0">
+                <div class="panel panel-default"
+                     ng-repeat="course in courses"
+                     ng-init="term = (terms | filter:{term_id: course.term_id})[0]">
+                    <div class="panel-heading">
+                        <h3 class="panel-title clearfix">
+                            [[course.department]] [[course.course_number | zpad:3]]-[[course.course_section | zpad:2]] [[course.course_name]]
+                            <span class="text-muted pull-right">
+                                [[ term.term_name ]] [[ term.year]]
+                            </span>
+                        </h3>
+                    </div>
+                    <div class="panel-body ">
+                        <div class="pull-left">
+                            <div style="margin-left: 0em">
+                                <span ng-show="courseNeedsOrders(course)" >
+                                    No response submitted. Please let us know what you need!
+                                </span>
+                                <span ng-show="course.no_book" class="text-muted">
+                                    No books needed. Thank you for letting us know!
+                                </span>
+                            </div>
 
-                                            <span ng-repeat="order in course.orders">
-                                                <span class="text-muted">[[order.book.isbn13 | isbnHyphenate]]</span>: [[order.book.title]]
-                                                </br>
-                                            </span>
-                                        </p>
-                                    </td>
-
-                                    <td style="vertical-align: top">
-                                        <span ng-if="!course.no_book">
-                                        <a ng-click="placeRequestForCourse(course)"
-                                           class="btn btn-primary"
-                                           style="width:100%; margin-bottom:5px">
-                                            Place a request <i class="fa fa-arrow-right fa-fw"></i>
-                                        </a>
-                                            <span ng-if="course.orders.length == 0">
-                                                <br>
-                                                <button
-                                                        ng-confirm-click="noBook(course)"
-                                                        ng-confirm-click-message="Are you sure you don't want a book?"
-                                                        class="btn btn-danger"
-                                                        style="width:100%">
-                                                    <i class="fa fa-times"></i> No book needed</button>
-                                            </span>
-                                        </span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                            <ul style="list-style-type: none; padding-left: 0px">
+                                <li ng-repeat="order in course.orders">
+                                    <i class="fa fa-times text-danger cursor-pointer"
+                                       title="Delete Order"
+                                       ng-confirm-click="deleteOrder(course, order)"
+                                       ng-confirm-click-message="Are you sure you want to delete the order for [[order.book.title]]?"></i>
+                                    <span class="text-muted">[[order.book.isbn13 | isbnHyphenate]]</span>: [[order.book.title]]
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="pull-right">
+                            <a ng-click="placeRequestForCourse(course)"
+                               class="btn "
+                               ng-class="!courseNeedsOrders(course) ? 'btn-default' : 'btn-primary'">
+                                Place a request <i class="fa fa-arrow-right fa-fw"></i>
+                            </a>
+                            <span >
+                                <button
+                                        ng-confirm-click="noBook(course)"
+                                        ng-confirm-click-message="Are you sure you don't want a book? [[course.orders.length ? '\n\nAll orders on this course will be deleted!' : '']]"
+                                        class="btn"
+                                        ng-disabled="course.no_book"
+                                        style="margin-left: 10px"
+                                        ng-class="!courseNeedsOrders(course) ? 'btn-default' : 'btn-danger'">
+                                    <i class="fa fa-times"></i> No book needed</button>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -92,63 +114,80 @@
         <div ng-show="getStage() == STAGE_SELECT_BOOKS" ng-controller="NewBookController">
 
             <div class="col-md-6">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title"><i class="fa fa-book fa-fw"></i> Select Books</h3>
-                    </div>
-                    <div class="panel-body">
 
-                        <!-- Nav tabs -->
-                        <ul class="nav nav-pills" role="tablist">
-                            <li role="presentation" class="active"><a href="#newbook" aria-controls="newbook" role="tab" data-toggle="tab">
-                                    <i class="fa fa-star"></i> Enter a New Book
-                                </a></li>
-                            <li role="presentation"><a href="#pastbooks" aria-controls="pastbooks" role="tab" data-toggle="tab">
-                                    <i class="fa fa-history"></i> Select a Past Book
-                                </a></li>
-                        </ul>
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs h3" role="tablist" style="font-size: 20px;">
+
+                    <li role="presentation" class="active">
+                        <a href="#newbook" aria-controls="newbook" role="tab" data-toggle="tab">
+                            <i class="fa fa-star"></i> Enter a New Book
+                        </a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#pastbooks" aria-controls="pastbooks" role="tab" data-toggle="tab">
+                            <i class="fa fa-history"></i> Select a Past Book
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="panel panel-default">
+                    {{--<div class="panel-heading">--}}
+                        {{--<h3 class="panel-title"><i class="fa fa-book fa-fw"></i> Select Books</h3>--}}
+                    {{--</div>--}}
+                    <div>
+
 
                         <!-- Tab panes -->
                         <div class="tab-content">
-                            <div role="tabpanel" class="tab-pane active" id="newbook">
-
-                                </br>
-
+                            <div role="tabpanel" class="panel-body tab-pane active" id="newbook">
 
                                 <div ng-controller="NewBookController">
                                     <book-editor></book-editor>
                                 </div>
                             </div>
 
-                            <div role="tabpanel" class="tab-pane" id="pastbooks">
+                            <div role="tabpanel" class="panel-body panel-list tab-pane" id="pastbooks">
 
-                                </br>
+
+                                <h3 class="text-muted"
+                                        ng-show="!selectedCourse.pastBooks">
+                                    Loading past books...
+                                </h3>
 
                                 <h3 class="text-muted"
                                         ng-show="selectedCourse.pastBooks.length == 0">
                                     There are no known past books for this course.
                                 </h3>
 
-                                <ul class="list-group"
-                                        ng-show="selectedCourse.pastBooks.length > 0">
-                                    <li class="list-group-item"
+                                    <div class="panel-list-item"
                                         ng-cloak
-                                        ng-repeat="data in selectedCourse.pastBooks | orderBy: (book.mine?0:1):true">
+                                        ng-show="selectedCourse.pastBooks.length > 0"
+                                        ng-repeat="bookData in selectedCourse.pastBooks">
 
                                         <div class="pull-right">
                                             <button class="btn btn-xs btn-primary"
-                                                    ng-click="addBookToCart(data)">
+                                                    ng-click="addBookToCart(bookData)">
                                                 <i class="fa fa-fw fa-plus"></i>
                                             </button>
                                         </div>
 
-                                        <h4 class="list-group-item-heading no-pad-bottom">[[data.book.title]]</h4>
-                                        <small >
-                                            <span class="text-muted" > Ordered by [[data.order.placed_by.first_name]] [[data.order.placed_by.last_name]] for
-                                                [[data.course.term.term_name]] [[data.course.term.year]]</span>
-                                        </small>
-                                    </li>
-                                </ul>
+                                        <book-details book="bookData.book">
+                                            <span ng-repeat="termData in bookData.terms">
+                                                <br>
+                                                [[termData.term.term_name]] [[termData.term.year]]:
+                                                <span ng-repeat="data in termData.orderData">
+                                                    <span ng-if="data.course.user">[[data.course.user.first_name]] [[data.course.user.last_name]]</span>
+                                                    <span ng-if="!data.course.user">TBA</span>
+
+                                                    ( <ng-pluralize count="data.numSections" when="{
+                                                        'one': '{} Section',
+                                                        'other': '{} Sections'}">
+                                                    </ng-pluralize> )
+                                                    [[$last ? '' : ($index==book.authors.length-2) ? ', and ' : ', ']]
+                                                </span>
+                                            </span>
+                                        </book-details>
+                                    </div>
                             </div>
                         </div>
                     </div>
@@ -161,74 +200,165 @@
                     <div class="panel-heading">
                         <h3 class="panel-title"><i class="fa fa-shopping-cart fa-fw"></i> Cart</h3>
                     </div>
-                    <div class="panel-body">
-                        <div ng-controller="NewBookController">
-                            <cart></cart>
-                        </div>
+                    <div class="panel-body panel-list"
+                         ng-controller="NewBookController">
 
-                        <h3 class="text-muted" ng-show="cartBooks.length == 0">There are no books in the cart.</h3>
-                        <div class="row" ng-show="cartBooks.length > 0">
-                            <button class="btn btn-success pull-right"
-                                    ng-click="setStage(3)"
-                                    style="margin: 20px;">
-                                <i class="fa fa-arrow-right"></i> Review Order
-                            </button>
+                        <h3 class="text-muted" ng-show="cartBooks.length == 0">
+                            There are no books in the cart.
+                        </h3>
+
+                        <div class="panel-list-item"
+                            ng-cloak
+                            ng-repeat="bookData in cartBooks">
+
+                            <div class="pull-right">
+                                <button class="btn btn-xs btn-danger"
+                                        ng-click="deleteBookFromCart(bookData)">
+                                    <i class="fa fa-fw fa-times"></i>
+                                </button>
+                            </div>
+
+                            <book-details book="bookData.book"></book-details>
+
                         </div>
                     </div>
                 </div>
-            </div>
 
-        </div>
-
-        <div class="col-lg-12" ng-show="getStage() == STAGE_REVIEW_ORDERS">
-
-            <div class="row">
-                <button class="btn btn-primary pull-left"
-                        ng-click="setStage(2)"
-                        style="margin: 20px;">
-                    <i class="fa fa-arrow-left"></i> Back
+                <button class="btn btn-success pull-right"
+                        ng-disabled="cartBooks.length == 0"
+                        ng-click="setStage(3)">
+                    Review Request <i class="fa fa-arrow-right"></i>
                 </button>
             </div>
+        </div>
 
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title"><i class="fa fa-book fa-fw"></i> Book Details</h3>
-                </div>
-                <div class="panel-body">
-                    <ul class="list-group">
-                        <li class="list-group-item"
-                            ng-repeat="bookData in cartBooks">
-                            <book-details book="bookData.book"></book-details>
-                        </li>
-                    </ul>
-                </div>
+        <div ng-show="getStage() == STAGE_REVIEW_ORDERS">
 
-            </div>
-            <div ng-if="(courses | filter:similarCourses).length>0">
-                Would you like to order the same book(s) for these sections?
-                <div ng-repeat="course in courses | filter:similarCourses ">
-                    [[course.department]] [[course.course_number]]-[[course.course_section]] [[course.course_name]]
+            <form novalidate class="simple-form" name="form" >
+
+                <div ng-class="(courses | filter:similarCourses).length>0 ? 'col-md-12' : 'col-md-12'">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><i class="fa fa-shopping-cart fa-fw"></i> Cart</h3>
+                        </div>
+                        <div class="panel-body panel-list">
+                            <div class="panel-list-item clearfix"
+                                ng-repeat="bookData in cartBooks">
+                                <div class="col-md-4">
+                                    <book-details book="bookData.book"></book-details>
+                                </div>
+
+                                <div class="col-md-4">
+                                    </br>
+                                    <label for="notes[[$index]]">Notes</label>
+                                    <input type="text"
+                                           ng-model="bookData.notes"
+                                           id="notes[[$index]]"
+                                           class="form-control"
+                                           placeholder="e.g. expected enrollment: 23">
+                                    <br>
+                                </div>
+                                <div class="col-md-4">
+                                    </br>
+                                    <div class="form-group" ng-class="{'has-error': submitted && form.req[[$index]].$error.required}">
+                                        <label for="required">Required for Course?</label>
+                                        </br>
+
+                                        <label class="radio-inline"><input
+                                                    type="radio"
+                                                    ng-model="bookData.required"
+                                                    name="req[[$index]]"
+                                                    ng-value="true"
+                                                    required=""/> Yes
+                                        </label>
+
+
+                                        <label class="radio-inline"><input
+                                                    type="radio"
+                                                    ng-model="bookData.required"
+                                                    name="req[[$index]]"
+                                                    ng-value="false"
+                                                    required=""/> No
+                                        </label>
+
+                                        <div ng-show="submitted">
+                                            <div ng-show="form.req[[$index]].$error.required"><p class="text-danger">
+                                                    Please let us know if this book is required!
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
-                <div class="row">
+                <div class="col-lg-offset-6 col-lg-6"
+                     ng-if="(courses | filter:similarCourses).length>0">
+                    <div class="panel panel-default">
+
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><i class="fa fa-university fa-fw"></i> Similar Courses</h3>
+                        </div>
+
+
+                        <div class="panel-body panel-list">
+
+                            <h5 class="text-muted" style="margin-top: 0; margin-bottom: 30px;">
+                                Select any additional courses that you would like to place this request for.
+                            </h5>
+
+                            <div class="panel-list-item active">
+
+                                [[selectedCourse.department]] [[selectedCourse.course_number | zpad:3]]-[[selectedCourse.course_section | zpad:2]]
+                                <span style="left: 50%; position: absolute">[[selectedCourse.user ? selectedCourse.user.last_first_name : 'TBA']]</span>
+                            </div>
+
+                            <div class="panel-list-item cursor-pointer"
+                                 ng-class="{active: isAdditionalCourseSelected(course)}"
+                                 ng-click="toggleAdditionalCourseSelected(course)"
+                                 ng-repeat="course in courses | filter:similarCourses ">
+
+                                [[course.department]] [[course.course_number | zpad:3]]-[[course.course_section | zpad:2]]
+                                <span style="left: 50%; position: absolute">[[course.user ? course.user.last_first_name : 'TBA']]</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
                     <button class="btn btn-success pull-right"
-                            ng-click="submitOrders(true)"
-                            style="margin: 20px;">
-                        <i class="fa fa-check"></i> Submit for all sections
+                            ng-click="submitOrders(form)">
+                        <i class="fa fa-check"></i>
+                        Submit
+                        <ng-pluralize count="getNumAdditionalCoursesSelected() + 1"
+                                      when="{0: 'Request',
+                                             'one': 'Request',
+                                             'other': '{} Requests'}">
+                        </ng-pluralize>
+                    </button>
+
+                    <button class="btn btn-primary pull-right "
+                            ng-click="setStage(2)"
+                            style="margin-right: 15px;">
+                        <i class="fa fa-arrow-left"></i> Make Revisions
                     </button>
                 </div>
-            </div>
-            <div class="row">
-                <button class="btn btn-success pull-right"
-                        ng-click="submitOrders(false)"
-                        style="margin: 20px;">
-                    <i class="fa fa-check"></i> Submit
-                </button>
-            </div>
+            </form>
         </div>
 
-        <div class="col-lg-12" ng-show="getStage() == STAGE_CONFIRMATION">
-
-            <h1>Order successfully placed! Thank you!</h1>
+        <div class=" col-lg-offset-2 col-lg-8" ng-show="getStage() == STAGE_ORDER_SUCCESS">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h1 class="text-center">Request successfully placed! Thank you!</h1>
+                    <br>
+                    <h1 class="text-center">
+                        <a href="/requests" class="btn btn-primary btn-lg">
+                            Place another request <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </h1>
+                </div>
+            </div>
         </div>
 
 

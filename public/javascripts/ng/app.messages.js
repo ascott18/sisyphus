@@ -163,10 +163,6 @@ app.controller('MessagesController', function($scope, $timeout, $http){
                 $scope.setStage($scope.STAGE_SENT);
                 $scope.selectNoUsers();
                 $scope.reloadMessages();
-            },
-            function error(response){
-                // TODO: handle this properly.
-                $scope.sendingMessages = false;
             });
     };
 
