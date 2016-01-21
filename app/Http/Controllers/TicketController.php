@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ticket;
+use App\Models\TicketComment;
+use App\Models\User;
 use Auth;
 use Illuminate\Http\Request;
 use App\Http\Requests;
@@ -50,6 +52,20 @@ class TicketController extends Controller
         return response()->json($ticket);
     }
 
+    public function postSubmitComment(Request $request) {
+        $this->authorize("all");
+
+        $comment = $request->get("comment");
+        $ticketId = $request->get("ticketId");
+
+        $user_id = Auth::user()->user_id;
+        TicketComment::create([
+            'user_id' => $user_id,
+            'ticket_id' => $ticketId
+        ]);
+
+    }
+
     /**
      * Display the specified resource.
      *
@@ -61,6 +77,11 @@ class TicketController extends Controller
         $ticket = Ticket::findOrFail($id);
 
         $this->authorize("view-ticket", $ticket);
+        $ticket->comments = $ticket->comments()->get();
+
+        foreach ($ticket->comments as $comment) {
+            $comment->author = User::findOrFail($comment->user_id);
+        }
 
         return view('tickets.details', ['ticket' => $ticket]);
     }
