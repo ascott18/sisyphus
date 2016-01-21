@@ -29,7 +29,7 @@ class Author extends Model
      *
      * @var array
      */
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'book_id'];
 
     public function book()
     {
