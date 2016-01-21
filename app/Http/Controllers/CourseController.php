@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\User;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Models\Term;
 use Illuminate\Database\Query\Builder;
@@ -12,11 +13,10 @@ use Illuminate\Database\Query\Builder;
 class CourseController extends Controller
 {
     public static $CourseValidation = [
-        'course.department' => 'required|min:2|max:10',
-        'course.course_name' => 'required',
+        'course.department' => 'required|string|min:2|max:10',
+        'course.course_name' => 'required|string',
         'course.course_number' => 'required|numeric',
         'course.course_section' => 'required|numeric',
-        'course.user_id' => 'required|exists:users,user_id',
     ];
 
     /**
@@ -84,12 +84,16 @@ class CourseController extends Controller
 
     public function postEdit(Request $request, $id)
     {
+        // TODO: always uppercase the department so that we don't require
+        // the user to make it uppercase when they type it in.
+
         $dbCourse = Course::findOrFail($id);
 
         $this->authorize("edit-course", $dbCourse);
         $this->validate($request, static::$CourseValidation);
 
-        $course = $request->except('course.term_id')['course'];
+        $course = $this->cleanCourseForCreateOrEdit($request);
+        unset($course['term_id']);
 
         $dbCourse->update($course);
         $dbCourse->save();
@@ -116,13 +120,26 @@ class CourseController extends Controller
     }
 
 
+    private function cleanCourseForCreateOrEdit(Request $request)
+    {
+        $course = $request->get('course');
+
+        $course['department'] = trim($course['department']);
+        $course['course_name'] = trim($course['course_name']);
+
+        // The professor of a course is nullable. Check for empty strings and manually set to null.
+        if (!isset($course['user_id']) || !$course['user_id']) $course['user_id'] = null;
+
+        return $course;
+    }
+
     public function postCreate(Request $request)
     {
         $this->authorize("create-courses");
-
         $this->validate($request, static::$CourseValidation);
 
-        $course = $request->get('course');
+        $course = $this->cleanCourseForCreateOrEdit($request);
+
         $dbCourse = new Course($course);
 
         // Authorize that the user can indeed create this course before actually saving it.
@@ -171,6 +188,22 @@ class CourseController extends Controller
         if($request->input('name'))
             $query = $query->where('course_name', 'LIKE', '%'.$request->input('name').'%');
 
+        if($request->input('professor')) {
+            $query = $query->where(function($sQuery) use ($request) {
+                $sQuery = $sQuery->where('users.first_name', 'LIKE', '%'.$request->input('professor').'%')
+                    ->orWhere('users.last_name', 'LIKE', '%'.$request->input('professor').'%');
+
+                $searchArray = preg_split("/[\s,]+/", $request->input('professor'));
+                if(count($searchArray) == 2) {
+                    $sQuery = $sQuery->orWhere('users.first_name', 'LIKE', '%'.$searchArray[0].'%')
+                        ->where('users.last_name', 'LIKE', '%'.$searchArray[1].'%')
+                        ->orWhere('users.last_name', 'LIKE', '%'.$searchArray[0].'%')
+                        ->where('users.first_name', 'LIKE', '%'.$searchArray[1].'%');
+                }
+
+                return $sQuery;
+            });
+        }
 
         return $query;
     }
@@ -195,6 +228,14 @@ class CourseController extends Controller
                     $query = $query->orderBy("department");
                     $query = $query->orderBy("course_number");
                     $query = $query->orderBy("course_section");
+                }
+            } else if($request->input('sort') == "professor") {
+                if($request->input('dir')) {
+                    $query = $query->orderBy('users.last_name', "desc");
+                    $query = $query->orderBy('users.first_name', "desc");
+                } else {
+                    $query = $query->orderBy('users.last_name');
+                    $query = $query->orderBy('users.first_name');
                 }
             } else {
                 if ($request->input('dir'))
@@ -244,14 +285,25 @@ class CourseController extends Controller
             $query = $query->where('term_id', '=', $request->input('term_id'));
         }
 
+        if($request->input('sort') == "professor" || $request->input('professor')) {
+            $query->join('users','users.user_id', '=', 'courses.user_id');
+        }
+
         $query = $this->buildSearchQuery($request, $query);
         $query = $this->buildSortQuery($request, $query);
         $query = $query->with("term");
+        $query = $query->with("user");
+
 
         $courses = $query->paginate(10);
 
         foreach ($courses as $course) {
             $course->term->term_name = $course->term->termName();
+
+
+            $course->order_count = Order::query()
+                ->where('course_id', '=', $course->course_id)
+                ->count();
         }
 
         return response()->json($courses);

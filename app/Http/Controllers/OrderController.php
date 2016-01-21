@@ -29,9 +29,6 @@ class OrderController extends Controller
         $this->authorize('all');
 
         $openTerms = Term::currentTerms()->get();
-        foreach ($openTerms as $term) {
-            $term['term_name'] = $term->termName();
-        }
 
         $openTermIds = $openTerms->pluck('term_id');
 
@@ -135,10 +132,6 @@ class OrderController extends Controller
                     }])
             ->get();
 
-        foreach ($courses as $course) {
-            $course->term->term_name = $course->term->termName();
-        }
-
         return response()->json($courses);
     }
 
@@ -150,11 +143,34 @@ class OrderController extends Controller
      */
     public function postSubmitOrder(Request $request)
     {
+        $this->validate($request, [
+            'courses' => 'required',
+            'courses.*.course_id' => 'required|numeric|exists:courses,course_id',
+            'cart' => 'required',
+            'cart.*.book' => 'required',
+            'cart.*.book.book_id' => 'required_unless:isNew,true',
+            'cart.*.book.isbn13' => 'required_if:isNew,true',
+            'cart.*.book.title' => 'required_if:isNew,true',
+            'cart.*.book.publisher' => 'required_if:isNew,true',
+            'cart.*.book.authors' => 'required_if:isNew,true',
+            'cart.*.book.authors*.name' => 'required',
+            'cart.*.notes' => '',
+            'cart.*.required' => 'required',
+        ]);
+
         $params = $request->all();
+        $user_id = $request->user()->user_id;
+
+        // Grab all the courses from the db and check auth before we actually start placing orders.
+        // This way, we won't place any orders if any of them might cause the process to fail.
+        $courses = [];
         foreach($params['courses'] as $section) {
             $course = Course::findOrFail($section['course_id']);
             $this->authorize('place-order-for-course', $course);
+            $courses[] = $course;
+        }
 
+        foreach($courses as $course) {
             foreach ($params['cart'] as $bookData) {
 
                 $book = $bookData['book'];
@@ -171,14 +187,14 @@ class OrderController extends Controller
 
                     if (!$db_book) {
                         $db_book = Book::create([
-                            'title' => $book['title'],
-                            'isbn13' => $isbn,
-                            'publisher' => $book['publisher'],
+                            'title' => trim($book['title']),
+                            'isbn13' => trim($isbn),
+                            'publisher' => trim($book['publisher']),
                         ]);
 
                         foreach ($book['authors'] as $author) {
                             $db_book->authors()->save(new Author([
-                                'name' => $author['name']
+                                'name' => trim($author['name'])
                             ]));
                         }
                     }
@@ -187,11 +203,11 @@ class OrderController extends Controller
                     $db_book = Book::findOrFail($book['book_id']);
                 }
 
-                $user_id = Auth::user()->user_id;
                 Order::create([
+                    'notes' => isset($bookData['notes']) ? $bookData['notes'] : '',
                     'placed_by' => $user_id,
                     'course_id' => $course['course_id'],
-                    'required' => $book['required'],
+                    'required' => $bookData['required'],
                     'book_id' => $db_book->book_id
                 ]);
             }

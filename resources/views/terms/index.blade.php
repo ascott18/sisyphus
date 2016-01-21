@@ -37,13 +37,13 @@
                             </thead>
                             <tbody>
                                 <tr ng-repeat="term in tc.displayed">
-                                    <td> [[ term.termName ]] </td>
+                                    <td> [[ term.term_name ]] </td>
                                     <td> [[ term.year ]] </td>
 
                                     <td> [[ term.status ]] </td>
 
-                                    <td> [[ term.orderStartDate ]] </td>
-                                    <td> [[ term.orderDueDate ]] </td>
+                                    <td> [[ term.order_start_date | moment:'ll' ]] </td>
+                                    <td> [[ term.order_due_date | moment:'ll' ]] </td>
                                     <td style="width: 1%">
                                         <a href="/terms/details/[[ term.term_id ]]" class="btn btn-sm btn-primary">
                                             Details&nbsp; <i class="fa fa-arrow-right"></i>

@@ -91,7 +91,7 @@
 
                         <dt>Created By</dt>
                         <dd>
-                            {{ $ticket->user->getLastFirst() }}
+                            {{ $ticket->user->last_first_name }}
                         </dd>
 
                         <dt>Created On</dt>

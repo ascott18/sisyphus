@@ -125,8 +125,8 @@ class HomeController extends Controller
             }
 
             $chartData[] = [
-                'name' => $term->displayName(),
-                'status' => $term->getStatusDisplayString(),
+                'name' => $term->display_name,
+                'status' => $term->status,
                 'term_id' => $term->term_id,
                 'current_count' => $currentCount,
                 'course_count' => $courseCount,

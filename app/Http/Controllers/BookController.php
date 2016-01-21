@@ -30,6 +30,12 @@ class BookController extends Controller
     private function buildBookSearchQuery($request, $query) {
         if($request->input('title'))
             $query = $query->where('title', 'LIKE', '%'.$request->input('title').'%');
+        if($request->input('author')) {
+            $query->join('authors', function($join) use ($request) {
+                $join->on('book.sbook_id', '=', 'author.book_id')
+                    ->where('author.name', '=', '%'.$request->input('author').'%');
+            });
+        }
         if($request->input('publisher'))
             $query = $query->where('publisher', 'LIKE', '%'.$request->input('publisher').'%');
         if($request->input('isbn13')) {
@@ -276,6 +282,14 @@ class BookController extends Controller
     }
 
     public function postEdit(Request $request) {
+        $this->validate($request, [
+            'book' => 'required|array',
+            'book.book_id' => 'required|integer',
+            'book.title' => 'required|string',
+            'book.publisher' => 'required|string',
+            'authors' => 'required',
+            'authors.*' => 'string'
+        ]);
 
         $book = $request->get('book');
         $authors = $request->get('authors');
@@ -288,8 +302,10 @@ class BookController extends Controller
         $db_book->authors()->delete();
 
         foreach ($authors as $author) {
-            $db_book->authors()->create($author);
+            $db_book->authors()->create(['name' => $author]);
         }
+
+        return redirect('books/details/' . $db_book->book_id);
     }
 
 }

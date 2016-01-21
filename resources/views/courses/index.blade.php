@@ -21,6 +21,8 @@
                                 <th width="170px" st-sort="section">Section</th>
                                 <th width="250px" st-sort="term_id" st-sort-default="reverse">Term</th>
                                 <th st-sort="course_name">Name</th>
+                                <th st-sort="professor">Professor</th>
+                                <th>Resoponded</th>
                                 <th width="1%"></th>
                             </tr>
                             <tr>
@@ -31,13 +33,17 @@
                                     <select class="form-control" ng-init="TermSelected = ''" ng-model="TermSelected" ng-change="updateTerm()">
                                         <option value="">All Terms</option>
                                         @foreach($terms as $term)
-                                            <option value="{{$term->term_id}}">{{$term->termName()}} {{$term->year}}</option>
+                                            <option value="{{$term->term_id}}">{{$term->display_name}}</option>
                                         @endforeach
                                     </select>
                                 </th>
                                 <th>
                                     <input type="text" class="form-control" placeholder="Search..." st-search="name"/>
                                 </th>
+                                <th>
+                                    <input type="text" class="form-control" placeholder="Search..." st-search="professor"/>
+                                </th>
+                                <th></th>
                                 <th></th>
                             </tr>
                             </thead>
@@ -49,6 +55,11 @@
                                 </td>
                                 <td>[[ course.term.term_name ]] [[ course.term.year ]]</td>
                                 <td>[[ course.course_name ]]</td>
+                                <td>[[ course.user.last_name ]], [[ course.user.first_name ]]</td>
+                                <td>
+                                    <div ng-show="course.order_count > 0 || course.no_book != 0">Yes</div>
+                                    <div ng-show="course.order_count == 0 && course.no_book == 0">No</div>
+                                </td>
                                 <td><a class="btn btn-sm btn-info" href="/courses/details/[[course.course_id]]" role="button">
                                         Details <i class="fa fa-arrow-right"></i>
                                     </a>

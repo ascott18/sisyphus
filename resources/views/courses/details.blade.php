@@ -51,7 +51,7 @@
 
                         <dt>Request Period</dt>
                         <dd>
-                            {{ $course->term->getStatusDisplayString() }}
+                            {{ $course->term->status }}
                         </dd>
 
                         @if ($course->term->areOrdersInProgress())
@@ -63,15 +63,22 @@
                     </dl>
 
                     <dl class="col-md-4 dl-horizontal">
-                        <dt>Professor</dt>
-                        <dd>
-                            {{ $course->user->last_name }}, {{ $course->user->first_name }}
-                        </dd>
+                        @if ($course->user != null)
+                            <dt>Professor</dt>
+                            <dd>
+                                {{ $course->user->last_first_name }}
+                            </dd>
 
-                        <dt>Email</dt>
-                        <dd>
-                            {{ $course->user->email }}
-                        </dd>
+                            <dt>Email</dt>
+                            <dd>
+                                {{ $course->user->email }}
+                            </dd>
+                        @else
+                            <dt>Professor</dt>
+                            <dd>
+                                TBA
+                            </dd>
+                        @endif
                     </dl>
                 </div>
             </div>
@@ -114,6 +121,7 @@
                                 <th>ISBN</th>
                                 <th>Publisher</th>
                                 <th>Required</th>
+                                <th>Notes</th>
                                 @can('place-order-for-course', $course)
                                     <th width="1%"></th>
                                 @endcan
@@ -132,7 +140,8 @@
 
                                         @if ($order->deleted_at != null)
                                             <br><span class="text-muted">
-                                                <span class="text-danger">Deleted</span> by {{$order->deletedBy->first_name}} {{$order->deletedBy->last_name}} on {{$order->deleted_at->toDateString()}}
+                                                <span class="text-danger">Deleted</span> by
+                                                {{$order->deletedBy->first_name}} {{$order->deletedBy->last_name}} on {{$order->deleted_at->toDateString()}}
                                             </span>
                                         @endif
                                     </td>
@@ -144,6 +153,9 @@
                                     </td>
                                     <td>
                                         {{ $order->required ? "Yes" : "No" }}
+                                    </td>
+                                    <td>
+                                        {{ $order->notes }}
                                     </td>
 
                                     @can('place-order-for-course', $course)

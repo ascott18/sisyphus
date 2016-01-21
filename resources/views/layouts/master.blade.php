@@ -114,13 +114,13 @@
             <div class="row">
                 <div class="col-lg-12">
 
-                    <h5 class="page-header text-muted">
+                    <h4 class="page-header text-muted">
                         @yield('area') /
                         @if (array_key_exists('action', View::getSections()))
                             @yield('action') /
                         @endif
                         @yield('page')
-                    </h5>
+                    </h4>
                 </div>
             </div>
             @endif

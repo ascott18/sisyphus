@@ -8,7 +8,9 @@
              style="display: none; position: absolute; left: 15px;"/>
     </div>
     <div style="padding-left: 10px; display: table-cell; vertical-align: top;">
-        <h4 class="list-group-item-heading no-pad-bottom">[[book.title]]</h4>
+        <h4 class="list-group-item-heading no-pad-bottom">
+            [[book.title.trim()]]<span ng-if="book.edition && book.edition.trim()">, [[book.edition]]</span>
+        </h4>
         <small >
             <span class="text-muted" >
                 [[book.isbn13 | isbnHyphenate]] &mdash; [[book.publisher]]

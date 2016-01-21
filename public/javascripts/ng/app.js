@@ -1,11 +1,14 @@
 
 var app = angular.module('sisyphus.helpers', ['smart-table']);
 
+// Use square braces with angular since curly braces interfere with laravel blade.
 app.config(function($interpolateProvider) {
     $interpolateProvider.startSymbol('[[');
     $interpolateProvider.endSymbol(']]');
 });
 
+// Provide the correct headers with AJAX requests so that Laravel can respond
+// with errors formatted as json.
 app.config(function($httpProvider) {
     $httpProvider.defaults.headers.common = { 'X-Requested-With' : 'XMLHttpRequest' }
 });
@@ -43,6 +46,7 @@ app.filter('filterSplit', function($filter){
     };
 });
 
+// Pads a string (or number) with zeroes if it is less than the given length.
 app.filter('zpad', function() {
     return function(input, n) {
         if(input === undefined)
@@ -55,6 +59,7 @@ app.filter('zpad', function() {
     };
 });
 
+// Automatically adds text to an element when it doesn't have children.
 app.directive('emptyPlaceholder', ['$http',
     function($http){
        return {
@@ -93,15 +98,9 @@ app.directive('emptyPlaceholder', ['$http',
    }
 ]);
 
-app.directive('initData', function() {
-    return {
-        restrict: 'A',
-        link: function($scope, element, attrs) {
-            if ( attrs.ngBind !== undefined)
-            {
-                $scope[attrs.ngBind] = attrs.initdata ? attrs.initdata : element.text();
-            }
-        }
+app.filter('moment', function () {
+    return function (value, format) {
+        return moment(value).format(format);
     };
 });
 

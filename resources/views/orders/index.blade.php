@@ -176,7 +176,9 @@
                                                 <br>
                                                 [[termData.term.term_name]] [[termData.term.year]]:
                                                 <span ng-repeat="data in termData.orderData">
-                                                    [[data.course.user.first_name]] [[data.course.user.last_name]]
+                                                    <span ng-if="data.course.user">[[data.course.user.first_name]] [[data.course.user.last_name]]</span>
+                                                    <span ng-if="!data.course.user">TBA</span>
+
                                                     ( <ng-pluralize count="data.numSections" when="{
                                                         'one': '{} Section',
                                                         'other': '{} Sections'}">
@@ -249,7 +251,11 @@
                                 <div class="col-md-4">
                                     </br>
                                     <label for="notes[[$index]]">Notes</label>
-                                    <input type="text" id="notes[[$index]]" class="form-control" placeholder="e.g. expected enrollment: 23">
+                                    <input type="text"
+                                           ng-model="bookData.notes"
+                                           id="notes[[$index]]"
+                                           class="form-control"
+                                           placeholder="e.g. expected enrollment: 23">
                                     <br>
                                 </div>
                                 <div class="col-md-4">
@@ -260,7 +266,7 @@
 
                                         <label class="radio-inline"><input
                                                     type="radio"
-                                                    ng-model="bookData.book.required"
+                                                    ng-model="bookData.required"
                                                     name="req[[$index]]"
                                                     ng-value="true"
                                                     required=""/> Yes
@@ -269,7 +275,7 @@
 
                                         <label class="radio-inline"><input
                                                     type="radio"
-                                                    ng-model="bookData.book.required"
+                                                    ng-model="bookData.required"
                                                     name="req[[$index]]"
                                                     ng-value="false"
                                                     required=""/> No
@@ -306,7 +312,7 @@
                             <div class="panel-list-item active">
 
                                 [[selectedCourse.department]] [[selectedCourse.course_number | zpad:3]]-[[selectedCourse.course_section | zpad:2]]
-                                <span style="left: 50%; position: absolute">[[selectedCourse.user.last_name]], [[selectedCourse.user.first_name]]</span>
+                                <span style="left: 50%; position: absolute">[[selectedCourse.user ? selectedCourse.user.last_first_name : 'TBA']]</span>
                             </div>
 
                             <div class="panel-list-item cursor-pointer"
@@ -315,7 +321,7 @@
                                  ng-repeat="course in courses | filter:similarCourses ">
 
                                 [[course.department]] [[course.course_number | zpad:3]]-[[course.course_section | zpad:2]]
-                                <span style="left: 50%; position: absolute">[[course.user.last_name]], [[course.user.first_name]]</span>
+                                <span style="left: 50%; position: absolute">[[course.user ? course.user.last_first_name : 'TBA']]</span>
                             </div>
                         </div>
                     </div>
@@ -345,6 +351,12 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                     <h1 class="text-center">Request successfully placed! Thank you!</h1>
+                    <br>
+                    <h1 class="text-center">
+                        <a href="/requests" class="btn btn-primary btn-lg">
+                            Place another request <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </h1>
                 </div>
             </div>
         </div>
