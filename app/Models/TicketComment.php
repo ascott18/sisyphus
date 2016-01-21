@@ -19,6 +19,8 @@ class TicketComment extends Model
      */
     protected $primaryKey = 'ticket_comment_id';
 
+    protected $fillable = ['user_id', 'ticket_id', 'body'];
+
 
     public function user()
     {

@@ -23,9 +23,9 @@ app.config(function($provide) {
     }]);
 });
 
-app.controller('TicketController', function($scope, $http) {
-
+app.controller('NewTicketController', function($scope, $http) {
     $scope.ticket = {};
+    $scope.comments = [{test: "Maria"}];
 
     var unloadListener = function (e) {
         var confirmationMessage = 'If you leave before submitting, your changes will be lost.';
@@ -35,9 +35,6 @@ app.controller('TicketController', function($scope, $http) {
     };
 
     window.addEventListener("beforeunload", unloadListener);
-
-
-
 
 
     $scope.createTicket = function(ticket){
@@ -51,6 +48,25 @@ app.controller('TicketController', function($scope, $http) {
 
     $scope.submitTicket = function(){
         window.removeEventListener("beforeunload", unloadListener);
+    };
+});
+
+app.controller('TicketController', function($scope, $http) {
+    $scope.ticket = {};
+    $scope.comments = [{author: {first_name: "Maria", last_name: "McCauley"}, date: "June 12, 2015"},
+                        {author: {first_name: "Michael", last_name: "Quigley"}, date: "June 13, 2015"}];
+    $scope.comment = {};
+
+    $scope.setTicket = function(ticket) {
+        $scope.ticket = ticket;
+        $scope.comments = ticket.comments;
+    };
+
+    $scope.submitComment = function() {
+        $http.post('/tickets/submit-comment', {comment: $scope.comment, ticketId: $scope.ticket["ticket_id"]}).then(
+            function success(response){
+                $scope.comment = {};
+        });
     };
 });
 

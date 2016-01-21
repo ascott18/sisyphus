@@ -241,7 +241,7 @@
                         </div>
                         <div class="panel-body panel-list">
                             <div class="panel-list-item clearfix"
-                                ng-repeat="bookData in cartBooks">
+                                 ng-repeat="bookData in cartBooks">
                                 <div class="col-md-4">
                                     <book-details book="bookData.book"></book-details>
                                 </div>
