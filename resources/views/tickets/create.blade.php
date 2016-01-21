@@ -6,7 +6,7 @@
 @section('content')
 
 
-    <div class="row col-lg-12" ng-controller="TicketController">
+    <div class="row col-lg-12" ng-controller="NewTicketController">
 
 
 
@@ -16,7 +16,7 @@
             <form name="form">
                 <div class="form-group" >
                     <label>Subject:</label>
-                    <input type="text" class="form-control" ng-model="ticket.subject">
+                    <input type="text" class="form-control" ng-model="ticket.title">
                 </div>
 
 

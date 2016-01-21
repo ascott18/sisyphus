@@ -10,14 +10,12 @@
             <div class="panel panel-default" ng-init="setTicket({{$ticket}})">
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="fa fa-life-ring fa-fw"></i>
-                        {{ $ticket->title }}
+                        [[ ticket.title ]]
                     </h3>
                 </div>
-                <div class="panel-body">
 
-                    {{ $ticket->body }}
+                <div ta-bind class="panel-body" ng-model="ticket.body"></div>
 
-                </div>
             </div>
 
 
@@ -39,7 +37,7 @@
                                         <span>
                                             <b>[[comment.author.first_name]] [[comment.author.last_name]]</b>
                                             <span class="text-muted" >
-                                                on [[comment.created_at ]]
+                                                on <moment>[[comment.created_at ]] </moment>
                                             </span>
                                         </span>
                                     </small>
@@ -50,16 +48,15 @@
                                 </div>
                             </div>
 
-
-
-                            <div class="form-group">
-                                 <input class="form-control" type="text" placeholder="Your comments"/>
+                            <div class="panel-list-item clearfix">
+                                <div class="form-group">
+                                    <input class="form-control" type="text" placeholder="Your comments" ng-model="comment.body"/>
+                                </div>
+                                <div class="form-group pull-right">
+                                    <button class="btn btn-success"
+                                            ng-click="submitComment()">Add</button>
+                                </div>
                             </div>
-                            <div class="form-group pull-right">
-                                <button class="btn btn-success"
-                                        ng-click="submitComment()">Add</button>
-                            </div>
-
 
                         </div>
 
@@ -69,43 +66,10 @@
 
         </div>
         <div class="col-lg-5">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title"><i class="fa fa-info fa-fw"></i>
-                        Details
-                    </h3>
-                </div>
-                <div class="panel-body">
-
-                    <dl class="col-md-12 dl-horizontal">
-                        <dt>Department</dt>
-                        <dd>
-                            {{ $ticket->department == null ? "None" : $ticket->department }}
-                        </dd>
-
-                        <dt>Linked To</dt>
-                        <dd>
-                            <a href="{{ $ticket->url }}">{{ $ticket->url }}</a>
-                        </dd>
-
-
-                        <dt>Created By</dt>
-                        <dd>
-                            {{ $ticket->user->last_first_name }}
-                        </dd>
-
-                        <dt>Created On</dt>
-                        <dd>
-                            {{ $ticket->created_at }}
-                        </dd>
-
-                        <dt>Email</dt>
-                        <dd>
-                            {{ $ticket->user->email }}
-                        </dd>
-                    </dl>
-                </div>
-            </div>
+            <ticket-details
+                    ticket="{{$ticket}}"
+                    author="{{$ticket->user}}">
+            </ticket-details>
         </div>
     </div>
 

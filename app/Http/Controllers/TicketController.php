@@ -39,15 +39,21 @@ class TicketController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function postCreate()
+    public function postSubmitTicket(Request $request)
     {
         $this->authorize("all");
 
-        $ticket = new Ticket();
-        $ticket->title = "";
-        $ticket->body = "<h3>New Ticket</h3>";
-        $ticket->user_id = Auth::user()->user_id;
-        $ticket->save();
+        $ticket = $request->get("ticket");
+        $user_id = Auth::user()->user_id;
+
+        Ticket::create([
+            'user_id' => $user_id,
+            'department' => $ticket['department'],
+            'url' => $ticket['url'],
+            'body' => $ticket['body'],
+            'title' => $ticket['title'],
+            'status' => 0
+        ]);
 
         return response()->json($ticket);
     }
@@ -57,13 +63,17 @@ class TicketController extends Controller
 
         $comment = $request->get("comment");
         $ticketId = $request->get("ticketId");
-
         $user_id = Auth::user()->user_id;
+
         TicketComment::create([
             'user_id' => $user_id,
-            'ticket_id' => $ticketId
+            'ticket_id' => $ticketId,
+            'body' => $comment['body']
         ]);
 
+        $ticket = $this->initializeTicketComments($ticketId);
+
+        return response()->json($ticket);
     }
 
     /**
@@ -74,6 +84,12 @@ class TicketController extends Controller
      */
     public function getDetails($id)
     {
+        $ticket = $this->initializeTicketComments($id);
+
+        return view('tickets.details', ['ticket' => $ticket]);
+    }
+
+    private function initializeTicketComments($id) {
         $ticket = Ticket::findOrFail($id);
 
         $this->authorize("view-ticket", $ticket);
@@ -83,7 +99,7 @@ class TicketController extends Controller
             $comment->author = User::findOrFail($comment->user_id);
         }
 
-        return view('tickets.details', ['ticket' => $ticket]);
+        return $ticket;
     }
 
     /**
