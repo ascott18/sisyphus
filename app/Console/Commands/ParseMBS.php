@@ -342,17 +342,23 @@ EOL;
             02, 04, 27 & 75
             01-03,05, 27 & 75
             100/400
+            102--104
         */
 
-        $chunks = explode(",", $in);
+        $chunks = preg_split("|;,+|", $in);
 
         $out = [];
 
         foreach ($chunks as $chunk) {
             $noSpace = str_replace(" ", "", $chunk);
 
-            if (preg_match("/\\d+-\\d+/", $noSpace)){
+            if (preg_match("/\\d+-\\d+/", $noSpace)) {
                 $extremes = explode("-", $noSpace);
+
+                $out = array_merge($out, range($extremes[0], $extremes[1]));
+            }
+            elseif (preg_match("/\\d+--\\d+/", $noSpace)){
+                $extremes = explode("--", $noSpace);
 
                 $out = array_merge($out, range($extremes[0], $extremes[1]));
             }
