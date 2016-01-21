@@ -22,8 +22,8 @@
                                 <th st-sort="term">Term</th>
                                 <th st-sort="term_id" st-sort-default="reverse">Year</th>
                                 <th>Status</th>
-                                <th st-sort="order_start_date">Order Start Date</th>
-                                <th st-sort="order_due_date">Order Due Date</th>
+                                <th st-sort="order_start_date">Request Start Date</th>
+                                <th st-sort="order_due_date">Request Due Date</th>
                                 <th width="1%"></th>
                             </tr>
                             <tr>
@@ -37,13 +37,13 @@
                             </thead>
                             <tbody>
                                 <tr ng-repeat="term in tc.displayed">
-                                    <td> [[ term.termName ]] </td>
+                                    <td> [[ term.term_name ]] </td>
                                     <td> [[ term.year ]] </td>
 
                                     <td> [[ term.status ]] </td>
 
-                                    <td> [[ term.orderStartDate ]] </td>
-                                    <td> [[ term.orderDueDate ]] </td>
+                                    <td> [[ term.order_start_date | moment:'ll' ]] </td>
+                                    <td> [[ term.order_due_date | moment:'ll' ]] </td>
                                     <td style="width: 1%">
                                         <a href="/terms/details/[[ term.term_id ]]" class="btn btn-sm btn-primary">
                                             Details&nbsp; <i class="fa fa-arrow-right"></i>

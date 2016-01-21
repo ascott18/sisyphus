@@ -12,12 +12,22 @@ use Zizaco\Entrust\Traits\EntrustUserTrait;
 
 
 /**
- * @property  int user_id
- * @property  string net_id The user's EWU NetID.
- * @property  string email The user's email address.
- * @property  string first_name
- * @property  string last_name
- * @property  string ewu_id The user's 8-digit EWU ID.
+ * App\Models\User
+ *
+ * @property int $user_id
+ * @property string $net_id The user's EWU NetID.
+ * @property string $email The user's email address.
+ * @property string $first_name
+ * @property string $last_name
+ * @property string $ewu_id The user's 8-digit EWU ID.
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Course[] $courses
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UserDepartment[] $departments
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Ticket[] $tickets
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Message[] $messages
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Role[] $roles
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property-read string $last_first_name
  */
 class User extends Model implements AuthenticatableContract,
                                     AuthorizableContract
@@ -42,24 +52,24 @@ class User extends Model implements AuthenticatableContract,
      */
     protected $fillable = [];
 
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['last_first_name'];
+
+
+
+    public function getLastFirstNameAttribute()
+    {
+        return "$this->last_name, $this->first_name";
+    }
 
     public function courses()
     {
         return $this->hasMany('App\Models\Course', 'user_id', 'user_id');
     }
-
-    /**
-     * Gets the users courses for which orders are currently open.
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function currentCourses()
-    {
-        $currentTermsIds = Term::currentTerms()->select('term_id')->get()->values();
-
-        return $this->courses()->whereIn('term_id', $currentTermsIds);
-    }
-
 
     public function departments()
     {
@@ -72,6 +82,16 @@ class User extends Model implements AuthenticatableContract,
     public function role()
     {
         return $this->roles()->first();
+    }
+
+    public function tickets()
+    {
+        return $this->hasMany('App\Models\Ticket', 'user_id', 'user_id');
+    }
+
+    public function messages()
+    {
+        return $this->hasMany('App\Models\Message', 'owner_user_id', 'user_id');
     }
 
 }

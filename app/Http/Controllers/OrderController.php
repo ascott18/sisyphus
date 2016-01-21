@@ -19,24 +19,60 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 class OrderController extends Controller
 {
 
-    /** GET: /orders/
+    /** GET: /requests/
      *
      * @param Request $request
      * @return \Illuminate\View\View
      */
     public function getIndex(Request $request)
     {
-        $targetUser = $request->user();
-
-        if ($request->user_id){
-            $targetUser = User::findOrFail($request->user_id);
-        }
-
-        $this->authorize('place-order-for-user', $targetUser);
+        $this->authorize('all');
 
         $openTerms = Term::currentTerms()->get();
 
-        return view('orders.index', ['user_id' => $targetUser->user_id, 'openTerms' => $openTerms]);
+        $openTermIds = $openTerms->pluck('term_id');
+
+        // If the user can place orders for everyone, don't return courses for everything here
+        // because it would almost certainly crash their browser if we did.
+        if ($request->user()->may('place-all-orders'))
+            $query = $request->user()->courses();
+        else
+            $query = Course::orderable();
+
+        $courses = $query
+            ->whereIn('term_id', $openTermIds)
+            ->with([
+                'orders.book',
+                'user' => function($query){
+                    return $query->select('first_name', 'last_name');
+                }])
+            ->get();
+
+        return view('orders.index', ['openTerms' => $openTerms, 'courses' => $courses]);
+    }
+
+    public function getCreate($course_id)
+    {
+        $course = Course::findOrFail($course_id);
+
+        $this->authorize('place-order-for-course', $course);
+
+        // Grab all the courses that are similar to the one requested.
+        // Similar means same department and course number, and offered during the same term.
+        $courses = Course::orderable()
+            ->where('department', '=', $course->department)
+            ->where('course_number', '=', $course->course_number)
+            ->where('term_id', '=', $course->term_id)
+            ->with([
+                'orders.book',
+                'user' => function($query){
+                    return $query->select('user_id', 'first_name', 'last_name');
+            }])
+            ->get();
+
+        $openTerms = Term::currentTerms()->get();
+
+        return view('orders.index', ['openTerms' => $openTerms, 'courses' => $courses, 'course' => $course]);
     }
 
     protected static function buildFilteredOrderQuery($query, User $user){
@@ -212,16 +248,15 @@ class OrderController extends Controller
 
     public function postNoBook(Request $request)
     {
-        $course_id=$request->get("course_id");
+        $course_id = $request->get("course_id");
         $course = Course::findOrFail($course_id);
 
         $this->authorize('place-order-for-course', $course);
 
-        if (count($course->orders)){
-            return response()->json([
-                'success' => false,
-                'message' => "This course already has orders placed for it."],
-                Response::HTTP_BAD_REQUEST);
+        foreach ($course->orders as $order) {
+            $order->deleted_by = $request->user()->user_id;
+            $order->save();
+            $order->delete();
         }
 
         $course->no_book = true;
@@ -235,47 +270,13 @@ class OrderController extends Controller
     {
         $order = Order::findOrFail($order_id);
 
-        $this->authorize('edit-order', $order);
+        $this->authorize('place-order-for-course', $order->course);
 
         $order->deleted_by = $request->user()->user_id;
         $order->save();
         $order->delete();
 
         return Redirect::back();
-    }
-
-    public function postUndelete(Request $request, $order_id)
-    {
-        $order = Order::withTrashed()->findOrFail($order_id);
-
-        $this->authorize('edit-order', $order);
-
-        $order->deleted_by = null;
-        $order->save();
-        $order->restore();
-
-        return Redirect::back();
-    }
-
-    public function getReadCourses(Request $request)
-    {
-        $user = $targetUser = $request->user();
-
-        if ($request->user_id){
-            $targetUser = User::findOrFail($request->user_id);
-        }
-
-        $this->authorize('place-order-for-user', $targetUser);
-
-        $courses = $targetUser->currentCourses()->with("orders.book")->get();
-        $retCourses = [];
-
-        foreach ($courses as $course) {
-            if ($user->can('place-order-for-course', $course))
-                $retCourses[] = $course;
-        }
-
-        return response()->json($retCourses);
     }
 
 
@@ -285,9 +286,11 @@ class OrderController extends Controller
      */
     public function getPastCourses($id)
     {
-        $this->authorize("all");
-
         $course = Course::findOrFail($id);
+
+        $this->authorize('place-order-for-course', $course);
+
+
         $courses =
             Course::
             where(['department' => $course->department, 'course_number' => $course->course_number])
@@ -295,14 +298,10 @@ class OrderController extends Controller
             ->with([
                     "term",
                     "orders.book.authors",
-                    'orders.placedBy'=>function($query){
+                    'user' => function($query){
                         return $query->select('user_id', 'first_name', 'last_name');
                     }])
             ->get();
-
-        foreach ($courses as $course) {
-            $course->term->term_name = $course->term->termName();
-        }
 
         return response()->json($courses);
     }
@@ -315,57 +314,78 @@ class OrderController extends Controller
      */
     public function postSubmitOrder(Request $request)
     {
+        $this->validate($request, [
+            'courses' => 'required',
+            'courses.*.course_id' => 'required|numeric|exists:courses,course_id',
+            'cart' => 'required',
+            'cart.*.book' => 'required',
+            'cart.*.book.book_id' => 'required_unless:isNew,true',
+            'cart.*.book.isbn13' => 'required_if:isNew,true',
+            'cart.*.book.title' => 'required_if:isNew,true',
+            'cart.*.book.publisher' => 'required_if:isNew,true',
+            'cart.*.book.authors' => 'required_if:isNew,true',
+            'cart.*.book.authors*.name' => 'required',
+            'cart.*.notes' => '',
+            'cart.*.required' => 'required',
+        ]);
+
         $params = $request->all();
+        $user_id = $request->user()->user_id;
 
-        $course = Course::findOrFail($params['course_id']);
-        $this->authorize("place-order-for-course", $course);
-
-        //TODO: validate incoming data
-
-        foreach ($params['cart'] as $bookData) {
-
-            $book = $bookData['book'];
-
-            if (isset($book['isNew']) && $book['isNew']) {
-
-                $isbn = $book['isbn13'];
-
-                $db_book = null;
-
-                if ($isbn) {
-                    $db_book = Book::where('isbn13', '=', $isbn)->first();
-                }
-
-                if (!$db_book){
-                    $db_book = Book::create([
-                        'title' => $book['title'],
-                        'isbn13' => $isbn,
-                        'publisher' => $book['publisher'],
-                    ]);
-
-                    foreach ($book['authors'] as $author) {
-                        $db_book->authors()->save(new Author([
-                            'name' => $author['name']
-                        ]));
-                    }
-                }
-
-            }
-            else {
-                $db_book = Book::findOrFail($book['book_id']);
-            }
-
-            $user_id = Auth::user()->user_id;
-            Order::create([
-                'placed_by' => $user_id,
-                'course_id' => $params['course_id'],
-                'required' => $book['required'],
-                'book_id' => $db_book->book_id
-            ]);
-
+        // Grab all the courses from the db and check auth before we actually start placing orders.
+        // This way, we won't place any orders if any of them might cause the process to fail.
+        $courses = [];
+        foreach($params['courses'] as $section) {
+            $course = Course::findOrFail($section['course_id']);
+            $this->authorize('place-order-for-course', $course);
+            $courses[] = $course;
         }
 
+        foreach($courses as $course) {
+            foreach ($params['cart'] as $bookData) {
 
+                $book = $bookData['book'];
 
+                if (isset($book['isNew']) && $book['isNew']) {
+
+                    $isbn = $book['isbn13'];
+
+                    $db_book = null;
+
+                    if ($isbn) {
+                        $db_book = Book::where('isbn13', '=', $isbn)->first();
+                    }
+
+                    if (!$db_book) {
+                        $db_book = Book::create([
+                            'title' => trim($book['title']),
+                            'isbn13' => trim($isbn),
+                            'publisher' => trim($book['publisher']),
+                        ]);
+
+                        foreach ($book['authors'] as $author) {
+                            $db_book->authors()->save(new Author([
+                                'name' => trim($author['name'])
+                            ]));
+                        }
+                    }
+
+                } else {
+                    $db_book = Book::findOrFail($book['book_id']);
+                }
+
+                Order::create([
+                    'notes' => isset($bookData['notes']) ? $bookData['notes'] : '',
+                    'placed_by' => $user_id,
+                    'course_id' => $course['course_id'],
+                    'required' => $bookData['required'],
+                    'book_id' => $db_book->book_id
+                ]);
+            }
+
+            $course->no_book = false;
+            $course->no_book_marked = null;
+            $course->save();
+        }
     }
 }

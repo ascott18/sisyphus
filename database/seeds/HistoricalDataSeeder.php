@@ -14,17 +14,26 @@ class HistoricalDataSeeder extends Seeder
      */
     public function run()
     {
+        \App\Models\User::create([
+            'first_name' => "Initial",
+            'last_name' => "Data",
+        ]);
+        
         $eaglenetFiles = [
             ["Summer", 2015],
             ["Fall", 2015],
+            ["Winter", 2016],
+            ["Spring", 2016],
+            ["Spring Semester", 2016],
         ];
 
         foreach ($eaglenetFiles as $fileInfo) {
             $this->command->line("Parsing eaglenet $fileInfo[0] $fileInfo[1]...");
+            $fileName = str_replace(' ', '', $fileInfo[0]) . $fileInfo[1];
             Artisan::call('parseCourseCsv', [
                 'termNumber' => array_search($fileInfo[0], Term::$termNumbers),
                 'year' => $fileInfo[1],
-                'file' => "database/seeds/dataFiles/eagleNet$fileInfo[0]$fileInfo[1].csv"
+                'file' => "database/seeds/dataFiles/eagleNet$fileName.csv"
             ]);
         }
 

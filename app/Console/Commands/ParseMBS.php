@@ -12,7 +12,7 @@ use \App\Models\Order;
 use \App\Models\Author;
 use \App\Models\Term;
 
-class ParseMBS extends Command implements SelfHandling
+class ParseMBS extends Command
 {
     /**
      * The name and signature of the console command.
@@ -105,7 +105,7 @@ EOL;
             $courseDataReg = $courseDataReg . "(.{{$colWidth}})\\s";
             $courseRegGroups[$colName] = $groupIndex++ + 1;
 
-            if ($colName == "Professor") break;
+            if ($colName == "Capacity") break;
         }
         $courseDataReg = "/^\\s*$courseDataReg/";
 
@@ -221,6 +221,7 @@ EOL;
             // so expand those out.
             $courseNumbers = $this->decipherNumbers($deptCourses[2]);
             $department = $deptCourses[1];
+            $classCapacity = trim($course[$courseRegGroups['Capacity']]);
 
             foreach ($courseNumbers as $courseNumber) {
                 $courseNumber = trim($courseNumber);
@@ -271,9 +272,9 @@ EOL;
                         $bookNumProcessing++;
 
                         $isbn = trim(str_replace("-", "", $book[$bookRegGroups['ISBN']]));
-                        $title = title_case($book[$bookRegGroups['Title']]);
-                        $publisher = title_case($book[$bookRegGroups['Publisher']]);
-                        $edition = $book[$bookRegGroups['Edition']];
+                        $title = trim(title_case($book[$bookRegGroups['Title']]));
+                        $publisher = trim(title_case($book[$bookRegGroups['Publisher']]));
+                        $edition = trim($book[$bookRegGroups['Edition']]);
 
                         if ($isbn == "None")
                         {
@@ -304,7 +305,11 @@ EOL;
                         $dbOrder = new Order;
                         $dbOrder->book_id = $dbBook->book_id;
                         $dbOrder->course_id = $dbCourse->course_id;
-                        $dbOrder->placed_by = $dbCourse->user_id; // TODO: make this a dummy user instead?
+                        $dbOrder->placed_by = 1; // TODO: ensure that this is the dummer user created in HistoricalDataSeeder
+                        // Don't do this - it feels weird.
+                        //if ($classCapacity){
+                        //    $dbOrder->notes = "Class Capacity: $classCapacity";
+                        //}
                         $dbOrder->save();
 
 
