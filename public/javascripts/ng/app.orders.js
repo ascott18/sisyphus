@@ -120,7 +120,7 @@ app.controller('OrdersListController', function($scope, $http) {
         var end = pagination.number || 10;
         var page = (start/end)+1;
 
-        var getRequestString = '/orders/order-list?page=' + page;                                         // book list uri
+        var getRequestString = '/requests/order-list?page=' + page;                                         // book list uri
 
         if(tableState.sort.predicate) {
             getRequestString += '&sort=' + encodeURIComponent(tableState.sort.predicate);               // build search

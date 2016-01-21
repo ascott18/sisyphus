@@ -75,34 +75,6 @@ class OrderController extends Controller
         return view('orders.index', ['openTerms' => $openTerms, 'courses' => $courses, 'course' => $course]);
     }
 
-    protected static function buildFilteredOrderQuery($query, User $user){
-        if ($user->may('view-dept-orders'))
-        {
-            $departments = $user->departments()->lists('department');
-            $query = $query->whereIn('department', $departments);
-        }
-        elseif (!$user->may('view-all-orders'))
-        {
-            $query = $query->where('placed_by', $user->user_id);
-        }
-
-        return $query;
-    }
-
-    protected static function buildFilteredCourseQuery($query, User $user){
-        if ($user->may('view-dept-courses'))
-        {
-            $departments = $user->departments()->lists('department');
-            $query = $query->whereIn('department', $departments);
-        }
-        elseif (!$user->may('view-all-courses'))
-        {
-            $query = $query->where('user_id', $user->user_id);
-        }
-
-        return $query;
-    }
-
     /** GET: /orders/list
      *
      * @param Request $request
@@ -113,17 +85,16 @@ class OrderController extends Controller
 
         $user = $request->user();
 
-        $currentTerm = Term::currentTerms()->first();
-        $currentTermId = $currentTerm ? $currentTerm->term_id : '';
+        $currentTermIds = Term::currentTerms()->pluck('term_id');
+        $userTermIds = Course::visible($user)->distinct()->pluck('term_id');
 
-        $terms = Term::whereIn('term_id', function($query) use ($user) {
-            static::buildFilteredCourseQuery($query->from('courses'), $user)->select('term_id');
-        })
-            ->orWhere('term_id', '=', $currentTermId)
+        $allRelevantTermIds = $currentTermIds->merge($userTermIds)->unique();
+
+        $terms = Term::whereIn('term_id', $allRelevantTermIds)
             ->orderBy('term_id', 'DESC')
             ->get();
 
-        return view('orders.list',['terms' => $terms, 'currentTermId' => $currentTermId]);
+        return view('orders.list',['terms' => $terms]);
     }
 
     /**
@@ -220,11 +191,9 @@ class OrderController extends Controller
     {
         $this->authorize("all"); // TODO: fix authorize permission
 
-        $query = Order::query()->withTrashed(); // yes, even the deleted ones
+        $query = Course::visible($request->user());
 
-        $query = $query->join('courses', 'orders.course_id', '=', 'courses.course_id'); // join before to get order department
-
-        $query = static::buildFilteredOrderQuery($query, $request->user()); // filter what the user can see
+        $query = $query->join('orders', 'courses.course_id', '=', 'orders.course_id'); // join before to get order department
 
         $query = $query->join('books', 'orders.book_id', '=', 'books.book_id'); // get the books
 
@@ -235,13 +204,9 @@ class OrderController extends Controller
         $query = $this->buildListSearchQuery($request, $query); // build the search query
         $query = $this->buildListSortQuery($request, $query); // build the sort query
 
-        $query->with("course.term"); // easily get the term name
+        $query->with("term"); // easily get the term name
 
         $orders = $query->paginate(10);
-
-        foreach ($orders as $order) {
-            $order->term_name = $order->course->term->displayName();
-        }
 
         return response()->json($orders);
     }

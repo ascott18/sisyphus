@@ -255,20 +255,6 @@ class CourseController extends Controller
         return $query;
     }
 
-    protected static function buildFilteredCourseQuery($query, User $user){
-        if ($user->may('view-dept-courses'))
-        {
-            $departments = $user->departments()->lists('department');
-            $query = $query->whereIn('department', $departments);
-        }
-        elseif (!$user->may('view-all-courses'))
-        {
-            $query = $query->where('user_id', $user->user_id);
-        }
-
-        return $query;
-    }
-
     /** GET: /courses/course-list?page={}&{sort=}&{dir=}&{section=}&{name=}
      * Searches the book list
      *

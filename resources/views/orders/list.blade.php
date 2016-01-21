@@ -19,46 +19,36 @@
                                empty-placeholder>
                             <thead>
                             <tr>
+                                <th st-sort="section">Section</th>
                                 <th st-sort="title">Title</th>
                                 <th>Term</th>
-                                <th st-sort="section">Section</th>
                                 <th st-sort="created_at">Order Date</th>
                                 <th width="1%"></th>
                             </tr>
                             <tr>
+                                <th><input type="text" class="form-control" placeholder="Search..." st-search="section"/></th>
                                 <th><input type="text" class="form-control" placeholder="Search..." st-search="title"/></th>
                                 <th>
-                                    <select class="form-control" ng-init="TermSelected = '{{$currentTermId}}'" ng-model="TermSelected" ng-change="updateTerm()">
+                                    <select class="form-control" ng-init="TermSelected = ''" ng-model="TermSelected" ng-change="updateTerm()">
                                         <option value="">All Terms</option>
                                         @foreach($terms as $term)
-                                            <option value="{{$term->term_id}}">{{$term->termName()}} {{$term->year}}</option>
+                                            <option value="{{$term->term_id}}">{{$term->display_name}} </option>
                                         @endforeach
                                     </select>
                                 </th>
-                                <th><input type="text" class="form-control" placeholder="Search..." st-search="section"/></th>
                                 <th></th>
                             </tr>
                             </thead>
                             <tbody>
 
                             <tr ng-cloak ng-repeat="order in mc.displayed">
-                                <td>[[ order.title ]]</td>
-                                <td>[[ order.term_name ]]</td>
                                 <td>[[ order.department ]] [[ order.course_number | zpad:3 ]]-[[ order.course_section | zpad:2 ]]</td>
-                                <td>[[ order.created_at ]]</td>
-                                <td>
-                                    <form action="[[ '/orders/undelete/' + order.order_id ]]" method="POST" name="form" ng-show="order.deleted_at != null">
-                                        {!! csrf_field() !!}
-                                        <button type="button" class="btn btn-sm btn-default" role="button" ng-confirm-click="submit" >
-                                            <i class="fa fa-history"></i> Restore Order
-                                        </button>
-                                    </form>
-                                    <form action="[[ '/orders/delete/' + order.order_id ]]" method="POST" name="form" ng-show="order.deleted_at == null">
-                                        {!! csrf_field() !!}
-                                        <button type="button" class="btn btn-sm btn-danger" role="button" ng-confirm-click="submit" >
-                                            <i class="fa fa-times"></i> Delete Order
-                                        </button>
-                                    </form>
+                                <td>[[ order.title ]]</td>
+                                <td>[[ order.term.display_name ]]</td>
+                                <td>[[ order.created_at | moment:'ll' ]]</td>
+                                <td><a class="btn btn-sm btn-info" href="/courses/details/[[ order.course_id ]]" role="button">
+                                        Details <i class="fa fa-arrow-right"></i>
+                                    </a>
                                 </td>
                             </tr>
 
