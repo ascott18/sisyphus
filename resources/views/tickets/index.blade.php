@@ -8,10 +8,18 @@
     <div class="row">
         <div class="col-lg-12">
 
-            <a class="btn btn-primary"
-               href="/tickets/create">
-                <i class="fa fa-plus"></i> Create Ticket
-            </a>
+            <div ng-controller="HelpModalController">
+                <a class="btn btn-primary",
+                   ng-click="toggleModal()">
+                    <i class="fa fa-plus"></i> Create Ticket
+                </a>
+
+                <modal title="Help" visible="showModal">
+
+                </modal>
+            </div>
+
+
             <br>
             <br>
 
