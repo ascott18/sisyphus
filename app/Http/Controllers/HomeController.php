@@ -66,7 +66,7 @@ class HomeController extends Controller
                 ->join('orders', function ($join) {
                     $join
                         ->on('orders.course_id', '=', 'courses.course_id')
-                        ->on('orders.created_at', '=', \DB::raw("(SELECT MIN(o.created_at) FROM orders o WHERE o.course_id = courses.course_id AND o.deleted_at IS NOT NULL)"))
+                        ->on('orders.created_at', '=', \DB::raw("(SELECT MIN(o.created_at) FROM orders o WHERE o.course_id = courses.course_id AND o.deleted_at IS NULL)"))
                         ->whereNotNull('orders.deleted_at');
                 })
                 ->groupBy('date')
@@ -161,15 +161,12 @@ class HomeController extends Controller
 
             $coursesResponded = Course::visible()
                 ->where('term_id', '=', $term->term_id)
-                ->where(function($query) use ($term){
-                    return $query
-                        ->whereRaw('UNIX_TIMESTAMP(courses.no_book_marked) != 0 OR (SELECT COUNT(*) FROM orders where orders.course_id = courses.course_id and orders.deleted_at IS NOT NULL) > 0');
-                })
-
+                ->whereRaw('(courses.no_book_marked IS NOT NULL
+                        OR (SELECT 1 FROM orders WHERE orders.course_id = courses.course_id and orders.deleted_at IS NULL LIMIT 1))')
                 ->count();
 
             $data[] = [
-                'name' => $term->displayName(),
+                'name' => $term->display_name,
                 'responded' => $coursesResponded,
                 'total' => $courseCount,
                 'percent' => intval($coursesResponded/$courseCount*100),
@@ -189,7 +186,7 @@ class HomeController extends Controller
                 $join
                     ->on('orders.course_id', '=', 'courses.course_id')
                     ->on('courses.no_book_marked', 'IS', \DB::raw('NULL'))
-                    ->whereNotNull('orders.deleted_at');
+                    ->whereNull('orders.deleted_at');
             })
             ->groupBy('date')
             ->orderBy('date')

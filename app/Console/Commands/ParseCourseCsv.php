@@ -76,7 +76,11 @@ class ParseCourseCsv extends Command
         $term = Term::where([
             'term_number' => $this->argument('termNumber'),
             'year' => $this->argument('year')
-        ])->firstOrFail();
+        ])->first();
+
+        if ($term == null){
+            echo "Skipping " . $this->argument('file') . " because the term was not found in the database.\n";
+        }
 
         $numParsed = 0;
 
@@ -93,52 +97,53 @@ class ParseCourseCsv extends Command
             $prof = $csv[19];
             $title = $csv[7];
 
+            if (in_array($courseNumber, $this->ignoredNumbers))
+                continue;
+
             if (!is_numeric($csv[18])) {
                 // Check the XL Remaining - some courses are messed up and are missing a column)
-                echo "Skipped $dept $courseNumber-$section: $title (Professor: $prof) due to probably wrong professor name.\n";
+                // in these cases, the professor will be in column 18 instead of 19.
+                $prof = $csv[18];
             }
-            else if (!in_array($courseNumber, $this->ignoredNumbers))
-            {
-                $numParsed++;
+            $numParsed++;
 
-                $title = strtr($title, $this->title_transforms_pre);
-                $title = title_case($title);
-                $title = strtr($title, $this->title_transforms_post);
+            $title = strtr($title, $this->title_transforms_pre);
+            $title = title_case($title);
+            $title = strtr($title, $this->title_transforms_post);
 
-                $prof = str_replace(" (P)", "", $prof);
-                $prof = explode(",", $prof)[0];
-                $prof = trim($prof);
-                $profNames = explode(" ", $prof);
+            $prof = str_replace(" (P)", "", $prof);
+            $prof = explode(",", $prof)[0];
+            $prof = trim($prof);
+            $profNames = explode(" ", $prof);
 
-                $fake_net_id = camel_case($prof);
-                $fake_net_id = strtr($fake_net_id, $this->user_transforms);
+            $fake_net_id = camel_case($prof);
+            $fake_net_id = strtr($fake_net_id, $this->user_transforms);
 
-                // TODO: this isn't how we're going to seed users.
-                // Or courses for that matter. This whole file exists only
-                // so that we can get the MBS parsing done.
-                if ($profNames[0] == 'TBA')
-                    $user = null;
-                else{
-                    $user = User::firstOrNew(['net_id' => $fake_net_id]);
-                    $user->first_name = $profNames[0];
-                    $user->last_name = $profNames[count($profNames) - 1];
-                    $user->save();
-                }
-
-                // In particular, this is definitely only for testing.
-                // In reality, only manager-type users need departments assigned.
-                // $user->departments()->updateOrCreate(['department' => $dept]);
-
-
-                $course = new Course;
-                $course->department = $dept;
-                $course->course_number = $courseNumber;
-                $course->course_section = $section;
-                $course->course_name = $title;
-                $course->user_id = $user ? $user->user_id : null;
-                $course->term_id = $term->term_id;
-                $course->save();
+            // TODO: this isn't how we're going to seed users.
+            // Or courses for that matter. This whole file exists only
+            // so that we can get the MBS parsing done.
+            if ($profNames[0] == 'TBA')
+                $user = null;
+            else{
+                $user = User::firstOrNew(['net_id' => $fake_net_id]);
+                $user->first_name = $profNames[0];
+                $user->last_name = $profNames[count($profNames) - 1];
+                $user->save();
             }
+
+            // In particular, this is definitely only for testing.
+            // In reality, only manager-type users need departments assigned.
+            // $user->departments()->updateOrCreate(['department' => $dept]);
+
+
+            $course = new Course;
+            $course->department = $dept;
+            $course->course_number = $courseNumber;
+            $course->course_section = $section;
+            $course->course_name = $title;
+            $course->user_id = $user ? $user->user_id : null;
+            $course->term_id = $term->term_id;
+            $course->save();
         }
 
         echo "Parsed $numParsed courses from Eaglenet csv.\n";

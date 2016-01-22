@@ -19,31 +19,23 @@ class HistoricalDataSeeder extends Seeder
             'last_name' => "Data",
         ]);
 
-        if (config("app.env") == 'production'){
-            $eaglenetFiles = [
-                ["Winter", 2012],
-                ["Spring", 2012],
-                ["Summer", 2015],
-                ["Fall", 2013],
-                ["Fall", 2014],
-                ["Fall", 2015],
-                ["Winter", 2013],
-                ["Winter", 2014],
-                ["Winter", 2015],
-                ["Winter", 2016],
-                ["Spring", 2013],
-                ["Spring", 2014],
-                ["Spring", 2015],
-                ["Spring", 2016],
-                ["Spring Semester", 2016],
-            ];
-        } else {
-            $eaglenetFiles = [
-                ["Winter", 2016],
-                ["Spring", 2016],
-                ["Spring Semester", 2016],
-            ];
-        }
+        $eaglenetFiles = [
+            ["Winter", 2012],
+            ["Spring", 2012],
+           //  ["Summer", 2015],
+            ["Fall", 2013],
+            ["Fall", 2014],
+            ["Fall", 2015],
+            ["Winter", 2013],
+            ["Winter", 2014],
+            ["Winter", 2015],
+            ["Winter", 2016],
+            ["Spring", 2013],
+            ["Spring", 2014],
+            ["Spring", 2015],
+            ["Spring", 2016],
+            ["Spring Semester", 2016],
+        ];
 
         foreach ($eaglenetFiles as $fileInfo) {
             $this->command->line("Parsing eaglenet $fileInfo[0] $fileInfo[1]...");

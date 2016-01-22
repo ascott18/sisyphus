@@ -64,10 +64,16 @@ EOL;
             if ($term[1] == "S") $termName = "Spring";
             $termNumber = array_search($termName, Term::$termNumbers);
             $dbTerm = Term::where(['term_number' => $termNumber, 'year' => "20$term[2]"])->first();
+
             if ($dbTerm == null){
                 echo("Skipping $termName $term[2] because it wasn't in the database\n");
                 continue;
             }
+
+            $semesterTermName = $termName == "Winter" ? "Spring" : $termName;
+            $termNumber = array_search("$semesterTermName Semester", Term::$termNumbers);
+            $dbSemesterTerm = Term::where(['term_number' => $termNumber, 'year' => "20$term[2]"])->first();
+
             echo ("Parsing $dbTerm->display_name\n");
             $termPeriodDayLength = $dbTerm->order_due_date->diffInDays($dbTerm->order_start_date);
 
@@ -210,7 +216,10 @@ EOL;
 
             // Make sure we found every book that the report said was in there.
             // TODO: figure out why this doesn't work
-            // if (!assert($booksExpected == $booksFound, "Didn't get all books. Expected $booksExpected. Got $booksFound")) exit;
+            if ($booksExpected != $booksFound){
+                echo "Didn't get all books. Expected $booksExpected. Got $booksFound.\n";
+                // exit;
+            }
 
 
             $bookNumProcessing = 0;
@@ -233,16 +242,25 @@ EOL;
                 $department = $deptCourses[1];
 
                 foreach ($courseNumbers as $courseNumber) {
-                    $courseNumber = trim($courseNumber);
 
                     $sectionData = $course[$courseRegGroups['Section']];
+                    $term = $dbTerm;
+                    if (substr($courseNumber, -1) == "S"){
+                        $term = $dbSemesterTerm;
+                        if ($term == null) {
+                            echo "Couldn't get semester term of $dbTerm->display_name for $department $courseNumber\n";
+                            continue;
+                        }
+                        $courseNumber = rtrim($courseNumber, "S");
+                    }
+
 
                     // If the section number is listed as "ALL" (quite common in the data),
                     // pull all of the section numbers that we have in the database for this course.
                     $sectionNumbers = null;
                     if (trim($sectionData) == "ALL") {
                         $sectionNumbers = Course::where([
-                            'term_id' => $dbTerm->term_id,
+                            'term_id' => $term->term_id,
                             'department' => $deptCourses[1],
                             'course_number' => $courseNumber,
                         ])->lists('course_section');
@@ -257,7 +275,7 @@ EOL;
                         $sectionNumber = trim($sectionNumber);
 
                         $dbCourse = Course::where([
-                            'term_id' => $dbTerm->term_id,
+                            'term_id' => $term->term_id,
                             'department' => $department,
                             'course_number' => $courseNumber,
                             'course_section' => $sectionNumber,
@@ -272,7 +290,7 @@ EOL;
                         if ($course['noText']) {
                             $dbCourse->no_book = true;
                             // TODO: this date is fake data.
-                            $dbCourse->no_book_marked = $dbTerm->order_start_date->copy()->addDays(rand(0, $termPeriodDayLength));
+                            $dbCourse->no_book_marked = $term->order_start_date->copy()->addDays(rand(0, $termPeriodDayLength));
                             $dbCourse->save();
                         }
 
@@ -317,7 +335,7 @@ EOL;
 
 
                             // TODO: this date is fake data.
-                            $dbOrder->created_at = $dbTerm->order_start_date->copy()->addDays(rand(0, $termPeriodDayLength));
+                            $dbOrder->created_at = $term->order_start_date->copy()->addDays(rand(0, $termPeriodDayLength));
                             $dbOrder->save();
                         }
                     }
@@ -326,12 +344,12 @@ EOL;
 
             echo("MBS parse complete.\n");
             echo("$coursesNotFound courses were not found in the database.\n");
-            echo("$bookNumProcessing books were saved.\n");
+            echo("$bookNumProcessing books were saved.\n\n");
         }
 
     }
 
-    public function decipherNumbers($in)
+    public static function decipherNumbers($in)
     {
         /* Parses the following forms into every number that they represent:
             123 - 125
@@ -345,7 +363,7 @@ EOL;
             102--104
         */
 
-        $chunks = preg_split("|;,+|", $in);
+        $chunks = preg_split("|[;,+.&/]|", $in);
 
         $out = [];
 
@@ -362,14 +380,8 @@ EOL;
 
                 $out = array_merge($out, range($extremes[0], $extremes[1]));
             }
-            elseif (preg_match("/\\d+([A-Z]?)&\\d+\\1/", $noSpace)){
-                $out = array_merge($out, explode("&", $noSpace));
-            }
-            elseif (preg_match("/\\d+([A-Z]?)\\/\\d+\\1/", $noSpace)){
-                $out = array_merge($out, explode("/", $noSpace));
-            }
-            elseif (preg_match("/\\d+([A-Z]?)/", $chunk)){
-                $out[] = $chunk;
+            elseif (preg_match("/\\d+([A-Z]?)/", $noSpace)){
+                $out[] = $noSpace;
             }
         }
 
