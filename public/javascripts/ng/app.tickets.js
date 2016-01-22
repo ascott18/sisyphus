@@ -106,6 +106,8 @@ app.controller('TicketsIndexController', function($scope, $http) {
 
     this.displayed = [];
 
+    $scope.statuses = ["New", "Waiting", "In Progress", "Closed"];
+
     this.callServer = function callServer(tableState, ctrl) {
 
         ctrl1.isLoading = true;
@@ -123,8 +125,6 @@ app.controller('TicketsIndexController', function($scope, $http) {
             $scope.stCtrl.pipe();
             return;
         }
-
-        // TODO: nathan do this
 
         //var pagination = tableState.pagination;
         //var start = pagination.start || 0;
