@@ -34,7 +34,7 @@ class ParseMBS extends Command
         $data = file_get_contents ( $this->argument('file') );
 
         $pageHeaderReg = <<<'EOL'
-|\d/\d\d/\d\d  Store:   .*?(Dept.*?Actual).*?(Author.*?Used).*? --     ---    ----|s
+|[ \d]\d/\d\d/\d\d  Store:   .*?(Dept.*?Actual).*?(Author.*?Used).*? --     ---    ----|s
 EOL;
 
         $docFooterReg = <<<'EOL'
@@ -218,7 +218,7 @@ EOL;
             // TODO: figure out why this doesn't work
             if ($booksExpected != $booksFound){
                 echo "Didn't get all books. Expected $booksExpected. Got $booksFound.\n";
-                // exit;
+                exit;
             }
 
 

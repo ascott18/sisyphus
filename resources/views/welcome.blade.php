@@ -142,6 +142,9 @@
     {{--<script src="javascripts/plugins/morris/morris-data.js"></script>--}}
 
     <script>
+
+    var app = angular.module('sisyphus', ['sisyphus.helpers']);
+
     $(function() {
         @foreach($chartData as $term)
             var data = {!! json_encode($term['data']) !!}

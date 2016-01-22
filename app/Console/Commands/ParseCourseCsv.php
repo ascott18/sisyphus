@@ -80,6 +80,7 @@ class ParseCourseCsv extends Command
 
         if ($term == null){
             echo "Skipping " . $this->argument('file') . " because the term was not found in the database.\n";
+            return;
         }
 
         $numParsed = 0;
