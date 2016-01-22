@@ -62,26 +62,28 @@ class HomeController extends Controller
 
             $numChartsFound++;
 
-            $orderReport = Course::visible()->where('term_id', '=', $term->term_id)
+            $orderReport = Course::visible()
+                ->where('term_id', '=', $term->term_id)
                 ->join('orders', function ($join) {
                     $join
                         ->on('orders.course_id', '=', 'courses.course_id')
                         ->on('orders.created_at', '=', \DB::raw("(SELECT MIN(o.created_at) FROM orders o WHERE o.course_id = courses.course_id AND o.deleted_at IS NULL)"))
-                        ->whereNotNull('orders.deleted_at');
+                        ->whereNull('orders.deleted_at');
                 })
+                ->select(\DB::raw('count(*) as count, DATE(orders.created_at) as date'))
                 ->groupBy('date')
                 ->orderBy('date')
-                ->select(\DB::raw('count(*) as count, DATE(orders.created_at) as date'))
                 ->get();
 
             $ordersByDate = static::getAccumulationsFromReport($orderReport);
 
 
-            $noBookReport = Course::visible()->where('term_id', '=', $term->term_id)
-                ->whereRaw('UNIX_TIMESTAMP(courses.no_book_marked) != 0')
+            $noBookReport = Course::visible()
+                ->where('term_id', '=', $term->term_id)
+                ->whereNotNull('courses.no_book_marked')
+                ->select(\DB::raw('count(courses.no_book_marked) as count, DATE(courses.no_book_marked) as date'))
                 ->groupBy('date')
                 ->orderBy('date')
-                ->select(\DB::raw('count(courses.no_book_marked) as count, DATE(courses.no_book_marked) as date'))
                 ->get();
 
             $noBookByDate = static::getAccumulationsFromReport($noBookReport);
