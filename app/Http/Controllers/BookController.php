@@ -32,7 +32,7 @@ class BookController extends Controller
             $query = $query->where('title', 'LIKE', '%'.$request->input('title').'%');
         if($request->input('author')) {
             $query->join('authors', function($join) use ($request) {
-                $join->on('book.sbook_id', '=', 'author.book_id')
+                $join->on('books.book_id', '=', 'author.book_id')
                     ->where('author.name', '=', '%'.$request->input('author').'%');
             });
         }

@@ -370,4 +370,56 @@ class UserController extends Controller
 
         return ['success' => true];
     }
+
+
+
+
+    public static $UserValidation = [
+        'user.first_name' => 'required|string',
+        'user.last_name' => 'required|string',
+        'user.email' => 'required|string|unique:users,email',
+    ];
+
+
+    public function getCreate()
+    {
+        $this->authorize("manage-users");
+
+        return view('users.edit', ['panelTitle' => 'Create User']);
+    }
+
+    public function postCreate(Request $request)
+    {
+        $this->authorize("manage-users");
+        $this->validate($request, static::$UserValidation, ['user.email.unique' => 'That Email already belongs to a user.']);
+        $this->validate($request, ['user.net_id' => 'required|string|unique:users,net_id'], ['user.net_id.unique' => 'That NetID already belongs to a user.']);
+
+        $user = new User($request->except('user.net_id', 'user.user_id'));
+        $user->net_id = $request->get('user.net_id');
+        $user->save();
+
+        return redirect('users');
+    }
+
+    public function getEdit($user_id)
+    {
+        $this->authorize("manage-users");
+
+        $user = User::findOrFail($user_id);
+
+        return view('users.edit', ['panelTitle' => 'Edit User', 'user' => $user]);
+    }
+
+    public function postEdit(Request $request)
+    {
+        $this->authorize("manage-users");
+        $this->validate($request, static::$UserValidation);
+
+        $user = $request->get('user');
+
+        $dbUser = User::findOrFail($user->user_id);
+        $dbUser->update($request->except('user.user_id'));
+
+        return redirect('users');
+    }
 }
