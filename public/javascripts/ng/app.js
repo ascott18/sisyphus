@@ -54,7 +54,12 @@ app.filter('zpad', function() {
         input = input.toString();
         if(input.length >= n)
             return input;
-        var zeros = "0".repeat(n);
+
+        // string.prototype.repeat doesn't work in IE - its part of ecmascript6.
+        var zeros = "";
+        while (n-- > 0){
+            zeros += "0";
+        }
         return (zeros + input).slice(-1 * n)
     };
 });
