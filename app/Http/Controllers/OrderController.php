@@ -75,6 +75,142 @@ class OrderController extends Controller
         return view('orders.index', ['openTerms' => $openTerms, 'courses' => $courses, 'course' => $course]);
     }
 
+    /** GET: /orders/list
+     *
+     * @param Request $request
+     * @return \Illuminate\View\View
+     */
+    public function getList(Request $request) {
+        $this->authorize("all");
+
+        $user = $request->user();
+
+        $currentTermIds = Term::currentTerms()->pluck('term_id');
+        $userTermIds = Course::visible($user)->distinct()->pluck('term_id');
+
+        $allRelevantTermIds = $currentTermIds->merge($userTermIds)->unique();
+
+        $terms = Term::whereIn('term_id', $allRelevantTermIds)
+            ->orderBy('term_id', 'DESC')
+            ->get();
+
+        return view('orders.list',['terms' => $terms]);
+    }
+
+    /**
+     * Build the search query for the books controller
+     *
+     * @param \Illuminate\Database\Eloquent\Builder
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    private function buildListSearchQuery($request, $query) {
+        if($request->input('title'))
+            $query = $query->where('title', 'LIKE', '%'.$request->input('title').'%');
+        if($request->input('section')) {
+            $searchArray = preg_split("/[\s-]/", $request->input('section'));
+            foreach($searchArray as $key => $field) {       // strip leading zeros from search terms
+                $searchArray[$key] = ltrim($field, '0');
+            }
+            if(count($searchArray) == 2) {
+                // we need to use an anonymous function so the subquery does not override the book_id limit from parent
+                $query = $query->where(function($sQuery) use ($searchArray){
+                    return $sQuery->where('department', 'LIKE', '%'.$searchArray[0].'%')
+                        ->where('course_number', 'LIKE', '%'.$searchArray[1].'%')
+                        ->orWhere('course_number', 'LIKE', '%'.$searchArray[0].'%')
+                        ->where('course_section', 'LIKE', '%'.$searchArray[1].'%')
+                        ->orWhere('department', 'LIKE', '%'.$searchArray[0].'%')
+                        ->where('course_section', 'LIKE', '%'.$searchArray[1].'%');
+                });
+            } elseif(count($searchArray) == 3) {
+                // this does not suffer the same problem but should be in a subquery like it is for proper formatting
+                $query->where(function($sQuery) use ($searchArray) {
+                    return $sQuery->where('department', 'LIKE', '%'.$searchArray[0].'%')
+                        ->where('course_number', 'LIKE', '%'.$searchArray[1].'%')
+                        ->where('course_section', 'LIKE', '%'.$searchArray[2].'%');
+                });
+            } else {
+                // we need to use an anonymous function so the subquery does not override the book_id limit from parent
+                for($i=0; $i<count($searchArray); $i++) {
+                    $query = $query->where(function($sQuery) use ($searchArray, $i) {
+                        return $sQuery->where('department', 'LIKE', '%'.$searchArray[$i].'%')
+                            ->orWhere('course_number', 'LIKE', '%'.$searchArray[$i].'%')
+                            ->orWhere('course_section', 'LIKE', '%'.$searchArray[$i].'%');
+                    });
+                }
+            }
+        }
+
+        if($request->input('course_name'))
+            $query = $query->where('course_name', 'LIKE', '%'.$request->input('course_name').'%');
+
+        return $query;
+    }
+
+    /**
+     * Build the sort query for the book detail list
+     *
+     * @param \Illuminate\Database\Eloquent\Builder
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    private function buildListSortQuery($request, $query) {
+        if($request->input('sort'))
+            if($request->input('sort') == "section") { // special case because of joined tables
+                if ($request->input('dir')) {
+                    $query = $query->orderBy("department", "desc")
+                        ->orderBy("course_number", "desc")
+                        ->orderBy("course_section", "desc");
+                } else {
+                    $query = $query->orderBy("department")
+                        ->orderBy("course_number")
+                        ->orderBy("course_section");
+                }
+            } else if($request->input('sort') == "created_at") { // created at needed a special case due to ambiguity
+                if ($request->input('dir'))
+                    $query = $query->orderBy('orders.created_at', "desc");
+                else
+                    $query = $query->orderBy('orders.created_at');
+            } else {
+                if ($request->input('dir'))
+                    $query = $query->orderBy($request->input('sort'), "desc");
+                else
+                    $query = $query->orderBy($request->input('sort'));
+            }
+
+        return $query;
+    }
+
+    /** GET: /orders/order-list?page={}&{sort=}&{dir=}
+     * searches the order list
+     *
+     * @param \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getOrderList(Request $request)
+    {
+        $this->authorize("all"); // TODO: fix authorize permission
+
+        $query = Course::visible($request->user());
+
+        $query = $query->join('orders', 'courses.course_id', '=', 'orders.course_id'); // join before to get order department
+
+        $query = $query->join('books', 'orders.book_id', '=', 'books.book_id'); // get the books
+
+        if($request->input('term_id')) { // filter by term
+            $query = $query->where('term_id', '=', $request->input('term_id'));
+        }
+
+        $query = $this->buildListSearchQuery($request, $query); // build the search query
+        $query = $this->buildListSortQuery($request, $query); // build the sort query
+
+        $query->with("term"); // easily get the term name
+
+        $orders = $query->paginate(10);
+
+        return response()->json($orders);
+    }
+
     public function postNoBook(Request $request)
     {
         $course_id = $request->get("course_id");

@@ -29,6 +29,8 @@ class Ticket extends Model
      */
     protected $primaryKey = 'ticket_id';
 
+    protected $guarded = array();
+
 
     public function user()
     {

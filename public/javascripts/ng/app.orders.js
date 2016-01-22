@@ -1,5 +1,5 @@
 
-var app = angular.module('sisyphus', ['sisyphus.helpers', 'sisyphus.helpers.isbnHyphenate']);
+var app = angular.module('sisyphus', ['sisyphus.helpers', 'sisyphus.helpers.isbnHyphenate', 'smart-table']);
 
 stripHyphens = function(isbn13) {
     return isbn13.replace(/-/g, "");
@@ -86,8 +86,76 @@ app.directive('bookDetails', function($http) {
    }
 });
 
-app.controller('OrdersController', ['$scope', '$http', 'CartService', '$filter',
-    function($scope, $http, CartService, $filter){
+app.controller('OrdersListController', function($scope, $http) {
+    var ctrl = this;
+    $scope.stCtrl=null;
+    $scope.stTableRef=null;
+
+    $scope.updateTerm=function()
+    {
+        if($scope.stCtrl)
+            $scope.stCtrl.pipe();
+
+        if($scope.stTableRef)
+            $scope.stTableRef.pagination.start = 0;
+    };
+
+    this.displayed = [];
+
+    this.callServer = function callServer(tableState, ctrl1) {
+        ctrl.isLoading = true;
+
+        if(!$scope.stCtrl&&ctrl1)
+        {
+            $scope.stCtrl=ctrl1;
+        }
+
+        if(!$scope.stTableRef&&tableState)
+        {
+            $scope.stTableRef=tableState;
+        }
+
+        var pagination = tableState.pagination;
+        var start = pagination.start || 0;
+        var end = pagination.number || 10;
+        var page = (start/end)+1;
+
+        var getRequestString = '/requests/order-list?page=' + page;                                         // book list uri
+
+        if(tableState.sort.predicate) {
+            getRequestString += '&sort=' + encodeURIComponent(tableState.sort.predicate);               // build search
+            if(tableState.sort.reverse)
+                getRequestString += '&dir=desc';
+        }
+
+        if($scope.TermSelected!="")
+        {
+            getRequestString+= '&term_id=' + $scope.TermSelected;
+        }
+
+
+        if(tableState.search.predicateObject) {
+            var predicateObject = tableState.search.predicateObject;
+            if(predicateObject.title)
+                getRequestString += '&title=' + encodeURIComponent(predicateObject.title);          // search title
+            if(predicateObject.section)
+                getRequestString += '&section=' + encodeURIComponent(predicateObject.section);       // search section
+        }
+
+        $http.get(getRequestString).then(
+            function success(response) {
+                tableState.pagination.numberOfPages = response.data.last_page;                          // update number of pages with what laravel gives back
+                tableState.pagination.number = response.data.per_page;                                  // update how many per page based on laravel response
+                ctrl.displayed = response.data.data;                                                    // get return data
+                ctrl.isLoading=false;
+            }
+        );
+
+    }
+});
+
+app.controller('OrdersController', ['$scope', '$http', 'CartService',
+    function($scope, $http, CartService){
 
     $scope.STAGE_SELECT_COURSE = 1;
     $scope.STAGE_SELECT_BOOKS = 2;

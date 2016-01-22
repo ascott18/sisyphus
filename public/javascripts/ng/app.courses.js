@@ -60,6 +60,8 @@ app.controller('CoursesIndexController', function($scope, $http) {
                 getRequestString += '&section=' + encodeURIComponent(predicateObject.section);     // search for section
             if(predicateObject.name)
                 getRequestString += '&name=' + encodeURIComponent(predicateObject.name);           // search for name
+            if(predicateObject.professor)
+                getRequestString += '&professor=' + encodeURIComponent(predicateObject.professor); // search for professor
         }
 
 

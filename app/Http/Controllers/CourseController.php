@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\User;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Models\Term;
 use Illuminate\Database\Query\Builder;
@@ -187,6 +188,22 @@ class CourseController extends Controller
         if($request->input('name'))
             $query = $query->where('course_name', 'LIKE', '%'.$request->input('name').'%');
 
+        if($request->input('professor')) {
+            $query = $query->where(function($sQuery) use ($request) {
+                $sQuery = $sQuery->where('users.first_name', 'LIKE', '%'.$request->input('professor').'%')
+                    ->orWhere('users.last_name', 'LIKE', '%'.$request->input('professor').'%');
+
+                $searchArray = preg_split("/[\s,]+/", $request->input('professor'));
+                if(count($searchArray) == 2) {
+                    $sQuery = $sQuery->orWhere('users.first_name', 'LIKE', '%'.$searchArray[0].'%')
+                        ->where('users.last_name', 'LIKE', '%'.$searchArray[1].'%')
+                        ->orWhere('users.last_name', 'LIKE', '%'.$searchArray[0].'%')
+                        ->where('users.first_name', 'LIKE', '%'.$searchArray[1].'%');
+                }
+
+                return $sQuery;
+            });
+        }
 
         return $query;
     }
@@ -212,6 +229,14 @@ class CourseController extends Controller
                     $query = $query->orderBy("course_number");
                     $query = $query->orderBy("course_section");
                 }
+            } else if($request->input('sort') == "professor") {
+                if($request->input('dir')) {
+                    $query = $query->orderBy('users.last_name', "desc");
+                    $query = $query->orderBy('users.first_name', "desc");
+                } else {
+                    $query = $query->orderBy('users.last_name');
+                    $query = $query->orderBy('users.first_name');
+                }
             } else {
                 if ($request->input('dir'))
                     $query = $query->orderBy($request->input('sort'), "desc");
@@ -225,20 +250,6 @@ class CourseController extends Controller
                     $query = $query->orderBy("course_section");
                 }
             }
-        }
-
-        return $query;
-    }
-
-    protected static function buildFilteredCourseQuery($query, User $user){
-        if ($user->may('view-dept-courses'))
-        {
-            $departments = $user->departments()->lists('department');
-            $query = $query->whereIn('department', $departments);
-        }
-        elseif (!$user->may('view-all-courses'))
-        {
-            $query = $query->where('user_id', $user->user_id);
         }
 
         return $query;
@@ -260,11 +271,26 @@ class CourseController extends Controller
             $query = $query->where('term_id', '=', $request->input('term_id'));
         }
 
+        if($request->input('sort') == "professor" || $request->input('professor')) {
+            $query->join('users','users.user_id', '=', 'courses.user_id');
+        }
+
         $query = $this->buildSearchQuery($request, $query);
         $query = $this->buildSortQuery($request, $query);
         $query = $query->with("term");
+        $query = $query->with("user");
+
 
         $courses = $query->paginate(10);
+
+        foreach ($courses as $course) {
+            $course->term->term_name = $course->term->termName();
+
+
+            $course->order_count = Order::query()
+                ->where('course_id', '=', $course->course_id)
+                ->count();
+        }
 
         return response()->json($courses);
     }

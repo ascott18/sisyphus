@@ -35,6 +35,8 @@ app.controller('BooksController', function($scope, $http) {
             var predicateObject = tableState.search.predicateObject;
             if(predicateObject.title)
                 getRequestString += '&title=' + encodeURIComponent(predicateObject.title);              // search title
+            if(predicateObject.author)
+                getRequestString += '&author=' + encodeURIComponent(predicateObject.author);            // search authors
             if(predicateObject.publisher)
                 getRequestString += '&publisher=' + encodeURIComponent(predicateObject.publisher);      // search publisher
             if(predicateObject.isbn13)

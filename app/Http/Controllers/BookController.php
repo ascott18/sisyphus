@@ -30,6 +30,12 @@ class BookController extends Controller
     private function buildBookSearchQuery($request, $query) {
         if($request->input('title'))
             $query = $query->where('title', 'LIKE', '%'.$request->input('title').'%');
+        if($request->input('author')) {
+            $query->join('authors', function($join) use ($request) {
+                $join->on('book.sbook_id', '=', 'author.book_id')
+                    ->where('author.name', '=', '%'.$request->input('author').'%');
+            });
+        }
         if($request->input('publisher'))
             $query = $query->where('publisher', 'LIKE', '%'.$request->input('publisher').'%');
         if($request->input('isbn13')) {

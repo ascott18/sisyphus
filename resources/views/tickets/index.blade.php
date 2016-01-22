@@ -38,7 +38,13 @@
                                     <input type="text" class="form-control" placeholder="Search..." st-search="section"/>
                                 </th>
                                 <th>
+                                    <select class="form-control"  ng-init="TermSelected = ''" ng-model="TermSelected" ng-change="updateTerm()">
+                                        <option value="">All Terms</option>
+                                            <option ng-repeat="status in statuses" value="status">
+                                                [[ status ]]
+                                            </option>
 
+                                    </select>
                                 </th>
                                 <th>
                                     <input type="text" class="form-control" placeholder="Search..." st-search="name"/>
