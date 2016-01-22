@@ -373,9 +373,9 @@ EOL;
             if (preg_match("/\\d+--?\\d+/", $noSpace)){
                 $extremes = preg_split("|--?|", $noSpace);
 
-                if (intval($extremes[0]) > intval($extremes[1]) || $extremes[1] - $extremes[0] > 10){
+                if (intval($extremes[0]) > intval($extremes[1]) || $extremes[1] - $extremes[0] > 35){
                     echo "Skipping range $noSpace from $in because it looks wrong. Using first value instead.";
-                    $out = $extremes[0];
+                    $out[] = $extremes[0];
                 }
                 else{
                     $out = array_merge($out, range($extremes[0], $extremes[1]));
