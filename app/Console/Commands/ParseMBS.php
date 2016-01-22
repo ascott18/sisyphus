@@ -370,15 +370,16 @@ EOL;
         foreach ($chunks as $chunk) {
             $noSpace = str_replace(" ", "", $chunk);
 
-            if (preg_match("/\\d+-\\d+/", $noSpace)) {
-                $extremes = explode("-", $noSpace);
+            if (preg_match("/\\d+--?\\d+/", $noSpace)){
+                $extremes = preg_split("|--?|", $noSpace);
 
-                $out = array_merge($out, range($extremes[0], $extremes[1]));
-            }
-            elseif (preg_match("/\\d+--\\d+/", $noSpace)){
-                $extremes = explode("--", $noSpace);
-
-                $out = array_merge($out, range($extremes[0], $extremes[1]));
+                if (intval($extremes[0]) > intval($extremes[1]) || $extremes[1] - $extremes[0] > 10){
+                    echo "Skipping range $noSpace from $in because it looks wrong. Using first value instead.";
+                    $out = $extremes[0];
+                }
+                else{
+                    $out = array_merge($out, range($extremes[0], $extremes[1]));
+                }
             }
             elseif (preg_match("/\\d+([A-Z]?)/", $noSpace)){
                 $out[] = $noSpace;
