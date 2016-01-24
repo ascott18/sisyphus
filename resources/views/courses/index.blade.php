@@ -25,7 +25,7 @@
                                 <th width="170px" st-sort="section">Section</th>
                                 <th st-sort="course_name">Name</th>
                                 <th st-sort="professor">Professor</th>
-                                <th>Resoponded</th>
+                                <th>Responded</th>
                                 <th width="1%"></th>
                             </tr>
                             <tr>
