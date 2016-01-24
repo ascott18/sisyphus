@@ -1,7 +1,7 @@
 body {
     padding-bottom: 20px;
     margin-top: 50px;
-    background-color: #fff
+    background-color: #F8F8F8
 }
 
 
@@ -14,7 +14,8 @@ body {
     padding-top: 0;
 }
 
-.table td > .btn {
+.table td > .btn,
+.table td > form > .btn {
     margin: -5px 0;
 }
 
@@ -30,8 +31,45 @@ body {
     font-size: 20px;
 }
 
+
+.panel-list .panel-list-item {
+    border-top: 1px solid #DDD;
+    border-bottom: 1px solid #DDD;
+    margin-top: -1px;
+    padding: 10px;
+    margin-left: -15px;
+    margin-right: -15px;
+}
+
+.panel-list .panel-list-item:first-of-type {
+    margin-top: -16px;
+}
+.panel-list .panel-list-item:last-child {
+    margin-bottom: -15px;
+    border-bottom: 0;
+}
+
+.panel-list .panel-list-item.active {
+    z-index: 2;
+    color: #ffffff;
+    background-color: #428bca;
+    border-color: #428bca;
+}
+
+.panel-list .panel-list-item.active .text-muted {
+    color: #cccccc;
+}
+
 .navbar {
     background-color: #8b001d
+}
+
+.nav-tabs li a {
+    line-height: 1.1;
+}
+
+a[role="tab"]{
+    outline: 0;
 }
 
 .no-pad-bottom {

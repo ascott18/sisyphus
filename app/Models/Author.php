@@ -5,9 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property int author_id
- * @property int book_id
- * @property string name
+ * App\Models\Author
+ *
+ * @property-read \App\Models\Book $book
+ * @property integer $author_id
+ * @property integer $book_id
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property string $name
  */
 class Author extends Model
 {
@@ -24,7 +29,7 @@ class Author extends Model
      *
      * @var array
      */
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'book_id'];
 
     public function book()
     {

@@ -9,14 +9,14 @@
         $hidden = false;
         if ($type == 'hidden') {$type = 'text'; $hidden = true;}
     ?>
-    @if(!$hidden)<label for="{{$name}}">{{ $label }}</label>
+    @if(!$hidden && $label)<label for="{{$name}}">{{ $label }}</label>
     @endif
     <input type="{{$type}}"
            @if ($hidden) style="display: none" @endif
            class="form-control"
            name="{{ $nameIndexer }}"
            id="{{ $name }}"
-           placeholder="{{ $label }}"
+           @if ($label) placeholder="{{ $label }}" @endif
            {{$type == 'hidden' ? 'ng-value' : 'ng-model'}}="{{ $name }}"
             @foreach($attrs as $attr => $value)
                 {{$attr}}="{{$value}}"
@@ -25,6 +25,9 @@
 
     <div ng-show="form.$submitted || form['{{$nameIndexerEscaped}}'].$touched">
         <span class="text-danger" ng-show="form['{{$nameIndexerEscaped}}'].$error.required">{{$label}} is required.</span>
-        <span class="text-danger" ng-show="form['{{$nameIndexerEscaped}}'].$error.pattern">{{$label}} is invalid.</span>
+        <span class="text-danger" ng-show="form['{{$nameIndexerEscaped}}'].$error.pattern">{{$label}} {{ isset($pattern) ? $pattern : 'is invalid'}}.</span>
+        @if ($type == 'email')
+            <span class="text-danger" ng-show="form['{{$nameIndexerEscaped}}'].$error.email">{{$label}} is not a valid email address.</span>
+        @endif
     </div>
 </div>

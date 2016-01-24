@@ -1,11 +1,14 @@
 
 var app = angular.module('sisyphus.helpers', ['smart-table']);
 
+// Use square braces with angular since curly braces interfere with laravel blade.
 app.config(function($interpolateProvider) {
     $interpolateProvider.startSymbol('[[');
     $interpolateProvider.endSymbol(']]');
 });
 
+// Provide the correct headers with AJAX requests so that Laravel can respond
+// with errors formatted as json.
 app.config(function($httpProvider) {
     $httpProvider.defaults.headers.common = { 'X-Requested-With' : 'XMLHttpRequest' }
 });
@@ -43,17 +46,25 @@ app.filter('filterSplit', function($filter){
     };
 });
 
+// Pads a string (or number) with zeroes if it is less than the given length.
 app.filter('zpad', function() {
     return function(input, n) {
         if(input === undefined)
             input = "";
+        input = input.toString();
         if(input.length >= n)
             return input;
-        var zeros = "0".repeat(n);
+
+        // string.prototype.repeat doesn't work in IE - its part of ecmascript6.
+        var zeros = "";
+        while (n-- > 0){
+            zeros += "0";
+        }
         return (zeros + input).slice(-1 * n)
     };
 });
 
+// Automatically adds text to an element when it doesn't have children.
 app.directive('emptyPlaceholder', ['$http',
     function($http){
        return {
@@ -92,15 +103,9 @@ app.directive('emptyPlaceholder', ['$http',
    }
 ]);
 
-app.directive('initData', function() {
-    return {
-        restrict: 'A',
-        link: function($scope, element, attrs) {
-            if ( attrs.ngBind !== undefined)
-            {
-                $scope[attrs.ngBind] = attrs.initdata ? attrs.initdata : element.text();
-            }
-        }
+app.filter('moment', function () {
+    return function (value, format) {
+        return moment(value).format(format);
     };
 });
 
@@ -110,9 +115,17 @@ function(){
         link: function (scope, element, attr) {
             var msg = attr.ngConfirmClickMessage || "Are you sure?";
             var clickAction = attr.ngConfirmClick;
-            element.bind('click',function (event) {
-                if ( window.confirm(msg) ) {
-                    scope.$eval(clickAction)
+            element.bind('click', function (event) {
+                var confirmed = window.confirm(msg);
+
+                if (confirmed)
+                {
+                    if (clickAction == 'submit'){
+                        $(element).parent('form').submit()
+                    }
+                    else{
+                        scope.$eval(clickAction);
+                    }
                 }
             });
         }
@@ -181,6 +194,7 @@ app.factory('RequestsErrorHandler', ['$q', '$rootScope', function($q, $rootScope
                 else if (rejection.data.response && rejection.data.response.message )
                 {
                     $rootScope.appErrors.push({
+                        title: "Error - " + rejection.data.response.statusName,
                         messages: [rejection.data.response.message]
                     });
                 }

@@ -14,7 +14,7 @@
 
 Route::controller('books', 'BookController');
 
-Route::controller('orders', 'OrderController');
+Route::controller('requests', 'OrderController');
 
 Route::controller('courses', 'CourseController');
 
@@ -23,6 +23,8 @@ Route::controller('messages', 'MessageController');
 Route::controller('terms', 'TermController');
 
 Route::controller('users', 'UserController');
+
+Route::controller('tickets', 'TicketController');
 
 Route::controller('/', 'HomeController');
 

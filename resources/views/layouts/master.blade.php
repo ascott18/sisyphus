@@ -6,7 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>@yield('page') - EWU Textbook Requests </title>
+    <title>
+        @if (array_key_exists('action', View::getSections()))
+            @yield('action')
+        @endif
+        @yield('page') - EWU Textbook Requests
+    </title>
 
     <!-- Bootstrap Core CSS-->
     <link href="/stylesheets/bootstrap.css" rel="stylesheet">
@@ -42,7 +47,7 @@
                 <div >
                     <img src="/images/logoWhite.svg" class="pull-left" >
 
-                    <h2>Textbook Orders
+                    <h2>Textbook Requests
                         @inject('auth', 'App\Providers\AuthServiceProvider')
                         @if ($auth->getIsDebuggingUnauthorizedAction())
                             <p style="position: absolute; font-size: 0.7em; width: 100%">
@@ -58,16 +63,18 @@
         <div class="collapse navbar-collapse navbar-ex1-collapse">
 
             <ul class="nav navbar-right top-nav">
-                <li >
-                    <span id="userName"><i class="fa fa-user"></i> Welcome, {{ Auth::user()->net_id }}! </span>
-                </li>
+                @if (Auth::user())
+                    <li >
+                        <span id="userName"><i class="fa fa-user"></i> Welcome, {{ Auth::user()->net_id }}! </span>
+                    </li>
+                @endif
             </ul>
 
             <!-- Sidebar Menu Items -->
             <ul class="nav navbar-nav side-nav">
                 <li><a href="/"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a></li>
                 <li><a href="/books"><i class="fa fa-fw fa-book"></i> Books</a></li>
-                <li><a href="/orders"><i class="fa fa-fw fa-shopping-cart"></i> Orders</a></li>
+                <li><a href="/requests"><i class="fa fa-fw fa-shopping-cart"></i> Requests</a></li>
                 @can('view-course-list')
                     <li><a href="/courses"><i class="fa fa-fw fa-university"></i> Courses</a></li>
                 @endcan
@@ -80,6 +87,7 @@
                 @can('manage-users')
                     <li><a href="/users"><i class="fa fa-fw fa-group"></i> Users</a></li>
                 @endcan
+                <li><a href="/tickets"><i class="fa fa-fw fa-life-ring"></i> Tickets</a></li>
 
                 {{--<li><a href="tables.html"><i class="fa fa-fw fa-table"></i> Tables</a></li>--}}
                 {{--<li><a href="forms.html"><i class="fa fa-fw fa-edit"></i> Forms</a></li>--}}
@@ -107,23 +115,41 @@
             @if (array_key_exists('area', View::getSections()))
             <div class="row">
                 <div class="col-lg-12">
-                    <h5 class="page-header text-muted">@yield('area') / @yield('page')
-                    </h5>
+
+                    <h4 class="page-header text-muted">
+                        @yield('area') /
+                        @if (array_key_exists('action', View::getSections()))
+                            @yield('action') /
+                        @endif
+                        @yield('page')
+                    </h4>
                 </div>
             </div>
+            @endif
+
+
+            @if (isset($errors) && count($errors) > 0)
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                    <button type="button" class="close" aria-label="Close" ng-click="appErrors.splice(appErrors.indexOf(error), 1)"><span aria-hidden="true">&times;</span></button>
+                    <ul>
+                    @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
             @endif
 
             <div ng-cloak ng-repeat="error in appErrors"
                     class="alert alert-danger alert-dismissible" role="alert">
                 <button type="button" class="close" aria-label="Close" ng-click="appErrors.splice(appErrors.indexOf(error), 1)"><span aria-hidden="true">&times;</span></button>
-                <strong>Error!</strong> <span ng-repeat="message in error.messages"><br>[[message]]</span>
+                <strong>[[error.title || "Error!"]]</strong> <span ng-repeat="message in error.messages"><br>[[message]]</span>
             </div>
 
             @yield('content')
 
             <hr>
             <footer>
-                <p>&copy; 2015 - Eastern Washington University</p>
+                <p>&copy; 2016 - Eastern Washington University</p>
                 <p class="text-muted">made with <i class="fa fa-heart" style="color: #8b001d;"></i> by EWU Computer Science students</p>
             </footer>
         </div>
@@ -151,6 +177,8 @@
 </script>
 
 <script src="/javascripts/bootstrap.js"></script>
+<script src="/javascripts/moment.min.js"></script>
+<script src="/javascripts/linq.min.js"></script>
 
 
 @yield('scripts')

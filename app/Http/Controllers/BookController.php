@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Cache;
 use App\Models\Book;
+use App\Models\Course;
 use Illuminate\Http\Request;
 
 class BookController extends Controller
@@ -30,13 +31,18 @@ class BookController extends Controller
     private function buildBookSearchQuery($request, $query) {
         if($request->input('title'))
             $query = $query->where('title', 'LIKE', '%'.$request->input('title').'%');
+        if($request->input('author')) {
+            $query->join('authors', function ($join) use ($request) {
+                $join->on('authors.book_id', '=', 'books.book_id')
+                    ->where('authors.name', 'LIKE', '%'.$request->input('author').'%');
+            });
+        }
         if($request->input('publisher'))
             $query = $query->where('publisher', 'LIKE', '%'.$request->input('publisher').'%');
         if($request->input('isbn13')) {
             $isbn = str_replace("-", "", $request->input('isbn13'));
             $query = $query->where('isbn13', 'LIKE', '%' . $isbn . '%');
         }
-
 
         return $query;
     }
@@ -70,18 +76,49 @@ class BookController extends Controller
     {
         $this->authorize("all");
 
-        $query = Book::query();
+        $user = $request->user();
+        if ($user->may('view-all-courses')){
+            $query = Book::query();
+        }
+        else if ($user->may('view-dept-books')){
+            // Only show books that have been ordered for courses that the user
+            // either teaches, or administers as a dept secretary.
+            $query = Book::whereIn('books.book_id',
+                Course::visible()
+                ->join('orders', function ($join) {
+                    $join->on('orders.course_id', '=', 'courses.course_id')
+                        ->whereNull('orders.deleted_at');
+                })
+                ->select('orders.book_id')
+                ->getQuery());
+        }
+        else {
+            // I am self-join, destroyer of worlds.
+            // We do the self join here to get all the courses that are
+            // similar to the ones that the current user teaches (same number and dept).
+            // This way we get a nice set of relevant books to the user, without bombarding them with
+            // every single physics book just because they taught a physics class once five years ago.
+            $query = Book::whereIn('books.book_id',
+                Course::where('courses.user_id', '=', $user->user_id)
+                    ->join('courses as similarCourses', function ($join) {
+                        $join->on('courses.department', '=', 'similarCourses.department')
+                            ->on('courses.course_number', '=', 'similarCourses.course_number');
+                    })
+                    ->join('orders', function ($join) {
+                        $join->on('orders.course_id', '=', 'similarCourses.course_id')
+                            ->whereNull('orders.deleted_at');
+                    })
+                    ->select('orders.book_id')
+                    ->distinct()
+                    ->getQuery());
+        }
 
         $query = $this->buildBookSearchQuery($request, $query);
-
         $query = $this->buildBookSortQuery($request, $query);
 
+        $query = $query->with('authors');
+
         $books = $query->paginate(10);
-
-
-        foreach($books as $book) {
-            $book->authors; // This is how we eager load the authors
-        }
 
         return response()->json($books);
     }
@@ -176,8 +213,7 @@ class BookController extends Controller
     {
         $this->authorize("all");
 
-        $query = \App\Models\Order::query();
-
+        $query = \App\Models\Order::query()->with("course.term");
 
         if($request->input('book_id'))
             $query = $query->where('book_id', '=', $request->input('book_id')); // find the book ID
@@ -185,10 +221,15 @@ class BookController extends Controller
         $query = $query->join('courses', 'orders.course_id', '=', 'courses.course_id'); // need to join the courses into the dataset
 
         $query = $this->buildDetailSearchQuery($request, $query); // build the search terms query
-
         $query = $this->buildDetailSortQuery($request, $query); // build the sort query
 
         $orders = $query->paginate(10); // get paginated result
+
+        foreach ($orders as $order) {
+            $order->course->term['term_name'] = $order->course->term->displayName();
+            $order->course['canView'] = $request->user()->can('view-course', $order->course);
+        }
+
 
         return response()->json($orders);
     }
@@ -218,13 +259,13 @@ class BookController extends Controller
 
     }
 
-    /** GET: /books/show/{id}
+    /** GET: /books/details/{id}
      * Display the specified resource.
      *
      * @param  int  $id
      * @return \Illuminate\View\View
      */
-    public function getShow($id)
+    public function getDetails($id)
     {
         $this->authorize("all");
 
@@ -258,6 +299,33 @@ class BookController extends Controller
         $book = Book::where('isbn13', '=', $isbn13)->with("authors")->get();
 
         return response()->json($book);
+    }
+
+    public function postEdit(Request $request) {
+        $this->validate($request, [
+            'book' => 'required|array',
+            'book.book_id' => 'required|integer',
+            'book.title' => 'required|string',
+            'book.publisher' => 'required|string',
+            'authors' => 'required',
+            'authors.*' => 'string'
+        ]);
+
+        $book = $request->get('book');
+        $authors = $request->get('authors');
+
+        $db_book = Book::findOrFail($book['book_id']);
+        $this->authorize("edit-book", $db_book);
+
+        $db_book->update($book);
+
+        $db_book->authors()->delete();
+
+        foreach ($authors as $author) {
+            $db_book->authors()->create(['name' => $author]);
+        }
+
+        return redirect('books/details/' . $db_book->book_id);
     }
 
 }

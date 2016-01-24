@@ -20,12 +20,14 @@
                             <thead>
                             <tr>
                                 <th st-sort="title">Title</th>
+                                <th st-sort="author">Author</th>
                                 <th st-sort="publisher">Publisher</th>
                                 <th st-sort="isbn13">ISBN</th>
                                 <th width="1%"></th>
                             </tr>
                             <tr>
                                 <th><input type="text" class="form-control" placeholder="Search..." st-search="title"/></th>
+                                <th><input type="text" class="form-control" placeholder="Search..." st-search="author"/></th>
                                 <th><input type="text" class="form-control" placeholder="Search..." st-search="publisher"/></th>
                                 <th><input type="text" class="form-control" placeholder="Search..." st-search="isbn13"/></th>
                                 <th></th>
@@ -34,20 +36,16 @@
                             <tbody>
 
                             <tr ng-cloak ng-repeat="book in mc.displayed">
+                                <td>[[ book.title ]]</td>
                                 <td>
-                                    <div>
-                                        [[ book.title ]]
-                                    </div>
-                                    <div class="text-muted">
-                                        <span ng-repeat="author in book.authors">
-                                            [[ author.name]] [[ $last ? '' : '|']]
-                                        </span>
-                                    </div>
+                                    <span ng-repeat="author in book.authors">
+                                        [[ author.name]] [[ $last ? '' : '|']]
+                                    </span>
                                 </td>
                                 <td>[[ book.publisher ]]</td>
                                 <td>[[ book.isbn13 | isbnHyphenate]]</td>
                                 <td>
-                                    <a href="/books/show/[[ book.book_id ]]" class="btn btn-sm btn-info" role="button">
+                                    <a href="/books/details/[[ book.book_id ]]" class="btn btn-sm btn-info" role="button">
                                         Details <i class="fa fa-arrow-right"></i>
                                     </a>
                                 </td>

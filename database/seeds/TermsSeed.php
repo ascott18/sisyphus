@@ -12,7 +12,8 @@ class TermsSeed extends Seeder
      */
     public function run()
     {
-        for ($year = 2015; $year <= 2017; $year++)
+        // Don't seed a ton unless we're on a server because seeding is pretty slow.
+        for ($year = config("app.env") == 'production' ? 2012 : 2016; $year <= 2017; $year++)
         {
             Term::createTermsForYear($year);
         }

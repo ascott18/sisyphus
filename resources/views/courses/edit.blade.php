@@ -1,6 +1,7 @@
 @extends('layouts.master')
 
 @section('area', 'Courses')
+@section('action', isset($course) ? "Edit" : "Create")
 @section('page', isset($course) ? $course->displayIdentifier() : "New Course")
 
 @section('content')
@@ -23,10 +24,15 @@
                             <h4>{{$term_name}}</h4>
                         @endif
 
-                        @include('input.generic', ['name' => 'course.course_name', 'label' => 'Title', 'attrs' => ['required' => 'true']])
-                        @include('input.generic', ['name' => 'course.department', 'label' => 'Department', 'attrs' => ['required' => 'true', 'pattern' => '[A-Z]+']])
-                        @include('input.generic', ['name' => 'course.course_number', 'label' => 'Number', 'attrs' => ['required' => 'true', 'pattern' => '\d+']])
-                        @include('input.generic', ['name' => 'course.course_section', 'label' => 'Section', 'attrs' => ['required' => 'true', 'pattern' => '\d+']])
+
+                        @include('input.generic', ['name' => 'course.course_name', 'label' => 'Title',
+                            'attrs' => ['required' => 'true']])
+                        @include('input.generic', ['name' => 'course.department', 'label' => 'Department',
+                            'attrs' => ['required' => 'true', 'pattern' => '[A-Z]{2,10}'], 'pattern' => 'must be 2-10 uppercase characters'])
+                        @include('input.generic', ['name' => 'course.course_number', 'label' => 'Number',
+                            'attrs' => ['required' => 'true', 'pattern' => '\d+'], 'pattern' => 'must be a number'])
+                        @include('input.generic', ['name' => 'course.course_section', 'label' => 'Section',
+                            'attrs' => ['required' => 'true', 'pattern' => '\d+'], 'pattern' => 'must be a number'])
                     </div>
 
                     <div class="col-md-6"
@@ -39,12 +45,21 @@
                             </span>
                         </div>
 
-                        <br>
-                        <strong>Currently Selected:</strong>
-                        <span ng-if="getSelectedUser()"> [[users[getSelectedUser()].first_name]] [[users[getSelectedUser()].last_name]]</span>
-                        <span ng-if="!getSelectedUser()"> Nobody </span>
+                        <div class="row">
+                            <br>
+                            <div class="col-md-6">
+                                <strong>Currently Selected:</strong>
+                                <span ng-if="getSelectedUser()"> [[users[getSelectedUser()].first_name]] [[users[getSelectedUser()].last_name]]</span>
+                                <span ng-if="!getSelectedUser()"> Nobody (Professor is TBA) </span>
+                            </div>
+                            <div class="col-md-6">
+                                <a class="btn btn-xs btn-danger" ng-click="course.user_id = null" ng-show="getSelectedUser()">
+                                    <i class="fa fa-times"></i> Clear Selection
+                                </a>
+                            </div>
+                        </div>
 
-                        @include('input.generic', ['type' => 'hidden', 'name' => 'course.user_id', 'label' => 'Professor', 'attrs' => ['required' => 'true']])
+                        @include('input.generic', ['type' => 'hidden', 'name' => 'course.user_id', 'label' => 'Professor', 'attrs' => []])
 
                         <div ng-show="userSearch">
                             <div class="list-group">

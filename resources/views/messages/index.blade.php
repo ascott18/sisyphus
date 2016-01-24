@@ -9,43 +9,55 @@
         <div ng-show="stage == STAGE_COMPOSE">
 
             <div class="col-md-4 ">
-                <ul class="list-group">
-                    <li class="list-group-item cursor-pointer list-group-item-success"
-                        ng-click="newMessage()">
+                <div class="panel panel-default">
 
-                        <h4 class="list-group-item-heading no-pad-bottom ">
-                            <i class="fa fa-plus fa-align-middle text-success" style="font-size: 1.5em"></i>&nbsp;
-                             Create New Message</h4>
-                    </li>
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <i class="fa fa-fw fa-envelope"></i>
+                            Messages
+                        </h3>
+                    </div>
+                    <div class="panel-body panel-list">
+                            <div class="panel-list-item cursor-pointer "
+                                ng-click="newMessage()">
 
-                    <li class="list-group-item cursor-pointer"
-                         ng-cloak
-                         ng-controller="MessageSaver"
-                         ng-class="{active: isMessageSelected(message)}"
-                         ng-click="selectMessage(message)"
-                         ng-repeat="message in messages | orderBy : ['isNew', 'last_sent == null', '-last_sent']">
+                                <h4 class="list-group-item-heading no-pad-bottom ">
+                                    <i class="fa fa-fw fa-plus fa-align-middle text-success" style="font-size: 1.5em"></i>
+                                     Create New Message</h4>
+                            </div>
 
-                        <div class="pull-right">
-                            <button class="btn btn-xs btn-danger"
-                                    ng-confirm-click="deleteMessage(message)"
-                                    ng-confirm-click-message="Are you sure you want to delete message [[message.subject]]?">
-                                <i class="fa fa-fw fa-trash"></i>
-                            </button>
-                            <button class="btn btn-xs btn-primary"
-                                    ng-click="newMessage(message)">
-                                <i class="fa fa-fw fa-copy"></i>
-                            </button>
-                        </div>
+                            <div class="panel-list-item cursor-pointer"
+                                 ng-cloak
+                                 ng-controller="MessageSaver"
+                                 ng-class="{active: isMessageSelected(message)}"
+                                 ng-click="selectMessage(message)"
+                                 ng-repeat="message in messages | orderBy : ['isNew', 'last_sent == null', '-last_sent']">
+                                <div class="pull-right">
+                                    <button class="btn btn-xs btn-danger"
+                                            title="Delete Message"
+                                            ng-confirm-click="deleteMessage(message)"
+                                            ng-confirm-click-message="Are you sure you want to delete message [[message.subject]]?">
+                                        <i class="fa fa-fw fa-trash"></i>
+                                    </button>
+                                    <button class="btn btn-xs btn-primary"
+                                            title="Duplicate Message"
+                                            ng-click="newMessage(message)">
+                                        <i class="fa fa-fw fa-copy"></i>
+                                    </button>
+                                </div>
 
-                        <h4 class="list-group-item-heading no-pad-bottom">[[message.subject]]</h4>
-                        <small >
-                            <span class="text-muted" ng-show="message['last_sent']">Sent On</span>
-                            <span class="text-muted" ng-show="!message['last_sent']">Never Sent</span>
-                            <span ng-bind="message.last_sent | date:'MMMM dd, yyyy'"></span>
-                        </small>
+                                <h4 class="list-group-item-heading no-pad-bottom">[[message.subject]]</h4>
+                                <small >
+                                    <span ng-show="moment(message['last_sent']).unix()">
+                                        <span class="text-muted">Sent On</span>
+                                        <span ng-bind="message.last_sent | date:'MMMM dd, yyyy'"></span>
+                                    </span>
+                                    <span class="text-muted" ng-show="!moment(message['last_sent']).unix()">Never Sent</span>
+                                </small>
 
-                    </li>
-                </ul>
+                            </div>
+                    </div>
+                </div>
             </div>
 
             <!--  There is a reason why we do an ng-repeat here, I promise.
@@ -61,25 +73,35 @@
                  ng-cloak
                  ng-if="isMessageSelected(message)"
                  ng-repeat="message in messages">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <i class="fa fa-fw fa-pencil"></i>
+                            Compose
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="clearfix">
+                            <button class="btn btn-success btn-md pull-right"
+                                    ng-click="setStage(STAGE_SEND)">
+                                Choose Recipients <i class="fa fa-arrow-right fa-fw"></i>
+                            </button>
+                        </div>
 
-                <div class="clearfix">
-                    <button class="btn btn-success btn-md pull-right"
-                            ng-click="setStage(STAGE_SEND)">
-                        Choose Recipients <i class="fa fa-arrow-right fa-fw"></i>
-                    </button>
-                </div>
-
-                <div class="form-group" >
-                    <label>Subject:</label>
-                    <input type="text" class="form-control" ng-model="message.subject">
-                </div>
+                        <div class="form-group" >
+                            <label>Subject:</label>
+                            <input type="text" class="form-control" ng-model="message.subject">
+                        </div>
 
 
-                <label>Body:</label>
-                <div text-angular ng-model="message.body">
+                        <label>Body:</label>
+                        <div text-angular ng-model="message.body">
 
+                        </div>
+                    </div>
                 </div>
             </div>
+
             <div class="col-md-8" ng-show="!anyMessageSelected()">
                 <h2 class="text-muted" style="width: 100%; display: block; text-align:center;">Select a message to edit.</h2>
             </div>
@@ -92,13 +114,13 @@
             </button>
 
             <br>
+            <br>
 
             <div class="row">
                 <div class="col-md-6">
-                    <h3>Message</h3>
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <span ng-bind-html="selectedMessage.subject"></span>
+                            <h3 class="panel-title" ng-bind-html="selectedMessage.subject"></h3>
                         </div>
                         <div class="panel-body">
                             <span ng-bind-html="selectedMessage.body"></span>
@@ -107,51 +129,80 @@
                 </div>
 
                 <div class="col-md-6">
-                    <h3>Recipients</h3>
-                    <div class="input-group">
-                        <input type="text" class="form-control"  placeholder="Search" ng-model="recipientSearch" >
-                        <span class="input-group-addon">
-                            <i class="fa fa-search"></i>
-                        </span>
-                    </div>
-                    <br>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                <i class="fa fa-fw fa-group"></i>
+                                Recipients
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="input-group">
+                                <input type="text" class="form-control"  placeholder="Search" ng-model="recipientSearch" >
+                                <span class="input-group-addon">
+                                    <i class="fa fa-search"></i>
+                                </span>
+                            </div>
+                            <br>
 
-                    <div class="clearfix">
-                        <span>Selected: [[(recipients | filter: {selected: true}).length]] / [[recipients.length]]</span>
-                        <div class="btn-group pull-right">
-                            <button class="btn btn-default" ng-click="selectNoUsers()">
-                                None
+                            <div class="clearfix">
+                                <span>Selected: [[(recipients | filter: {selected: true}).length]] / [[recipients.length]]</span>
+                                <div class="btn-group pull-right">
+                                    <button class="btn btn-default" ng-click="selectNoUsers()">
+                                        None
+                                    </button>
+                                    <button class="btn btn-default" ng-click="selectAllUsers()">
+                                        All
+                                    </button>
+                                    <button class="btn btn-default" ng-click="selectUsersMissingOrders()">
+                                        Missing Responses
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h4 ng-if="recipients.length == 0" class="text-muted">
+                                    Nobody was found that teaches during these open terms:
+                                    <ul>
+                                        <li ng-repeat="term in terms">[[term.display_name]]</li>
+                                    </ul>
+                                </h4>
+                            </div>
+                            <div class="list-group">
+                                <div class="list-group-item cursor-pointer"
+                                     ng-class="{active: isRecipientSelected(recipient)}"
+                                     ng-click="toggleRecipient(recipient)"
+                                     dir-paginate="recipient in recipients | filterSplit: recipientSearch | orderBy: 'last_name' | itemsPerPage:10">
+
+                                    <span>[[recipient.last_name]], [[recipient.first_name]]</span>
+                                    <span class="pull-right">[[recipient.coursesResponded]] / [[recipient.courseCount]] courses responded</span>
+                                </div>
+                            </div>
+                            <dir-pagination-controls></dir-pagination-controls>
+
+                            <button class="btn btn-success btn-md pull-right"
+                                    ng-click="sendMessages()"
+                                    ng-disabled="(recipients | filter: {selected: true}).length == 0"
+                                    ng-show="!sendingMessages">
+                                Send
+                                <ng-pluralize count="(recipients | filter: {selected: true}).length"
+                                              when="{'one': '{} Message',
+                                                    'other': '{} Messages'}">
+                                </ng-pluralize>
+                                <i class="fa fa-arrow-right fa-fw"></i>
                             </button>
-                            <button class="btn btn-default" ng-click="selectAllUsers()">
-                                All
-                            </button>
-                            <button class="btn btn-default" ng-click="selectUsersMissingOrders()">
-                                Missing Orders
+
+                            <button class="btn btn-success btn-md pull-right"
+                                    ng-show="sendingMessages">
+                                Sending
+                                <ng-pluralize count="numSendingMessages"
+                                              when="{'one': '{} Message',
+                                             'other': '{} Messages'}">
+                                </ng-pluralize>
+                                <i class="fa fa-spinner fa-spin fa-fw"></i>
                             </button>
                         </div>
                     </div>
-
-                    <div class="list-group">
-                        <div class="list-group-item cursor-pointer"
-                             ng-class="{active: isRecipientSelected(recipient)}"
-                             ng-click="toggleRecipient(recipient)"
-                             dir-paginate="recipient in recipients | filterSplit: recipientSearch | orderBy: 'last_name' | itemsPerPage:10">
-
-                             <span>[[recipient.last_name]], [[recipient.first_name]]</span>
-                        </div>
-                    </div>
-                    <dir-pagination-controls></dir-pagination-controls>
-
-                    <button class="btn btn-success btn-md pull-right"
-                            ng-click="sendMessages()"
-                            ng-show="!sendingMessages">
-                        Send [[(recipients | filter: {selected: true}).length]] Messages <i class="fa fa-arrow-right fa-fw"></i>
-                    </button>
-
-                    <button class="btn btn-success btn-md pull-right"
-                            ng-show="sendingMessages">
-                        Sending [[numSendingMessages]] Messages <i class="fa fa-spinner fa-spin fa-fw"></i>
-                    </button>
                 </div>
             </div>
         </div>
@@ -162,7 +213,11 @@
                 <i class="fa fa-arrow-left fa-fw"></i> Send Another
             </button>
 
-            <h2 class="" style="width: 100%; display: block; text-align:center;">Message sent to [[numSendingMessages]] users!</h2>
+            <h2 class="" style="width: 100%; display: block; text-align:center;">Message sent to
+                <ng-pluralize count="numSendingMessages"
+                              when="{'one': '{} user',
+                                     'other': '{} users'}">
+                </ng-pluralize>!</h2>
         </div>
     </div>
 

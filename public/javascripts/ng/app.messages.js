@@ -92,7 +92,7 @@ app.controller('MessagesController', function($scope, $timeout, $http){
         $scope.messages = [];
         $scope.selectMessage(null);
 
-        $http.get('/messages/all').then(
+        $http.get('/messages/all-messages').then(
             function success(response) {
                 $scope.messages = response.data;
 
@@ -163,10 +163,6 @@ app.controller('MessagesController', function($scope, $timeout, $http){
                 $scope.setStage($scope.STAGE_SENT);
                 $scope.selectNoUsers();
                 $scope.reloadMessages();
-            },
-            function error(response){
-                // TODO: handle this properly.
-                $scope.sendingMessages = false;
             });
     };
 
@@ -195,14 +191,15 @@ app.controller('MessagesController', function($scope, $timeout, $http){
 
 
     // Recipient selection functions
-    $scope.selectUsersMissingOrders = selector(function(r){return r.least_num_orders == 0});
+    $scope.selectUsersMissingOrders = selector(function(r){return r.coursesResponded < r.courseCount});
     $scope.selectAllUsers = selector(function(){return true});
     $scope.selectNoUsers = selector(function(){return false});
 
     // Go fetch all possible recipients of the messages.
     $http.get('/messages/all-recipients').then(
         function success(response) {
-            $scope.recipients = response.data;
+            $scope.recipients = response.data.users;
+            $scope.terms = response.data.terms;
         }
     );
 

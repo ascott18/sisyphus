@@ -37,60 +37,64 @@ class RolesSeed extends Seeder
 
 
 
-        makePerm('place-all-orders', "Place All Orders");
-        makePerm('edit-all-orders', "Edit All Orders");
-        makePerm('view-all-orders', "View All Orders");
+        makePerm('place-all-orders', "All - Place Requests");
+        makePerm('view-all-orders', "All - View Requests");
 
-        makePerm('place-dept-orders', "Place Department Orders");
-        makePerm('view-dept-orders', "View Department Orders");
+        makePerm('place-dept-orders', "Department - Place Requests");
+        makePerm('view-dept-orders', "Department - View Requests");
 
-        makePerm('view-course-list', "View Course List");
-        makePerm('view-all-courses', "View All Courses");
-        makePerm('view-dept-courses', "View Department Courses");
+        makePerm('view-all-courses', "All - View Courses");
+        makePerm('view-dept-courses', "Department - View Courses");
 
-        makePerm('edit-courses', "Edit Courses");
+        makePerm('edit-courses', "Other - Edit Visible Courses");
+        makePerm('create-all-courses', "All - Create Course");
+        makePerm('create-dept-courses', "Department - Create Course");
 
-        makePerm('edit-books', "Edit Books");
+        makePerm('edit-books', "All - Edit Books");
 
-        makePerm('manage-users', "Manage Users");
-        makePerm('manage-roles', "Manage Roles");
+        makePerm('manage-users', "All - Manage Users");
+        makePerm('manage-roles', "All - Manage Roles");
 
-        makePerm('view-terms', "View Terms");
-        makePerm('edit-terms', "Edit Terms");
+        makePerm('view-terms', "All - View Terms");
+        makePerm('edit-terms', "All - Edit Terms");
 
-        makePerm('send-messages-to-all', "Send Messages To Everyone");
-        makePerm('send-messages-to-department', "Send Messages To Department");
+        makePerm('send-all-messages', "All - Send Messages");
+        makePerm('send-dept-messages', "Department - Send Messages");
+
+
+        makePerm('order-outside-period', "Other - Order for Non-current Terms");
 
 
         makeRole('admin', "Administrator")->attachPermissions([
-            p('send-messages-to-all'),
             p('manage-users'),
             p('manage-roles'),
             p('view-terms'),
             p('edit-terms'),
-            p('view-course-list'),
+            p('edit-books'),
+            p('edit-courses'),
+            p('send-all-messages'),
+            p('place-all-orders'),
+            p('view-all-orders'),
+            p('view-all-courses'),
+            p('create-all-courses'),
+            p('order-outside-period'),
+        ]);
+
+        makeRole('store', "Bookstore Staff")->attachPermissions([
+            p('view-terms'),
             p('edit-books'),
             p('place-all-orders'),
-            p('edit-all-orders'),
             p('view-all-orders'),
             p('view-all-courses'),
         ]);
 
-        makeRole('store', "Bookstore Staff")->attachPermissions([
-            p('view-course-list'),
-            p('view-terms'),
-            p('edit-books'),
-            p('place-all-orders'),
-            p('edit-all-orders'),
-            p('view-all-orders')
-        ]);
-
         makeRole('dept-sec', "Department Secretary")->attachPermissions([
-            p('send-messages-to-department'),
-            p('view-course-list'),
             p('place-dept-orders'),
             p('view-dept-orders'),
             p('view-dept-courses'),
+            p('create-dept-courses'),
+            p('send-dept-messages'),
+            p('edit-courses'),
         ]);
 
     }
