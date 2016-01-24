@@ -31,8 +31,8 @@ class BookController extends Controller
         if($request->input('title'))
             $query = $query->where('title', 'LIKE', '%'.$request->input('title').'%');
         if($request->input('author')) {
-            $query->join('authors', function($join) use ($request) {
-                $join->on('books.book_id', '=', 'authors.book_id')
+            $query->join('authors', function ($join) use ($request) {
+                $join->on('authors.book_id', '=', 'books.book_id')
                     ->where('authors.name', 'LIKE', '%'.$request->input('author').'%');
             });
         }
@@ -82,7 +82,7 @@ class BookController extends Controller
         else if ($user->may('view-dept-books')){
             // Only show books that have been ordered for courses that the user
             // either teaches, or administers as a dept secretary.
-            $query = Book::whereIn('book_id',
+            $query = Book::whereIn('books.book_id',
                 Course::visible()
                 ->join('orders', function ($join) {
                     $join->on('orders.course_id', '=', 'courses.course_id')
@@ -97,7 +97,7 @@ class BookController extends Controller
             // similar to the ones that the current user teaches (same number and dept).
             // This way we get a nice set of relevant books to the user, without bombarding them with
             // every single physics book just because they taught a physics class once five years ago.
-            $query = Book::whereIn('book_id',
+            $query = Book::whereIn('books.book_id',
                 Course::where('courses.user_id', '=', $user->user_id)
                     ->join('courses as similarCourses', function ($join) {
                         $join->on('courses.department', '=', 'similarCourses.department')
@@ -116,6 +116,7 @@ class BookController extends Controller
         $query = $this->buildBookSortQuery($request, $query);
 
         $query = $query->with('authors');
+
         $books = $query->paginate(10);
 
         return response()->json($books);
