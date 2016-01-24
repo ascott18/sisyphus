@@ -1,6 +1,6 @@
 <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
 <div class="pull-right"><?php echo date("m/d/Y, h:i:s a");?></div>
-<h1>Book Request Check Sheet</h1>
+<h1>Textbook Request Checksheet</h1>
 
 <style>
     td, th{font-family: sans-serif;font-size:10pt;}
@@ -19,7 +19,6 @@
     <div class="col-lg-12">
 
         <div class="text-center"><h2>{{ $term->display_name }}</h2></div>
-        <?php  $courses = $term->courses;?>
         <table width="100%" cellpadding="8">
 
             <thead>
@@ -40,7 +39,7 @@
             @foreach ($courses as $course)
 
                 <?php $user = $course->user;?>
-                @if(!$course->no_book)
+                @if(!$course->no_book && count($course->orders))
                     @foreach($course->orders as $order)
                         <?php $book = $order->book?>
                         <tr>
@@ -71,7 +70,7 @@
                             {{ str_pad($course->course_number, 3, "0", STR_PAD_LEFT) }}-{{ $course->course_section }}
                             {{$course->course_name}}</td>
                         <td>{{$user ? $user->last_first_name : 'TBA'}}</td>
-                        <td>No Book</td>
+                        <td>&lt;{{$course->no_book ? 'No Book' : 'No Response'}}></td>
                         <td></td>
                         <td></td>
                         <td></td>
