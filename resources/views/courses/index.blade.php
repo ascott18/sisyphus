@@ -22,7 +22,7 @@
                                 <th width="250px" st-sort="term_id" st-sort-default="reverse">Term</th>
                                 <th st-sort="course_name">Name</th>
                                 <th st-sort="professor">Professor</th>
-                                <th>Resoponded</th>
+                                <th>Responded</th>
                                 <th width="1%"></th>
                             </tr>
                             <tr>
