@@ -374,7 +374,7 @@ EOL;
                 $extremes = preg_split("|--?|", $noSpace);
 
                 if (intval($extremes[0]) > intval($extremes[1]) || $extremes[1] - $extremes[0] > 35){
-                    echo "Skipping range $noSpace from $in because it looks wrong. Using first value instead.";
+                    echo "Skipping range $noSpace from $in because it looks wrong. Using first value instead.\n";
                     $out[] = $extremes[0];
                 }
                 else{

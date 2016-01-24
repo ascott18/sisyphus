@@ -50,7 +50,7 @@ class User extends Model implements AuthenticatableContract,
      *
      * @var array
      */
-    protected $fillable = [];
+    protected $fillable = ['first_name', 'last_name', 'email'];
 
     /**
      * The accessors to append to the model's array form.

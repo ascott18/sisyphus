@@ -69,6 +69,17 @@ app.controller('UsersController', function($scope, $http) {
 });
 
 
+app.controller('UsersModifyController', function ($scope) {
+    $scope.submit = function(form, e){
+        if (form.$valid)
+            form.submit();
+        else{
+            form.$setSubmitted(true);
+            e.preventDefault();
+        }
+    }
+});
+
 app.controller('NewDepartmentController', function($scope, $http) {
     $scope.canAddDepartment = function(){
         var user = $scope.user;
