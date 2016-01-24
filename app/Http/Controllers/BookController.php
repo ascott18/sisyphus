@@ -244,7 +244,7 @@ class BookController extends Controller
         if($coverImage == NULL) {
             $cached = false;
             $googleResponse = json_decode(file_get_contents("https://www.googleapis.com/books/v1/volumes?q=isbn:".$request->input('isbn')));
-            if(isset($googleResponse->items->volumeInfo->imageLinks->thumbnail)) {
+            if(isset($googleResponse->items[0]->volumeInfo->imageLinks->thumbnail)) {
                 $coverImage = file_get_contents($googleResponse->items[0]->volumeInfo->imageLinks->thumbnail);
                 Cache::put($request->input('isbn'), $coverImage, 43800);
             }
