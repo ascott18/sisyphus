@@ -48,13 +48,6 @@ class Course extends Model
         return $this->department . ' ' . str_pad($this->course_number, 3, '0', STR_PAD_LEFT) . '-' . str_pad($this->course_section, 2, '0', STR_PAD_LEFT);
     }
 
-    public function canPlaceOrder()
-    {
-        $currentTermsIds = Term::currentTerms()->select('term_id')->get()->values();
-
-        return $currentTermsIds->contains($this->term_id);
-    }
-
     public function orders()
     {
         return $this->hasMany('App\Models\Order', 'course_id', 'course_id');

@@ -1,6 +1,10 @@
-@extends('layouts.master')
+@extends('layouts.master', [
+    'breadcrumbs' => [
+        ['Error'],
+        [$response['statusName'], '.'],
+    ]
+])
 
-@section('page', $response['statusName'])
 
 @section('content')
     <style>

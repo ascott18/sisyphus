@@ -1,7 +1,10 @@
-@extends('layouts.master')
+@extends('layouts.master', [
+    'breadcrumbs' => [
+        ['Tickets', '/tickets'],
+        ['All Tickets'],
+    ]
+])
 
-@section('area', 'Tickets')
-@section('page', 'All Tickets')
 
 @section('content')
 
@@ -54,7 +57,7 @@
                             </thead>
                             <tbody>
 
-                            <tr ng-repeat="ticket in tc.displayed">
+                            <tr ng-cloak ng-repeat="ticket in tc.displayed">
                                 <td>
                                     [[ ticket.title ]]
                                 </td>

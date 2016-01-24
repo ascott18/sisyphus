@@ -1,7 +1,10 @@
-@extends('layouts.master')
+@extends('layouts.master', [
+    'breadcrumbs' => [
+        ['Requests', '/requests'],
+        ['All Requests'],
+    ]
+])
 
-@section('area', 'Requests')
-@section('page', 'All Requests')
 
 @section('content')
     <div class="row">

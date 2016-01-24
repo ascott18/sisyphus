@@ -1,11 +1,13 @@
-@extends('layouts.master')
+@extends('layouts.master', [
+    'breadcrumbs' => [
+        ['Books', '/books'],
+        ['Edit'],
+        [$book->title],
+    ]
+])
 
-@section('area', 'Books')
-@section('action', "Edit")
-@section('page', $book->title)
 
 @section('content')
-
 
     <div class="row">
         <div class="col-md-6" ng-controller="EditBookController">
@@ -22,7 +24,7 @@
 
                         <div class="form-group">
                             <label for="isbn13">ISBN 13</label>
-                            <input type="text" class="form-control" ng-disabled=true name="isbn13" ng-model="book.isbn13">
+                            <input type="text" class="form-control" ng-disabled="true" placeholder="ISBN 13" isbn13 ng-model="book.isbn13">
                         </div>
 
 
@@ -31,13 +33,13 @@
 
                         <div class="form-group" ng-init="addAuthors({{$book->authors}})">
                             <label>Author</label>
-                            <input type="text" class="form-control" name="authors[0]" required ng-model="authors[0].name">
+                            <input type="text" class="form-control" name="authors[0]" placeholder="Author" required ng-model="authors[0].name">
 
-                            <div ng-show="form.$submitted || form['authors[0]'].$touched">
+                            <div ng-cloak ng-show="form.$submitted || form['authors[0]'].$touched">
                                 <span class="text-danger" ng-show="form['authors[0]'].$error.required">Author is required.</span>
                             </div>
 
-                            <div class="input-group" ng-repeat="author in authors" style="margin-top: 10px" ng-if="!$first">
+                            <div ng-cloak class="input-group" ng-repeat="author in authors" style="margin-top: 10px" ng-if="!$first">
 
                                 <input type="text" class="form-control" name="authors[ [[$index]] ]" ng-model="author.name" required>
 

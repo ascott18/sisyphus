@@ -1,7 +1,10 @@
-@extends('layouts.master')
+@extends('layouts.master', [
+    'breadcrumbs' => [
+        ['Courses', '/courses'],
+        [$course->displayIdentifier()],
+    ]
+])
 
-@section('area', 'Courses')
-@section('page', $course->displayIdentifier())
 
 @section('content')
 
@@ -21,7 +24,7 @@
                     </div>
                     @endcan
 
-                    <dl class="col-md-4 dl-horizontal">
+                    <dl class="col-lg-4 col-md-6 dl-horizontal">
                         <dt>Title</dt>
                         <dd>
                             {{ $course->course_name }}
@@ -43,10 +46,14 @@
                         </dd>
                     </dl>
 
-                    <dl class="col-md-4 dl-horizontal">
+                    <dl class="col-lg-4 col-md-6 dl-horizontal">
                         <dt>Term</dt>
                         <dd>
-                            <a href="/terms/details/{{ $course->term->term_id }}">{{ $course->term->displayName() }}</a>
+                            @can('view-terms')
+                                <a href="/terms/details/{{ $course->term->term_id }}">{{ $course->term->displayName() }}</a>
+                            @else
+                                {{ $course->term->displayName() }}
+                            @endcan
                         </dd>
 
                         <dt>Request Period</dt>
@@ -62,7 +69,7 @@
                         @endif
                     </dl>
 
-                    <dl class="col-md-4 dl-horizontal">
+                    <dl class="col-lg-4 col-md-6 dl-horizontal">
                         @if ($course->user != null)
                             <dt>Professor</dt>
                             <dd>
@@ -89,7 +96,7 @@
                     <h3 class="panel-title"><i class="fa fa-shopping-cart fa-fw"></i> Requests</h3>
                 </div>
                 <div class="panel-body">
-                    @if ($course->canPlaceOrder())
+                    @can('place-order-for-course', $course)
                         <a href="/requests/create/{{$course->course_id}}" class="btn btn-primary" role="button">
                             Place a request <i class="fa fa-arrow-right"></i>
                         </a>
@@ -103,7 +110,7 @@
                                 <i class="fa fa-times"></i> No Book Needed
                             </button>
                         @endif
-                    @endif
+                    @endcan
 
                     {{-- being no_book and having orders are no mutually exclusive. A course might be no_book and also have deleted orders, which are listed here.--}}
                     @if ($course->no_book)
@@ -146,7 +153,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        [["{{ $order->book->isbn13 }}" | isbnHyphenate ]]
+                                        <span ng-bind=":: '{{ $order->book->isbn13 }}' | isbnHyphenate">{{ $order->book->isbn13 }}</span>
                                     </td>
                                     <td>
                                         {{ $order->book->publisher }}

@@ -54,10 +54,10 @@ app.directive('bookDetails', function($http) {
        link: function(scope, element, attrs) {
 
            $(element).find(".smallImage").on('mouseover',function(){
-               $(element).find(".largeImage").css("display", "");
+               $(element).find(".largeImage").fadeIn();
            });
            $(element).find(".largeImage").on('mouseleave',function(){
-               $(element).find(".largeImage").hide();
+               $(element).find(".largeImage").fadeOut();
            });
 
            scope.lastIsbn = '';
@@ -154,8 +154,8 @@ app.controller('OrdersListController', function($scope, $http) {
     }
 });
 
-app.controller('OrdersController', ['$scope', '$http', 'CartService',
-    function($scope, $http, CartService){
+app.controller('OrdersController', ['$scope', '$http', 'CartService', 'BreadcrumbService',
+    function($scope, $http, CartService, BreadcrumbService){
 
     $scope.STAGE_SELECT_COURSE = 1;
     $scope.STAGE_SELECT_BOOKS = 2;
@@ -179,9 +179,13 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService',
 
         $scope.selectedCourse = course;
 
+        BreadcrumbService.clear();
+        BreadcrumbService.push($scope.$eval(
+            'selectedCourse.department + " " + (selectedCourse.course_number | zpad:3) + "-" + (selectedCourse.course_section | zpad:2) + " " + selectedCourse.course_name'
+        ));
+
         $http.get('/requests/past-courses/' + course.course_id).then(
             function success(response) {
-                console.log("got courses", response.data);
                 var pastCourses = response.data;
 
                 course['pastBooks'] = Enumerable

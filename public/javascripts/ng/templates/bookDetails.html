@@ -2,14 +2,13 @@
 
 <div style="display: table-row;">
 
-    <div>
-        <img class="smallImage" width="60" ng-src="[[ getBookCoverImage() ]]"/>
-        <img class="largeImage" ng-src="[[ getBookCoverImage() ]]"
-             style="display: none; position: absolute; left: 15px;"/>
+    <div class="book-details-images">
+        <img class="smallImage" ng-src="[[ getBookCoverImage() ]]"/>
+        <img class="largeImage" ng-src="[[ getBookCoverImage() ]]" style="display: none;"/>
     </div>
     <div style="padding-left: 10px; display: table-cell; vertical-align: top;">
         <h4 class="list-group-item-heading no-pad-bottom">
-            [[book.title.trim()]]<span ng-if="book.edition && book.edition.trim()">, [[book.edition]]</span>
+            [[book.title.trim()]]<span ng-if="book.edition.trim()">, [[book.edition]]</span>
         </h4>
         <small >
             <span class="text-muted" >

@@ -25,6 +25,19 @@ app.run(['$templateCache', 'stConfig', function($templateCache, stConfig) {
         '</ul></nav>');
 }]);
 
+app.service('BreadcrumbService', function($rootScope){
+    $rootScope.breadcrumbAppends = [];
+
+    return {
+        push: function(crumb){
+            $rootScope.breadcrumbAppends.push(crumb);
+        },
+
+        clear: function(){
+            $rootScope.breadcrumbAppends = [];
+        }
+    };
+});
 
 // Filters the source array by splitting the query string on whitespace/commas, and then
 // runs the array through the 'filter' filter for each segment of the query.
@@ -83,18 +96,20 @@ app.directive('emptyPlaceholder', ['$http',
                    function (newValues, oldValues) {
                        if (newValues[1] && !hasStartedRequest) {
                            hasStartedRequest = true;
-                           return;
                        }
-                       if (!newValues[1] && hasStartedRequest) {
+                       else if (!newValues[1] && hasStartedRequest) {
                            hasFinishedRequest = true;
-                       }
-                       if (!hasFinishedRequest){
-                           return;
                        }
 
                        table.siblings(".empty-table-placeholder").remove();
-                       if (newValues[0] == 0) {
-                           table.after("<h2 class='text-muted empty-table-placeholder'>" +  text + "</h2>");
+                       if (newValues[0] == 0)
+                       {
+                           if ( !hasFinishedRequest){
+                               table.after("<h2 class='text-muted empty-table-placeholder'>Loading...</h2>");
+                           }
+                           else {
+                               table.after("<h2 class='text-muted empty-table-placeholder'>" +  text + "</h2>");
+                           }
                        }
                    }
                );
@@ -106,6 +121,11 @@ app.directive('emptyPlaceholder', ['$http',
 app.filter('moment', function () {
     return function (value, format) {
         return moment(value).format(format);
+    };
+});
+app.filter('momentObj', function () {
+    return function (value, format) {
+        return moment(value);
     };
 });
 

@@ -61,6 +61,10 @@ class User extends Model implements AuthenticatableContract,
 
 
 
+    public function getFirstLastNameAttribute()
+    {
+        return "$this->first_name $this->last_name";
+    }
     public function getLastFirstNameAttribute()
     {
         return "$this->last_name, $this->first_name";

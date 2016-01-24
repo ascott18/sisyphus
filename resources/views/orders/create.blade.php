@@ -1,13 +1,12 @@
-@extends('layouts.master')
+@extends('layouts.master', [
+    'breadcrumbs' => [
+        ['Requests', '/requests'],
+        [isset($course) ? 'Place Request' : 'My Courses'],
+    ]
+])
 
-@section('area', 'Requests')
-@if (isset($course))
-    @section('page', 'Place Request')
-@else
-    @section('page', 'My Courses')
-@endif
+
 @section('content')
-
 
 <div>
     <div ng-cloak class="row" ng-controller="OrdersController"
@@ -18,12 +17,6 @@
                     placeRequestForCourse((courses | filter:{'course_id': {{$course->course_id}} })[0]);
                 @endif
             ">
-
-        <div class="col-lg-12" ng-if="selectedCourse">
-            <h3 class="text-muted" style="margin-top: 0px; margin-bottom: 20px;">
-                [[selectedCourse.department]] [[selectedCourse.course_number | zpad:3]]-[[selectedCourse.course_section | zpad:2]] [[selectedCourse.course_name]]
-            </h3>
-        </div>
 
         <div class="col-lg-12" ng-show="getStage() == STAGE_SELECT_COURSE">
             <div class="col-lg-offset-1 col-lg-10"

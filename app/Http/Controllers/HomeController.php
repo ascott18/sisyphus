@@ -7,6 +7,8 @@ use App\Models\Course;
 use App\Models\Term;
 use Cache;
 use Carbon\Carbon;
+use \Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class HomeController extends Controller
 {
@@ -17,18 +19,27 @@ class HomeController extends Controller
 
     /** GET: /
      *
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\View\View
      */
-    public function getIndex()
+    public function getIndex(Request $request)
     {
-        $this->authorize("all");
+        if ($request->user()->can('view-dashboard')){
+            $this->authorize('view-dashboard');
 
-        return view('welcome', static::getCachedDashboardData());
+            return view('welcome', static::getCachedDashboardData($request->user()->user_id));
+        }
+        else {
+            $this->authorize('all');
+
+            return redirect('/requests');
+        }
+
     }
 
-    private static function getCachedDashboardData(){
+    private static function getCachedDashboardData($user_id){
         // Cache this for x minutes.
-        return Cache::remember('dashboard-' . \Auth::user()->user_id, static::CACHE_MINUTES, function() {
+        return Cache::remember('dashboard-' . $user_id, static::CACHE_MINUTES, function() {
             return [
                 'chartData' => static::getChartData(),
                 'responseStats' => static::getResponseStats(),

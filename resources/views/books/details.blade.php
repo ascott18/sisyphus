@@ -1,7 +1,10 @@
-@extends('layouts.master')
+@extends('layouts.master', [
+    'breadcrumbs' => [
+        ['Books', '/books'],
+        [$book->title],
+    ]
+])
 
-@section('area', 'Books')
-@section('page', $book->title)
 
 @section('content')
 
@@ -15,7 +18,7 @@
             <div class="panel-body">
                 <div class="col-sm-6">
                     <a href="/books/edit/{{ $book->book_id }}" class="btn btn-primary " role="button">
-                        Edit <i class="fa fa-arrow-right"></i>
+                        <i class="fa fa-pencil"></i> Edit
                     </a>
                     <dl class="dl-horizontal">
                         <dt>Title</dt>
@@ -86,7 +89,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="order in bdc.displayed">
+                            <tr ng-cloak ng-repeat="order in bdc.displayed">
                                 <td>[[ order.course.term.display_name ]]</td>
                                 <td>
                                     [[ order.department ]] [[ order.course_number | zpad:3 ]]-[[ order.course_section | zpad:2 ]]
@@ -96,17 +99,15 @@
                                 <td>[[ order.notes ]]</td>
 
                                 <td>
-                                    <a ng-if="order.course.canView" class="btn btn-sm btn-info" href="/courses/details/[[order.course_id]]" role="button">
+                                    <a ng-if="order.course.canView" class="btn btn-sm btn-primary" href="/courses/details/[[order.course_id]]" role="button">
                                         Course Details <i class="fa fa-arrow-right"></i>
                                     </a>
                                 </td>
-
-                                {{--<td>[[ order.quantity_requested ]]</td>--}}
                             </tr>
                         </tbody>
                         <tfoot>
                         <tr>
-                            <td class="text-center" st-pagination="" st-items-by-page="10" colspan="5">
+                            <td class="text-center" st-pagination="" st-items-by-page="10" colspan="6">
                             </td>
                         </tr>
                         </tfoot>

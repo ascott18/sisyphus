@@ -1,7 +1,10 @@
-@extends('layouts.master')
+@extends('layouts.master', [
+    'breadcrumbs' => [
+        ['Users', '/users'],
+        ['User Management'],
+    ]
+])
 
-@section('area', 'Users')
-@section('page', 'User Management')
 
 @section('content')
 
