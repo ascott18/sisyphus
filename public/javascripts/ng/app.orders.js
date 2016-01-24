@@ -219,7 +219,6 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
                                 .ToArray()
                         }
                     })
-                    .OrderByDescending("$.terms[0].term_id")
                     .ToArray();
             }
         );

@@ -155,10 +155,11 @@
                                     <div class="panel-list-item"
                                         ng-cloak
                                         ng-show="selectedCourse.pastBooks.length > 0"
-                                        ng-repeat="bookData in selectedCourse.pastBooks">
+                                        ng-repeat="bookData in selectedCourse.pastBooks | orderBy:'terms[0].term_id'">
 
                                         <div class="pull-right">
                                             <button class="btn btn-xs btn-primary"
+                                                    title="Add to Cart"
                                                     ng-click="addBookToCart(bookData)">
                                                 <i class="fa fa-fw fa-plus"></i>
                                             </button>
