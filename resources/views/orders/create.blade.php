@@ -172,10 +172,10 @@
                                                     <span ng-if="data.course.user">[[data.course.user.first_name]] [[data.course.user.last_name]]</span>
                                                     <span ng-if="!data.course.user">TBA</span>
 
-                                                    ( <ng-pluralize count="data.numSections" when="{
+                                                    (<ng-pluralize count="data.numSections" when="{
                                                         'one': '{} Section',
                                                         'other': '{} Sections'}">
-                                                    </ng-pluralize> )
+                                                    </ng-pluralize>)
                                                     [[$last ? '' : ($index==book.authors.length-2) ? ', and ' : ', ']]
                                                 </span>
                                             </span>

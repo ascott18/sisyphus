@@ -215,9 +215,11 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
                                 // For each term/user combination,
                                 // group by the term and associate all the groupings for that term as 'orderData'
                                 .GroupBy("$.course.term_id", "", "{term:$$.First().course.term, orderData: $$.ToArray()}")
+                                .OrderByDescending('$.term.term_id')
                                 .ToArray()
                         }
                     })
+                    .OrderByDescending("$.terms[0].term_id")
                     .ToArray();
             }
         );

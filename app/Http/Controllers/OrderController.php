@@ -18,6 +18,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class OrderController extends Controller
 {
+    const PAST_BOOKS_NUM_MONTHS = 30;
 
     /** GET: /requests/
      *
@@ -263,20 +264,23 @@ class OrderController extends Controller
 
         $this->authorize('place-order-for-course', $course);
 
-
         $courses =
             Course::
             where(['department' => $course->department, 'course_number' => $course->course_number])
             ->where('course_id', '!=', $id)
             ->with([
                     "term",
-                    "orders.book.authors",
+                    "orders" => function ($query){
+                        return $query
+                            ->where('created_at', '>', Carbon::today()->subMonths(static::PAST_BOOKS_NUM_MONTHS))
+                            ->with('book.authors');
+                    },
                     'user' => function($query){
                         return $query->select('user_id', 'first_name', 'last_name');
                     }])
             ->get();
 
-        return response()->json($courses);
+        return $courses;
     }
 
     /**
