@@ -155,8 +155,7 @@
                                     <div class="panel-list-item"
                                         ng-cloak
                                         ng-show="selectedCourse.pastBooks.length > 0"
-                                        ng-repeat="bookData in selectedCourse.pastBooks | orderBy:'terms[0].term_id'">
-
+                                        ng-repeat="bookData in selectedCourse.pastBooks | orderBy:'-terms[0].term.term_id' track by bookData.book.book_id">
                                         <div class="pull-right">
                                             <button class="btn btn-xs btn-primary"
                                                     title="Add to Cart"
@@ -169,8 +168,11 @@
                                             <span ng-repeat="termData in bookData.terms">
                                                 <br>
                                                 [[termData.term.term_name]] [[termData.term.year]]:
-                                                <span ng-repeat="data in termData.orderData">
-                                                    <span ng-if="data.course.user">[[data.course.user.first_name]] [[data.course.user.last_name]]</span>
+                                                <span ng-repeat="data in termData.orderData"
+                                                      ng-class="{'text-primary': data.course.user.user_id == selectedCourse.user_id}">
+                                                    <span ng-if="data.course.user">
+                                                        [[data.course.user.last_name]]
+                                                    </span>
                                                     <span ng-if="!data.course.user">TBA</span>
 
                                                     (<ng-pluralize count="data.numSections" when="{

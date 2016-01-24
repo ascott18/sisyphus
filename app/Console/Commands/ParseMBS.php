@@ -75,7 +75,6 @@ EOL;
             $dbSemesterTerm = Term::where(['term_number' => $termNumber, 'year' => "20$term[2]"])->first();
 
             echo ("Parsing $dbTerm->display_name\n");
-            $termPeriodDayLength = $dbTerm->order_due_date->diffInDays($dbTerm->order_start_date);
 
             // From the page header, calculate the column widths.
             // This only works for the left-aligned columns.
@@ -253,6 +252,7 @@ EOL;
                         }
                         $courseNumber = rtrim($courseNumber, "S");
                     }
+                    $termPeriodDayLength = $term->order_due_date->diffInDays($term->order_start_date);
 
 
                     // If the section number is listed as "ALL" (quite common in the data),

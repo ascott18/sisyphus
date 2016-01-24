@@ -18,7 +18,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class OrderController extends Controller
 {
-    const PAST_BOOKS_NUM_MONTHS = 30;
+    const PAST_BOOKS_NUM_MONTHS = 24;
 
     /** GET: /requests/
      *
@@ -74,7 +74,7 @@ class OrderController extends Controller
                 ->with([
                     'orders.book',
                     'user' => function($query){
-                        return $query->select('user_id', 'first_name', 'last_name');
+                        return $query->select('user_id', 'last_name');
                 }])
                 ->get();
 
@@ -268,15 +268,18 @@ class OrderController extends Controller
             Course::
             where(['department' => $course->department, 'course_number' => $course->course_number])
             ->where('course_id', '!=', $id)
+            ->where('created_at', '>', Carbon::today()->subMonths(static::PAST_BOOKS_NUM_MONTHS))
             ->with([
-                    "term",
+                    "term" => function ($query){
+                        return $query->select('term_id', 'term_number', 'year');
+                    },
                     "orders" => function ($query){
                         return $query
-                            ->where('created_at', '>', Carbon::today()->subMonths(static::PAST_BOOKS_NUM_MONTHS))
+                            ->select('order_id', 'book_id', 'course_id')
                             ->with('book.authors');
                     },
                     'user' => function($query){
-                        return $query->select('user_id', 'first_name', 'last_name');
+                        return $query->select('user_id', 'last_name');
                     }])
             ->get();
 

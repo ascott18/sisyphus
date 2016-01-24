@@ -70,7 +70,7 @@ app.directive('bookDetails', function($http) {
 
                    $http.get("https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn, {cache: true}).then(
                        function success(response){
-                           if(response.data.items) {
+                           if(response.data.items && response.data.items[0].volumeInfo.imageLinks) {
                                scope.thumbnail = response.data.items[0].volumeInfo.imageLinks.thumbnail;
                            } else {
                                scope.thumbnail = "/images/coverNotAvailable.jpg";
@@ -219,6 +219,7 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
                                 .ToArray()
                         }
                     })
+                    .OrderByDescending("$.terms[0].term_id")
                     .ToArray();
             }
         );
