@@ -31,7 +31,7 @@
                 <th>ISBN</th>
                 <th>Publisher</th>
                 <th>Req</th>
-                <th>Amt Ord</th>
+                <th>Notes</th>
             </tr>
             </thead>
             <tbody>
@@ -44,7 +44,7 @@
                         <?php $book = $order->book?>
                         <tr>
                             <td>{{ $course->department }}
-                                {{ str_pad($course->course_number, 3, "0", STR_PAD_LEFT) }}-{{ $course->course_section }}
+                                {{ str_pad($course->course_number, 3, "0", STR_PAD_LEFT) }}-{{ str_pad($course->course_section, 2, "0", STR_PAD_LEFT) }}
                                 {{$course->course_name}}</td>
                             <td>{{$user ? $user->last_first_name : 'TBA'}}</td>
                             <td>{{$book->title}}</td>
@@ -60,14 +60,14 @@
                             <td></td>
                             <td>{{$book->isbn13}}</td>
                             <td>{{$book->publisher}}</td>
-                            <td></td>
-                            <td></td>
+                            <td>{{$order->required ? 'Yes' : 'No'}}</td>
+                            <td>{{$order->notes}}</td>
                         </tr>
                     @endforeach
                 @else
                     <tr>
                         <td>{{ $course->department }}
-                            {{ str_pad($course->course_number, 3, "0", STR_PAD_LEFT) }}-{{ $course->course_section }}
+                            {{ str_pad($course->course_number, 3, "0", STR_PAD_LEFT) }}-{{ str_pad($course->course_section, 2, "0", STR_PAD_LEFT) }}
                             {{$course->course_name}}</td>
                         <td>{{$user ? $user->last_first_name : 'TBA'}}</td>
                         <td>&lt;{{$course->no_book ? 'No Book' : 'No Response'}}></td>

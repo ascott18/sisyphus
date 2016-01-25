@@ -71,6 +71,7 @@ class OrderController extends Controller
                 ->where('department', '=', $course->department)
                 ->where('course_number', '=', $course->course_number)
                 ->where('term_id', '=', $course->term_id)
+                ->orWhere('course_id', '=', $course->course_id)
                 ->with([
                     'orders.book',
                     'user' => function($query){
@@ -79,6 +80,12 @@ class OrderController extends Controller
                 ->get();
 
             $openTerms = Term::currentTerms()->get();
+
+            // Make sure that the requested course ends up in the list.
+            // If we're debugging unauthorized actions, because of the way Course::orderable() works,
+            // it is possible that the requested course might have passed the authorize check
+            // but didn't end up the query.
+
 
             return view('orders.create', ['openTerms' => $openTerms, 'courses' => $courses, 'course' => $course]);
         }
@@ -203,7 +210,6 @@ class OrderController extends Controller
         $query = Course::visible($request->user());
 
         $query = $query->join('orders', 'courses.course_id', '=', 'orders.course_id'); // join before to get order department
-
         $query = $query->join('books', 'orders.book_id', '=', 'books.book_id'); // get the books
 
         if($request->input('term_id')) { // filter by term

@@ -2,7 +2,8 @@
 var app = angular.module('sisyphus', ['sisyphus.helpers', 'sisyphus.helpers.isbnHyphenate', 'smart-table']);
 
 stripHyphens = function(isbn13) {
-    return isbn13.replace(/-/g, "");
+    if (!isbn13) return isbn13;
+    return isbn13.replace(/[\s-]/g, "");
 };
 
 app.service("CartService", function () {
@@ -62,6 +63,9 @@ app.directive('bookDetails', function($http) {
 
            scope.lastIsbn = '';
            scope.getBookCoverImage = function() {
+               if (!scope.book)
+                   return;
+
                var isbn = scope.book.isbn13;
                if (isbn != scope.lastIsbn)
                {
@@ -253,7 +257,7 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
         var index = $scope.cartBooks.indexOf(bookData);
         if (index > -1) {
             $scope.cartBooks.splice(index, 1);
-            if (!bookData.isNew) {
+            if (bookData.book.book_id) {
                 $scope.selectedCourse['pastBooks'].push(bookData);
             }
         }
@@ -354,6 +358,7 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", function(
     $scope.isbnChanged = function(book) {
         if ($scope.isAutoFilled) {
             $scope.isAutoFilled = false;
+            $scope.autofilledBook = null;
             $scope.authors = [];
             $scope.book = angular.copy($scope.master);
             $scope.book['isbn13'] = book['isbn13'];
@@ -370,16 +375,15 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", function(
             $http.get('/books/book-by-isbn?isbn13=' + stripped).then(
                 function success(response) {
                     var data = response.data[0];
-                    if (data) {
+                    if (data && data.isbn13 == stripHyphens($scope.book.isbn13)) {
                         $scope.book['title'] = data.title;
                         $scope.book['edition'] = data.edition;
                         $scope.book['publisher'] = data.publisher;
                         $scope.authors = data.authors;
 
+                        $scope.autofilledBook = data;
                         $scope.isAutoFilled = true;
                     }
-
-                    console.log("got book", response.data);
                 }
             );
         }
@@ -397,7 +401,6 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", function(
         if (form.$valid) {
             $scope.master = angular.copy(book);
             $scope.master["authors"] = $scope.authors;
-            $scope.master["isNew"] = true;
             var bookData = {};
             bookData['book'] = $scope.master;
             bookData['book']['isbn13'] = stripHyphens(bookData['book']['isbn13']);
