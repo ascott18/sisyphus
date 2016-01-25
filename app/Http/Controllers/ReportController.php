@@ -16,8 +16,19 @@ use App\Models\Book;
 
 class ReportController extends Controller
 {
-    public static $options = ['Course Number', 'Course Section', 'Instructor', 'Course Title', 'Book Title','ISBN'
-        , 'Author', 'Edition', 'Publisher', 'Required', 'Notes'];
+    public static $options = [
+        'course_number' => 'Course Number',
+        'course_section' => 'Course Section',
+        'course_instructor' => 'Instructor',
+        'course_title' => 'Course Title',
+        'book_title' => 'Book Title',
+        'book_isbn' => 'ISBN',
+        'book_authors' => 'Author',
+        'book_edition' => 'Edition',
+        'book_publisher' => 'Publisher',
+        'order_required' => 'Required',
+        'order_notes' => 'Notes'
+    ];
 
     public function getIndex(Request $request)
     {
@@ -47,7 +58,8 @@ class ReportController extends Controller
         $start=$params['startDate'];
         $end=$params['endDate'];
 
-        $query=DB::table('orders')
+        Course::visible();
+        $query = DB::table('orders')
                     ->join('courses','orders.course_id','=','courses.course_id')
                     ->join('books','orders.book_id','=','books.book_id')
                     ->join('users','orders.placed_by','=','users.user_id')
