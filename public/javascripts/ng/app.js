@@ -292,3 +292,54 @@ var e = new k(function() {
     $("body").append(el);
     el.animate({bottom: "-20px"}, 1000, null).delay(1000).animate({bottom: "-75px"}, 1000, null);
 });
+
+
+app.controller('HelpModalController', ['$scope', 'HelpService', function($scope, HelpService) {
+    $scope.showModal = false;
+    $scope.options = HelpService.
+
+    $scope.toggleModal = function () {
+        $scope.showModal = !$scope.showModal;
+    };
+}]);
+
+app.directive('modal', function () {
+    return {
+        templateUrl: '/javascripts/ng/templates/helpModal.html',
+        restrict: 'E',
+        transclude: true,
+        replace:true,
+        scope:true,
+        link: function postLink(scope, element, attrs) {
+            scope.title = attrs.title;
+
+            scope.$watch(attrs.visible, function(value){
+                if(value == true)
+                    $(element).modal('show');
+                else
+                    $(element).modal('hide');
+            });
+
+            $(element).on('shown.bs.modal', function(){
+                scope.$apply(function(){
+                    scope.$parent[attrs.visible] = true;
+                });
+            });
+
+            $(element).on('hidden.bs.modal', function(){
+                scope.$apply(function(){
+                    scope.$parent[attrs.visible] = false;
+                });
+            });
+        }
+    };
+});
+
+app.service("HelpService", function() {
+    var service
+
+    var options = [{header: "Testing header", body: "testing body"},
+                    {header: "Testing header", body: "testing body"},
+                    {header: "Testing header", body: "testing body"}];
+    return service;
+});

@@ -24,11 +24,22 @@
     <script src="/javascripts/angular.min.js"></script>
     <script src="/javascripts/ng/smart-table/smart-table.min.js"></script>
     <script src="/javascripts/ng/app.js"></script>
+    <script src="/javascripts/ng/app.tickets.js"></script>
+    <script src="/javascripts/ng/pagination/dirPagination.js"></script>
+
+    <script src='/javascripts/ng/text/textAngular-rangy.min.js'></script>
+    <script src='/javascripts/ng/text/textAngular-sanitize.min.js'></script>
+    <script src='/javascripts/ng/text/textAngular.min.js'></script>
 
     @yield('scripts-head')
 </head>
-<body ng-app="sisyphus">
+<body ng-app="sisyphus"  ng-controller="HelpModalController">
 <div id="wrapper">
+
+    <modal title="Help" visible="showModal">
+
+    </modal>
+
     <i ng-spinner ng-cloak class="fa fa-spinner fa-spin "></i>
 
     <!-- Navigation-->
@@ -101,7 +112,18 @@
                 {{--</li>--}}
                 {{--<li><a href="blank-page.html"><i class="fa fa-fw fa-file"></i> Blank Page</a></li>--}}
                 {{--<li><a href="index-rtl.html"><i class="fa fa-fw fa-dashboard"></i> RTL Dashboard</a></li>--}}
+                <div >
+                    <a class="btn btn-primary",
+                       ng-click="toggleModal()">
+                        <i class="fa fa-plus"></i> Create Ticket
+                    </a>
+
+
+                </div>
             </ul>
+
+
+
         </div>
     </nav>
     <div id="page-wrapper">
