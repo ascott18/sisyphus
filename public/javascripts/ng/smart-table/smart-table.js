@@ -490,7 +490,6 @@ ng.module('smart-table')
       link: {
 
         pre: function (scope, element, attrs, ctrl) {
-
           var pipePromise = null;
 
           if (ng.isFunction(scope.stPipe)) {
@@ -502,7 +501,10 @@ ng.module('smart-table')
               }
 
               pipePromise = $timeout(function () {
-                scope.stPipe(ctrl.tableState(), ctrl);
+                if(!attrs.stHasDefault || scope.alreadyCalled) {
+                  scope.stPipe(ctrl.tableState(), ctrl)
+                }
+                scope.alreadyCalled = true;
               }, config.pipe.delay);
 
               return pipePromise;
