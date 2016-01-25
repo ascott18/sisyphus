@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Cache;
 use App\Models\Book;
 use App\Models\Course;
 use Illuminate\Http\Request;
@@ -30,13 +31,18 @@ class BookController extends Controller
     private function buildBookSearchQuery($request, $query) {
         if($request->input('title'))
             $query = $query->where('title', 'LIKE', '%'.$request->input('title').'%');
+        if($request->input('author')) {
+            $query->join('authors', function ($join) use ($request) {
+                $join->on('authors.book_id', '=', 'books.book_id')
+                    ->where('authors.name', 'LIKE', '%'.$request->input('author').'%');
+            });
+        }
         if($request->input('publisher'))
             $query = $query->where('publisher', 'LIKE', '%'.$request->input('publisher').'%');
         if($request->input('isbn13')) {
             $isbn = str_replace("-", "", $request->input('isbn13'));
             $query = $query->where('isbn13', 'LIKE', '%' . $isbn . '%');
         }
-
 
         return $query;
     }
@@ -77,7 +83,7 @@ class BookController extends Controller
         else if ($user->may('view-dept-books')){
             // Only show books that have been ordered for courses that the user
             // either teaches, or administers as a dept secretary.
-            $query = Book::whereIn('book_id',
+            $query = Book::whereIn('books.book_id',
                 Course::visible()
                 ->join('orders', function ($join) {
                     $join->on('orders.course_id', '=', 'courses.course_id')
@@ -92,7 +98,7 @@ class BookController extends Controller
             // similar to the ones that the current user teaches (same number and dept).
             // This way we get a nice set of relevant books to the user, without bombarding them with
             // every single physics book just because they taught a physics class once five years ago.
-            $query = Book::whereIn('book_id',
+            $query = Book::whereIn('books.book_id',
                 Course::where('courses.user_id', '=', $user->user_id)
                     ->join('courses as similarCourses', function ($join) {
                         $join->on('courses.department', '=', 'similarCourses.department')
@@ -111,10 +117,19 @@ class BookController extends Controller
         $query = $this->buildBookSortQuery($request, $query);
 
         $query = $query->with('authors');
+
         $books = $query->paginate(10);
 
         return response()->json($books);
     }
+
+    /**
+     * Build the search query for the book detail list
+     *
+     * @param \Illuminate\Database\Eloquent\Builder
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
 
     private function buildDetailSearchQuery($request, $query) {
         if($request->input('section')) {
@@ -219,19 +234,30 @@ class BookController extends Controller
         return response()->json($orders);
     }
 
-    /*
-    public function getCover(Request $request) {
-        $googleResponse = json_decode(file_get_contents("https://www.googleapis.com/books/v1/volumes?q=isbn:".$request->input('isbn')));
 
-        $coverImage = file_get_contents($googleResponse->items[0]->volumeInfo->imageLinks->thumbnail);
+    public function getCover(Request $request) {
+        $this->authorize("all");
+
+        $cached = true;
+        $coverImage = Cache::get($request->input('isbn'));
+
+        if($coverImage == NULL) {
+            $cached = false;
+            $googleResponse = json_decode(file_get_contents("https://www.googleapis.com/books/v1/volumes?q=isbn:".$request->input('isbn')));
+            if(isset($googleResponse->items[0]->volumeInfo->imageLinks->thumbnail)) {
+                $coverImage = file_get_contents($googleResponse->items[0]->volumeInfo->imageLinks->thumbnail);
+                Cache::put($request->input('isbn'), $coverImage, 43800);
+            }
+        }
+
 
         return response()->json(array (
-            "image" => base64_encode($coverImage)
+            "image" => base64_encode($coverImage),
+                "cached" => $cached
             )
         );
 
     }
-    */
 
     /** GET: /books/details/{id}
      * Display the specified resource.
@@ -251,9 +277,8 @@ class BookController extends Controller
 
     public function getEdit($id)
     {
-
         $book = Book::findOrFail($id);
-        $this->authorize("edit-book",$book);
+        $this->authorize("edit-book", $book);
 
         return view('books.edit', ['book' => $book]);
     }
@@ -276,6 +301,14 @@ class BookController extends Controller
     }
 
     public function postEdit(Request $request) {
+        $this->validate($request, [
+            'book' => 'required|array',
+            'book.book_id' => 'required|integer',
+            'book.title' => 'required|string',
+            'book.publisher' => 'required|string',
+            'authors' => 'required',
+            'authors.*' => 'string'
+        ]);
 
         $book = $request->get('book');
         $authors = $request->get('authors');
@@ -288,8 +321,10 @@ class BookController extends Controller
         $db_book->authors()->delete();
 
         foreach ($authors as $author) {
-            $db_book->authors()->create($author);
+            $db_book->authors()->create(['name' => $author]);
         }
+
+        return redirect('books/details/' . $db_book->book_id);
     }
 
 }

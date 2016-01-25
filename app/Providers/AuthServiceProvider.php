@@ -172,29 +172,6 @@ class AuthServiceProvider extends ServiceProvider
         });
 
 
-        $gate->define('place-order-for-user', function (User $user, User $targetUser) {
-            if ($user->may('place-all-orders')) {
-                return true;
-            }
-
-            // TODO: restrict these courses to those of the current term.
-            if ($user->may('place-dept-orders')) {
-                $departments = $user->departments()->lists('department');
-                foreach ($targetUser->currentCourses as $course) {
-                    if ($departments->contains($course->department)) {
-                        return true;
-                    }
-                }
-            }
-
-            if ($user->user_id == $targetUser->user_id){
-                return true;
-            }
-
-            return false;
-        });
-
-
         $gate->define('edit-books', function (User $user) {
             return $user->may('edit-books');
         });
@@ -257,6 +234,11 @@ class AuthServiceProvider extends ServiceProvider
         $gate->define('view-ticket', function (User $user, Ticket $ticket) {
             // TODO: make this correct (check department, and have permissions for viewing department tickets, etc).
             return $ticket->user_id == $user->user_id;
+        });
+
+
+        $gate->define('view-dashboard', function (User $user) {
+            return $user->may('view-dashboard');
         });
 
         $gate->define('make-reports', function (User $user) {

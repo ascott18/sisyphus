@@ -1,7 +1,10 @@
-@extends('layouts.master')
+@extends('layouts.master', [
+    'breadcrumbs' => [
+        ['Messages', '/messages'],
+        ['Send Messages'],
+    ]
+])
 
-@section('area', 'Messages')
-@section('page', 'Send Messages')
 
 @section('content')
 

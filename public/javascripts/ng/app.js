@@ -1,11 +1,14 @@
 
 var app = angular.module('sisyphus.helpers', ['smart-table']);
 
+// Use square braces with angular since curly braces interfere with laravel blade.
 app.config(function($interpolateProvider) {
     $interpolateProvider.startSymbol('[[');
     $interpolateProvider.endSymbol(']]');
 });
 
+// Provide the correct headers with AJAX requests so that Laravel can respond
+// with errors formatted as json.
 app.config(function($httpProvider) {
     $httpProvider.defaults.headers.common = { 'X-Requested-With' : 'XMLHttpRequest' }
 });
@@ -22,6 +25,19 @@ app.run(['$templateCache', 'stConfig', function($templateCache, stConfig) {
         '</ul></nav>');
 }]);
 
+app.service('BreadcrumbService', function($rootScope){
+    $rootScope.breadcrumbAppends = [];
+
+    return {
+        push: function(crumb){
+            $rootScope.breadcrumbAppends.push(crumb);
+        },
+
+        clear: function(){
+            $rootScope.breadcrumbAppends = [];
+        }
+    };
+});
 
 // Filters the source array by splitting the query string on whitespace/commas, and then
 // runs the array through the 'filter' filter for each segment of the query.
@@ -43,6 +59,7 @@ app.filter('filterSplit', function($filter){
     };
 });
 
+// Pads a string (or number) with zeroes if it is less than the given length.
 app.filter('zpad', function() {
     return function(input, n) {
         if(input === undefined)
@@ -50,11 +67,17 @@ app.filter('zpad', function() {
         input = input.toString();
         if(input.length >= n)
             return input;
-        var zeros = "0".repeat(n);
+
+        // string.prototype.repeat doesn't work in IE - its part of ecmascript6.
+        var zeros = "";
+        while (n-- > 0){
+            zeros += "0";
+        }
         return (zeros + input).slice(-1 * n)
     };
 });
 
+// Automatically adds text to an element when it doesn't have children.
 app.directive('emptyPlaceholder', ['$http',
     function($http){
        return {
@@ -73,18 +96,20 @@ app.directive('emptyPlaceholder', ['$http',
                    function (newValues, oldValues) {
                        if (newValues[1] && !hasStartedRequest) {
                            hasStartedRequest = true;
-                           return;
                        }
-                       if (!newValues[1] && hasStartedRequest) {
+                       else if (!newValues[1] && hasStartedRequest) {
                            hasFinishedRequest = true;
-                       }
-                       if (!hasFinishedRequest){
-                           return;
                        }
 
                        table.siblings(".empty-table-placeholder").remove();
-                       if (newValues[0] == 0) {
-                           table.after("<h2 class='text-muted empty-table-placeholder'>" +  text + "</h2>");
+                       if (newValues[0] == 0)
+                       {
+                           if ( !hasFinishedRequest){
+                               table.after("<h2 class='text-muted empty-table-placeholder'>Loading...</h2>");
+                           }
+                           else {
+                               table.after("<h2 class='text-muted empty-table-placeholder'>" +  text + "</h2>");
+                           }
                        }
                    }
                );
@@ -93,15 +118,14 @@ app.directive('emptyPlaceholder', ['$http',
    }
 ]);
 
-app.directive('initData', function() {
-    return {
-        restrict: 'A',
-        link: function($scope, element, attrs) {
-            if ( attrs.ngBind !== undefined)
-            {
-                $scope[attrs.ngBind] = attrs.initdata ? attrs.initdata : element.text();
-            }
-        }
+app.filter('moment', function () {
+    return function (value, format) {
+        return moment(value).format(format);
+    };
+});
+app.filter('momentObj', function () {
+    return function (value, format) {
+        return moment(value);
     };
 });
 

@@ -1,7 +1,10 @@
-@extends('layouts.master')
+@extends('layouts.master', [
+    'breadcrumbs' => [
+        ['Users', '/users'],
+        ['User Management'],
+    ]
+])
 
-@section('area', 'Users')
-@section('page', 'User Management')
 
 @section('content')
 
@@ -32,6 +35,10 @@
                href="/users/roles">
                 <i class="fa fa-key"></i> Manage Roles
             </a>
+            <a class="btn btn-primary"
+               href="/users/create">
+                <i class="fa fa-plus"></i> Create User
+            </a>
             <br>
             <br>
 
@@ -47,6 +54,7 @@
                                class="table table-hover">
                             <thead>
                             <tr>
+                                <th width="1%"></th>
                                 <th st-sort="last_name">Last Name</th>
                                 <th st-sort="first_name">First Name</th>
                                 <th st-sort="net_id">NetID</th>
@@ -55,6 +63,7 @@
                                 <th width="170px">Departments</th>
                             </tr>
                             <tr>
+                                <th width="1%"></th>
                                 <th><input type="text" class="form-control" placeholder="Search..." st-search="lName"/></th>
                                 <th><input type="text" class="form-control" placeholder="Search..." st-search="fName"/></th>
                                 <th><input type="text" class="form-control" placeholder="Search..." st-search="netID"/></th>
@@ -67,6 +76,11 @@
 
                             <tr ng-cloak
                                 ng-repeat="user in users">
+                                <td>
+                                    <a class="btn btn-default btn-xs" href="/users/edit/[[user.user_id]]">
+                                        <i class="fa fa-pencil"></i> Edit
+                                    </a>
+                                </td>
                                 <td>
                                     [[user.last_name]]
                                 </td>
@@ -145,7 +159,7 @@
                             </tbody>
                             <tfoot>
                             <tr>
-                                <td class="text-center" st-pagination="" st-items-by-page="10" colspan="6">
+                                <td class="text-center" st-pagination="" st-items-by-page="10" colspan="7">
                                 </td>
                             </tr>
                             </tfoot>

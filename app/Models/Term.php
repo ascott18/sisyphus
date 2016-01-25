@@ -6,11 +6,20 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property Carbon order_start_date The date on which orders will be open for this term.
- * @property Carbon order_due_date The date by which book orders are due for this term.
- * @property integer year The year for which the term exists.
- * @property integer term_number The term number, which is a key in static::$termNumbers.
- * @property integer term_id The database primary key for this model.
+ * App\Models\Term
+ *
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Course[] $courses
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Term currentOrPast()
+ * @property integer $term_id The database primary key for this model.
+ * @property integer $term_number The term number, which is a key in static::$termNumbers.
+ * @property \Carbon\Carbon $order_start_date The date on which orders will be open for this term.
+ * @property \Carbon\Carbon $order_due_date The date by which book orders are due for this term.
+ * @property integer $year The year for which the term exists.
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property-read string $term_name
+ * @property-read string $display_name
+ * @property-read mixed $status
  */
 class Term extends Model
 {
@@ -37,6 +46,13 @@ class Term extends Model
     protected $fillable = ['order_start_date', 'order_due_date'];
 
     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['term_name', 'display_name', 'status'];
+
+    /**
      * A mapping of term numbers to their English name.
      *
      * @var array
@@ -57,7 +73,7 @@ class Term extends Model
      * @var array
      */
     public static $termOrdering = [
-        10, 20, 25, 30, 35, 40, 15
+        10, 25, 20, 35, 30, 15, 40
     ];
 
 
@@ -76,27 +92,33 @@ class Term extends Model
 
                 switch ($term_number){
                     case 10: // Winter
-                        $start = Carbon::create($year - 1, 10, 01);
+                        $end = Carbon::create($year - 1, 12, 4);
+                        break;
+                    case 25: // Spring Semester
+                        $end = Carbon::create($year - 1, 12, 4);
                         break;
                     case 20: // Spring
-                    case 25: // Spring Semester
-                        $start = Carbon::create($year, 1, 01);
+                        $end = Carbon::create($year, 2, 28);
+                        break;
+                    case 35: // Summer semester
+                        $end = Carbon::create($year, 4, 8);
                         break;
                     case 30: // Summer
-                    case 35: // Summer semester
-                        $start = Carbon::create($year, 4, 01);
+                        $end = Carbon::create($year, 5, 20);
+                        break;
+                    case 15: // Fall semester
+                        $end = Carbon::create($year, 7, 21);
                         break;
                     case 40: // Fall
-                    case 15: // Fall semester
-                        $start = Carbon::create($year, 7, 01);
+                        $end = Carbon::create($year, 8, 21);
                         break;
                 }
 
                 // TODO: figure out what these dates should look like, roughly, from the bookstore.
 
                 $term = new static([
-                    'order_start_date' => $start->copy(),
-                    'order_due_date' => $start->copy()->addMonths(1)->addDays(20),
+                    'order_start_date' => $end->copy()->addMonths(-3),
+                    'order_due_date' => $end->copy(),
                 ]);
 
                 // Add these manually - they shouldn't be mass assignable.
@@ -114,7 +136,7 @@ class Term extends Model
      *
      * @return string
      */
-    public function termName()
+    public function getTermNameAttribute()
     {
         $term = $this->term_number;
 
@@ -122,13 +144,30 @@ class Term extends Model
     }
 
     /**
-     * Gets the full display name of this term.
+     * @deprecated Use $term->term_name instead.
+     */
+    public function termName()
+    {
+        return $this->term_name;
+    }
+
+
+    /**
+     * Gets the name of the term_number of this model.
      *
      * @return string
      */
+    public function getDisplayNameAttribute()
+    {
+        return $this->term_name . ' ' . $this->year;
+    }
+
+    /**
+     * @deprecated Use $term->display_name instead.
+     */
     public function displayName()
     {
-        return $this->termName() . ' ' . $this->year;
+        return $this->display_name;
     }
 
     /**
@@ -166,7 +205,7 @@ class Term extends Model
      *
      * @return string
      */
-    public function getStatusDisplayString()
+    public function getStatusAttribute()
     {
         if ($this->areOrdersInProgress())
         {
@@ -186,6 +225,7 @@ class Term extends Model
 
         return "Will start eventually";
     }
+
 
     /**
      * Gets the courses belonging to the term.

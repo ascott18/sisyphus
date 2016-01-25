@@ -1,8 +1,9 @@
 
-var app = angular.module('sisyphus', ['sisyphus.helpers', 'sisyphus.helpers.isbnHyphenate']);
+var app = angular.module('sisyphus', ['sisyphus.helpers', 'sisyphus.helpers.isbnHyphenate', 'smart-table']);
 
 stripHyphens = function(isbn13) {
-    return isbn13.replace(/-/g, "");
+    if (!isbn13) return isbn13;
+    return isbn13.replace(/[\s-]/g, "");
 };
 
 app.service("CartService", function () {
@@ -54,14 +55,17 @@ app.directive('bookDetails', function($http) {
        link: function(scope, element, attrs) {
 
            $(element).find(".smallImage").on('mouseover',function(){
-               $(element).find(".largeImage").css("display", "");
+               $(element).find(".largeImage").fadeIn();
            });
            $(element).find(".largeImage").on('mouseleave',function(){
-               $(element).find(".largeImage").hide();
+               $(element).find(".largeImage").fadeOut();
            });
 
            scope.lastIsbn = '';
            scope.getBookCoverImage = function() {
+               if (!scope.book)
+                   return;
+
                var isbn = scope.book.isbn13;
                if (isbn != scope.lastIsbn)
                {
@@ -70,7 +74,7 @@ app.directive('bookDetails', function($http) {
 
                    $http.get("https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn, {cache: true}).then(
                        function success(response){
-                           if(response.data.items) {
+                           if(response.data.items && response.data.items[0].volumeInfo.imageLinks) {
                                scope.thumbnail = response.data.items[0].volumeInfo.imageLinks.thumbnail;
                            } else {
                                scope.thumbnail = "/images/coverNotAvailable.jpg";
@@ -86,8 +90,76 @@ app.directive('bookDetails', function($http) {
    }
 });
 
-app.controller('OrdersController', ['$scope', '$http', 'CartService', '$filter',
-    function($scope, $http, CartService, $filter){
+app.controller('OrdersListController', function($scope, $http) {
+    var ctrl = this;
+    $scope.stCtrl=null;
+    $scope.stTableRef=null;
+
+    $scope.updateTerm=function()
+    {
+        if($scope.stCtrl)
+            $scope.stCtrl.pipe();
+
+        if($scope.stTableRef)
+            $scope.stTableRef.pagination.start = 0;
+    };
+
+    this.displayed = [];
+
+    this.callServer = function callServer(tableState, ctrl1) {
+        ctrl.isLoading = true;
+
+        if(!$scope.stCtrl&&ctrl1)
+        {
+            $scope.stCtrl=ctrl1;
+        }
+
+        if(!$scope.stTableRef&&tableState)
+        {
+            $scope.stTableRef=tableState;
+        }
+
+        var pagination = tableState.pagination;
+        var start = pagination.start || 0;
+        var end = pagination.number || 10;
+        var page = (start/end)+1;
+
+        var getRequestString = '/requests/order-list?page=' + page;                                         // book list uri
+
+        if(tableState.sort.predicate) {
+            getRequestString += '&sort=' + encodeURIComponent(tableState.sort.predicate);               // build search
+            if(tableState.sort.reverse)
+                getRequestString += '&dir=desc';
+        }
+
+        if($scope.TermSelected!="")
+        {
+            getRequestString+= '&term_id=' + $scope.TermSelected;
+        }
+
+
+        if(tableState.search.predicateObject) {
+            var predicateObject = tableState.search.predicateObject;
+            if(predicateObject.title)
+                getRequestString += '&title=' + encodeURIComponent(predicateObject.title);          // search title
+            if(predicateObject.section)
+                getRequestString += '&section=' + encodeURIComponent(predicateObject.section);       // search section
+        }
+
+        $http.get(getRequestString).then(
+            function success(response) {
+                tableState.pagination.numberOfPages = response.data.last_page;                          // update number of pages with what laravel gives back
+                tableState.pagination.number = response.data.per_page;                                  // update how many per page based on laravel response
+                ctrl.displayed = response.data.data;                                                    // get return data
+                ctrl.isLoading=false;
+            }
+        );
+
+    }
+});
+
+app.controller('OrdersController', ['$scope', '$http', 'CartService', 'BreadcrumbService',
+    function($scope, $http, CartService, BreadcrumbService){
 
     $scope.STAGE_SELECT_COURSE = 1;
     $scope.STAGE_SELECT_BOOKS = 2;
@@ -111,9 +183,13 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', '$filter',
 
         $scope.selectedCourse = course;
 
+        BreadcrumbService.clear();
+        BreadcrumbService.push($scope.$eval(
+            'selectedCourse.department + " " + (selectedCourse.course_number | zpad:3) + "-" + (selectedCourse.course_section | zpad:2) + " " + selectedCourse.course_name'
+        ));
+
         $http.get('/requests/past-courses/' + course.course_id).then(
             function success(response) {
-                console.log("got courses", response.data);
                 var pastCourses = response.data;
 
                 course['pastBooks'] = Enumerable
@@ -143,9 +219,11 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', '$filter',
                                 // For each term/user combination,
                                 // group by the term and associate all the groupings for that term as 'orderData'
                                 .GroupBy("$.course.term_id", "", "{term:$$.First().course.term, orderData: $$.ToArray()}")
+                                .OrderByDescending('$.term.term_id')
                                 .ToArray()
                         }
                     })
+                    .OrderByDescending("$.terms[0].term_id")
                     .ToArray();
             }
         );
@@ -179,7 +257,7 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', '$filter',
         var index = $scope.cartBooks.indexOf(bookData);
         if (index > -1) {
             $scope.cartBooks.splice(index, 1);
-            if (!bookData.isNew) {
+            if (bookData.book.book_id) {
                 $scope.selectedCourse['pastBooks'].push(bookData);
             }
         }
@@ -280,6 +358,7 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", function(
     $scope.isbnChanged = function(book) {
         if ($scope.isAutoFilled) {
             $scope.isAutoFilled = false;
+            $scope.autofilledBook = null;
             $scope.authors = [];
             $scope.book = angular.copy($scope.master);
             $scope.book['isbn13'] = book['isbn13'];
@@ -296,16 +375,15 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", function(
             $http.get('/books/book-by-isbn?isbn13=' + stripped).then(
                 function success(response) {
                     var data = response.data[0];
-                    if (data) {
+                    if (data && data.isbn13 == stripHyphens($scope.book.isbn13)) {
                         $scope.book['title'] = data.title;
                         $scope.book['edition'] = data.edition;
                         $scope.book['publisher'] = data.publisher;
                         $scope.authors = data.authors;
 
+                        $scope.autofilledBook = data;
                         $scope.isAutoFilled = true;
                     }
-
-                    console.log("got book", response.data);
                 }
             );
         }
@@ -323,7 +401,6 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", function(
         if (form.$valid) {
             $scope.master = angular.copy(book);
             $scope.master["authors"] = $scope.authors;
-            $scope.master["isNew"] = true;
             var bookData = {};
             bookData['book'] = $scope.master;
             bookData['book']['isbn13'] = stripHyphens(bookData['book']['isbn13']);

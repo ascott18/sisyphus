@@ -18,9 +18,9 @@ class CreateOrdersTable extends Migration
             $table->integer('book_id')->unsigned();
             $table->foreign('book_id')->references('book_id')->on('books');
 
-            $table->integer('status')->unsigned();
+            $table->integer('status')->unsigned(); // this has since been removed.
             $table->string('ordered_by_name'); // this has since been removed.
-            $table->integer('quantity_requested')->unsigned();
+            $table->integer('quantity_requested')->unsigned(); // this has since been removed.
             $table->timestamps();
         });
     }

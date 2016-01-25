@@ -1,7 +1,10 @@
-@extends('layouts.master')
+@extends('layouts.master', [
+    'breadcrumbs' => [
+        ['Books', '/books'],
+        [$book->title],
+    ]
+])
 
-@section('area', 'Books')
-@section('page', $book->title)
 
 @section('content')
 
@@ -15,35 +18,39 @@
             <div class="panel-body">
                 <div class="col-sm-6">
                     <a href="/books/edit/{{ $book->book_id }}" class="btn btn-primary " role="button">
-                        Edit <i class="fa fa-arrow-right"></i>
+                        <i class="fa fa-pencil"></i> Edit
                     </a>
                     <dl class="dl-horizontal">
                         <dt>Title</dt>
-                    <dd>
-                        {{ $book->title }}
-                    </dd>
+                        <dd>
+                            {{ $book->title }}
+                        </dd>
+                        <dt>Edition</dt>
+                        <dd>
+                            {{ $book->edition }}
+                        </dd>
 
-                    <dt>{{count($book->authors) == 1 ? "Author" : "Authors"}}</dt>
-                    <dd>
-                        @if (count($book->authors) == 0)
-                            <span class="text-muted">No Authors</span>
-                        @endif
-                        <?php $index = 0; ?>
-                        @foreach($book->authors as $author)
-                            {{$author->name}}
-                            @if ($index++ != count($book->authors)-1)
-                                <br/>
+                        <dt>{{count($book->authors) == 1 ? "Author" : "Authors"}}</dt>
+                        <dd>
+                            @if (count($book->authors) == 0)
+                                <span class="text-muted">No Authors</span>
                             @endif
-                        @endforeach
-                    </dd>
-                    <dt>Publisher</dt>
-                    <dd>
-                        {{ $book->publisher }}
-                    </dd>
-                    <dt>ISBN 13</dt>
-                    <dd>
-                        [["{{ $book->isbn13 }}" | isbnHyphenate]]
-                    </dd>
+                            <?php $index = 0; ?>
+                            @foreach($book->authors as $author)
+                                {{$author->name}}
+                                @if ($index++ != count($book->authors)-1)
+                                    <br/>
+                                @endif
+                            @endforeach
+                        </dd>
+                        <dt>Publisher</dt>
+                        <dd>
+                            {{ $book->publisher }}
+                        </dd>
+                        <dt>ISBN 13</dt>
+                        <dd>
+                            [["{{ $book->isbn13 }}" | isbnHyphenate]]
+                        </dd>
                     </dl>
                 </div>
                 <div class="col-sm-6">
@@ -69,6 +76,7 @@
                             <th st-sort="section">Course</th>
                             <th st-sort="course_name">Course Name</th>
                             <th>Required</th>
+                            <th>Notes</th>
                             <th width="1%"></th>
                         </tr>
                         <tr>
@@ -77,29 +85,29 @@
                             <th><input type="text" class="form-control" placeholder="Search..." st-search="course_name"/></th>
                             <th></th>
                             <th></th>
+                            <th></th>
                         </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="order in bdc.displayed">
-                                <td>[[ order.course.term.term_name ]]</td>
+                            <tr ng-cloak ng-repeat="order in bdc.displayed">
+                                <td>[[ order.course.term.display_name ]]</td>
                                 <td>
                                     [[ order.department ]] [[ order.course_number | zpad:3 ]]-[[ order.course_section | zpad:2 ]]
                                 </td>
                                 <td>[[ order.course_name ]]</td>
                                 <td>[[ order.required ? "Yes" : "No" ]]</td>
+                                <td>[[ order.notes ]]</td>
 
                                 <td>
-                                    <a ng-if="order.course.canView" class="btn btn-sm btn-info" href="/courses/details/[[order.course_id]]" role="button">
+                                    <a ng-if="order.course.canView" class="btn btn-sm btn-primary" href="/courses/details/[[order.course_id]]" role="button">
                                         Course Details <i class="fa fa-arrow-right"></i>
                                     </a>
                                 </td>
-
-                                {{--<td>[[ order.quantity_requested ]]</td>--}}
                             </tr>
                         </tbody>
                         <tfoot>
                         <tr>
-                            <td class="text-center" st-pagination="" st-items-by-page="10" colspan="5">
+                            <td class="text-center" st-pagination="" st-items-by-page="10" colspan="6">
                             </td>
                         </tr>
                         </tfoot>

@@ -1,7 +1,10 @@
-@extends('layouts.master')
+@extends('layouts.master', [
+    'breadcrumbs' => [
+        ['Courses', '/courses'],
+        [$course->displayIdentifier()],
+    ]
+])
 
-@section('area', 'Courses')
-@section('page', $course->displayIdentifier())
 
 @section('content')
 
@@ -21,7 +24,7 @@
                     </div>
                     @endcan
 
-                    <dl class="col-md-4 dl-horizontal">
+                    <dl class="col-lg-4 col-md-6 dl-horizontal">
                         <dt>Title</dt>
                         <dd>
                             {{ $course->course_name }}
@@ -43,15 +46,19 @@
                         </dd>
                     </dl>
 
-                    <dl class="col-md-4 dl-horizontal">
+                    <dl class="col-lg-4 col-md-6 dl-horizontal">
                         <dt>Term</dt>
                         <dd>
-                            <a href="/terms/details/{{ $course->term->term_id }}">{{ $course->term->displayName() }}</a>
+                            @can('view-terms')
+                                <a href="/terms/details/{{ $course->term->term_id }}">{{ $course->term->displayName() }}</a>
+                            @else
+                                {{ $course->term->displayName() }}
+                            @endcan
                         </dd>
 
                         <dt>Request Period</dt>
                         <dd>
-                            {{ $course->term->getStatusDisplayString() }}
+                            {{ $course->term->status }}
                         </dd>
 
                         @if ($course->term->areOrdersInProgress())
@@ -62,16 +69,23 @@
                         @endif
                     </dl>
 
-                    <dl class="col-md-4 dl-horizontal">
-                        <dt>Professor</dt>
-                        <dd>
-                            {{ $course->user->last_name }}, {{ $course->user->first_name }}
-                        </dd>
+                    <dl class="col-lg-4 col-md-6 dl-horizontal">
+                        @if ($course->user != null)
+                            <dt>Professor</dt>
+                            <dd>
+                                {{ $course->user->last_first_name }}
+                            </dd>
 
-                        <dt>Email</dt>
-                        <dd>
-                            {{ $course->user->email }}
-                        </dd>
+                            <dt>Email</dt>
+                            <dd>
+                                {{ $course->user->email }}
+                            </dd>
+                        @else
+                            <dt>Professor</dt>
+                            <dd>
+                                TBA
+                            </dd>
+                        @endif
                     </dl>
                 </div>
             </div>
@@ -82,7 +96,7 @@
                     <h3 class="panel-title"><i class="fa fa-shopping-cart fa-fw"></i> Requests</h3>
                 </div>
                 <div class="panel-body">
-                    @if ($course->canPlaceOrder())
+                    @can('place-order-for-course', $course)
                         <a href="/requests/create/{{$course->course_id}}" class="btn btn-primary" role="button">
                             Place a request <i class="fa fa-arrow-right"></i>
                         </a>
@@ -96,7 +110,7 @@
                                 <i class="fa fa-times"></i> No Book Needed
                             </button>
                         @endif
-                    @endif
+                    @endcan
 
                     {{-- being no_book and having orders are no mutually exclusive. A course might be no_book and also have deleted orders, which are listed here.--}}
                     @if ($course->no_book)
@@ -114,6 +128,7 @@
                                 <th>ISBN</th>
                                 <th>Publisher</th>
                                 <th>Required</th>
+                                <th>Notes</th>
                                 @can('place-order-for-course', $course)
                                     <th width="1%"></th>
                                 @endcan
@@ -132,18 +147,22 @@
 
                                         @if ($order->deleted_at != null)
                                             <br><span class="text-muted">
-                                                <span class="text-danger">Deleted</span> by {{$order->deletedBy->first_name}} {{$order->deletedBy->last_name}} on {{$order->deleted_at->toDateString()}}
+                                                <span class="text-danger">Deleted</span> by
+                                                {{$order->deletedBy->first_name}} {{$order->deletedBy->last_name}} on {{$order->deleted_at->toDateString()}}
                                             </span>
                                         @endif
                                     </td>
                                     <td>
-                                        [["{{ $order->book->isbn13 }}" | isbnHyphenate ]]
+                                        <span ng-bind=":: '{{ $order->book->isbn13 }}' | isbnHyphenate">{{ $order->book->isbn13 }}</span>
                                     </td>
                                     <td>
                                         {{ $order->book->publisher }}
                                     </td>
                                     <td>
                                         {{ $order->required ? "Yes" : "No" }}
+                                    </td>
+                                    <td>
+                                        {{ $order->notes }}
                                     </td>
 
                                     @can('place-order-for-course', $course)

@@ -1,7 +1,9 @@
-@extends('layouts.master')
-
-@section('area', 'Users')
-@section('page', 'Role Management')
+@extends('layouts.master', [
+    'breadcrumbs' => [
+        ['Users', '/users'],
+        ['Role Management'],
+    ]
+])
 
 <style>
     .perm-input select {

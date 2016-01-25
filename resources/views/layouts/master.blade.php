@@ -7,10 +7,14 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>
-        @if (array_key_exists('action', View::getSections()))
-            @yield('action')
+        @if (isset($breadcrumbs))
+            @if (!isset($breadcrumbs[1]))
+                {{$breadcrumbs[0][0]}}
+            @else
+                {{$breadcrumbs[1][0]}} {{isset($breadcrumbs[2]) ? $breadcrumbs[2][0] : ''}}
+            @endif
         @endif
-        @yield('page') - EWU Textbook Requests
+         - EWU Textbook Requests
     </title>
 
     <!-- Bootstrap Core CSS-->
@@ -63,16 +67,20 @@
         <div class="collapse navbar-collapse navbar-ex1-collapse">
 
             <ul class="nav navbar-right top-nav">
-                <li >
-                    <span id="userName"><i class="fa fa-user"></i> Welcome, {{ Auth::user()->net_id }}! </span>
-                </li>
+                @if (Auth::user())
+                    <li >
+                        <span id="userName"><i class="fa fa-user"></i> Welcome, {{ Auth::user()->net_id }}! </span>
+                    </li>
+                @endif
             </ul>
 
             <!-- Sidebar Menu Items -->
             <ul class="nav navbar-nav side-nav">
+                @can('view-dashboard')
                 <li><a href="/"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a></li>
-                <li><a href="/books"><i class="fa fa-fw fa-book"></i> Books</a></li>
+                @endcan
                 <li><a href="/requests"><i class="fa fa-fw fa-shopping-cart"></i> Requests</a></li>
+                <li><a href="/books"><i class="fa fa-fw fa-book"></i> Books</a></li>
                 @can('view-course-list')
                     <li><a href="/courses"><i class="fa fa-fw fa-university"></i> Courses</a></li>
                 @endcan
@@ -113,23 +121,27 @@
             <!-- Page Heading-->
 
 
-            @if (array_key_exists('area', View::getSections()))
             <div class="row">
                 <div class="col-lg-12">
-
-                    <h5 class="page-header text-muted">
-                        @yield('area') /
-                        @if (array_key_exists('action', View::getSections()))
-                            @yield('action') /
+                    <h4 class="page-header text-muted">
+                        @if (isset($breadcrumbs))
+                        <ul class="slash-list">
+                            @foreach($breadcrumbs as $breadcrumb)
+                                @if(isset($breadcrumb[1]))
+                                    <li><a href="{{$breadcrumb[1]}}">{{$breadcrumb[0]}}</a></li>
+                                @elseif ($breadcrumb != null)
+                                    <li>{{$breadcrumb[0]}}</li>
+                                @endif
+                            @endforeach
+                            <li ng-cloak ng-repeat="breadcrumb in breadcrumbAppends">[[breadcrumb]]</li>
+                        </ul>
                         @endif
-                        @yield('page')
-                    </h5>
+                    </h4>
                 </div>
             </div>
-            @endif
 
 
-            @if (count($errors) > 0)
+            @if (isset($errors) && count($errors) > 0)
                 <div class="alert alert-danger alert-dismissible" role="alert">
                     <button type="button" class="close" aria-label="Close" ng-click="appErrors.splice(appErrors.indexOf(error), 1)"><span aria-hidden="true">&times;</span></button>
                     <ul>

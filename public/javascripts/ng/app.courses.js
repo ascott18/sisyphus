@@ -60,6 +60,8 @@ app.controller('CoursesIndexController', function($scope, $http) {
                 getRequestString += '&section=' + encodeURIComponent(predicateObject.section);     // search for section
             if(predicateObject.name)
                 getRequestString += '&name=' + encodeURIComponent(predicateObject.name);           // search for name
+            if(predicateObject.professor)
+                getRequestString += '&professor=' + encodeURIComponent(predicateObject.professor); // search for professor
         }
 
 
@@ -101,8 +103,6 @@ app.controller('CoursesModifyController', function($filter, $scope) {
             $scope.course.user_id = filteredUsers[0].user_id;
         }
     };
-
-
 
     $scope.submit = function(form, e){
         if (form.$valid)

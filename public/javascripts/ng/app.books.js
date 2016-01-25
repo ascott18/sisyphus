@@ -35,6 +35,8 @@ app.controller('BooksController', function($scope, $http) {
             var predicateObject = tableState.search.predicateObject;
             if(predicateObject.title)
                 getRequestString += '&title=' + encodeURIComponent(predicateObject.title);              // search title
+            if(predicateObject.author)
+                getRequestString += '&author=' + encodeURIComponent(predicateObject.author);            // search authors
             if(predicateObject.publisher)
                 getRequestString += '&publisher=' + encodeURIComponent(predicateObject.publisher);      // search publisher
             if(predicateObject.isbn13)
@@ -55,19 +57,25 @@ app.controller('BooksController', function($scope, $http) {
 
 app.controller('EditBookController', function($scope, $http) {
     $scope.authors = [];
-    $scope.master = {};
     $scope.book = {};
     $scope.submitted = false;
 
-    $scope.addAuthor = function(author) {
+    $scope.addAuthor = function() {
         $scope.authors.push({name: ""});
-
     };
 
     $scope.removeAuthor = function(index) {
         if (index >= 0 && index < $scope.authors.length) {
             $scope.authors.splice(index, 1);
         }
+    };
+
+    $scope.setBook = function(book) {
+        $scope.book = book;
+    };
+
+    $scope.addAuthors = function(authors) {
+        $scope.authors = authors;
     };
 
     $scope.reset = function(form) {
@@ -79,19 +87,14 @@ app.controller('EditBookController', function($scope, $http) {
         $scope.book = angular.copy($scope.master);
     };
 
-    $scope.setBook = function(book) {
-        $scope.book = book;
-    };
 
-    $scope.addAuthors = function(authors) {
-        $scope.authors = authors;
-    };
-
-    $scope.save = function() {
-        $http.post('/books/edit', {book: $scope.book, authors: $scope.authors}).then(
-            function success(response){
-                console.log("Saved!", response);
-            });
+    $scope.submit = function(form, e){
+        if (form.$valid)
+            form.submit();
+        else{
+            form.$setSubmitted(true);
+            e.preventDefault();
+        }
     };
 
     $scope.reset();
@@ -104,36 +107,24 @@ app.controller('BookDetailsController', function($scope, $http) {
     $scope.book_isbn_13 = book_isbn_13_init;
 
     /* TODO: We need a missing thumbnail image */
+    $scope.isCached = false;
     $scope.book_cover_img = "";
 
-    /*
+
     $scope.getLaravelImage = function() {
         $http.get("/books/cover?isbn=" + $scope.book_isbn_13).then (
             function success(response){
-                $scope.book_cover_img = "data:image/jpeg;base64," + response.data.image;
-            },
-            function error(response) {
-                // TODO: handle properly
-                console.log("Couldn't get book details", response);
-            }
-        )
-    }
-    */
-
-    $scope.getBookCoverImage = function() {
-        $http.get("https://www.googleapis.com/books/v1/volumes?q=isbn:" + $scope.book_isbn_13).then(
-            function success(response){
-                if(response.data.items) {
-                    $scope.book_cover_img = response.data.items[0].volumeInfo.imageLinks.thumbnail;
+                if(response.data.image != "") {
+                    $scope.book_cover_img = "data:image/jpeg;base64," + response.data.image;
+                    $scope.isCached = response.data.cached;
                 } else {
                     $scope.book_cover_img = "/images/coverNotAvailable.jpg";
                 }
             }
-        );
+        )
     }
 
-    //$scope.getLaravelImage();
-    $scope.getBookCoverImage();
+    $scope.getLaravelImage();
 
 
     this.displayed = [];

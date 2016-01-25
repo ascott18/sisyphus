@@ -1,7 +1,9 @@
-@extends('layouts.master')
-
-@section('area', 'Books')
-@section('page', 'All Books')
+@extends('layouts.master', [
+    'breadcrumbs' => [
+        ['Books', '/books'],
+        ['All Books'],
+    ]
+])
 
 @section('content')
     <div class="row">
@@ -20,12 +22,14 @@
                             <thead>
                             <tr>
                                 <th st-sort="title">Title</th>
+                                <th st-sort="author">Author</th>
                                 <th st-sort="publisher">Publisher</th>
                                 <th st-sort="isbn13">ISBN</th>
                                 <th width="1%"></th>
                             </tr>
                             <tr>
                                 <th><input type="text" class="form-control" placeholder="Search..." st-search="title"/></th>
+                                <th><input type="text" class="form-control" placeholder="Search..." st-search="author"/></th>
                                 <th><input type="text" class="form-control" placeholder="Search..." st-search="publisher"/></th>
                                 <th><input type="text" class="form-control" placeholder="Search..." st-search="isbn13"/></th>
                                 <th></th>
@@ -34,15 +38,11 @@
                             <tbody>
 
                             <tr ng-cloak ng-repeat="book in mc.displayed">
+                                <td>[[ book.title ]]</td>
                                 <td>
-                                    <div>
-                                        [[ book.title ]]
-                                    </div>
-                                    <div class="text-muted">
-                                        <span ng-repeat="author in book.authors">
-                                            [[ author.name]] [[ $last ? '' : '|']]
-                                        </span>
-                                    </div>
+                                    <span ng-repeat="author in book.authors">
+                                        [[ author.name]] [[ $last ? '' : '|']]
+                                    </span>
                                 </td>
                                 <td>[[ book.publisher ]]</td>
                                 <td>[[ book.isbn13 | isbnHyphenate]]</td>
@@ -57,7 +57,7 @@
                             </tbody>
                             <tfoot>
                             <tr>
-                                <td class="text-center" st-pagination="" st-items-by-page="10" colspan="4">
+                                <td class="text-center" st-pagination="" st-items-by-page="10" colspan="5">
                                 </td>
                             </tr>
                             </tfoot>

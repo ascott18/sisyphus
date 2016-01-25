@@ -31,6 +31,22 @@ body {
     font-size: 20px;
 }
 
+.page-header .slash-list {
+    padding: 0;
+    margin: 0;
+}
+.slash-list {
+    list-style: none;
+}
+.slash-list li {
+    display: inline;
+}
+.slash-list li + li:before {
+    content: "/ ";
+}
+.slash-list li:empty {
+    display: none;
+}
 
 .panel-list .panel-list-item {
     border-top: 1px solid #DDD;
@@ -58,6 +74,20 @@ body {
 
 .panel-list .panel-list-item.active .text-muted {
     color: #cccccc;
+}
+
+.book-details-images {
+    position: relative;
+}
+.book-details-images .smallImage {
+    width: 60px;
+}
+.book-details-images .largeImage {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1000;
 }
 
 .navbar {

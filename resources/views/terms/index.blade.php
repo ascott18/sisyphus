@@ -1,7 +1,10 @@
-@extends('layouts.master')
+@extends('layouts.master', [
+    'breadcrumbs' => [
+        ['Terms', '/terms'],
+        ['All Terms'],
+    ]
+])
 
-@section('area', 'Terms')
-@section('page', 'All Terms')
 
 @section('content')
 
@@ -36,14 +39,16 @@
                             </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="term in tc.displayed">
-                                    <td> [[ term.termName ]] </td>
+                                <tr ng-cloak ng-repeat="term in tc.displayed">
+                                    <td> [[ term.term_name ]] </td>
                                     <td> [[ term.year ]] </td>
 
-                                    <td> [[ term.status ]] </td>
+                                    <td ng-class="{'text-muted': term.status.indexOf('eventually') > -1 || term.status == 'Concluded'}">
+                                        [[ term.status ]]
+                                    </td>
 
-                                    <td> [[ term.orderStartDate ]] </td>
-                                    <td> [[ term.orderDueDate ]] </td>
+                                    <td> [[ term.order_start_date | moment:'ll' ]] </td>
+                                    <td> [[ term.order_due_date | moment:'ll' ]] </td>
                                     <td style="width: 1%">
                                         <a href="/terms/details/[[ term.term_id ]]" class="btn btn-sm btn-primary">
                                             Details&nbsp; <i class="fa fa-arrow-right"></i>

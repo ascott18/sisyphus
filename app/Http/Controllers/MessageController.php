@@ -79,7 +79,7 @@ class MessageController extends Controller
             ::where('users.net_id', '!=', 'tba')
             ->select(DB::raw(
                 "users.first_name, users.last_name, users.user_id,
-                COUNT(courses.no_book_marked IS NOT NULL OR (SELECT 1 FROM `orders` WHERE courses.course_id=orders.course_id LIMIT 1) > 0) as coursesResponded,
+                COUNT(courses.no_book_marked IS NOT NULL OR (SELECT 1 FROM `orders` WHERE courses.course_id=orders.course_id AND orders.deleted_at IS NULL LIMIT 1) > 0) as coursesResponded,
                 COUNT(course_id) as courseCount"))
             ->join('courses', 'courses.user_id', '=', 'users.user_id')
             ->whereIn('courses.term_id', $currentTermIds);
