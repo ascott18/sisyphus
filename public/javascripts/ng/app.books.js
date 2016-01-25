@@ -107,36 +107,24 @@ app.controller('BookDetailsController', function($scope, $http) {
     $scope.book_isbn_13 = book_isbn_13_init;
 
     /* TODO: We need a missing thumbnail image */
+    $scope.isCached = false;
     $scope.book_cover_img = "";
 
-    /*
+
     $scope.getLaravelImage = function() {
         $http.get("/books/cover?isbn=" + $scope.book_isbn_13).then (
             function success(response){
-                $scope.book_cover_img = "data:image/jpeg;base64," + response.data.image;
-            },
-            function error(response) {
-                // TODO: handle properly
-                console.log("Couldn't get book details", response);
-            }
-        )
-    }
-    */
-
-    $scope.getBookCoverImage = function() {
-        $http.get("https://www.googleapis.com/books/v1/volumes?q=isbn:" + $scope.book_isbn_13).then(
-            function success(response){
-                if(response.data.items) {
-                    $scope.book_cover_img = response.data.items[0].volumeInfo.imageLinks.thumbnail;
+                if(response.data.image != "") {
+                    $scope.book_cover_img = "data:image/jpeg;base64," + response.data.image;
+                    $scope.isCached = response.data.cached;
                 } else {
                     $scope.book_cover_img = "/images/coverNotAvailable.jpg";
                 }
             }
-        );
+        )
     }
 
-    //$scope.getLaravelImage();
-    $scope.getBookCoverImage();
+    $scope.getLaravelImage();
 
 
     this.displayed = [];

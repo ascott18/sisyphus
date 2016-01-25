@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Cache;
 use App\Models\Book;
 use App\Models\Course;
 use Illuminate\Http\Request;
@@ -122,6 +123,14 @@ class BookController extends Controller
         return response()->json($books);
     }
 
+    /**
+     * Build the search query for the book detail list
+     *
+     * @param \Illuminate\Database\Eloquent\Builder
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+
     private function buildDetailSearchQuery($request, $query) {
         if($request->input('section')) {
             $searchArray = preg_split("/[\s-]/", $request->input('section'));
@@ -225,19 +234,30 @@ class BookController extends Controller
         return response()->json($orders);
     }
 
-    /*
-    public function getCover(Request $request) {
-        $googleResponse = json_decode(file_get_contents("https://www.googleapis.com/books/v1/volumes?q=isbn:".$request->input('isbn')));
 
-        $coverImage = file_get_contents($googleResponse->items[0]->volumeInfo->imageLinks->thumbnail);
+    public function getCover(Request $request) {
+        $this->authorize("all");
+
+        $cached = true;
+        $coverImage = Cache::get($request->input('isbn'));
+
+        if($coverImage == NULL) {
+            $cached = false;
+            $googleResponse = json_decode(file_get_contents("https://www.googleapis.com/books/v1/volumes?q=isbn:".$request->input('isbn')));
+            if(isset($googleResponse->items[0]->volumeInfo->imageLinks->thumbnail)) {
+                $coverImage = file_get_contents($googleResponse->items[0]->volumeInfo->imageLinks->thumbnail);
+                Cache::put($request->input('isbn'), $coverImage, 43800);
+            }
+        }
+
 
         return response()->json(array (
-            "image" => base64_encode($coverImage)
+            "image" => base64_encode($coverImage),
+                "cached" => $cached
             )
         );
 
     }
-    */
 
     /** GET: /books/details/{id}
      * Display the specified resource.
