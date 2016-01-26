@@ -25,6 +25,7 @@ Homestead.json
 .idea/dynamic.xml
 .idea/uiDesigner.xml
 .idea/jsLibraryMappings.xml
+.idea/deployment.xml
 
 # Gradle:
 # .idea/gradle.xml
