@@ -129,8 +129,7 @@ class ReportController extends Controller
                         });
                     }
                 })
-                ->with(['user', 'orders.book.authors']);;
-
+                ->with(['user', 'orders.book.authors']);
         }
         else {
             throw new BadRequestHttpException("No includes were specified. Report would be empty.");
