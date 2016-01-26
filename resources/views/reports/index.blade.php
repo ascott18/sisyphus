@@ -19,21 +19,18 @@
                         <div class="row">
                                 <h4>Select Term</h4>
                                 <select class="form-control"
-                                        ng-init="TermSelected=(terms | filter:{term_id: {{$currentTermId}}})[0]"
+                                        ng-init="TermSelected=(terms | filter:{term_id: {{$currentTermId}}})[0]; onSelectTerm()"
                                         ng-model="TermSelected"
                                         ng-options="term.display_name for term in terms track by term.term_id"
                                         ng-change="onSelectTerm()">
-                                    <option hidden value=''>Custom</option>
                                 </select>
-                            <h4>-OR-</h4>
+
                                 <h4>Choose a date range</h4>
                                 <div class="col-lg-4 col-md-6" >
                                     <h3>Order Start Date</h3>
                                     <input type="hidden" name="reportDateStart" ng-value="reportDateStart | date:'yyyy-MM-dd'">
 
                                     <uib-datepicker ng-model="reportDateStart"
-                                                    ng-init="reportDateStart = TermSelected.order_start_date"
-                                                    ng-change="TermSelected=''"
                                                     max-date="reportDateEnd"
                                                     show-weeks="false"></uib-datepicker>
                                 </div>
@@ -42,8 +39,6 @@
                                     <h3>Order Due Date</h3>
                                     <input type="hidden" name="reportDateEnd" ng-value="reportDateEnd  | date:'yyyy-MM-dd'" >
                                     <uib-datepicker ng-model="reportDateEnd"
-                                                    ng-init="reportDateEnd = TermSelected.order_due_date"
-                                                    ng-change="TermSelected=''"
                                                     min-date="reportDateStart"
                                                     show-weeks="false"></uib-datepicker>
                                 </div>
@@ -58,11 +53,11 @@
                             </ul>
 
                         <h4>What would you like included in your report?</h4>
-                            <input type="checkbox" ng-model="include.deleted" ng-checked="true">Deleted Orders<br>
-                            <input type="checkbox" ng-model="include.nondeleted" ng-checked="true">Non-Deleted Orders<br>
-                            <input type="checkbox" ng-model="include.submitted" ng-checked="true">Classes that have submitted orders<br>
-                            <input type="checkbox" ng-model="include.notSubmitted" ng-checked="true">Classes that have not submitted orders<br>
-                            <input type="checkbox" ng-model="include.noBook" ng-checked="true">Classes that specified no book<br><br>
+                            <input type="checkbox" ng-model="include.deleted" >Deleted Orders<br>
+                            <input type="checkbox" ng-model="include.nondeleted" >Non-Deleted Orders<br>
+                            <input type="checkbox" ng-model="include.submitted" >Classes that have submitted orders<br>
+                            <input type="checkbox" ng-model="include.notSubmitted" >Classes that have not submitted orders<br>
+                            <input type="checkbox" ng-model="include.noBook" >Classes that specified no book<br><br>
 
                         <button type="submit" class="btn btn-success"
                         ng-click="submit()">Submit <span class="fa fa-arrow-right"></span></button>

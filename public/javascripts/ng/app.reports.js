@@ -2,19 +2,26 @@ var app = angular.module('sisyphus', ['sisyphus.helpers', 'ui.bootstrap' , 'smar
 
 app.controller('ReportsController', function($scope, $http) {
     $scope.columns=[];
-    $scope.include={};
-    $scope.createDate = function(date){
-        return new Date(date);
-    };
 
-    $scope.onSelectTerm=function()
+    $scope.include = {
+        deleted: true,
+        nondeleted: true,
+        submitted: true,
+        notSubmitted: true,
+        noBook: true
+    };
+    //
+    //$scope.reportDateStart = new Date();
+    //$scope.reportDateEnd = new Date();
+
+    $scope.onSelectTerm = function()
     {
         var term = $scope.TermSelected;
-        $scope.reportDateStart = term.order_start_date;
-        $scope.reportDateEnd = term.order_due_date;
-    }
+        $scope.reportDateStart = moment(term.order_start_date).toDate();
+        $scope.reportDateEnd = moment(term.order_due_date).toDate();
+    };
 
-    $scope.toggleColumn=function(columnIndex)
+    $scope.toggleColumn = function(columnIndex)
     {
         if($scope.isColumnSelected(columnIndex))
         {
@@ -26,9 +33,9 @@ app.controller('ReportsController', function($scope, $http) {
             $scope.columns.push(columnIndex);
         }
 
-    }
+    };
 
-    $scope.isColumnSelected=function(columnIndex)
+    $scope.isColumnSelected = function(columnIndex)
     {
         for(var i=0;i<$scope.columns.length;i++)
         {
@@ -37,12 +44,18 @@ app.controller('ReportsController', function($scope, $http) {
                 return true;
             }
         }
-    }
+    };
+
 
     $scope.submit=function()
     {
-            $http.post('/reports/submit-report', {startDate:$scope.reportDateStart,
-                endDate:$scope.reportDateEnd, columns: $scope.columns, include: $scope.include}).then(function(response) {
+            $http.post('/reports/submit-report', {
+                    startDate: $scope.reportDateStart,
+                    endDate: $scope.reportDateEnd,
+                    columns: $scope.columns,
+                    include: $scope.include,
+                    term_id: $scope.TermSelected.term_id,
+            }).then(function(response) {
                     $scope.data = response.data['orders'];
                     var newWindow=window.open('report', 'Report');
 
