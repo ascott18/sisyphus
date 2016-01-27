@@ -108,6 +108,36 @@ class ReportController extends Controller
                 ->where('orders.created_at', '>=', Carbon::parse($start))
                 ->where('orders.created_at', '<=', Carbon::parse($end))
                 ->with(['course', 'book.authors']);
+
+            $results = $query->get()->toArray();
+
+            // We get back a list of orders. To be consistent with the other query,
+            // which has to return a set of courses, we will transform this into a list of courses.
+            $courseOrders = [];
+            foreach ($results as $order) {
+                $course = $order['course'];
+                $course_id = $course['course_id'];
+
+                if (!isset($courseOrders[$course_id])){
+                    $courseOrders[$course_id] = [];
+                }
+
+                $courseOrders[$course_id][] = $order;
+            }
+
+            $results = [];
+            foreach ($courseOrders as $course_id => $orders) {
+                $course = $orders[0]['course'];
+                $course['orders'] = [];
+
+                // Null out this relation so that we don't have forever recursion
+                foreach ($orders as $order) {
+                    $order['course'] = null;
+                    $course['orders'][] = $order;
+                }
+
+                $results[] = $course;
+            }
         }
         elseif ($include['submitted'] || $include['notSubmitted'] || $include['noBook']) {
             $query = Course::visible()
@@ -130,28 +160,16 @@ class ReportController extends Controller
                     }
                 })
                 ->with(['user', 'orders.book.authors']);
+
+
+            $results = $query->get()->toArray();
         }
         else {
             throw new BadRequestHttpException("No includes were specified. Report would be empty.");
         }
 
 
-        $sql = $query->toSql();
-        $results = $query->get();
 
-
-
-
-        $query = Course::visible();
-
-
-        $query = DB::table('orders')
-                    ->join('courses','orders.course_id','=','courses.course_id')
-                    ->join('books','orders.book_id','=','books.book_id')
-                    ->join('users','orders.placed_by','=','users.user_id')
-                    ->get();
-
-       return (['orders'=>$query, 'start'=>$start]);
-
+        return (['courses' => $results, 'start' => $start]);
     }
 }

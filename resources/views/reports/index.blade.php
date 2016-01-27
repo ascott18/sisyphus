@@ -65,6 +65,34 @@
                 </div>
             </div>
         </div>
+
+
+
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><i class="fa fa-bar-chart"></i>Create Report</h3>
+                </div>
+                <div class="panel-body">
+
+                    <table class="table table-hover">
+                        <thead>
+
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="row in reportData" >
+                                <td>
+                                    [[row.course.department]] [[row.course.course_number | zpad:3]]-[[row.course.course_section | zpad:2]] [[row.course.course_name]]
+                                </td>
+                                <td>
+                                    [[row.order.order_id]]
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
 @stop
