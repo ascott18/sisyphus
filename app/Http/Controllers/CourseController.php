@@ -9,6 +9,7 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Models\Term;
 use Illuminate\Database\Query\Builder;
+use SearchHelper;
 
 class CourseController extends Controller
 {
@@ -160,58 +161,14 @@ class CourseController extends Controller
      * @return \Illuminate\Database\Query
      */
     private function buildSearchQuery($request, $query) {
-        if($request->input('section')) {
-            $searchArray = preg_split("/[\s-]/", $request->input('section'));
-            foreach($searchArray as $key => $field) {       // strip leading zeros from search terms
-                $searchArray[$key] = ltrim($field, '0');
-            }
-            if(count($searchArray) == 2) {
-                // we need to use an anonymous function so the subquery does not lose permission based sorting
-                $query = $query->where(function($sQuery) use ($searchArray){
-                    return $sQuery->where('department', 'LIKE', '%'.$searchArray[0].'%')
-                        ->where('course_number', 'LIKE', '%'.$searchArray[1].'%')
-                        ->orWhere('course_number', 'LIKE', '%'.$searchArray[0].'%')
-                        ->where('course_section', 'LIKE', '%'.$searchArray[1].'%')
-                        ->orWhere('department', 'LIKE', '%'.$searchArray[0].'%')
-                        ->where('course_section', 'LIKE', '%'.$searchArray[1].'%');
-                });
-            } elseif(count($searchArray) == 3) {
-                // this needs to be in a subquery to not lose permission based searching
-                $query->where(function($sQuery) use ($searchArray) {
-                    return $sQuery->where('department', 'LIKE', '%'.$searchArray[0].'%')
-                        ->where('course_number', 'LIKE', '%'.$searchArray[1].'%')
-                        ->where('course_section', 'LIKE', '%'.$searchArray[2].'%');
-                });
-            } else {
-                // we need to use an anonymous function so the subquery does not lose permission based searching
-                for($i=0; $i<count($searchArray); $i++) {
-                    $query = $query->where(function($sQuery) use ($searchArray, $i) {
-                        return $sQuery->where('department', 'LIKE', '%'.$searchArray[$i].'%')
-                            ->orWhere('course_number', 'LIKE', '%'.$searchArray[$i].'%')
-                            ->orWhere('course_section', 'LIKE', '%'.$searchArray[$i].'%');
-                    });
-                }
-            }
-        }
+        if($request->input('section'))
+            SearchHelper::sectionSearchQuery($query, $request->input('section'));
 
         if($request->input('name'))
             $query = $query->where('course_name', 'LIKE', '%'.$request->input('name').'%');
 
         if($request->input('professor')) {
-            $query = $query->where(function($sQuery) use ($request) {
-                $sQuery = $sQuery->where('users.first_name', 'LIKE', '%'.$request->input('professor').'%')
-                    ->orWhere('users.last_name', 'LIKE', '%'.$request->input('professor').'%');
-
-                $searchArray = preg_split("/[\s,]+/", $request->input('professor'));
-                if(count($searchArray) == 2) {
-                    $sQuery = $sQuery->orWhere('users.first_name', 'LIKE', '%'.$searchArray[0].'%')
-                        ->where('users.last_name', 'LIKE', '%'.$searchArray[1].'%')
-                        ->orWhere('users.last_name', 'LIKE', '%'.$searchArray[0].'%')
-                        ->where('users.first_name', 'LIKE', '%'.$searchArray[1].'%');
-                }
-
-                return $sQuery;
-            });
+            SearchHelper::professorSearchQuery($query, $request->input('professor'));
         }
 
         return $query;

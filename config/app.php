@@ -144,6 +144,7 @@ return [
         App\Providers\AuthServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        App\Providers\SearchServiceProvider::class,
 
         'Zizaco\Entrust\EntrustServiceProvider',
         'Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider',
@@ -206,6 +207,7 @@ return [
 
         // Custom
         'Cas' => Xavrsl\Cas\Facades\Cas::class,
+        'SearchHelper' => App\Facades\SearchHelper::class,
 
     ],
 

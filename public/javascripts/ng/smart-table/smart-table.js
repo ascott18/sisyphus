@@ -135,8 +135,10 @@ ng.module('smart-table')
       var predicateObject = tableState.search.predicateObject || {};
       var prop = predicate ? predicate : '$';
 
-      input = ng.isString(input) ? input.trim() : input;
+      // REVERSED THESE TWO LINES BECAUSE TRIMMING THE INPUT AND REPLACING IT IS NOT GOOD FOR US
       $parse(prop).assign(predicateObject, input);
+      input = ng.isString(input) ? input.trim : input;
+
       // to avoid to filter out null value
       if (!input) {
         deepDelete(predicateObject, prop);
