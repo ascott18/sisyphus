@@ -503,7 +503,7 @@ ng.module('smart-table')
               }
 
               pipePromise = $timeout(function () {
-                if(!attrs.stHasDefault || scope.alreadyCalled) {
+                if(!attrs.stHasDefaultSort || scope.alreadyCalled) {
                   scope.stPipe(ctrl.tableState(), ctrl)
                 }
                 scope.alreadyCalled = true;

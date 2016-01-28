@@ -16,7 +16,7 @@
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">
-                        <table st-pipe="cc.callServer" st-table="cc.displayed" st-has-default="true"
+                        <table st-pipe="cc.callServer" st-table="cc.displayed" st-has-default-sort="true"
                                class="table table-hover"
                                empty-placeholder>
                             <thead>
