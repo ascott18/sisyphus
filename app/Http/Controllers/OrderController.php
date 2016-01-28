@@ -109,8 +109,10 @@ class OrderController extends Controller
     private function buildListSearchQuery($request, $query) {
         if($request->input('title'))
             $query = $query->where('title', 'LIKE', '%'.$request->input('title').'%');
+
         if($request->input('section'))
             Searchhelper::sectionSearchQuery($query, $request->input('section'));
+
         if($request->input('course_name'))
             $query = $query->where('course_name', 'LIKE', '%'.$request->input('course_name').'%');
 

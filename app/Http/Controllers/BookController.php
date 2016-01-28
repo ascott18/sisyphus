@@ -32,14 +32,17 @@ class BookController extends Controller
     private function buildBookSearchQuery($request, $query) {
         if($request->input('title'))
             $query = $query->where('title', 'LIKE', '%'.$request->input('title').'%');
+
         if($request->input('author')) {
             $query->join('authors', function ($join) use ($request) {
                 $join->on('authors.book_id', '=', 'books.book_id')
                     ->where('authors.name', 'LIKE', '%'.$request->input('author').'%');
             });
         }
+
         if($request->input('publisher'))
             $query = $query->where('publisher', 'LIKE', '%'.$request->input('publisher').'%');
+
         if($request->input('isbn13')) {
             $isbn = str_replace("-", "", $request->input('isbn13'));
             $query = $query->where('isbn13', 'LIKE', '%' . $isbn . '%');
@@ -135,6 +138,7 @@ class BookController extends Controller
     private function buildDetailSearchQuery($request, $query) {
         if($request->input('section'))
             SearchHelper::sectionSearchQuery($query, $request->input('section')); // use search helper for section search
+
         if($request->input('course_name'))
             $query = $query->where('course_name', 'LIKE', '%'.$request->input('course_name').'%');
 

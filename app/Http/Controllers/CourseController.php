@@ -167,9 +167,8 @@ class CourseController extends Controller
         if($request->input('name'))
             $query = $query->where('course_name', 'LIKE', '%'.$request->input('name').'%');
 
-        if($request->input('professor')) {
+        if($request->input('professor'))
             SearchHelper::professorSearchQuery($query, $request->input('professor'));
-        }
 
         return $query;
     }
