@@ -160,15 +160,19 @@ class CourseController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Database\Query
      */
-    private function buildSearchQuery($request, $query) {
-        if($request->input('section'))
-            SearchHelper::sectionSearchQuery($query, $request->input('section'));
+    private function buildSearchQuery($search, $query) {
+        $predicateObject = [];
+        if(isset($search->predicateObject))
+            $predicateObject = $search->predicateObject;
 
-        if($request->input('name'))
-            $query = $query->where('course_name', 'LIKE', '%'.$request->input('name').'%');
+        if(isset($predicateObject->section))
+            SearchHelper::sectionSearchQuery($query, $predicateObject->section);
 
-        if($request->input('professor'))
-            SearchHelper::professorSearchQuery($query, $request->input('professor'));
+        if(isset($predicateObject->name))
+            $query = $query->where('course_name', 'LIKE', '%'.$predicateObject->name.'%');
+
+        if(isset($predicateObject->professor))
+            SearchHelper::professorSearchQuery($query, $predicateObject->professor);
 
         return $query;
     }
@@ -236,12 +240,17 @@ class CourseController extends Controller
             $query = $query->where('term_id', '=', $request->input('term_id'));
         }
 
-        if($request->input('sort') == "professor" || $request->input('professor')) {
+        $tableState = json_decode($request->input('table_state'));
+
+        if((isset($tableState->sort->predicate) && $tableState->sort->predicate == "professor")
+            || isset($tableState->search->predicateObject->professor) ) { // only join when we actually need it
+
             $query->join('users','users.user_id', '=', 'courses.user_id');
+
         }
 
-        $query = $this->buildSearchQuery($request, $query);
-        $query = $this->buildSortQuery($request, $query);
+        $query = $this->buildSearchQuery($tableState->search, $query);
+        //$query = $this->buildSortQuery($request, $query);
         $query = $query->with("term");
         $query = $query->with("user");
 

@@ -40,29 +40,11 @@ app.controller('CoursesIndexController', function($scope, $http) {
         var end = pagination.number || 10;
         var page = (start/end)+1;
 
-        var getRequestString = '/courses/course-list?page=' + page;                                 // set course list uri
+        var searchObject = tableState.search.predicateObject;
 
-        if($scope.TermSelected!="")
-        {
-            getRequestString+= '&term_id=' + $scope.TermSelected;
-        }
-
-
-        if(tableState.sort.predicate) {
-            getRequestString += '&sort=' + tableState.sort.predicate;                               // build sort string
-            if(tableState.sort.reverse)
-                getRequestString += '&dir=desc';
-        }
-
-        if(tableState.search.predicateObject) {
-            var predicateObject = tableState.search.predicateObject;
-            if(predicateObject.section)
-                getRequestString += '&section=' + encodeURIComponent(predicateObject.section);     // search for section
-            if(predicateObject.name)
-                getRequestString += '&name=' + encodeURIComponent(predicateObject.name);           // search for name
-            if(predicateObject.professor)
-                getRequestString += '&professor=' + encodeURIComponent(predicateObject.professor); // search for professor
-        }
+        var getRequestString = '/courses/course-list?page=' + page +
+                                '&term_id='     + $scope.TermSelected +
+                                '&table_state=' + encodeURIComponent(JSON.stringify(tableState));
 
 
         $http.get(getRequestString).then(
