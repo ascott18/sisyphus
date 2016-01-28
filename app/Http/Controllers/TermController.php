@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Requests;
@@ -160,9 +161,10 @@ class TermController extends Controller
     {
         $this->authorize("view-terms"); // TODO: maybe a different permission for this?
 
-        $term = Term::with("courses.orders.book")->findOrFail($term_id);
+        $term = Term::findOrFail($term_id);
+        $courses = Course::visible()->where('term_id', '=', $term_id)->with(['orders.book', 'user'])->get();
 
-        return view('terms.check',['term'=>$term]);
+        return view('terms.check', ['term' => $term, 'courses' => $courses]);
     }
 
     /**

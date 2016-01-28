@@ -1,8 +1,11 @@
-@extends('layouts.master')
+@extends('layouts.master', [
+    'breadcrumbs' => [
+        ['Users', '/users'],
+        [isset($user) ? 'Edit' : 'Create'],
+        isset($user) ? [$user->first_last_name] : null,
+    ]
+])
 
-@section('area', 'Users')
-@section('action', isset($user) ? "Edit" : "Create")
-@section('page', isset($user) ? $user->first_last_name : "New User")
 
 @section('content')
 

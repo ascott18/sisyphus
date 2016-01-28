@@ -1,7 +1,10 @@
-@extends('layouts.master')
+@extends('layouts.master', [
+    'breadcrumbs' => [
+        ['Terms', '/terms'],
+        [$term->display_name],
+    ]
+])
 
-@section('area', 'Terms')
-@section('page', $term->display_name)
 
 @section('content')
 
@@ -97,7 +100,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="course in ttc.displayed">
+                                <tr ng-cloak ng-repeat="course in ttc.displayed">
                                     <td>
                                         [[ course.department ]] [[ course.course_number | zpad:3 ]]-[[ course.course_section | zpad:2 ]]
                                     </td>

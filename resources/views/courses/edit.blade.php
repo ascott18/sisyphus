@@ -1,8 +1,11 @@
-@extends('layouts.master')
+@extends('layouts.master', [
+    'breadcrumbs' => [
+        ['Courses', '/courses'],
+        [isset($course) ? 'Edit' : 'Create'],
+        isset($course) ? [$course->displayIdentifier()] : null,
+    ]
+])
 
-@section('area', 'Courses')
-@section('action', isset($course) ? "Edit" : "Create")
-@section('page', isset($course) ? $course->displayIdentifier() : "New Course")
 
 @section('content')
 
@@ -49,10 +52,10 @@
                             <br>
                             <div class="col-md-6">
                                 <strong>Currently Selected:</strong>
-                                <span ng-if="getSelectedUser()"> [[users[getSelectedUser()].first_name]] [[users[getSelectedUser()].last_name]]</span>
-                                <span ng-if="!getSelectedUser()"> Nobody (Professor is TBA) </span>
+                                <span ng-cloak ng-if="getSelectedUser()"> [[users[getSelectedUser()].first_name]] [[users[getSelectedUser()].last_name]]</span>
+                                <span ng-cloak ng-if="!getSelectedUser()"> Nobody (Professor is TBA) </span>
                             </div>
-                            <div class="col-md-6">
+                            <div ng-cloak class="col-md-6">
                                 <a class="btn btn-xs btn-danger" ng-click="course.user_id = null" ng-show="getSelectedUser()">
                                     <i class="fa fa-times"></i> Clear Selection
                                 </a>
@@ -61,7 +64,7 @@
 
                         @include('input.generic', ['type' => 'hidden', 'name' => 'course.user_id', 'label' => 'Professor', 'attrs' => []])
 
-                        <div ng-show="userSearch">
+                        <div ng-cloak ng-show="userSearch">
                             <div class="list-group">
                                 <div class="list-group-item cursor-pointer"
                                      ng-class="{active: course.user_id == user.user_id}"

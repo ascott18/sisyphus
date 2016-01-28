@@ -1,7 +1,9 @@
-@extends('layouts.master')
-
-@section('area', 'Books')
-@section('page', 'All Books')
+@extends('layouts.master', [
+    'breadcrumbs' => [
+        ['Books', '/books'],
+        ['All Books'],
+    ]
+])
 
 @section('content')
     <div class="row">
@@ -55,7 +57,7 @@
                             </tbody>
                             <tfoot>
                             <tr>
-                                <td class="text-center" st-pagination="" st-items-by-page="10" colspan="4">
+                                <td class="text-center" st-pagination="" st-items-by-page="10" colspan="5">
                                 </td>
                             </tr>
                             </tfoot>

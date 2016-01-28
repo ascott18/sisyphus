@@ -144,6 +144,9 @@ class ParseCourseCsv extends Command
             $course->course_name = $title;
             $course->user_id = $user ? $user->user_id : null;
             $course->term_id = $term->term_id;
+
+            $course->created_at = $term->order_start_date->copy()->addDays(-1);
+
             $course->save();
         }
 

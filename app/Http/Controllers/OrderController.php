@@ -20,6 +20,7 @@ use SearchHelper;
 
 class OrderController extends Controller
 {
+    const PAST_BOOKS_NUM_MONTHS = 24;
 
     /** GET: /requests/
      *
@@ -28,53 +29,68 @@ class OrderController extends Controller
      */
     public function getIndex(Request $request)
     {
-        $this->authorize('all');
-
-        $openTerms = Term::currentTerms()->get();
-
-        $openTermIds = $openTerms->pluck('term_id');
-
-        // If the user can place orders for everyone, don't return courses for everything here
-        // because it would almost certainly crash their browser if we did.
         if ($request->user()->may('place-all-orders'))
-            $query = $request->user()->courses();
+            return $this->getList($request);
         else
-            $query = Course::orderable();
-
-        $courses = $query
-            ->whereIn('term_id', $openTermIds)
-            ->with([
-                'orders.book',
-                'user' => function($query){
-                    return $query->select('first_name', 'last_name');
-                }])
-            ->get();
-
-        return view('orders.index', ['openTerms' => $openTerms, 'courses' => $courses]);
+            return $this->getCreate($request, null);
     }
 
-    public function getCreate($course_id)
+    public function getCreate(Request $request, $course_id = null)
     {
-        $course = Course::findOrFail($course_id);
+        if ($course_id == null){
+            $this->authorize('all');
 
-        $this->authorize('place-order-for-course', $course);
+            $openTerms = Term::currentTerms()->get();
 
-        // Grab all the courses that are similar to the one requested.
-        // Similar means same department and course number, and offered during the same term.
-        $courses = Course::orderable()
-            ->where('department', '=', $course->department)
-            ->where('course_number', '=', $course->course_number)
-            ->where('term_id', '=', $course->term_id)
-            ->with([
-                'orders.book',
-                'user' => function($query){
-                    return $query->select('user_id', 'first_name', 'last_name');
-            }])
-            ->get();
+            $openTermIds = $openTerms->pluck('term_id');
 
-        $openTerms = Term::currentTerms()->get();
+            // If the user can place orders for everyone, don't return courses for everything here
+            // because it would almost certainly crash their browser if we did.
+            if ($request->user()->may('place-all-orders'))
+                $query = $request->user()->courses();
+            else
+                $query = Course::orderable();
 
-        return view('orders.index', ['openTerms' => $openTerms, 'courses' => $courses, 'course' => $course]);
+            $courses = $query
+                ->whereIn('term_id', $openTermIds)
+                ->with([
+                    'orders.book',
+                    'user' => function($query){
+                        return $query->select('first_name', 'last_name');
+                    }])
+                ->get();
+
+            return view('orders.create', ['openTerms' => $openTerms, 'courses' => $courses]);
+        }
+        else {
+            $course = Course::findOrFail($course_id);
+
+            $this->authorize('place-order-for-course', $course);
+
+            // Grab all the courses that are similar to the one requested.
+            // Similar means same department and course number, and offered during the same term.
+            $courses = Course::orderable()
+                ->where('department', '=', $course->department)
+                ->where('course_number', '=', $course->course_number)
+                ->where('term_id', '=', $course->term_id)
+                ->orWhere('course_id', '=', $course->course_id)
+                ->with([
+                    'orders.book',
+                    'user' => function($query){
+                        return $query->select('user_id', 'last_name');
+                }])
+                ->get();
+
+            $openTerms = Term::currentTerms()->get();
+
+            // Make sure that the requested course ends up in the list.
+            // If we're debugging unauthorized actions, because of the way Course::orderable() works,
+            // it is possible that the requested course might have passed the authorize check
+            // but didn't end up the query.
+
+
+            return view('orders.create', ['openTerms' => $openTerms, 'courses' => $courses, 'course' => $course]);
+        }
     }
 
     /** GET: /orders/list
@@ -166,7 +182,6 @@ class OrderController extends Controller
         $query = Course::visible($request->user());
 
         $query = $query->join('orders', 'courses.course_id', '=', 'orders.course_id'); // join before to get order department
-
         $query = $query->join('books', 'orders.book_id', '=', 'books.book_id'); // get the books
 
         if($request->input('term_id')) { // filter by term
@@ -227,20 +242,26 @@ class OrderController extends Controller
 
         $this->authorize('place-order-for-course', $course);
 
-
         $courses =
             Course::
             where(['department' => $course->department, 'course_number' => $course->course_number])
             ->where('course_id', '!=', $id)
+            ->where('created_at', '>', Carbon::today()->subMonths(static::PAST_BOOKS_NUM_MONTHS))
             ->with([
-                    "term",
-                    "orders.book.authors",
+                    "term" => function ($query){
+                        return $query->select('term_id', 'term_number', 'year');
+                    },
+                    "orders" => function ($query){
+                        return $query
+                            ->select('order_id', 'book_id', 'course_id')
+                            ->with('book.authors');
+                    },
                     'user' => function($query){
-                        return $query->select('user_id', 'first_name', 'last_name');
+                        return $query->select('user_id', 'last_name');
                     }])
             ->get();
 
-        return response()->json($courses);
+        return $courses;
     }
 
     /**

@@ -250,9 +250,8 @@ class BookController extends Controller
 
     public function getEdit($id)
     {
-
         $book = Book::findOrFail($id);
-        $this->authorize("edit-book",$book);
+        $this->authorize("edit-book", $book);
 
         return view('books.edit', ['book' => $book]);
     }
