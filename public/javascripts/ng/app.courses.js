@@ -19,7 +19,6 @@ app.controller('CoursesIndexController', function($scope, $http) {
 
     this.callServer = function callServer(tableState, ctrl) {
 
-
         ctrl1.isLoading = true;
         if(!$scope.stCtrl&&ctrl)
         {
@@ -40,21 +39,24 @@ app.controller('CoursesIndexController', function($scope, $http) {
         var end = pagination.number || 10;
         var page = (start/end)+1;
 
-        var searchObject = tableState.search.predicateObject;
+        tableState.term_selected = $scope.TermSelected;
+        var getRequestString = '/courses/course-list';
 
-        var getRequestString = '/courses/course-list?page=' + page +
-                                '&term_id='     + $scope.TermSelected +
-                                '&table_state=' + encodeURIComponent(JSON.stringify(tableState));
+        var data = {
+            page: page,
+            table_state: tableState
+        };
 
+        var config = {
+            params: data
+        };
 
-        $http.get(getRequestString).then(
-            function success(response) {
-                tableState.pagination.numberOfPages = response.data.last_page;                    // update number of pages with laravel response
-                tableState.pagination.number = response.data.per_page;                            // update entries per page with laravel response
-                ctrl1.displayed = response.data.data;                                              // save laravel response data
-                ctrl1.isLoading=false;
-            }
-        );
+        $http.get(getRequestString, config).then(function(response){
+            tableState.pagination.numberOfPages = response.data.last_page;                    // update number of pages with laravel response
+            tableState.pagination.number = response.data.per_page;                            // update entries per page with laravel response
+            ctrl1.displayed = response.data.data;                                              // save laravel response data
+            ctrl1.isLoading=false;
+        });
 
     }
 });

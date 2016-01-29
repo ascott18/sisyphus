@@ -124,37 +124,24 @@ app.controller('OrdersListController', function($scope, $http) {
         var end = pagination.number || 10;
         var page = (start/end)+1;
 
-        var getRequestString = '/requests/order-list?page=' + page;                                         // book list uri
+        tableState.term_id = $scope.TermSelected;
+        var getRequestString = '/requests/order-list';                                         // book list uri
 
-        if(tableState.sort.predicate) {
-            getRequestString += '&sort=' + encodeURIComponent(tableState.sort.predicate);               // build search
-            if(tableState.sort.reverse)
-                getRequestString += '&dir=desc';
-        }
+        var data = {
+            page: page,
+            table_state: tableState
+        };
 
-        if($scope.TermSelected!="")
-        {
-            getRequestString+= '&term_id=' + $scope.TermSelected;
-        }
+        var config = {
+            params: data
+        };
 
-
-        if(tableState.search.predicateObject) {
-            var predicateObject = tableState.search.predicateObject;
-            if(predicateObject.title)
-                getRequestString += '&title=' + encodeURIComponent(predicateObject.title);          // search title
-            if(predicateObject.section)
-                getRequestString += '&section=' + encodeURIComponent(predicateObject.section);       // search section
-        }
-
-        $http.get(getRequestString).then(
-            function success(response) {
-                tableState.pagination.numberOfPages = response.data.last_page;                          // update number of pages with what laravel gives back
-                tableState.pagination.number = response.data.per_page;                                  // update how many per page based on laravel response
-                ctrl.displayed = response.data.data;                                                    // get return data
-                ctrl.isLoading=false;
-            }
-        );
-
+        $http.get(getRequestString, config).then(function(response){
+            tableState.pagination.numberOfPages = response.data.last_page;                    // update number of pages with laravel response
+            tableState.pagination.number = response.data.per_page;                            // update entries per page with laravel response
+            ctrl.displayed = response.data.data;                                              // save laravel response data
+            ctrl.isLoading=false;
+        });
     }
 });
 

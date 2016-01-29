@@ -21,28 +21,24 @@ app.controller('TermsTableController', function($scope, $http) {
 
         var page = (start/end)+1;
 
-        var getRequestString = '/terms/term-list?page=' + page;                                 // term list uri
-        if(tableState.sort.predicate) {
-            getRequestString += '&sort=' + encodeURIComponent(tableState.sort.predicate);      // build sort
-            if(tableState.sort.reverse) {
-                getRequestString += '&dir=desc';
-            }
-        }
-        if(tableState.search.predicateObject) {
-            var predicateObject = tableState.search.predicateObject;
-            getRequestString += '&term=' + encodeURIComponent(predicateObject.term);      // build search for term
-            if(predicateObject.year)
-                getRequestString += '&year=' + encodeURIComponent(predicateObject.year);    // build search for year
-        }
+        tableState.term_selected = $scope.TermSelected;
+        var getRequestString = '/terms/term-list';
 
-        $http.get(getRequestString).then(
-            function success(response) {
-                tableState.pagination.numberOfPages = response.data.last_page;               // update number of pages with laravel response
-                tableState.pagination.number = response.data.per_page;                       // update entries per page with laravel response
-                ctrl.displayed = response.data.data;                                         // save laravel response data for table
-                ctrl.isLoading=false;
-            }
-        );
+        var data = {
+            page: page,
+            table_state: tableState
+        };
+
+        var config = {
+            params: data
+        };
+
+        $http.get(getRequestString, config).then(function(response){
+            tableState.pagination.numberOfPages = response.data.last_page;                    // update number of pages with laravel response
+            tableState.pagination.number = response.data.per_page;                            // update entries per page with laravel response
+            ctrl.displayed = response.data.data;                                              // save laravel response data
+            ctrl.isLoading=false;
+        });
     }
 
     this.callServerDetail = function callServer(tableState) {
@@ -53,32 +49,24 @@ app.controller('TermsTableController', function($scope, $http) {
         var end = pagination.number || 10;
         var page = (start/end)+1;
 
-        var getRequestString = '/terms/term-detail-list?&page=' + page;                                 // term list uri
+        tableState.term_id = $scope.term_id;
+        var getRequestString = '/terms/term-detail-list';
 
-        getRequestString += '&term_id=' + $scope.term_id;                                               // get term id
+        var data = {
+            page: page,
+            table_state: tableState
+        };
 
-        if(tableState.sort.predicate) {
-            getRequestString += '&sort=' + encodeURIComponent(tableState.sort.predicate);               // build sort
-            if(tableState.sort.reverse)
-                getRequestString += '&dir=desc';
-        }
+        var config = {
+            params: data
+        };
 
-        if(tableState.search.predicateObject) {
-            var predicateObject = tableState.search.predicateObject;
-            if(predicateObject.section)
-                getRequestString += '&section=' + encodeURIComponent(predicateObject.section);
-            if(predicateObject.name)
-                getRequestString += '&name=' + encodeURIComponent(predicateObject.name);
-        }
-
-        $http.get(getRequestString).then(
-            function success(response) {
-                tableState.pagination.numberOfPages = response.data.last_page;               // update number of pages with laravel response
-                tableState.pagination.number = response.data.per_page;                       // update entries per page with laravel response
-                ctrl.displayed = response.data.data;                                         // save laravel response data for table
-                ctrl.isLoading=false;
-            }
-        );
+        $http.get(getRequestString, config).then(function(response){
+            tableState.pagination.numberOfPages = response.data.last_page;                    // update number of pages with laravel response
+            tableState.pagination.number = response.data.per_page;                            // update entries per page with laravel response
+            ctrl.displayed = response.data.data;                                              // save laravel response data
+            ctrl.isLoading=false;
+        });
 
     }
 });

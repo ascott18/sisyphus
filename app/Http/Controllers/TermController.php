@@ -71,9 +71,13 @@ class TermController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    private function buildTermSearchQuery($request, $query) {
-        if($request->input("term")) {
-            $termList = $this->searchTermNames($request->input('term'));
+    private function buildTermSearchQuery($tableState, $query) {
+        $predicateObject = [];
+        if(isset($tableState->search->predicateObject))
+            $predicateObject = $tableState->search->predicateObject; // initialize predicate object
+
+        if(isset($predicateObject->term)) {
+            $termList = $this->searchTermNames($predicateObject->term);
 
             $query = $query->Where(function($sQuery) use ($termList) {
                 for($i=0; $i<count($termList); $i++) {
@@ -82,8 +86,8 @@ class TermController extends Controller
             });
         }
 
-        if($request->input("year")) {
-            $query = $query->where("year", "=", $request->input("year"));              // this will search for matching year
+        if(isset($predicateObject->year) && $predicateObject->year != "") {
+            $query = $query->where("year", "=", $predicateObject->year);              // this will search for matching year
         }
 
         return $query;
@@ -96,10 +100,11 @@ class TermController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    private function buildTermSortQuery($request, $query) {
-        if($request->input('sort')) {
-            if($request->input('sort') == "term") {
-                if($request->input('dir')) {
+    private function buildTermSortQuery($tableState, $query) {
+        if(isset($tableState->sort->predicate)){
+            $sort = $tableState->sort;
+            if($sort->predicate == "term") {
+                if($sort->reverse == 1) {
                     $query = $query->orderBy("term_number", "desc")
                                     ->orderBy("year", "desc");
                 } else {
@@ -107,10 +112,10 @@ class TermController extends Controller
                                     ->orderBy("year");
                 }
             } else {
-                if ($request->input('dir'))
-                    $query = $query->orderBy($request->input('sort'), "desc");
+                if ($sort->reverse == 1)
+                    $query = $query->orderBy($sort->predicate, "desc");
                 else
-                    $query = $query->orderBy($request->input('sort'));
+                    $query = $query->orderBy($sort->predicate);
             }
         }
         return $query;
@@ -125,12 +130,14 @@ class TermController extends Controller
 
     public function getTermList(Request $request)
     {
+        $tableState = json_decode($request->input('table_state'));
+
         $this->authorize("view-terms");
 
         $query = Term::query();
 
-        $query = $this->buildTermSearchQuery($request, $query);
-        $query = $this->buildTermSortQuery($request, $query);
+        $query = $this->buildTermSearchQuery($tableState, $query);
+        $query = $this->buildTermSortQuery($tableState, $query);
 
         return $query->paginate(15);
     }
@@ -174,12 +181,16 @@ class TermController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Database\Query
      */
-    private function buildDetailSearchQuery($request, $query) {
-        if($request->input('section'))
-            SearchHelper::sectionSearchQuery($query, $request->input('section'));
+    private function buildDetailSearchQuery($tableState, $query) {
+        $predicateObject = [];
+        if(isset($tableState->search->predicateObject))
+            $predicateObject = $tableState->search->predicateObject; // initialize predicate object
 
-        if($request->input('name'))
-            $query = $query->where('course_name', 'LIKE', '%'.$request->input('name').'%');
+        if(isset($predicateObject->section))
+            SearchHelper::sectionSearchQuery($query, $predicateObject->section);
+
+        if(isset($predicateObject->name))
+            $query = $query->where('course_name', 'LIKE', '%'.$predicateObject->name.'%');
 
         return $query;
     }
@@ -191,10 +202,11 @@ class TermController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    private function buildDetailSortQuery($request, $query) {
-        if($request->input('sort'))
-            if($request->input('sort') == "section"){
-                if($request->input('dir')) {
+    private function buildDetailSortQuery($tableState, $query) {
+        if(isset($tableState->sort->predicate)) {
+            $sort = $tableState->sort;
+            if ($sort->predicate == "section") {
+                if ($sort->reverse == 1) {
                     $query = $query->orderBy("department", "desc");
                     $query = $query->orderBy("course_number", "desc");
                     $query = $query->orderBy("course_section", "desc");
@@ -204,11 +216,12 @@ class TermController extends Controller
                     $query = $query->orderBy("course_section");
                 }
             } else {
-                if($request->input('dir'))
-                    $query = $query->orderBy($request->input('sort'), "desc");
+                if ($sort->reverse == 1)
+                    $query = $query->orderBy($sort->predicate, "desc");
                 else
-                    $query = $query->orderBy($request->input('sort'));
+                    $query = $query->orderBy($sort->predicate);
             }
+        }
 
         return $query;
     }
@@ -223,15 +236,17 @@ class TermController extends Controller
 
     public function getTermDetailList(Request $request)
     {
+        $tableState = json_decode($request->input('table_state'));
+
         $this->authorize("view-terms");
 
         $query = \App\Models\Course::visible($request->user());
 
-        if($request->input('term_id'))
-            $query = $query->where('term_id', '=', $request->input('term_id')); // find the term ID
+        if(isset($tableState->term_id) && $tableState->term_id != "")
+            $query = $query->where('term_id', '=', $tableState->term_id);
 
-        $query = $this->buildDetailSearchQuery($request, $query); // build the search terms query
-        $query = $this->buildDetailSortQuery($request, $query); // build the sort query
+        $query = $this->buildDetailSearchQuery($tableState, $query); // build the search terms query
+        $query = $this->buildDetailSortQuery($tableState, $query); // build the sort query
 
         $courses = $query->paginate(10); // get paginated result
 
