@@ -38,10 +38,13 @@ class BookController extends Controller
             $query = $query->where('title', 'LIKE', '%'.$predicateObject->title.'%');
 
         if(isset($predicateObject->author)) {
+            $query = $query->where('authors.name', 'LIKE', '%'.$predicateObject->author.'%');
+            /*
             $query->join('authors', function ($join) use ($predicateObject) {
                 $join->on('authors.book_id', '=', 'books.book_id')
                     ->where('authors.name', 'LIKE', '%'.$predicateObject->author.'%');
             });
+            */
         }
 
         if(isset($predicateObject->publisher))
@@ -66,10 +69,18 @@ class BookController extends Controller
     private function buildBookSortQuery($tableState, $query) {
         if(isset($tableState->sort->predicate)) {
             $sort = $tableState->sort;
-            if ($sort->reverse == 1)
-                $query = $query->orderBy($sort->predicate, "desc");
-            else
-                $query = $query->orderBy($sort->predicate);
+            if($sort->predicate == "author") {
+                if ($sort->reverse == 1) {
+                    $query = $query->orderBy('authors.name', "desc");
+                } else {
+                    $query = $query->orderBy('authors.name');
+                }
+            } else {
+                if ($sort->reverse == 1)
+                    $query = $query->orderBy($sort->predicate, "desc");
+                else
+                    $query = $query->orderBy($sort->predicate);
+            }
         }
 
         return $query;
@@ -124,6 +135,13 @@ class BookController extends Controller
                     ->select('orders.book_id')
                     ->distinct()
                     ->getQuery());
+        }
+
+        if((isset($tableState->sort->predicate) && $tableState->sort->predicate == "author")
+            || isset($tableState->search->predicateObject->author) ) { // only join when we actually need it
+
+            $query->join('authors','books.book_id', '=', 'authors.book_id');
+
         }
 
         $query = $this->buildBookSearchQuery($tableState, $query);

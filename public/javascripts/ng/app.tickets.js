@@ -108,6 +108,15 @@ app.controller('TicketsIndexController', function($scope, $http) {
 
     $scope.statuses = ["New", "Waiting", "In Progress", "Closed"];
 
+    $scope.updateStatus=function()
+    {
+        if($scope.stCtrl)
+            $scope.stCtrl.pipe();
+
+        if($scope.stTableRef)
+            $scope.stTableRef.pagination.start = 0;
+    };
+
     this.callServer = function callServer(tableState, ctrl) {
 
         ctrl1.isLoading = true;
@@ -126,36 +135,32 @@ app.controller('TicketsIndexController', function($scope, $http) {
             return;
         }
 
-        //var pagination = tableState.pagination;
-        //var start = pagination.start || 0;
-        //var end = pagination.number || 10;
-        //var page = (start/end)+1;
-        //
-        //var getRequestString = '/tickets/ticket-list?page=' + page;                                 // set course list uri
-        //
-        //if(tableState.sort.predicate) {
-        //    getRequestString += '&sort=' + tableState.sort.predicate;                               // build sort string
-        //    if(tableState.sort.reverse)
-        //        getRequestString += '&dir=desc';
-        //}
-        //
-        //if(tableState.search.predicateObject) {
-        //    var predicateObject = tableState.search.predicateObject;
-        //    if(predicateObject.section)
-        //        getRequestString += '&section=' + encodeURIComponent(predicateObject.section);     // search for section
-        //    if(predicateObject.name)
-        //        getRequestString += '&name=' + encodeURIComponent(predicateObject.name);           // search for name
-        //}
+        ctrl.isLoading = true;
 
+        var pagination = tableState.pagination;
+        var start = pagination.start || 0;
+        var end = pagination.number || 10;
+        var page = (start/end)+1;
 
-        $http.get('/tickets/ticket-list').then(
-            function success(response) {
-                tableState.pagination.numberOfPages = response.data.last_page;                    // update number of pages with laravel response
-                tableState.pagination.number = response.data.per_page;                            // update entries per page with laravel response
-                ctrl1.displayed = response.data.data;                                              // save laravel response data
-                ctrl1.isLoading=false;
-            }
-        );
+        console.log($scope.statusSelected);
+        tableState.statusSelected = $scope.statusSelected;
+        var getRequestString = '/tickets/ticket-list';
 
+        var data = {
+            page: page,
+            table_state: tableState
+        };
+
+        var config = {
+            params: data
+        };
+
+        $http.get(getRequestString, config).then(function(response){
+            tableState.pagination.numberOfPages = response.data.last_page;                    // update number of pages with laravel response
+            tableState.pagination.number = response.data.per_page;                            // update entries per page with laravel response
+            console.log(response.data.data.length);
+            ctrl1.displayed = response.data.data;                                              // save laravel response data
+            ctrl1.isLoading=false;
+        });
     }
 });

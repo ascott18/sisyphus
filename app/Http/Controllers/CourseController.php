@@ -237,8 +237,8 @@ class CourseController extends Controller
 
         $query = Course::visible($request->user());
 
-        if(isset($tableState->term_selected) && $tableState->term_selected != "") {
-            $query = $query->where('term_id', '=', $tableState->term_selected);
+        if(isset($tableState->status_selected) && $tableState->status_selected != "") {
+            $query = $query->where('status', '=', $tableState->status_selected);
         }
 
 
