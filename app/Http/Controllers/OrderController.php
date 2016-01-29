@@ -129,10 +129,8 @@ class OrderController extends Controller
 
         if(isset($predicateObject->title))
             $query = $query->where('title', 'LIKE', '%'.$predicateObject->title.'%');
-
         if(isset($predicateObject->section))
             Searchhelper::sectionSearchQuery($query, $predicateObject->section);
-
         if(isset($predicateObject->course_name))
             $query = $query->where('course_name', 'LIKE', '%'.$predicateObject->course_name.'%');
 

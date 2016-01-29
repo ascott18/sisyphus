@@ -26,7 +26,7 @@ class BookController extends Controller
      * Build the search query for the books controller
      *
      * @param \Illuminate\Database\Eloquent\Builder
-     * @param \Illuminate\Http\Request $request
+     * @param $tableState
      * @return \Illuminate\Database\Eloquent\Builder
      */
     private function buildBookSearchQuery($tableState, $query) {
@@ -60,7 +60,7 @@ class BookController extends Controller
      * Build the sort query for the books controller
      *
      * @param \Illuminate\Database\Eloquent\Builder
-     * @param \Illuminate\Http\Request $request
+     * @param \Illuminate\Http\Request $tableState
      * @return \Illuminate\Database\Eloquent\Builder
      */
     private function buildBookSortQuery($tableState, $query) {
@@ -140,18 +140,17 @@ class BookController extends Controller
      * Build the search query for the book detail list
      *
      * @param \Illuminate\Database\Eloquent\Builder
-     * @param \Illuminate\Http\Request $request
+     * @param $tableState
      * @return \Illuminate\Database\Eloquent\Builder
      */
 
-    private function buildDetailSearchQuery($tableState, $query) {
+    private function buildBookDetailSearchQuery($tableState, $query) {
         $predicateObject = [];
         if(isset($tableState->search->predicateObject))
             $predicateObject = $tableState->search->predicateObject; // initialize predicate object
 
         if(isset($predicateObject->section))
             SearchHelper::sectionSearchQuery($query, $predicateObject->section); // use search helper for section search
-
         if(isset($predicateObject->course_name))
             $query = $query->where('course_name', 'LIKE', '%'.$predicateObject->course_name.'%');
 
@@ -162,10 +161,10 @@ class BookController extends Controller
      * Build the sort query for the book detail list
      *
      * @param \Illuminate\Database\Eloquent\Builder
-     * @param \Illuminate\Http\Request $request
+     * @param $tableState
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    private function buildDetailSortQuery($tableState, $query) {
+    private function buildBookDetailSortQuery($tableState, $query) {
         if(isset($tableState->sort->predicate)) {
             $sort = $tableState->sort;
             if ($sort->predicate == "section") { // special case because of joined tables
@@ -211,8 +210,8 @@ class BookController extends Controller
 
         $query = $query->join('courses', 'orders.course_id', '=', 'courses.course_id'); // need to join the courses into the dataset
 
-        $query = $this->buildDetailSearchQuery($tableState, $query); // build the search terms query
-        $query = $this->buildDetailSortQuery($tableState, $query); // build the sort query
+        $query = $this->buildBookDetailSearchQuery($tableState, $query); // build the search terms query
+        $query = $this->buildBookDetailSortQuery($tableState, $query); // build the sort query
 
         $orders = $query->paginate(10); // get paginated result
 

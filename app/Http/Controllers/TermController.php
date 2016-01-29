@@ -68,7 +68,7 @@ class TermController extends Controller
      * Build the search query for the term controller
      *
      * @param \Illuminate\Database\Eloquent\Builder
-     * @param \Illuminate\Http\Request $request
+     * @param $tableState
      * @return \Illuminate\Database\Eloquent\Builder
      */
     private function buildTermSearchQuery($tableState, $query) {
@@ -97,7 +97,7 @@ class TermController extends Controller
      * Build the sort query for the term controller
      *
      * @param \Illuminate\Database\Eloquent\Builder
-     * @param \Illuminate\Http\Request $request
+     * @param $tableState
      * @return \Illuminate\Database\Eloquent\Builder
      */
     private function buildTermSortQuery($tableState, $query) {

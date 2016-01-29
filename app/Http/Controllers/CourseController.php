@@ -157,10 +157,10 @@ class CourseController extends Controller
      * Build the search query for the courses controller
      *
      * @param \Illuminate\Database\Query $query
-     * @param \Illuminate\Http\Request $request
+     * @param $tableState
      * @return \Illuminate\Database\Query
      */
-    private function buildSearchQuery($tableState, $query) {
+    private function buildCourseSearchQuery($tableState, $query) {
 
         $predicateObject = [];
         if(isset($tableState->search->predicateObject))
@@ -168,10 +168,8 @@ class CourseController extends Controller
 
         if(isset($predicateObject->section))
             SearchHelper::sectionSearchQuery($query, $predicateObject->section);
-
         if(isset($predicateObject->name))
             $query = $query->where('course_name', 'LIKE', '%'.$predicateObject->name.'%');
-
         if(isset($predicateObject->professor))
             SearchHelper::professorSearchQuery($query, $predicateObject->professor);
 
@@ -183,10 +181,10 @@ class CourseController extends Controller
      * Build the sort query for the courses controller
      *
      * @param \Illuminate\Database\Query $query
-     * @param \Illuminate\Http\Request $request
+     * @param $tableState
      * @return \Illuminate\Database\Query
      */
-    private function buildSortQuery($tableState, $query) {
+    private function buildCourseSortQuery($tableState, $query) {
         if(isset($tableState->sort->predicate)){
             $sort = $tableState->sort;
             if ($sort->predicate == "section"){
@@ -251,8 +249,8 @@ class CourseController extends Controller
 
         }
 
-        $query = $this->buildSearchQuery($tableState, $query);
-        $query = $this->buildSortQuery($tableState, $query);
+        $query = $this->buildCourseSearchQuery($tableState, $query);
+        $query = $this->buildCourseSortQuery($tableState, $query);
         $query = $query->with("term");
         $query = $query->with("user");
 

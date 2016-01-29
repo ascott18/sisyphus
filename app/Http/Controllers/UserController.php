@@ -51,10 +51,10 @@ class UserController extends Controller
      * Build the search query for the users controller
      *
      * @param \Illuminate\Database\Query $query
-     * @param \Illuminate\Http\Request $request
+     * @param $tableState
      * @return \Illuminate\Database\Query
      */
-    private function buildSearchQuery($tableState, $query)
+    private function buildUserSearchQuery($tableState, $query)
     {
         $predicateObject = [];
         if(isset($tableState->search->predicateObject))
@@ -77,10 +77,10 @@ class UserController extends Controller
      * Build the sort query for the users controller
      *
      * @param \Illuminate\Database\Query $query
-     * @param \Illuminate\Http\Request $request
+     * @param $tableState
      * @return \Illuminate\Database\Query
      */
-    private function buildSortQuery($tableState, $query)
+    private function buildUserSortQuery($tableState, $query)
     {
         if(isset($tableState->sort->predicate)) {
             $sort = $tableState->sort;
@@ -109,9 +109,9 @@ class UserController extends Controller
 
         $query = $query->with(['departments', 'roles']);
 
-        $query = $this->buildSearchQuery($tableState, $query);
+        $query = $this->buildUserSearchQuery($tableState, $query);
 
-        $query = $this->buildSortQuery($tableState, $query);
+        $query = $this->buildUserSortQuery($tableState, $query);
 
         $users = $query->paginate(10);
 
