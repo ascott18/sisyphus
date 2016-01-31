@@ -6,6 +6,7 @@ use Cache;
 use App\Models\Book;
 use App\Models\Course;
 use Illuminate\Http\Request;
+use SearchHelper;
 
 class BookController extends Controller
 {
@@ -31,14 +32,17 @@ class BookController extends Controller
     private function buildBookSearchQuery($request, $query) {
         if($request->input('title'))
             $query = $query->where('title', 'LIKE', '%'.$request->input('title').'%');
+
         if($request->input('author')) {
             $query->join('authors', function ($join) use ($request) {
                 $join->on('authors.book_id', '=', 'books.book_id')
                     ->where('authors.name', 'LIKE', '%'.$request->input('author').'%');
             });
         }
+
         if($request->input('publisher'))
             $query = $query->where('publisher', 'LIKE', '%'.$request->input('publisher').'%');
+
         if($request->input('isbn13')) {
             $isbn = str_replace("-", "", $request->input('isbn13'));
             $query = $query->where('isbn13', 'LIKE', '%' . $isbn . '%');
@@ -132,39 +136,8 @@ class BookController extends Controller
      */
 
     private function buildDetailSearchQuery($request, $query) {
-        if($request->input('section')) {
-            $searchArray = preg_split("/[\s-]/", $request->input('section'));
-            foreach($searchArray as $key => $field) {       // strip leading zeros from search terms
-                $searchArray[$key] = ltrim($field, '0');
-            }
-            if(count($searchArray) == 2) {
-                // we need to use an anonymous function so the subquery does not override the book_id limit from parent
-                $query = $query->where(function($sQuery) use ($searchArray){
-                        return $sQuery->where('department', 'LIKE', '%'.$searchArray[0].'%')
-                            ->where('course_number', 'LIKE', '%'.$searchArray[1].'%')
-                            ->orWhere('course_number', 'LIKE', '%'.$searchArray[0].'%')
-                            ->where('course_section', 'LIKE', '%'.$searchArray[1].'%')
-                            ->orWhere('department', 'LIKE', '%'.$searchArray[0].'%')
-                            ->where('course_section', 'LIKE', '%'.$searchArray[1].'%');
-                });
-            } elseif(count($searchArray) == 3) {
-                // this does not suffer the same problem but should be in a subquery like it is for proper formatting
-                $query->where(function($sQuery) use ($searchArray) {
-                   return $sQuery->where('department', 'LIKE', '%'.$searchArray[0].'%')
-                       ->where('course_number', 'LIKE', '%'.$searchArray[1].'%')
-                       ->where('course_section', 'LIKE', '%'.$searchArray[2].'%');
-                });
-            } else {
-                // we need to use an anonymous function so the subquery does not override the book_id limit from parent
-                for($i=0; $i<count($searchArray); $i++) {
-                    $query = $query->where(function($sQuery) use ($searchArray, $i) {
-                        return $sQuery->where('department', 'LIKE', '%'.$searchArray[$i].'%')
-                            ->orWhere('course_number', 'LIKE', '%'.$searchArray[$i].'%')
-                            ->orWhere('course_section', 'LIKE', '%'.$searchArray[$i].'%');
-                    });
-                }
-            }
-        }
+        if($request->input('section'))
+            SearchHelper::sectionSearchQuery($query, $request->input('section')); // use search helper for section search
 
         if($request->input('course_name'))
             $query = $query->where('course_name', 'LIKE', '%'.$request->input('course_name').'%');

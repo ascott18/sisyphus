@@ -26,7 +26,7 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
 
     <script src="/javascripts/angular.min.js"></script>
-    <script src="/javascripts/ng/smart-table/smart-table.min.js"></script>
+    <script src="/javascripts/ng/smart-table/smart-table.js"></script>
     <script src="/javascripts/ng/app.js"></script>
 
     @yield('scripts-head')
