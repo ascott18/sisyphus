@@ -310,8 +310,8 @@ class BookController extends Controller
             'authors.*' => 'string'
         ]);
 
-        $book = $request->get('book');
-        $authors = $request->get('authors');
+        $book = $request->input('book');
+        $authors = $request->input('authors');
 
         $db_book = Book::findOrFail($book['book_id']);
         $this->authorize("edit-book", $db_book);

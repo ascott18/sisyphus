@@ -76,6 +76,7 @@ class CourseController extends Controller
         $this->authorize("edit-course", $course);
 
         // All users, from which we will select a professor.
+        // TODO: restrict this, since dept secretaries can also edit courses.
         $users = User::all(['first_name', 'last_name', 'user_id']);
 
         return view('courses.edit', ['panelTitle' => 'Edit Course', 'course' => $course, 'users' => $users]);
@@ -122,7 +123,7 @@ class CourseController extends Controller
 
     private function cleanCourseForCreateOrEdit(Request $request)
     {
-        $course = $request->get('course');
+        $course = $request->input('course');
 
         $course['department'] = trim($course['department']);
         $course['course_name'] = trim($course['course_name']);

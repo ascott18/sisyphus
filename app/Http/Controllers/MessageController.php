@@ -113,7 +113,7 @@ class MessageController extends Controller
     {
         $this->authorize('send-messages');
 
-        $cloneFrom = $request->get('message_id');
+        $cloneFrom = $request->input('message_id');
 
         if (is_null($cloneFrom))
         {
@@ -147,7 +147,7 @@ class MessageController extends Controller
      */
     public function postDeleteMessage(Request $request)
     {
-        $message_id = (int)$request->get('message_id');
+        $message_id = (int)$request->input('message_id');
         $message = Message::findOrFail($message_id);
 
         $this->authorize('touch-message', $message);
@@ -168,7 +168,7 @@ class MessageController extends Controller
      */
     public function postSaveMessage(Request $request)
     {
-        $message_id = (int)$request->get('message_id');
+        $message_id = (int)$request->input('message_id');
         $message = Message::findOrFail($message_id);
 
         $this->authorize('touch-message', $message);
@@ -181,7 +181,7 @@ class MessageController extends Controller
 
     public function postSendMessages(Request $request)
     {
-        $message = $request->get('message');
+        $message = $request->input('message');
         $currentUser = $request->user();
 
         $dbMessage = Message::findOrFail($message['message_id']);
@@ -191,7 +191,7 @@ class MessageController extends Controller
 
         $dbMessage->update(['last_sent' => Carbon::now()]);
 
-        $recipientIds = $request->get('recipients');
+        $recipientIds = $request->input('recipients');
 
         foreach ($recipientIds as $user_id)
         {
