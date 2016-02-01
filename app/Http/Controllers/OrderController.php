@@ -77,7 +77,7 @@ class OrderController extends Controller
                 ->with([
                     'orders.book',
                     'user' => function($query){
-                        return $query->select('user_id', 'last_name');
+                        return $query->select('user_id', 'first_name', 'last_name');
                 }])
                 ->get();
 
