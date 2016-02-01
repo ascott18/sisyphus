@@ -52,6 +52,9 @@ class CASAuth {
         {
             $cas = app('cas');
 
+            // Need to manually connect since we're bypassing Xavrsl\Cas\CasManager for our authentication attempt.
+            $cas->connection();
+
 
             // This will throw an exception if authentication fails,
             // and will immediately redirect to login.ewu.edu if authentication is needed.
