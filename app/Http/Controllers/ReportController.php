@@ -17,19 +17,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class ReportController extends Controller
 {
-    public static $options = [
-        'course_number' => 'Course Number',
-        'course_section' => 'Course Section',
-        'course_instructor' => 'Instructor',
-        'course_title' => 'Course Title',
-        'book_title' => 'Book Title',
-        'book_isbn' => 'ISBN',
-        'book_authors' => 'Author',
-        'book_edition' => 'Edition',
-        'book_publisher' => 'Publisher',
-        'order_required' => 'Required',
-        'order_notes' => 'Notes'
-    ];
+
 
     public function getIndex(Request $request)
     {
@@ -39,6 +27,8 @@ class ReportController extends Controller
 
         $userTerms = Course::visible($user)->distinct()->lists('term_id');
 
+        $departments=Course::visible($user)->distinct()->lists('department');
+
         $terms = Term::whereIn('term_id', $userTerms)
             ->orderBy('order_start_date', 'DESC')
             ->get();
@@ -47,9 +37,7 @@ class ReportController extends Controller
         foreach ($terms as $term) {
             $term['display_name'] = $term->displayName();
         }
-
-
-        return view('reports.index',['terms' => $terms, 'currentTermId' => $currentTermId, 'options' => static::$options]);
+        return view('reports.index',['departments' => $departments,'terms' => $terms, 'currentTermId' => $currentTermId]);
     }
 
     public function postSubmitReport(Request $request)
@@ -71,6 +59,7 @@ class ReportController extends Controller
         $params=$request->all();
         $start=$params['startDate'];
         $end=$params['endDate'];
+        //$dept=$params['dept'];
 
 
 
@@ -93,11 +82,7 @@ class ReportController extends Controller
                 ->select('course_id')
                 ->toBase())
             ->withTrashed();
-
-            if ($include['deleted'] && $include['nondeleted']){
-                // do nothing
-            }
-            elseif ($include['deleted']) {
+            if ($include['deleted']) {
                 $query->whereNotNull('orders.deleted_at');
             }
             elseif ($include['nondeleted']) {

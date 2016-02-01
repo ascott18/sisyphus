@@ -1,18 +1,76 @@
 var app = angular.module('sisyphus', ['sisyphus.helpers', 'ui.bootstrap' , 'smart-table']);
 
-app.controller('ReportsController', function($scope, $http) {
-    $scope.columns=[];
 
-    $scope.include = {
-        deleted: true,
-        nondeleted: true,
-        submitted: true,
-        notSubmitted: true,
-        noBook: true
+app.config([ '$compileProvider',
+    function($compileProvider) {
+        $compileProvider.aHrefSanitizationWhitelist(/^s*(https?|ftp|blob|mailto|chrome-extension):/);
+        // pre-Angularv1.2 use urlSanizationWhitelist()
+    }
+]);
+
+
+app.controller('ReportsController', function($scope, $http) {
+    var data=[];
+    $scope.json = JSON.stringify(data);
+    $scope.downloadLink = window.URL.createObjectURL(new Blob([$scope.json], {type: "application/json"}));
+
+
+    $scope.STAGE_SELECT_FIELDS= 1;
+    $scope.STAGE_CREATE_REPORT = 2;
+    $scope.stage = $scope.STAGE_SELECT_FIELDS;
+    $scope.options ={   course_title: 'Course Title',
+                        course_number:'Course Number',
+                        course_section: 'Course Section',
+                        course_department: 'Course Department',
+                        course_instructor:'Instructor',
+                        book_title: 'Book Title',
+                        book_isbn: 'ISBN',
+                        book_authors: 'Author',
+                        book_edition: 'Edition',
+                        book_publisher: 'Publisher',
+                        order_required: 'Required',
+                        order_notes: 'Notes'
     };
-    //
-    //$scope.reportDateStart = new Date();
-    //$scope.reportDateEnd = new Date();
+
+    $scope.columns=[];
+    $scope.include = {
+        deleted: false,
+        nondeleted: false,
+        submitted: false,
+        notSubmitted: false,
+        noBook: false
+    };
+
+    $scope.init = function(terms,departments){
+        $scope.terms=terms;
+        $scope.departments=departments;
+    };
+
+    $scope.getStage = function(){
+        return $scope.stage;
+    };
+
+    $scope.setStage = function(stage){
+        $scope.stage = stage;
+    };
+
+    $scope.setDeleted = function(){
+        $scope.resetInclude();
+        $scope.include.deleted = true;
+    };
+
+    $scope.setNonDeleted = function(){
+        $scope.resetInclude();
+        $scope.include.nondeleted = true;
+    };
+
+    $scope.resetInclude=function(){
+        $scope.include.deleted=false;
+        $scope.include.nondeleted=false;
+        $scope.include.submitted=false;
+        $scope.include.notSubmitted=false;
+        $scope.include.noBook=false;
+    };
 
     $scope.onSelectTerm = function()
     {
@@ -21,43 +79,56 @@ app.controller('ReportsController', function($scope, $http) {
         $scope.reportDateEnd = moment(term.order_due_date).toDate();
     };
 
-    $scope.toggleColumn = function(columnIndex)
+    $scope.toggleColumn = function(column)
     {
-        if($scope.isColumnSelected(columnIndex))
+        if($scope.isColumnSelected(column))
         {
-            var index = $scope.columns.indexOf(columnIndex);
+            var index = $scope.columns.indexOf(column);
             $scope.columns.splice(index,1);
         }
         else
         {
-            $scope.columns.push(columnIndex);
+            $scope.columns.push(column);
         }
 
     };
 
-    $scope.isColumnSelected = function(columnIndex)
+    $scope.isColumnSelected = function(column)
     {
         for(var i=0;i<$scope.columns.length;i++)
         {
-            if($scope.columns[i]==columnIndex)
+            if($scope.columns[i]==column)
             {
                 return true;
             }
         }
     };
 
+    $scope.isCheckboxChecked = function() {
+        if($scope.include.deleted||$scope.include.nondeleted)
+        {
+            return true;
+        }
+        return ($scope.include.submitted || $scope.include.notSubmitted || $scope.include.noBook);
+    }
+
+
+
+
 
     $scope.submit=function()
     {
+            $scope.stage=$scope.STAGE_CREATE_REPORT;
+            $scope.ReportType=null;
             $http.post('/reports/submit-report', {
                     startDate: $scope.reportDateStart,
                     endDate: $scope.reportDateEnd,
                     columns: $scope.columns,
                     include: $scope.include,
                     term_id: $scope.TermSelected.term_id,
+                    dept: $scope.DeptSelected,
             }).then(function(response) {
                     var courses = response.data['courses'];
-
                 // TODO: linqjs-ify this.
                     var flattenedCourses = [];
                     for (var i = 0; i < courses.length; i++){
@@ -73,6 +144,24 @@ app.controller('ReportsController', function($scope, $http) {
 
                     }
                     $scope.reportData = flattenedCourses;
+                for(var key in $scope.reportData)
+                {
+                    if($scope.reportData.hasOwnProperty(key))
+                    {
+                        var obj=$scope.reportData[key];
+                        for(var prop in obj)
+                        {
+                            if(obj.hasOwnProperty(prop))
+                            {
+                                console.log(prop + "=" +obj[prop]);
+                            }
+                        }
+                    }
+                    console.log();
+                }
+                $scope.json = JSON.stringify(data);
+
+
 
 
                 //    var newWindow=window.open('report', 'Report');
