@@ -103,6 +103,8 @@ class Handler extends ExceptionHandler
             $e = new HttpException(419, "Session token mismatched. Please refresh the page and try again.", $e);
         }
         elseif ($e instanceof \CAS_AuthenticationException){
+            // PHPCas likes to output a ton of its own crap. ob_end_clean clears the output buffer so it won't actually get output.
+            ob_end_clean();
             $e = new HttpException(Response::HTTP_BAD_GATEWAY, "There was an error contacting Eastern SSO. It may be down, or it may be misconfigured.", $e);
         }
 
