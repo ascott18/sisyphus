@@ -127,14 +127,12 @@ app.controller('BookDetailsController', function($scope, $http) {
 
         var getRequestString = '/books/book-detail-list';
 
-        var data = {
-            book_id: $scope.book_id,
-            page: page,
-            table_state: tableState
-        };
-
         var config = {
-            params: data
+            params: {
+                book_id: $scope.book_id,
+                page: page,
+                table_state: tableState
+            }
         };
 
         $http.get(getRequestString, config).then(function(response){

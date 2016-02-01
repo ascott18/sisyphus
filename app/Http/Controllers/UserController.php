@@ -425,8 +425,8 @@ class UserController extends Controller
 
         $user = $request->get('user');
 
-        $dbUser = User::findOrFail($user->user_id);
-        $dbUser->update($request->except('user.user_id'));
+        $dbUser = User::findOrFail($user['user_id']);
+        $dbUser->update($request->except('user.user_id')['user']);
 
         return redirect('users');
     }
