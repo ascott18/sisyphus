@@ -64,9 +64,16 @@
                         <div class="pull-left">
                             <div style="margin-left: 0em">
                                 <span ng-show="courseNeedsOrders(course)" >
+                                    <span class="fa-stack fa-fw ">
+                                        <i class="fa fa-question fa-2x text-primary"></i>
+                                    </span>
                                     No response submitted. Please let us know what you need!
                                 </span>
                                 <span ng-show="course.no_book" class="text-muted">
+                                    <span class="fa-stack" style="color: #d8d8d8">
+                                        <i class="fa fa-book fa-stack-1x"></i>
+                                        <i class="fa fa-ban fa-stack-2x "></i>
+                                    </span>
                                     No books needed. Thank you for letting us know!
                                 </span>
                             </div>
@@ -76,14 +83,14 @@
                                     style="display: flex"
                                     ng-style="{'padding-bottom': $last ? '0' : '10px'}">
                                     <div style="padding-right: 5px">
-                                        <i class="fa fa-trash-o fa-1-5x text-muted-hover-danger cursor-pointer"
+                                        <i class="fa fa-trash-o fa-fw fa-1-5x text-muted-hover-danger cursor-pointer"
                                            title="Delete Request"
                                            ng-confirm-click="deleteOrder(course, order)"
                                            ng-confirm-click-message="Are you sure you want to delete the request for [[order.book.title]]?"></i>
                                     </div>
                                     <div >
                                         <a href="/books/details/[[order.book.book_id]]" style="color: #000;">
-                                            [[order.book.title]]<span ng-show="order.book.edition.trim()">, [[order.book.edition]]</span>
+                                            <strong>[[order.book.title]]</strong><span ng-show="order.book.edition.trim()">, [[order.book.edition]]</span>
                                         </a>
                                         <span class="text-muted" ng-show="order.book.isbn13"> &mdash; [[order.book.isbn13 | isbnHyphenate]] </span>
                                         <div class="text-muted">

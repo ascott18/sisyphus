@@ -484,7 +484,7 @@ ul.alert-dropdown {
 }
 
 .text-muted-hover-danger {
-    color: #cccccc;
+    color: #d8d8d8;
 }
 *:hover > * > .text-muted-hover-danger {
     color: #999999;
