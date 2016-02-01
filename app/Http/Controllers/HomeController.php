@@ -37,6 +37,14 @@ class HomeController extends Controller
 
     }
 
+
+    public function getLogout(){
+        $this->authorize('all');
+
+        $cas = app('cas');
+        $cas->logout();
+    }
+
     private static function getCachedDashboardData($user_id){
         // Cache this for x minutes.
         return Cache::remember('dashboard-' . $user_id, static::CACHE_MINUTES, function() {
@@ -229,7 +237,6 @@ class HomeController extends Controller
 
         return $activityReport;
     }
-
 
     private static function getAccumulationsFromReport($reportData)
     {

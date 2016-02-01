@@ -6,6 +6,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
+use phpCAS;
 
 class CASAuth {
 
@@ -51,9 +52,15 @@ class CASAuth {
         {
             $cas = app('cas');
 
+
             // This will throw an exception if authentication fails,
             // and will immediately redirect to login.ewu.edu if authentication is needed.
-            $cas->authenticate();
+            // We call out to phpCas manually because Xavrsl/Cas swallows up exceptions in $cas->authenticate() for some reason.
+
+//          $cas->authenticate();
+            if(!$this->isPretending()){
+                phpCAS::forceAuthentication();
+            }
 
 
             // If we get here, the user is authenticated with CAS.
