@@ -71,6 +71,9 @@
                     <li >
                         <span id="userName"><i class="fa fa-user"></i> Welcome, {{ Auth::user()->net_id }}! </span>
                     </li>
+                    <li class="pull-right">
+                        <span style="margin-left: 25px"><a href="/logout">Logout</a></span>
+                    </li>
                 @endif
             </ul>
 

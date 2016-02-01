@@ -41,8 +41,7 @@ class HomeController extends Controller
     public function getLogout(){
         $this->authorize('all');
 
-        $cas = app('cas');
-        $cas->logout();
+        return redirect('https://login.ewu.edu/cas/logout');
     }
 
     private static function getCachedDashboardData($user_id){
