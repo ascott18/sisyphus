@@ -129,7 +129,7 @@
                         <div role="tabpanel" class="panel-body tab-pane active" id="newbook">
 
                             <form novalidate class="simple-form" name="form" ng-controller="NewBookController">
-                                <div class="form-group" ng-class="{'has-error': (submitted || form.isbn13.$touched) && (form.isbn13.$error.isbn13 || form.isbn13.$error.required)}">
+                                <div class="form-group" ng-init="addPassedBookToCart( {{ json_encode($book) }} )" ng-class="{'has-error': (submitted || form.isbn13.$touched) && (form.isbn13.$error.isbn13 || form.isbn13.$error.required)}">
                                     <label for="isbn13">ISBN 13</label>
                                     <input
                                             ng-change="isbnChanged(book)"

@@ -246,15 +246,17 @@ class BookController extends Controller
     public function getCover(Request $request) {
         $this->authorize("all");
 
-        $cached = true;
-        $coverImage = Cache::get($request->input('isbn'));
+        if($request->input('isbn') != '') {
+            $cached = true;
+            $coverImage = Cache::get('coverThumb-' . $request->input('isbn'));
 
-        if($coverImage == NULL) {
-            $cached = false;
-            $googleResponse = json_decode(file_get_contents("https://www.googleapis.com/books/v1/volumes?q=isbn:".$request->input('isbn')));
-            if(isset($googleResponse->items[0]->volumeInfo->imageLinks->thumbnail)) {
-                $coverImage = file_get_contents($googleResponse->items[0]->volumeInfo->imageLinks->thumbnail);
-                Cache::put($request->input('isbn'), $coverImage, 43800);
+            if ($coverImage == NULL) {
+                $cached = false;
+                $googleResponse = json_decode(file_get_contents("https://www.googleapis.com/books/v1/volumes?q=isbn:" . $request->input('isbn')));
+                if (isset($googleResponse->items[0]->volumeInfo->imageLinks->thumbnail)) {
+                    $coverImage = file_get_contents($googleResponse->items[0]->volumeInfo->imageLinks->thumbnail);
+                    Cache::put('coverTumb-' . $request->input('isbn'), $coverImage, 43800);
+                }
             }
         }
 

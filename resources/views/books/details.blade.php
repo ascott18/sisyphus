@@ -20,6 +20,9 @@
                     <a href="/books/edit/{{ $book->book_id }}" class="btn btn-primary " role="button">
                         <i class="fa fa-pencil"></i> Edit
                     </a>
+                    <a href="/requests?isbn13={{ $book->isbn13 }}" class="btn btn-primary" role="button">
+                        <i class="fa fa-shopping-cart"></i> Re-request
+                    </a>
                     <dl class="dl-horizontal">
                         <dt>Title</dt>
                         <dd>

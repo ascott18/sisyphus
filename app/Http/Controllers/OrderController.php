@@ -60,7 +60,15 @@ class OrderController extends Controller
                     }])
                 ->get();
 
-            return view('orders.create', ['openTerms' => $openTerms, 'courses' => $courses]);
+            $book = [];
+            if($request->input('isbn13') != null) {
+                $book = Book::query()
+                    ->where('isbn13', '=', $request->input('isbn13'))
+                    ->with('authors')
+                    ->get();
+            }
+
+            return view('orders.create', ['openTerms' => $openTerms, 'courses' => $courses, 'book' => $book]);
         }
         else {
             $course = Course::findOrFail($course_id);

@@ -35,13 +35,11 @@ app.controller('UsersController', function($scope, $http) {
 
         var getRequestString = '/users/user-list';
 
-        var data = {
-            page: page,
-            table_state: tableState
-        };
-
         var config = {
-            params: data
+            params: {
+                page: page,
+                table_state: tableState
+            }
         };
 
         $http.get(getRequestString, config).then(function(response){

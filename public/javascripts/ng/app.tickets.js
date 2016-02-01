@@ -146,13 +146,11 @@ app.controller('TicketsIndexController', function($scope, $http) {
         tableState.statusSelected = $scope.statusSelected;
         var getRequestString = '/tickets/ticket-list';
 
-        var data = {
-            page: page,
-            table_state: tableState
-        };
-
         var config = {
-            params: data
+            params: {
+                page: page,
+                table_state: tableState
+            }
         };
 
         $http.get(getRequestString, config).then(function(response){

@@ -382,6 +382,21 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", function(
         }
     };
 
+    $scope.addPassedBookToCart = function(book) {
+        if(book != "") {
+            $scope.master = {};
+            $scope.master['title'] = book[0].title;
+            $scope.master['edition'] = book[0].edition;
+            $scope.master['publisher'] = book[0].publisher;
+            $scope.master['authors'] = book[0].authors;
+            console.log(book); // TODO: remove this!!!
+            var bookData = {};
+            bookData['book'] = $scope.master;
+            bookData['book']['isbn13'] = stripHyphens(book[0].isbn13);
+            CartService.cartBooks.push(bookData);
+        }
+    };
+
     $scope.addNewBookToCart = function(book, form){
         $scope.submitted = true;
 

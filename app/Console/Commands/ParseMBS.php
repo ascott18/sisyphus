@@ -326,7 +326,7 @@ EOL;
                             $dbOrder = new Order;
                             $dbOrder->book_id = $dbBook->book_id;
                             $dbOrder->course_id = $dbCourse->course_id;
-                            $dbOrder->placed_by = 1; // TODO: ensure that this is the dummer user created in HistoricalDataSeeder
+                            $dbOrder->placed_by = null; // TODO: ensure that this is the dummer user created in HistoricalDataSeeder
                             // Don't do this - it feels weird.
                             //if ($classCapacity){
                             //    $dbOrder->notes = "Class Capacity: $classCapacity";

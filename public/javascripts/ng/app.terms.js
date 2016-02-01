@@ -24,13 +24,11 @@ app.controller('TermsTableController', function($scope, $http) {
         tableState.term_selected = $scope.TermSelected;
         var getRequestString = '/terms/term-list';
 
-        var data = {
-            page: page,
-            table_state: tableState
-        };
-
         var config = {
-            params: data
+            params: {
+                page: page,
+                table_state: tableState
+            }
         };
 
         $http.get(getRequestString, config).then(function(response){
@@ -52,13 +50,11 @@ app.controller('TermsTableController', function($scope, $http) {
         tableState.term_id = $scope.term_id;
         var getRequestString = '/terms/term-detail-list';
 
-        var data = {
-            page: page,
-            table_state: tableState
-        };
-
         var config = {
-            params: data
+            params: {
+                page: page,
+                table_state: tableState
+            }
         };
 
         $http.get(getRequestString, config).then(function(response){
