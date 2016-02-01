@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Middleware\CASAuth;
 use App\Models\Book;
 use App\Models\Course;
 use App\Models\Term;
@@ -9,6 +10,7 @@ use Cache;
 use Carbon\Carbon;
 use \Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class HomeController extends Controller
 {
@@ -41,7 +43,22 @@ class HomeController extends Controller
     public function getLogout(){
         $this->authorize('all');
 
-        return redirect('https://login.ewu.edu/cas/logout');
+
+        $cas = app('cas');
+        $cas->connection();
+
+        if(!CASAuth::isPretending()){
+            if(!phpCAS::isAuthenticated())
+            {
+                $this->initializeCas();
+            }
+            phpCAS::logout(['url' => 'https://login.ewu.edu/cas/logout']);
+
+            redirect('https://login.ewu.edu/cas/logout');
+        }
+        else {
+            throw new BadRequestHttpException("Can't log out when you're pretending.");
+        }
     }
 
     private static function getCachedDashboardData($user_id){

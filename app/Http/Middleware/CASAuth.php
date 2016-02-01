@@ -27,7 +27,7 @@ class CASAuth {
         $this->session = app('session');
     }
 
-    private function isPretending()
+    public static function isPretending()
     {
         if (!empty(config("cas.cas_pretend_user")))
         {
