@@ -102,6 +102,9 @@ class Handler extends ExceptionHandler
         elseif ($e instanceof TokenMismatchException){
             $e = new HttpException(419, "Session token mismatched. Please refresh the page and try again.", $e);
         }
+        elseif ($e instanceof \CAS_AuthenticationException){
+            $e = new HttpException(Response::HTTP_BAD_GATEWAY, "There was an error contacting Eastern SSO. It may be down, or it may be misconfigured.", $e);
+        }
 
         return parent::render($request, $e);
     }
