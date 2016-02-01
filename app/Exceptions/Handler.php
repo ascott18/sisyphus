@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Session\TokenMismatchException;
 use Illuminate\Support\Facades\Config;
+use Symfony\Component\Debug\Exception\FlattenException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -109,5 +110,31 @@ class Handler extends ExceptionHandler
         }
 
         return parent::render($request, $e);
+    }
+
+    /**
+     * Create a Symfony response for the given exception.
+     *
+     * @param  \Exception  $e
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    protected function convertExceptionToResponse(Exception $e)
+    {
+        try{
+            $exception = FlattenException::create($e);
+
+            $content = view('error', ['response' => [
+                'success' => false,
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
+                'statusName' => Response::$statusTexts[Response::HTTP_INTERNAL_SERVER_ERROR],
+                'message' => config('app.debug') ? $e->getMessage() : "An unexpected error occurred.",
+                'flattenException' => config('app.debug') ? $exception : null,
+            ]])->render();
+
+            return new Response($content, 404, []);
+        }
+        catch(Exception $renderException){
+            return parent::convertExceptionToResponse($e);
+        }
     }
 }
