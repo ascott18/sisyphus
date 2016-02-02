@@ -1,9 +1,8 @@
 
 
-<div style="display: table-row;">
-
-    <div class="book-details-images">
-        <img class="smallImage" ng-src="[[ getBookCoverImage() ]]"/>
+<div style="display: inline-table;">
+    <div ng-show="!hideImage" class="book-details-images">
+        <img width="60px" class="smallImage" ng-src="[[ getBookCoverImage() ]]"/>
         <img class="largeImage" ng-src="[[ getBookCoverImage() ]]" style="display: none;"/>
     </div>
     <div style="padding-left: 10px; display: table-cell; vertical-align: top;">
@@ -12,7 +11,7 @@
         </h4>
         <small >
             <span class="text-muted" >
-                [[book.isbn13 | isbnHyphenate]] &mdash; [[book.publisher]]
+                <span ng-if="book.isbn13">[[book.isbn13 | isbnHyphenate]] &mdash; </span>[[book.publisher]]
                 <br>
                 by <span ng-repeat="author in book.authors">
                     [[author.name]][[$last ? '' : ($index==book.authors.length-2) ? ', and ' : ', ']]

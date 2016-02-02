@@ -135,8 +135,10 @@ ng.module('smart-table')
       var predicateObject = tableState.search.predicateObject || {};
       var prop = predicate ? predicate : '$';
 
-      input = ng.isString(input) ? input.trim() : input;
+      // REVERSED THESE TWO LINES BECAUSE TRIMMING THE INPUT AND REPLACING IT IS NOT GOOD FOR US
       $parse(prop).assign(predicateObject, input);
+      input = ng.isString(input) ? input.trim : input;
+
       // to avoid to filter out null value
       if (!input) {
         deepDelete(predicateObject, prop);
@@ -490,7 +492,6 @@ ng.module('smart-table')
       link: {
 
         pre: function (scope, element, attrs, ctrl) {
-
           var pipePromise = null;
 
           if (ng.isFunction(scope.stPipe)) {
@@ -502,7 +503,10 @@ ng.module('smart-table')
               }
 
               pipePromise = $timeout(function () {
-                scope.stPipe(ctrl.tableState(), ctrl);
+                if(!attrs.stHasDefaultSort || scope.alreadyCalled) {
+                  scope.stPipe(ctrl.tableState(), ctrl)
+                }
+                scope.alreadyCalled = true;
               }, config.pipe.delay);
 
               return pipePromise;

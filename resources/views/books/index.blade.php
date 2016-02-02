@@ -38,7 +38,7 @@
                             <tbody>
 
                             <tr ng-cloak ng-repeat="book in mc.displayed">
-                                <td>[[ book.title ]]</td>
+                                <td>[[ book.title + ' ' + book.edition ]]</td>
                                 <td>
                                     <span ng-repeat="author in book.authors">
                                         [[ author.name]] [[ $last ? '' : '|']]
