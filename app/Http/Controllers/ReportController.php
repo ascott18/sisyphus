@@ -56,10 +56,10 @@ class ReportController extends Controller
             'include.noBook' => 'required|boolean',
         ]);
 
-        $params=$request->all();
-        $start=$params['startDate'];
-        $end=$params['endDate'];
-        //$dept=$params['dept'];
+        $params = $request->all();
+        $start = $params['startDate'];
+        $end = $params['endDate'];
+        $departments = $params['departments'];
 
 
 
@@ -79,21 +79,35 @@ class ReportController extends Controller
             $query = Order::whereIn('course_id',
                 Course::visible()
                 ->where('term_id', '=', $term_id)
+                ->whereIn('department', $departments)
                 ->select('course_id')
                 ->toBase())
-            ->withTrashed();
-            if ($include['deleted']) {
-                $query->whereNotNull('orders.deleted_at');
-            }
-            elseif ($include['nondeleted']) {
-                $query->whereNull('orders.deleted_at');
-            }
+            ->withTrashed()
+            ->where(function($q) use ($include, $start, $end) {
+                if ($include['deleted']) {
+                    $q->orWhere(function($q) use ($start, $end) {
+                        $q->whereNotNull('orders.deleted_at')
+                            ->where('orders.deleted_at', '>=', Carbon::parse($start))
+                            ->where('orders.deleted_at', '<=', Carbon::parse($end));
+                    });
+                }
+                if ($include['nondeleted']) {
+                    $q->orWhere(function($q) use ($start, $end) {
+                        $q->whereNull('orders.deleted_at')
+                            ->where('orders.created_at', '>=', Carbon::parse($start))
+                            ->where('orders.created_at', '<=', Carbon::parse($end));
+                    });
+                }
+            })
+            ->with([
+                    'course',
+                    'course.user' => function($q){
+                        $q->select('user_id', 'first_name', 'last_name');
+                    },
+                    'book.authors'
+                ]);
 
-            $query
-                ->where('orders.created_at', '>=', Carbon::parse($start))
-                ->where('orders.created_at', '<=', Carbon::parse($end))
-                ->with(['course', 'book.authors']);
-
+//            $sql = $query->toSql();
             $results = $query->get()->toArray();
 
             // We get back a list of orders. To be consistent with the other query,
@@ -127,6 +141,7 @@ class ReportController extends Controller
         elseif ($include['submitted'] || $include['notSubmitted'] || $include['noBook']) {
             $query = Course::visible()
                 ->where('term_id', '=', $term_id)
+                ->whereIn('department', $departments)
                 ->where(function($q) use($include) {
                     $courseOrdersQuery = Order::where('orders.course_id', '=', DB::raw('courses.course_id'))->toBase();
 
@@ -144,7 +159,12 @@ class ReportController extends Controller
                         });
                     }
                 })
-                ->with(['user', 'orders.book.authors']);
+                ->with([
+                    'user' => function($q){
+                        $q->select('user_id', 'first_name', 'last_name');
+                    },
+                    'orders.book.authors'
+                ]);
 
 
             $results = $query->get()->toArray();

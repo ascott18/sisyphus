@@ -12,26 +12,28 @@
         <div class="col-lg-12" ng-show="getStage()== STAGE_SELECT_FIELDS">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title"><i class="fa fa-bar-chart"></i>Choose Report Type</h3>
+                    <h3 class="panel-title"><i class="fa fa-bar-chart"></i>What would you like to base your report on?</h3>
                 </div>
                 <div class="panel-body">
-                    <form>
-                        <input type="radio" ng-model="ReportType" ng-change="setNonDeleted()" value="requests">
+
+                    <div class="radio">
+                        <label >
+                            <input type="radio" ng-model="ReportType" ng-change="resetInclude()" value="orders" />
                             Requests
-                        </input></br>
-                        <input type="radio" ng-model="ReportType" ng-change="setDeleted()" value="deleted">
-                            Deleted Requests
-                        </input></br>
-                        <input type="radio" ng-model="ReportType" ng-change="resetInclude()" value="orders">
-                            Courses with requests/Courses without requests/courses that chose no book
-                        </input></br></br>
-                    </form>
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label >
+                            <input type="radio" ng-model="ReportType" ng-change="resetInclude()" value="courses" />
+                            Courses
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>
 
 
-        <div class="col-lg-12" ng-show="ReportType!=null">
+        <div class="col-lg-12" ng-show="ReportType">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="fa fa-bar-chart"></i>Create Report</h3>
@@ -39,6 +41,7 @@
                 <div class="panel-body">
                     <form novalidate class="simple-form">
                         <div class="row">
+                            <div class="col-lg-7">
                                 <h4>Select Term</h4>
                                 <select class="form-control"
                                         ng-init="TermSelected=(terms | filter:{term_id: {{$currentTermId}}})[0]; onSelectTerm()"
@@ -47,48 +50,99 @@
                                         ng-change="onSelectTerm()">
                                 </select>
 
-                                <h4>Choose a date range</h4>
-                                <div class="col-lg-4 col-md-6" >
-                                    <h3>Order Start Date</h3>
-                                    <input type="hidden" name="reportDateStart" ng-value="reportDateStart | date:'yyyy-MM-dd'">
+                                <div ng-show="ReportType == 'orders'">
+                                    <br><br>
+                                    <h4>Choose a date range</h4>
 
-                                    <uib-datepicker ng-model="reportDateStart"
-                                                    max-date="reportDateEnd"
-                                                    show-weeks="false"></uib-datepicker>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h3>Minimum Date</h3>
+                                            <input type="hidden" name="reportDateStart" ng-value="reportDateStart | date:'yyyy-MM-dd'">
+
+                                            <uib-datepicker ng-model="reportDateStart"
+                                                            max-date="reportDateEnd"
+                                                            show-weeks="false"></uib-datepicker>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <h3>Maximum Date</h3>
+                                            <input type="hidden" name="reportDateEnd" ng-value="reportDateEnd  | date:'yyyy-MM-dd'" >
+                                            <uib-datepicker ng-model="reportDateEnd"
+                                                            min-date="reportDateStart"
+                                                            show-weeks="false"></uib-datepicker>
+                                        </div>
+                                    </div>
                                 </div>
-
-                                <div class="col-lg-4 col-md-6">
-                                    <h3>Order Due Date</h3>
-                                    <input type="hidden" name="reportDateEnd" ng-value="reportDateEnd  | date:'yyyy-MM-dd'" >
-                                    <uib-datepicker ng-model="reportDateEnd"
-                                                    min-date="reportDateStart"
-                                                    show-weeks="false"></uib-datepicker>
-                                </div>
-                        </div>
-                        </br>
-                        <h4>Select a department</h4>
-                        <select class="form-control" ng-model="DeptSelected" ng-init="">
-                            <option value="">All Courses</option>
-                            <option ng-repeat="dept in departments" value=[[dept]]>[[dept]]</option>
-                        </select>
-                        </br>
-
-
-                        <h4>Data</h4>
-                        <ul class="list-group">
-                            <div ng-repeat="option in options">
-                                <li class="list-group-item cursor-pointer"
-                                    ng-class="{active: isColumnSelected(option)}"
-                                    ng-click="toggleColumn(option)">[[option]]</li>
                             </div>
-                        </ul>
 
+                            <div class="col-lg-5 col-md-12">
+                                <div class="row">
+                                    <div class="col-sm-6">
+
+                                        <h4>Select Department(s)</h4>
+                                        <select class="form-control"
+                                                multiple
+                                                size="5"
+                                                ng-multiple="true"
+                                                ng-model="DeptsSelected"
+                                                ng-options="dept for dept in departments">
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <h4>Select Report Columns</h4>
+                                        <select class="form-control"
+                                                multiple
+                                                size="12"
+                                                ng-multiple="true"
+                                                ng-model="ColumnsSelected"
+                                                ng-options="optionProperties.name for optionProperties in options">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div ng-show="ReportType == 'courses'">
+                            <h4>What would you like included in your report?</h4>
+                            (Must select at least one)
+                            <br>
+
+                            <div class="checkbox">
+                                <label >
+                                    <input type="checkbox" ng-model="include.submitted" />
+                                    Courses that have submitted orders
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label >
+                                    <input type="checkbox" ng-model="include.notSubmitted" />
+                                    Courses that have not submitted orders
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label >
+                                    <input type="checkbox" ng-model="include.noBook" />
+                                    Courses that specified no book
+                                </label>
+                            </div>
+                        </div>
                         <div ng-show="ReportType == 'orders'">
                             <h4>What would you like included in your report?</h4>
-                            (Must select at least one)</br></br>
-                            <input type="checkbox" ng-model="include.submitted" >Classes that have submitted orders<br>
-                            <input type="checkbox" ng-model="include.notSubmitted" >Classes that have not submitted orders<br>
-                            <input type="checkbox" ng-model="include.noBook" >Classes that specified no book<br><br>
+                            (Must select at least one)
+                            <br>
+
+                            <div class="checkbox">
+                                <label >
+                                    <input type="checkbox" ng-model="include.nondeleted" />
+                                    Placed Requests
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label >
+                                    <input type="checkbox" ng-model="include.deleted" />
+                                    Deleted Requests
+                                </label>
+                            </div>
                         </div>
                         <button type="submit" class="btn btn-success"
                         ng-click="submit()" ng-disabled="!isCheckboxChecked()">Submit <span class="fa fa-arrow-right"></span></button>
@@ -105,87 +159,26 @@
                     <h3 class="panel-title"><i class="fa fa-bar-chart"></i>Create Report</h3>
                 </div>
                 <div class="panel-body">
+                    <button class="btn btn-primary"
+                            ng-csv="reportRows"
+                            csv-header="getReportHeaderRow()"
+                            filename="report.csv">
+                        <i class="fa fa-download"></i> Download CSV
+                    </button>
 
-                    <a class="pure-button pure-button-primary" download="report.html" href=[[downloadLink]]>HTML Download</a>
-                    <button type="submit" class="btn btn-primary"
-                            >HTML <span class="fa fa-arrow-right"></span></button>
-                    <button type="submit" class="btn btn-primary"
-                            >CSV <span class="fa fa-arrow-right"></span></button>
-                    <table class="table table-hover">
+                    <table class="table table-hover" id="reportTable">
                         <thead>
                             <tr>
-                                <th ng-if="isColumnSelected('Course Title')">
-                                    Course Title
-                                </th>
-                                <th ng-if="isColumnSelected('Course Number')">
-                                    Course Number
-                                </th>
-                                <th ng-if="isColumnSelected('Course Section')">
-                                    Course Section
-                                </th>
-                                <th ng-if="isColumnSelected('Course Department')">
-                                    Course Department
-                                </th>
-                                <th ng-if="isColumnSelected('Instructor')">
-                                    Instructor
-                                </th>
-                                <th ng-if="isColumnSelected('Book Title')">
-                                    Book Title
-                                </th>
-                                <th ng-if="isColumnSelected('Author')">
-                                    Author
-                                </th>
-                                <th ng-if="isColumnSelected('Edition')">
-                                    Edition
-                                </th>
-                                <th ng-if="isColumnSelected('ISBN')">
-                                    ISBN
-                                </th>
-                                <th ng-if="isColumnSelected('Publisher')">
-                                    Publisher
-                                </th>
-                                <th ng-if="isColumnSelected('Required')">
-                                    Required
+                                <th
+                                    ng-repeat="optionProperties in ColumnsSelected">
+                                    [[optionProperties.name]]
                                 </th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="row in reportData" >
-                                <td ng-if="isColumnSelected('Course Title')">
-                                    [[row.course.course_name]]
-                                </td>
-                                <td ng-if="isColumnSelected('Course Number')">
-                                    [[row.course.course_number]]
-                                </td>
-                                <td ng-if="isColumnSelected('Course Section')">
-                                    [[row.course.course_section]]
-                                </td>
-                                <td ng-if="isColumnSelected('Course Department')">
-                                    {{--TODO--}}
-                                </td>
-                                <td ng-if="isColumnSelected('Instructor')">
-                                    [[row.order.placed_by]]
-                                </td>
-
-                                <td ng-if="isColumnSelected('Book Title')">
-                                    [[row.order.book.title]]
-                                </td>
-                                <td ng-if="isColumnSelected('Author')">
-                                    <div ng-repeat="author in row.order.book.authors">
-                                        [[author.name]]
-                                    </div>
-                                </td>
-                                <td ng-if="isColumnSelected('Edition')">
-                                    [[row.order.book.edition]]
-                                </td>
-                                <td ng-if="isColumnSelected('ISBN')">
-                                    [[row.order.book.isbn13]]
-                                </td>
-                                <td ng-if="isColumnSelected('Publisher')">
-                                    [[row.order.book.publisher]]
-                                </td>
-                                <td ng-if="isColumnSelected('Required')">
-                                    [[row.order.required]]
+                            <tr ng-repeat="row in reportRows" >
+                                <td ng-repeat="cell in row track by $index">
+                                    [[cell]]
                                 </td>
                             </tr>
                         </tbody>
@@ -198,6 +191,9 @@
 @stop
 
 @section('scripts-head')
+    <script src="/javascripts/angular-sanitize.min.js"></script>
+    <script src="/javascripts/ng/csv/ng-csv.min.js"></script>
+    <script src="/javascripts/ng/helper.isbnHyphenate.js"></script>
     <script src="/javascripts/ng/app.reports.js"></script>
     <script src="/javascripts/ui-bootstrap-tpls-0.14.3.min.js"></script>
 @stop

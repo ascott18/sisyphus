@@ -76,6 +76,18 @@ body {
     color: #cccccc;
 }
 
+
+select[multiple] option{
+    padding: 10px 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+select[multiple]{
+    padding: 0;
+}
+
+
+
 .book-details-images {
     position: relative;
 }
