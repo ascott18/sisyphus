@@ -127,7 +127,7 @@ app.controller('ReportsController', function($scope, $http, $filter) {
     };
 
     $scope.getReportCsvFileName = function(){
-        return "books-report_" + moment().format("YYYY-MM-DD-hh_mm-ss-a");
+        return "books-report_" + moment().format("YYYY-MM-DD-hh_mm-ss-a") + ".csv";
     };
 
     $scope.submit = function()
