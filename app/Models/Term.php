@@ -264,7 +264,7 @@ class Term extends Model
 
 
     /**
-     * Gets the terms which ended within the given number of days.
+     * Gets the terms which started on or before today
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */

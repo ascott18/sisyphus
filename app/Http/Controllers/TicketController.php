@@ -44,7 +44,7 @@ class TicketController extends Controller
     {
         $this->authorize("all");
 
-        $ticket = $request->get("ticket");
+        $ticket = $request->input("ticket");
         $user_id = Auth::user()->user_id;
 
         Ticket::create([

@@ -58,7 +58,7 @@
                                     [[ course.department ]] [[ course.course_number | zpad:3 ]]-[[ course.course_section | zpad:2 ]]
                                 </td>
                                 <td>[[ course.course_name ]]</td>
-                                <td>[[ course.user.last_name ]], [[ course.user.first_name ]]</td>
+                                <td>[[ course.user.last_first_name || 'TBA' ]]</td>
                                 <td>
                                     <div ng-show="course.order_count > 0 || course.no_book != 0">Yes</div>
                                     <div ng-show="course.order_count == 0 && course.no_book == 0">No</div>

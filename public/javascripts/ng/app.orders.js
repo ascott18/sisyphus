@@ -45,49 +45,55 @@ app.directive('isbn13', function() {
 
 
 app.directive('bookDetails', function($http) {
-   return {
-       restrict: 'E',
-       transclude: true,
-       scope: {
-           book: '='
-       },
-       templateUrl: '/javascripts/ng/templates/bookDetails.html',
-       link: function(scope, element, attrs) {
+    var noBookThumb = "/images/coverNotAvailable.jpg";
+    return {
+        restrict: 'E',
+        transclude: true,
+        scope: {
+            book: '=',
+            hideImage: '='
+        },
+        templateUrl: '/javascripts/ng/templates/bookDetails.html',
+        link: function(scope, element, attrs) {
 
-           $(element).find(".smallImage").on('mouseover',function(){
-               $(element).find(".largeImage").fadeIn();
-           });
-           $(element).find(".largeImage").on('mouseleave',function(){
-               $(element).find(".largeImage").fadeOut();
-           });
+            $(element).find(".smallImage").on('mouseover', function(){
+                if (scope.thumbnail != noBookThumb)
+                    $(element).find(".largeImage").fadeIn();
+            });
+            $(element).find(".largeImage").on('mouseleave',function(){
+                $(element).find(".largeImage").fadeOut();
+            });
 
-           scope.lastIsbn = '';
-           scope.getBookCoverImage = function() {
-               if (!scope.book)
-                   return;
+            scope.lastIsbn = '';
+            scope.getBookCoverImage = function() {
+                if (!scope.book)
+                    return;
 
-               var isbn = scope.book.isbn13;
-               if (isbn != scope.lastIsbn)
-               {
-                   scope.lastIsbn = isbn;
-                   scope.thumbnail = '';
+                var isbn = scope.book.isbn13;
+                if (!isbn){
+                    return scope.thumbnail = noBookThumb;
+                }
+                if (isbn != scope.lastIsbn)
+                {
+                    scope.lastIsbn = isbn;
+                    scope.thumbnail = '';
 
-                   $http.get("https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn, {cache: true}).then(
-                       function success(response){
-                           if(response.data.items && response.data.items[0].volumeInfo.imageLinks) {
-                               scope.thumbnail = response.data.items[0].volumeInfo.imageLinks.thumbnail;
-                           } else {
-                               scope.thumbnail = "/images/coverNotAvailable.jpg";
-                           }
-                       }
-                   );
-               }
-               else {
-                   return scope.thumbnail;
-               }
-           }
-       }
-   }
+                    $http.get("https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn, {cache: true}).then(
+                        function success(response){
+                            if(response.data.items && response.data.items[0].volumeInfo.imageLinks) {
+                                scope.thumbnail = response.data.items[0].volumeInfo.imageLinks.thumbnail;
+                            } else {
+                                scope.thumbnail = noBookThumb;
+                            }
+                        }
+                    );
+                }
+                else {
+                    return scope.thumbnail;
+                }
+            }
+        }
+    }
 });
 
 app.controller('OrdersListController', function($scope, $http) {
@@ -214,7 +220,6 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
                     .ToArray();
             }
         );
-
     };
 
     $scope.deleteOrder = function(course, order)
@@ -289,16 +294,47 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
 
             $scope.submitting = true;
             $http.post('/requests/submit-order', {courses:sections, cart:CartService.cartBooks}).then(
-                function success(){
+                function success(response){
                     $scope.additionalCourses = null;
                     $scope.submitting = false;
+                    $scope.orderResults = response.data.orderResults;
+
                     $scope.setStage($scope.STAGE_ORDER_SUCCESS);
                 },
                 function failure(){
+                    $scope.orderResults = null;
                     $scope.submitting = false;
                 });
         }
     };
+
+    $scope.orderWasACompleteFailure = function(){
+        if (!$scope.orderResults)
+            return false;
+
+        return Enumerable
+            .From($scope.orderResults)
+            .SelectMany()
+            .All(function(courseOrder){
+                return courseOrder.notPlaced && !$scope.ordersAreEffectivelyEqual(courseOrder.order, courseOrder.newOrder)
+            })
+    };
+
+    $scope.orderWasACompleteSuccess = function(){
+        if (!$scope.orderResults)
+            return true;
+
+        return !Enumerable
+            .From($scope.orderResults)
+            .SelectMany()
+            .Any(function(courseOrder){
+                return courseOrder.notPlaced && !$scope.ordersAreEffectivelyEqual(courseOrder.order, courseOrder.newOrder)
+            })
+    };
+
+    $scope.ordersAreEffectivelyEqual = function(order1, order2){
+        return order1.notes == order2.notes && order1.required == order2.required;
+    }
 
     $scope.toggleAdditionalCourseSelected = function(course){
         if ($scope.additionalCourses == null)
@@ -319,16 +355,17 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
         return $scope.additionalCourses.indexOf(course) >= 0;
     };
 
-    $scope.similarCourses = function(value)
+    $scope.isCourseSimilarToSelected = function(course)
     {
         if ($scope.selectedCourse == null)
         {
             return true;
         }
 
-        if (value.department == $scope.selectedCourse.department
-            && value.course_number == $scope.selectedCourse.course_number
-            && value.course_section != $scope.selectedCourse.course_section)
+        if (course.department == $scope.selectedCourse.department
+            && course.course_number == $scope.selectedCourse.course_number
+            && course.term_id == $scope.selectedCourse.term_id
+            && course.course_section != $scope.selectedCourse.course_section)
         {
             return true;
         }
@@ -398,10 +435,10 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", function(
         }
     };
 
-    $scope.addNewBookToCart = function(book, form){
+    $scope.addNewBookToCart = function(book, form, ignoreValidation){
         $scope.submitted = true;
 
-        if (form.$valid) {
+        if (ignoreValidation || form.$valid) {
             $scope.master = angular.copy(book);
             $scope.master["authors"] = $scope.authors;
             var bookData = {};

@@ -240,6 +240,10 @@ class AuthServiceProvider extends ServiceProvider
         $gate->define('view-dashboard', function (User $user) {
             return $user->may('view-dashboard');
         });
+
+        $gate->define('make-reports', function (User $user) {
+           return $user->may("make-reports");
+        });
     }
 
     public function register()

@@ -94,6 +94,9 @@
                     <li><a href="/users"><i class="fa fa-fw fa-group"></i> Users</a></li>
                 @endcan
                 <li><a href="/tickets"><i class="fa fa-fw fa-life-ring"></i> Tickets</a></li>
+                @can('make-reports')
+                <li><a href="/reports"><i class="fa fa-fw fa-bar-chart"></i> Reports</a></li>
+                @endcan
 
                 {{--<li><a href="tables.html"><i class="fa fa-fw fa-table"></i> Tables</a></li>--}}
                 {{--<li><a href="forms.html"><i class="fa fa-fw fa-edit"></i> Forms</a></li>--}}

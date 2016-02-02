@@ -101,7 +101,7 @@ class Course extends Model
                     ->select('department')
                     ->getQuery()
                     ->getQuery();
-                $query = $query->whereIn('department', $deptSubQuery);
+                $query = $query->whereIn('courses.department', $deptSubQuery);
                 return $query = $query->orWhere('courses.user_id', '=', $user->user_id);
             });
         }

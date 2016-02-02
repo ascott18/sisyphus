@@ -56,7 +56,7 @@ class OrderController extends Controller
                 ->with([
                     'orders.book',
                     'user' => function($query){
-                        return $query->select('first_name', 'last_name');
+                        return $query->select('user_id', 'first_name', 'last_name');
                     }])
                 ->get();
 
@@ -85,7 +85,7 @@ class OrderController extends Controller
                 ->with([
                     'orders.book',
                     'user' => function($query){
-                        return $query->select('user_id', 'last_name');
+                        return $query->select('user_id', 'first_name', 'last_name');
                 }])
                 ->get();
 
@@ -218,7 +218,7 @@ class OrderController extends Controller
 
     public function postNoBook(Request $request)
     {
-        $course_id = $request->get("course_id");
+        $course_id = $request->input("course_id");
         $course = Course::findOrFail($course_id);
 
         $this->authorize('place-order-for-course', $course);
@@ -263,7 +263,7 @@ class OrderController extends Controller
         $courses =
             Course::
             where(['department' => $course->department, 'course_number' => $course->course_number])
-            ->where('course_id', '!=', $id)
+//            ->where('course_id', '!=', $id)
             ->where('created_at', '>', Carbon::today()->subMonths(static::PAST_BOOKS_NUM_MONTHS))
             ->with([
                     "term" => function ($query){
@@ -295,12 +295,12 @@ class OrderController extends Controller
             'courses.*.course_id' => 'required|numeric|exists:courses,course_id',
             'cart' => 'required',
             'cart.*.book' => 'required',
-            'cart.*.book.book_id' => 'required_unless:isNew,true',
-            'cart.*.book.isbn13' => 'required_if:isNew,true',
-            'cart.*.book.title' => 'required_if:isNew,true',
-            'cart.*.book.publisher' => 'required_if:isNew,true',
-            'cart.*.book.authors' => 'required_if:isNew,true',
-            'cart.*.book.authors*.name' => 'required',
+//            'cart.*.book.isbn13' => 'required_without:book_id',
+            'cart.*.book.title' => 'required_without:book_id',
+            'cart.*.book.publisher' => 'required_without:book_id',
+            'cart.*.book.authors' => 'required_without:book_id',
+            'cart.*.book.authors[0]' => 'required_without:book_id',
+            'cart.*.book.authors.*.name' => 'required',
             'cart.*.notes' => '',
             'cart.*.required' => 'required',
         ]);
@@ -312,31 +312,44 @@ class OrderController extends Controller
         // This way, we won't place any orders if any of them might cause the process to fail.
         $courses = [];
         foreach($params['courses'] as $section) {
-            $course = Course::findOrFail($section['course_id']);
+            $course = Course::with('orders.book.authors')->findOrFail($section['course_id']);
             $this->authorize('place-order-for-course', $course);
             $courses[] = $course;
         }
+
+        $orderResults = [];
+
 
         foreach($courses as $course) {
             foreach ($params['cart'] as $bookData) {
 
                 $book = $bookData['book'];
 
-                if (isset($book['isNew']) && $book['isNew']) {
+                if (!isset($book['book_id']) || !$book['book_id']) {
 
-                    $isbn = $book['isbn13'];
+                    $isbn = isset($book['isbn13']) ? $book['isbn13'] : '';
+                    $isbn = preg_replace('|[^0-9]|', '', $isbn);
+                    $edition = trim(isset($book['edition']) ? $book['edition'] : '');
 
                     $db_book = null;
 
                     if ($isbn) {
                         $db_book = Book::where('isbn13', '=', $isbn)->first();
                     }
+                    else {
+                        $db_book = Book::where([
+                            'title' => trim($book['title']),
+                            'publisher' => trim($book['publisher']),
+                            'edition' => $edition,
+                        ])->first();
+                    }
 
                     if (!$db_book) {
                         $db_book = Book::create([
                             'title' => trim($book['title']),
-                            'isbn13' => trim($isbn),
+                            'isbn13' => $isbn,
                             'publisher' => trim($book['publisher']),
+                            'edition' => $edition,
                         ]);
 
                         foreach ($book['authors'] as $author) {
@@ -350,18 +363,51 @@ class OrderController extends Controller
                     $db_book = Book::findOrFail($book['book_id']);
                 }
 
-                Order::create([
-                    'notes' => isset($bookData['notes']) ? $bookData['notes'] : '',
-                    'placed_by' => $user_id,
-                    'course_id' => $course['course_id'],
-                    'required' => $bookData['required'],
-                    'book_id' => $db_book->book_id
-                ]);
+                $notes = isset($bookData['notes']) ? $bookData['notes'] : '';
+                $notes = trim($notes);
+
+                $book_id = $db_book->book_id;
+                if (!isset($orderResults[$book_id]))
+                    $orderResults[$book_id] = [];
+
+                $existingOrders = $course->orders;
+                $sameOrders = $existingOrders->where('book_id', $book_id);
+
+                if (count($sameOrders)) {
+                    foreach ($sameOrders as $sameOrder) {
+                        $orderResults[$book_id][] = [
+                            'notPlaced' => true,
+                            'order' => $sameOrder,
+                            'course' => $course,
+                            'newOrder' => [
+                                'required' => $bookData['required'],
+                                'notes' => $notes
+                            ]
+                        ];
+                    }
+                }
+                else{
+                    $order = Order::create([
+                        'notes' => $notes,
+                        'placed_by' => $user_id,
+                        'course_id' => $course['course_id'],
+                        'required' => $bookData['required'],
+                        'book_id' => $book_id
+                    ]);
+
+                    $orderResults[$book_id][] = [
+                        'notPlaced' => false,
+                        'order' => $order->load('book.authors'),
+                        'course' => $course,
+                    ];
+                }
             }
 
             $course->no_book = false;
             $course->no_book_marked = null;
             $course->save();
         }
+
+        return ['success' => true, 'orderResults' => array_values($orderResults)];
     }
 }

@@ -173,7 +173,7 @@
                                             <form action="/requests/delete/{{$order->order_id}}" method="POST" name="form">
                                                 {!! csrf_field() !!}
                                                 <button type="button" class="btn btn-sm btn-danger" role="button" ng-confirm-click="submit" >
-                                                    <i class="fa fa-times"></i> Delete Request
+                                                    <i class="fa fa-trash-o"></i> Delete Request
                                                 </button>
                                             </form>
                                         @endif
