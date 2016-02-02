@@ -258,6 +258,22 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
         }
     };
 
+    $scope.addPassedBookToCart = function(book) { // isbn was passed in from book details page
+        if(book.length != 0) {
+            $scope.master = {};
+            $scope.master['title'] = book[0].title;
+            $scope.master['edition'] = book[0].edition;
+            $scope.master['publisher'] = book[0].publisher;
+            $scope.master['authors'] = book[0].authors;
+            $scope.master['book_id'] = book[0].book_id;
+            var bookData = {};
+            bookData['book'] = $scope.master;
+            bookData['book']['isbn13'] = stripHyphens(book[0].isbn13);
+            CartService.cartBooks.push(bookData);
+            //this.addBookToCart(bookData);
+        }
+    };
+
     $scope.submitOrders = function(form) {
         $scope.submitted = true;
 
@@ -379,21 +395,6 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", function(
     $scope.removeAuthor = function(index) {
         if (index >= 0 && index < $scope.authors.length) {
                 $scope.authors.splice(index, 1);
-        }
-    };
-
-    $scope.addPassedBookToCart = function(book) {
-        if(book != "") {
-            $scope.master = {};
-            $scope.master['title'] = book[0].title;
-            $scope.master['edition'] = book[0].edition;
-            $scope.master['publisher'] = book[0].publisher;
-            $scope.master['authors'] = book[0].authors;
-            console.log(book); // TODO: remove this!!!
-            var bookData = {};
-            bookData['book'] = $scope.master;
-            bookData['book']['isbn13'] = stripHyphens(book[0].isbn13);
-            CartService.cartBooks.push(bookData);
         }
     };
 

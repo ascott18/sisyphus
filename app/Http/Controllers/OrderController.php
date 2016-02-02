@@ -170,6 +170,11 @@ class OrderController extends Controller
                     $query = $query->orderBy('orders.created_at', "desc");
                 else
                     $query = $query->orderBy('orders.created_at');
+            } else if ($sort->predicate == "course_name") {
+                if ($sort->reverse == 1)
+                    $query = $query->orderBy('courses.course_name', "desc");
+                else
+                    $query = $query->orderBy('courses.course_name');
             } else {
                 if ($sort->reverse == 1)
                     $query = $query->orderBy($sort->predicate, "desc");

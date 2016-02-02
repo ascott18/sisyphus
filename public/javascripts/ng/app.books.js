@@ -98,7 +98,6 @@ app.controller('BookDetailsController', function($scope, $http) {
     $scope.isCached = false;
     $scope.book_cover_img = "";
 
-
     $scope.getLaravelImage = function() {
         $http.get("/books/cover?isbn=" + $scope.book_isbn_13).then (
             function success(response){

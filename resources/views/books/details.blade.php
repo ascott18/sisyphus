@@ -21,7 +21,7 @@
                         <i class="fa fa-pencil"></i> Edit
                     </a>
                     <a href="/requests?isbn13={{ $book->isbn13 }}" class="btn btn-primary" role="button">
-                        <i class="fa fa-shopping-cart"></i> Re-request
+                        <i class="fa fa-shopping-cart"></i> Request This Book
                     </a>
                     <dl class="dl-horizontal">
                         <dt>Title</dt>
