@@ -218,6 +218,20 @@ a[role="tab"]{
     .navbar-brand h2 {
         font-size: 100%;
     }
+
+    .col-sm-vspace:not(:first-child){
+        padding-top: 15px;
+    }
+}
+
+@media (max-width: 1199px) {
+    .col-lg-vspace:not(:first-child){
+        padding-top: 15px;
+    }
+}
+
+.col-xs-vspace:not(:first-child){
+    padding-top: 15px;
 }
 
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {

@@ -30,7 +30,7 @@
                             {{ $course->course_name }}
                         </dd>
 
-                        <dt>Department</dt>
+                        <dt>Subject</dt>
                         <dd>
                             {{ $course->department }}
                         </dd>

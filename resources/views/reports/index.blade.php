@@ -1,7 +1,9 @@
-@extends('layouts.master')
-
-@section('area', 'Reports')
-@section('page', 'Select Report')
+@extends('layouts.master', [
+    'breadcrumbs' => [
+        ['Reports', '/reports'],
+        ['Create Reports'],
+    ]
+])
 
 @section('content')
 
@@ -9,10 +11,10 @@
          ng-controller="ReportsController"
          ng-init="init({{$terms}},{{$departments}})"
     >
-        <div class="col-lg-12" ng-show="getStage()== STAGE_SELECT_FIELDS">
+        <div class="col-lg-12" ng-show="getStage() == STAGE_SELECT_FIELDS">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title"><i class="fa fa-bar-chart"></i>What would you like to base your report on?</h3>
+                    <h3 class="panel-title"><i class="fa fa-bar-chart"></i> What would you like to base your report on?</h3>
                 </div>
                 <div class="panel-body">
 
@@ -33,80 +35,78 @@
         </div>
 
 
-        <div class="col-lg-12" ng-show="ReportType">
+        <div ng-cloak class="col-lg-12" ng-show="ReportType && getStage() == STAGE_SELECT_FIELDS">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title"><i class="fa fa-bar-chart"></i>Create Report</h3>
+                    <h3 class="panel-title"><i class="fa fa-bar-chart"></i> Create Report</h3>
                 </div>
                 <div class="panel-body">
-                    <form novalidate class="simple-form">
-                        <div class="row">
-                            <div class="col-lg-7">
-                                <h4>Select Term</h4>
-                                <select class="form-control"
-                                        ng-init="TermSelected=(terms | filter:{term_id: {{$currentTermId}}})[0]; onSelectTerm()"
-                                        ng-model="TermSelected"
-                                        ng-options="term.display_name for term in terms track by term.term_id"
-                                        ng-change="onSelectTerm()">
-                                </select>
+                    <div class="row">
+                        <div ng-class="[ReportType == 'orders' ? 'col-lg-7' : 'col-lg-12']">
+                            <h4>Select Term</h4>
+                            <select class="form-control"
+                                    ng-init="TermSelected=(terms | filter:{term_id: {{$currentTermId}}})[0]; onSelectTerm()"
+                                    ng-model="TermSelected"
+                                    ng-options="term.display_name for term in terms track by term.term_id"
+                                    ng-change="onSelectTerm()">
+                            </select>
 
-                                <div ng-show="ReportType == 'orders'">
-                                    <br><br>
-                                    <h4>Choose a date range</h4>
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <h3>Minimum Date</h3>
-                                            <input type="hidden" name="reportDateStart" ng-value="reportDateStart | date:'yyyy-MM-dd'">
-
-                                            <uib-datepicker ng-model="reportDateStart"
-                                                            max-date="reportDateEnd"
-                                                            show-weeks="false"></uib-datepicker>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <h3>Maximum Date</h3>
-                                            <input type="hidden" name="reportDateEnd" ng-value="reportDateEnd  | date:'yyyy-MM-dd'" >
-                                            <uib-datepicker ng-model="reportDateEnd"
-                                                            min-date="reportDateStart"
-                                                            show-weeks="false"></uib-datepicker>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-5 col-md-12">
+                            <div ng-show="ReportType == 'orders'">
+                                <br>
                                 <div class="row">
-                                    <div class="col-sm-6">
+                                    <div class="col-md-6">
+                                        <h4>Minimum Date</h4>
+                                        <input type="hidden" name="reportDateStart" ng-value="reportDateStart | date:'yyyy-MM-dd'">
 
-                                        <h4>Select Department(s)</h4>
-                                        <select class="form-control"
-                                                multiple
-                                                size="5"
-                                                ng-multiple="true"
-                                                ng-model="DeptsSelected"
-                                                ng-options="dept for dept in departments">
-                                        </select>
+                                        <uib-datepicker ng-model="reportDateStart"
+                                                        max-date="reportDateEnd"
+                                                        show-weeks="false"></uib-datepicker>
                                     </div>
-                                    <div class="col-sm-6">
-                                        <h4>Select Report Columns</h4>
-                                        <select class="form-control"
-                                                multiple
-                                                size="12"
-                                                ng-multiple="true"
-                                                ng-model="ColumnsSelected"
-                                                ng-options="optionProperties.name for optionProperties in options">
-                                        </select>
+
+                                    <div class="col-md-6">
+                                        <h4>Maximum Date</h4>
+                                        <input type="hidden" name="reportDateEnd" ng-value="reportDateEnd  | date:'yyyy-MM-dd'" >
+                                        <uib-datepicker ng-model="reportDateEnd"
+                                                        min-date="reportDateStart"
+                                                        show-weeks="false"></uib-datepicker>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div ng-show="ReportType == 'courses'">
-                            <h4>What would you like included in your report?</h4>
-                            (Must select at least one)
-                            <br>
+                        <div class="col-lg-5 col-md-12 col-md-vspace col-lg-vspace">
+                            <div class="row">
+                                <div class="col-sm-6">
 
+                                    <h4>Select Subjects(s)</h4>
+                                    <select class="form-control"
+                                            multiple
+                                            size="12"
+                                            ng-multiple="true"
+                                            ng-model="DeptsSelected"
+                                            ng-options="dept for dept in departments">
+                                    </select>
+                                </div>
+                                <div class="col-sm-6 col-sm-vspace">
+                                    <h4>Select Report Columns</h4>
+                                    <select class="form-control"
+                                            multiple
+                                            size="12"
+                                            ng-multiple="true"
+                                            ng-model="ColumnsSelected"
+                                            ng-options="optionProperties.name for optionProperties in options">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-12 col-xs-vspace">
+                        <h4>What would you like included in your report?</h4>
+                        (Must select at least one)
+                        <br>
+
+                        <div ng-show="ReportType == 'courses'">
                             <div class="checkbox">
                                 <label >
                                     <input type="checkbox" ng-model="include.submitted" />
@@ -126,11 +126,8 @@
                                 </label>
                             </div>
                         </div>
-                        <div ng-show="ReportType == 'orders'">
-                            <h4>What would you like included in your report?</h4>
-                            (Must select at least one)
-                            <br>
 
+                        <div ng-show="ReportType == 'orders'">
                             <div class="checkbox">
                                 <label >
                                     <input type="checkbox" ng-model="include.nondeleted" />
@@ -145,26 +142,40 @@
                             </div>
                         </div>
                         <button type="submit" class="btn btn-success"
-                        ng-click="submit()" ng-disabled="!isCheckboxChecked()">Submit <span class="fa fa-arrow-right"></span></button>
-                    </form>
+                                ng-click="submit()"
+                                ng-disabled="!isCheckboxChecked()">
+                            Submit <i class="fa fa-arrow-right"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
-
-
-        <div class="col-lg-12" ng-show="getStage() == STAGE_CREATE_REPORT">
+        <div ng-cloak class="col-lg-12" ng-show="getStage() == STAGE_VIEW_REPORT">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title"><i class="fa fa-bar-chart"></i>Create Report</h3>
+                    <h3 class="panel-title"><i class="fa fa-bar-chart"></i>
+                        [[TermSelected.display_name]] [[ReportType == 'orders' ? 'Requests' : 'Courses' ]] Report. Created [[reportCreatedDate | moment:'ll']].
+                        <span ng-show="ReportType == 'orders'">
+                            Data range: [[ reportDateStart | moment:'ll' ]] - [[ reportDateEnd | moment:'ll' ]]
+                        </span>
+                    </h3>
                 </div>
                 <div class="panel-body">
                     <button class="btn btn-primary"
+                            style="margin-right: 15px"
+                            ng-click="setStage(STAGE_SELECT_FIELDS)">
+                        <i class="fa fa-arrow-left"></i> Change Settings
+                    </button>
+                    <button class="btn btn-primary"
                             ng-csv="reportRows"
+                            ng-disabled="!reportRows || reportRows.length == 0"
                             csv-header="getReportHeaderRow()"
-                            filename="report.csv">
+                            filename="[[getReportCsvFileName()]]">
                         <i class="fa fa-download"></i> Download CSV
                     </button>
+                    <br>
+                    <br>
 
                     <table class="table table-hover" id="reportTable">
                         <thead>

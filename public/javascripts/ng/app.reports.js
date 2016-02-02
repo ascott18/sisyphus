@@ -2,7 +2,7 @@ var app = angular.module('sisyphus', ['sisyphus.helpers', 'sisyphus.helpers.isbn
 
 app.controller('ReportsController', function($scope, $http, $filter) {
     $scope.STAGE_SELECT_FIELDS= 1;
-    $scope.STAGE_CREATE_REPORT = 2;
+    $scope.STAGE_VIEW_REPORT = 2;
     $scope.stage = $scope.STAGE_SELECT_FIELDS;
 
     $scope.options = [
@@ -19,7 +19,7 @@ app.controller('ReportsController', function($scope, $http, $filter) {
             value: function(courseOrderObj){ return courseOrderObj.course.course_section }
         },
         {
-            name: 'Course Department',
+            name: 'Course Subject',
             value: function(courseOrderObj){ return courseOrderObj.course.department }
         },
         {
@@ -66,10 +66,6 @@ app.controller('ReportsController', function($scope, $http, $filter) {
         {
             name: 'Course Has Requests?',
             value: function(courseOrderObj){ return (courseOrderObj.course.orders && courseOrderObj.course.orders.length) ? 'Yes' : 'No' }
-        },
-        {
-            name: 'Request Deleted?',
-            value: function(courseOrderObj){ return courseOrderObj.order.deleted_at ? 'Yes' : 'No' }
         }
     ];
 
@@ -130,11 +126,15 @@ app.controller('ReportsController', function($scope, $http, $filter) {
         return row;
     };
 
+    $scope.getReportCsvFileName = function(){
+        return "books-report_" + moment().format("YYYY-MM-DD-hh_mm-ss-a");
+    };
 
     $scope.submit = function()
     {
-        $scope.stage=$scope.STAGE_CREATE_REPORT;
-        $scope.ReportType=null;
+        $scope.reportRows = null;
+        $scope.setStage($scope.STAGE_VIEW_REPORT);
+
         $http.post('/reports/submit-report', {
                 startDate: $scope.reportDateStart,
                 endDate: $scope.reportDateEnd,

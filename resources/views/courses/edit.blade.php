@@ -30,7 +30,7 @@
 
                         @include('input.generic', ['name' => 'course.course_name', 'label' => 'Title',
                             'attrs' => ['required' => 'true']])
-                        @include('input.generic', ['name' => 'course.department', 'label' => 'Department',
+                        @include('input.generic', ['name' => 'course.department', 'label' => 'Subject',
                             'attrs' => ['required' => 'true', 'pattern' => '[A-Z]{2,10}'], 'pattern' => 'must be 2-10 uppercase characters'])
                         @include('input.generic', ['name' => 'course.course_number', 'label' => 'Number',
                             'attrs' => ['required' => 'true', 'pattern' => '\d+'], 'pattern' => 'must be a number'])
