@@ -78,7 +78,7 @@
                             <div class="row">
                                 <div class="col-sm-6">
 
-                                    <h4>Select Subjects(s)</h4>
+                                    <h4>Select Subject(s)</h4>
                                     <select class="form-control"
                                             multiple
                                             size="12"
