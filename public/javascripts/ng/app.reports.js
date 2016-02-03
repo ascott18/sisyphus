@@ -5,6 +5,11 @@ app.controller('ReportsController', function($scope, $http, $filter) {
     $scope.STAGE_VIEW_REPORT = 2;
     $scope.stage = $scope.STAGE_SELECT_FIELDS;
 
+
+    // TODO: hook me up with some good checkbox stuff.
+    $scope.groupBySection = true;
+
+
     $scope.options = [
         {
             name: 'Course Title',
@@ -66,6 +71,14 @@ app.controller('ReportsController', function($scope, $http, $filter) {
         {
             name: 'Course Has Requests?',
             value: function(courseOrderObj){ return (courseOrderObj.course.orders && courseOrderObj.course.orders.length) ? 'Yes' : 'No' }
+        },
+        {
+            name: 'Request Deleted?',
+            value: function(courseOrderObj){ return (courseOrderObj.order.deleted_at) ? 'Yes' : 'No' },
+            doesAutoEnforce: true,
+            autoEnforce: function(){
+                return $scope.include.deleted && $scope.include.nondeleted
+            }
         }
     ];
 
@@ -135,6 +148,20 @@ app.controller('ReportsController', function($scope, $http, $filter) {
         $scope.reportRows = null;
         $scope.setStage($scope.STAGE_VIEW_REPORT);
 
+        for(var i = 0; i < $scope.options.length; i++){
+            var indexOf = $scope.ColumnsSelected.indexOf($scope.options[i]);
+            if ($scope.options[i].doesAutoEnforce){
+                if ($scope.options[i].autoEnforce())
+                {
+                    if (indexOf < 0 )
+                        $scope.ColumnsSelected.splice(i, 0, $scope.options[i]);
+                } else if (indexOf >= 0 ) {
+                    // The auto column shouldn't be included. Take it out.
+                    $scope.ColumnsSelected.splice(indexOf, 1);
+                }
+            }
+        }
+
         $http.post('/reports/submit-report', {
                 startDate: $scope.reportDateStart,
                 endDate: $scope.reportDateEnd,
@@ -153,10 +180,12 @@ app.controller('ReportsController', function($scope, $http, $filter) {
                         .Where("course => !course.orders || !course.orders.length")
                         .Select("course => {course: course, order: null, book: null}")
                 )
+                // Select each object into a row of the report.
+                // Some of these rows will get filtered out after we do any grouping.
                 .Select(function(courseOrderObject){
                     var row = [];
-                    for (var i = 0; i < $scope.ColumnsSelected.length; i++){
-                        var optionProperties = $scope.ColumnsSelected[i];
+                    for (var i = 0; i < $scope.options.length; i++){
+                        var optionProperties = $scope.options[i];
 
                         // wow super lame where did all my errors go idk they just disappeared
                         try{
@@ -169,9 +198,49 @@ app.controller('ReportsController', function($scope, $http, $filter) {
                     }
 
                     return row;
-                })
-                .ToArray();
+                });
 
+            // Group by sections if the user so desires.
+            if ($scope.groupBySection){
+                var sectionColumn = -1;
+                for (var i = 0; i < $scope.ColumnsSelected.length; i++) {
+                    var optionProperties = $scope.ColumnsSelected[i];
+                    if (optionProperties.name == 'Course Section')
+                    {
+                        sectionColumn = i;
+                        break;
+                    }
+                }
+
+                if (sectionColumn > -1){
+                    // Group by every property of the row except the section.
+                    reportRows = reportRows.GroupBy("", "", function(key, similarRows){
+                        // A commma-delimited string with all of the sections for which there is a row
+                        // that is otherwise identical to the key row except the section.
+                        var sectionsString = similarRows.Select(function(r){ return r[sectionColumn]}).ToString(", ");
+                        key[sectionColumn] = sectionsString;
+                        return key;
+                    }, function(row){
+                        var selector = row.slice();
+                        selector[sectionColumn] = 0;
+                        return JSON.stringify(selector);
+                    });
+                }
+            }
+
+            // Filter out any columns that the user did not select.
+            reportRows = reportRows.Select(function(row){
+                    var filteredRow = [];
+                    for (var i = 0; i < $scope.options.length; i++){
+                        if ($scope.ColumnsSelected.indexOf($scope.options[i]) >= 0)
+                            filteredRow.push(row[i]);
+                    }
+
+                    return filteredRow;
+                });
+
+
+            reportRows = reportRows.ToArray();
 
             $scope.reportRows = reportRows;
 

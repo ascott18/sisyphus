@@ -12,6 +12,7 @@
     <div ng-cloak class="row" ng-controller="OrdersController"
             ng-init="
                 terms = {{$openTerms}};
+                current_user_id = {{$current_user_id}};
                 courses = {{$courses}};
                 @if (isset($course))
                     placeRequestForCourse((courses | filter:{'course_id': {{$course->course_id}} })[0]);
@@ -55,6 +56,7 @@
                     <div class="panel-heading">
                         <h3 class="panel-title clearfix">
                             [[course.department]] [[course.course_number | zpad:3]]-[[course.course_section | zpad:2]] [[course.course_name]]
+                            <span class="text-muted" ng-if="course.user_id != current_user_id"> &mdash; [[course.user.last_name || 'TBA']]</span>
                             <span class="text-muted pull-right">
                                 [[ term.term_name ]] [[ term.year]]
                             </span>
@@ -160,7 +162,7 @@
                                             required isbn13>
 
                                     <div ng-show="submitted || form.isbn13.$touched">
-                                        <div ng-show="form.isbn13.$error.required"><p class="text-danger">Required</p></div>
+                                        {{--<div ng-show="form.isbn13.$error.required"><p class="text-danger">Required</p></div>--}}
                                         <div ng-show="form.isbn13.$error.isbn13"><p class="text-danger">Invalid ISBN</p></div>
                                     </div>
                                 </div>
@@ -546,7 +548,7 @@
                         </h5>
                     </div>
                     <h1 class="text-center">
-                        <a href="/requests" class="btn btn-primary btn-lg">
+                        <a href="{{$continueUrl}}" class="btn btn-primary btn-lg">
                             Place another request <i class="fa fa-arrow-right"></i>
                         </a>
                     </h1>

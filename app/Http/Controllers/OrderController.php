@@ -37,19 +37,29 @@ class OrderController extends Controller
 
     public function getCreate(Request $request, $course_id = null)
     {
+        $user = $request->user();
+        $openTerms = Term::currentTerms()->get();
+
+        $viewParams = [
+            'openTerms' => $openTerms,
+            'current_user_id' => $user->user_id,
+            'continueUrl' => '/requests'
+        ];
+
         if ($course_id == null){
             $this->authorize('all');
-
-            $openTerms = Term::currentTerms()->get();
 
             $openTermIds = $openTerms->pluck('term_id');
 
             // If the user can place orders for everyone, don't return courses for everything here
             // because it would almost certainly crash their browser if we did.
-            if ($request->user()->may('place-all-orders'))
+            if ($request->user()->may('place-all-orders')){
                 $query = $request->user()->courses();
-            else
+                $viewParams['continueUrl'] = '/courses';
+            }
+            else{
                 $query = Course::orderable();
+            }
 
             $courses = $query
                 ->whereIn('term_id', $openTermIds)
@@ -60,7 +70,8 @@ class OrderController extends Controller
                     }])
                 ->get();
 
-            return view('orders.create', ['openTerms' => $openTerms, 'courses' => $courses]);
+            $viewParams['courses'] = $courses;
+
         }
         else {
             $course = Course::findOrFail($course_id);
@@ -81,16 +92,17 @@ class OrderController extends Controller
                 }])
                 ->get();
 
-            $openTerms = Term::currentTerms()->get();
-
             // Make sure that the requested course ends up in the list.
             // If we're debugging unauthorized actions, because of the way Course::orderable() works,
             // it is possible that the requested course might have passed the authorize check
             // but didn't end up the query.
 
-
-            return view('orders.create', ['openTerms' => $openTerms, 'courses' => $courses, 'course' => $course]);
+            $viewParams['continueUrl'] = '/courses';
+            $viewParams['courses'] = $courses;
+            $viewParams['course'] = $course;
         }
+
+        return view('orders.create', $viewParams);
     }
 
     /** GET: /orders/list

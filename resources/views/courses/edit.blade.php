@@ -38,27 +38,32 @@
                             'attrs' => ['required' => 'true', 'pattern' => '\d+'], 'pattern' => 'must be a number'])
                     </div>
 
-                    <div class="col-md-6"
+                    <div class="col-md-6 col-md-vspace"
                          ng-init="users = {{$users}}">
-                        <label>Professor </label>
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Search" ng-model="userSearch" ng-blur="userSearchOnBlur(userSearch)">
-                            <span class="input-group-addon">
-                                <i class="fa fa-search"></i>
-                            </span>
-                        </div>
 
                         <div class="row">
-                            <br>
-                            <div class="col-md-6">
-                                <strong>Currently Selected:</strong>
-                                <span ng-cloak ng-if="getSelectedUser()"> [[users[getSelectedUser()].first_name]] [[users[getSelectedUser()].last_name]]</span>
-                                <span ng-cloak ng-if="!getSelectedUser()"> Nobody (Professor is TBA) </span>
+                            <div class="col-lg-6">
+                                <label>Professor </label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Search for a professor" ng-model="userSearch" ng-blur="userSearchOnBlur(userSearch)">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-search"></i>
+                                    </span>
+                                </div>
                             </div>
-                            <div ng-cloak class="col-md-6">
-                                <a class="btn btn-xs btn-danger" ng-click="course.user_id = null" ng-show="getSelectedUser()">
-                                    <i class="fa fa-times"></i> Clear Selection
-                                </a>
+                            <div ng-cloak class="col-lg-6 col-lg-vspace">
+
+                                <p >
+                                    <strong >Selected:</strong>
+                                    <a class="btn btn-xs btn-danger" style="margin-left: 15px;" ng-click="course.user_id = null" ng-show="getSelectedUser()">
+                                        <i class="fa fa-times"></i> Clear Selection
+                                    </a>
+                                </p>
+
+                                <h4 ng-cloak ng-if="getSelectedUser()"> [[users[getSelectedUser()].first_name]] [[users[getSelectedUser()].last_name]]</h4>
+                                <h4 ng-cloak ng-if="!getSelectedUser()"> Nobody (Professor is TBA) </h4>
+
+
                             </div>
                         </div>
 
@@ -76,7 +81,6 @@
                             </div>
                             <dir-pagination-controls></dir-pagination-controls>
                         </div>
-                        <h4 class="text-muted" ng-show="!userSearch">Start typing above to search for a professor.</h4>
                     </div>
                     <div class="col-md-offset-6 col-md-6 ">
                         <button type="submit" class="btn btn-success">

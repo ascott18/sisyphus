@@ -104,6 +104,7 @@ class RolesSeed extends Seeder
             p('edit-courses'),
             p('make-reports'),
             p('view-dashboard'),
+            p('view-terms'),
         ]);
 
     }

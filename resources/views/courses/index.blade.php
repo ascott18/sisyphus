@@ -63,7 +63,7 @@
                                     <div ng-show="course.order_count > 0 || course.no_book != 0">Yes</div>
                                     <div ng-show="course.order_count == 0 && course.no_book == 0">No</div>
                                 </td>
-                                <td><a class="btn btn-sm btn-info" href="/courses/details/[[course.course_id]]" role="button">
+                                <td><a class="btn btn-sm btn-primary" href="/courses/details/[[course.course_id]]" role="button">
                                         Details <i class="fa fa-arrow-right"></i>
                                     </a>
                                 </td>

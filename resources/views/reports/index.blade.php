@@ -94,7 +94,7 @@
                                             size="12"
                                             ng-multiple="true"
                                             ng-model="ColumnsSelected"
-                                            ng-options="optionProperties.name for optionProperties in options">
+                                            ng-options="optionProperties.name for optionProperties in options | filter:{doesAutoEnforce: '!true'}">
                                     </select>
                                 </div>
                             </div>

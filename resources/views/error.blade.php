@@ -1,7 +1,7 @@
 @extends('layouts.master', [
     'breadcrumbs' => [
         ['Error'],
-        [$response['statusName'], '.'],
+        [$response['statusName'], 'javascript:window.location.href=window.location.href'],
     ]
 ])
 
@@ -13,6 +13,28 @@
             text-align: center;
             vertical-align: middle
         }
+
+
+
+        /*Handle 'nested' error pages (they actually end up one after another) */
+        #wrapper ~ #wrapper .page-header {
+            display: none;
+        }
+        #wrapper:not(:last-of-type) footer,
+        #wrapper:not(:last-of-type) .how-dare-you-break-me,
+        #wrapper:not(:first-of-type) .broken
+        {
+            display: none;
+        }
+        #wrapper:not(:first-of-type) .status {
+            margin-top: -60px;
+        }
+        #wrapper:first-of-type .status {
+            padding-top: 90px;
+        }
+
+
+
         .error-page h2 {
             font-size: 9em
         }
@@ -34,7 +56,7 @@
             white-space: nowrap;
             position: absolute;
             left: 10%;
-            top: 20px;
+            top: 0px;
         }
         .broken h1 {
             font-size: 4em;
@@ -56,10 +78,6 @@
             font-size: 0.7em;
             color: #c1c1c1;
         }
-
-        .status {
-            padding-top: 90px;
-        }
     </style>
     <div class="row open-sans error-page">
         <div class="col-lg-12">
@@ -76,49 +94,53 @@
             @endif
             @if (isset($response['flattenException']) && $response['flattenException'])
             <?php
-                function formatClass($class)
-                {
-                    $parts = explode('\\', $class);
+                if (!function_exists('formatClass')) {
+                    function formatClass($class)
+                    {
+                        $parts = explode('\\', $class);
 
-                    return sprintf('<abbr title="%s">%s</abbr>', e($class), array_pop($parts));
-                }
-                function formatPath($path, $line)
-                {
-                    $path = e($path);
-                    $file = preg_match('#[^/\\\\]*$#', $path, $file) ? $file[0] : $path;
+                        return sprintf('<abbr title="%s">%s</abbr>', e($class), array_pop($parts));
+                    }
+                    function formatPath($path, $line)
+                    {
+                        $path = e($path);
+                        $file = preg_match('#[^/\\\\]*$#', $path, $file) ? $file[0] : $path;
 
-                    //if ($linkFormat = $this->fileLinkFormat) {
-                    //    $link = strtr($this->escapeHtml($linkFormat), array('%f' => $path, '%l' => (int) $line));
-                    //
-                    //    return sprintf(' in <a href="%s" title="Go to source">%s line %d</a>', $link, $file, $line);
-                    //}
+                        //if ($linkFormat = $this->fileLinkFormat) {
+                        //    $link = strtr($this->escapeHtml($linkFormat), array('%f' => $path, '%l' => (int) $line));
+                        //
+                        //    return sprintf(' in <a href="%s" title="Go to source">%s line %d</a>', $link, $file, $line);
+                        //}
 
-                    return sprintf(' in <a title="%s line %3$d" ondblclick="var f=this.innerHTML;this.innerHTML=this.title;this.title=f;">%s:%d</a>', $path, $file, $line);
-                }
-                function formatArgs(array $args)
-                {
-                    $result = array();
-                    foreach ($args as $key => $item) {
-                        if ('object' === $item[0]) {
-                            $formattedValue = sprintf('<em class="text-muted">object</em>(%s)', formatClass($item[1]));
-                        } elseif ('array' === $item[0]) {
-                            $formattedValue = sprintf('<em class="text-muted">array</em>(%s)', is_array($item[1]) ? formatArgs($item[1]) : $item[1]);
-                        } elseif ('string' === $item[0]) {
-                            $formattedValue = sprintf("'%s'", e($item[1]));
-                        } elseif ('null' === $item[0]) {
-                            $formattedValue = '<em>null</em>';
-                        } elseif ('boolean' === $item[0]) {
-                            $formattedValue = '<em>'.strtolower(var_export($item[1], true)).'</em>';
-                        } elseif ('resource' === $item[0]) {
-                            $formattedValue = '<em>resource</em>';
-                        } else {
-                            $formattedValue = str_replace("\n", '', var_export(e((string) $item[1]), true));
+                        return sprintf(' in <a title="%s line %3$d" ondblclick="var f=this.innerHTML;this.innerHTML=this.title;this.title=f;">%s:%d</a>', $path, $file, $line);
+                    }
+                    function formatArgs(array $args)
+                    {
+                        $result = array();
+                        foreach ($args as $key => $item) {
+                            if ($key === 'password') {
+                                $formattedValue = "<i class='fa fa-smile-o'></i>";
+                            } elseif ('object' === $item[0]) {
+                                $formattedValue = sprintf('<em class="text-muted">object</em>(%s)', formatClass($item[1]));
+                            } elseif ('array' === $item[0]) {
+                                $formattedValue = sprintf('<em class="text-muted">array</em>(%s)', is_array($item[1]) ? formatArgs($item[1]) : $item[1]);
+                            } elseif ('string' === $item[0]) {
+                                $formattedValue = sprintf("'%s'", e($item[1]));
+                            } elseif ('null' === $item[0]) {
+                                $formattedValue = '<em>null</em>';
+                            } elseif ('boolean' === $item[0]) {
+                                $formattedValue = '<em>'.strtolower(var_export($item[1], true)).'</em>';
+                            } elseif ('resource' === $item[0]) {
+                                $formattedValue = '<em>resource</em>';
+                            } else {
+                                $formattedValue = str_replace("\n", '', var_export(e((string) $item[1]), true));
+                            }
+
+                            $result[] = is_int($key) ? $formattedValue : sprintf("'%s' => %s", $key, $formattedValue);
                         }
 
-                        $result[] = is_int($key) ? $formattedValue : sprintf("'%s' => %s", $key, $formattedValue);
+                        return implode(', ', $result);
                     }
-
-                    return implode(', ', $result);
                 }
 
                 $flattenException = $response['flattenException'];
@@ -138,7 +160,7 @@
                             <small>{{$e['message']}}</small>
                         </div>
                         <div class="panel-body">
-                            <table class="table table-hover">
+                            <table class="table table-hover table-responsive">
                                 <thead>
                                     <tr>
                                         <th>#</th>
