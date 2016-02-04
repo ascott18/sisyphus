@@ -60,7 +60,7 @@
                                 <th st-sort="net_id">NetID</th>
                                 <th st-sort="email">Email</th>
                                 <th width="240px">Role</th>
-                                <th width="170px">Departments</th>
+                                <th width="170px">Subjects</th>
                             </tr>
                             <tr>
                                 <th width="1%"></th>

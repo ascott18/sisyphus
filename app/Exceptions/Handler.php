@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Session\TokenMismatchException;
 use Illuminate\Support\Facades\Config;
+use Symfony\Component\Debug\Exception\FlattenException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -102,7 +103,38 @@ class Handler extends ExceptionHandler
         elseif ($e instanceof TokenMismatchException){
             $e = new HttpException(419, "Session token mismatched. Please refresh the page and try again.", $e);
         }
+        elseif ($e instanceof \CAS_AuthenticationException){
+            // PHPCas likes to output a ton of its own crap. ob_end_clean clears the output buffer so it won't actually get output.
+            ob_end_clean();
+            $e = new HttpException(Response::HTTP_BAD_GATEWAY, "There was an error contacting Eastern SSO. It may be down, or it may be misconfigured.", $e);
+        }
 
         return parent::render($request, $e);
+    }
+
+    /**
+     * Create a Symfony response for the given exception.
+     *
+     * @param  \Exception  $e
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    protected function convertExceptionToResponse(Exception $e)
+    {
+        try{
+            $exception = FlattenException::create($e);
+
+            $content = view('error', ['response' => [
+                'success' => false,
+                'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
+                'statusName' => Response::$statusTexts[Response::HTTP_INTERNAL_SERVER_ERROR],
+                'message' => config('app.debug') ? $e->getMessage() : "An unexpected error occurred.",
+                'flattenException' => config('app.debug') ? $exception : null,
+            ]])->render();
+
+            return new Response($content, 404, []);
+        }
+        catch(Exception $renderException){
+            return parent::convertExceptionToResponse($e);
+        }
     }
 }

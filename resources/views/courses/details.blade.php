@@ -30,7 +30,7 @@
                             {{ $course->course_name }}
                         </dd>
 
-                        <dt>Department</dt>
+                        <dt>Subject</dt>
                         <dd>
                             {{ $course->department }}
                         </dd>
@@ -78,7 +78,7 @@
 
                             <dt>Email</dt>
                             <dd>
-                                {{ $course->user->email }}
+                                <a href="mailto:{{ $course->user->email }}">{{ $course->user->email }}</a>
                             </dd>
                         @else
                             <dt>Professor</dt>
