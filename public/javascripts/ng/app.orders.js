@@ -189,6 +189,14 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
                     .From(pastCourses)
                     // Select an object for each order that has the course, the order, and the book on it.
                     .SelectMany("$.orders", "course,order => {course:course, order:order, book:order.book}")
+                    .Where(function(bookGrouping) {
+                        if($scope.passedBookId) {
+                            return bookGrouping.book.book_id != $scope.passedBookId;
+                        } else {
+                            return true;
+                        }
+
+                    })
                     // Group these objects by the book id, selecting a new object for each book that
                     // contains that book and the collection of the previously selected objects
                     // that belong to each book.
@@ -270,12 +278,13 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
             $scope.master['edition'] = book[0].edition;
             $scope.master['publisher'] = book[0].publisher;
             $scope.master['authors'] = book[0].authors;
+            $scope.master['orders'] = book[0].orders;
             $scope.master['book_id'] = book[0].book_id;
+            $scope.passedBookId = book[0].book_id;
             var bookData = {};
             bookData['book'] = $scope.master;
             bookData['book']['isbn13'] = stripHyphens(book[0].isbn13);
             CartService.cartBooks.push(bookData);
-            //this.addBookToCart(bookData);
         }
     };
 
