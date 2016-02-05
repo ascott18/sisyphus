@@ -84,7 +84,7 @@
                                             size="12"
                                             ng-multiple="true"
                                             ng-model="DeptsSelected"
-                                            ng-options="dept for dept in departments">
+                                            ng-options="dept for dept in departments|orderBy:dept">
                                     </select>
                                 </div>
                                 <div class="col-sm-6 col-sm-vspace">
@@ -94,16 +94,22 @@
                                             size="12"
                                             ng-multiple="true"
                                             ng-model="ColumnsSelected"
-                                            ng-options="optionProperties.name for optionProperties in options | filter:{doesAutoEnforce: '!true'}">
+                                            ng-options="optionProperties.name for optionProperties in options | filter:{doesAutoEnforce: '!true'} | filter:shouldOptionShow">
                                     </select>
                                 </div>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" ng-model="groupBySection" />
+                                    Group By Section
+                                </label>
                             </div>
                         </div>
                     </div>
 
                     <div class="col-lg-12 col-xs-vspace">
                         <h4>What would you like included in your report?</h4>
-                        (Must select at least one)
+                        <p class="text-muted">(Must select at least one)</p>
                         <br>
 
                         <div ng-show="ReportType == 'courses'">
