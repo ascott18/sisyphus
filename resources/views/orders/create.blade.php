@@ -17,6 +17,11 @@
                 @if (isset($course))
                     placeRequestForCourse((courses | filter:{'course_id': {{$course->course_id}} })[0]);
                 @endif
+                @if (isset($book))
+                    addPassedBookToCart( {{ json_encode($book) }} );
+                @endif
+
+
             ">
 
         <div class="col-lg-12" ng-show="getStage() == STAGE_SELECT_COURSE">

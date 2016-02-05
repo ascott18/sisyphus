@@ -51,19 +51,23 @@ class UserController extends Controller
      * Build the search query for the users controller
      *
      * @param \Illuminate\Database\Query $query
-     * @param \Illuminate\Http\Request $request
+     * @param $tableState
      * @return \Illuminate\Database\Query
      */
-    private function buildSearchQuery($request, $query)
+    private function buildUserSearchQuery($tableState, $query)
     {
-        if ($request->input('lName'))
-            $query = $query->where('last_name', 'LIKE', '%' . $request->input('lName') . '%');
-        if ($request->input('fName'))
-            $query = $query->where('first_name', 'LIKE', '%' . $request->input('fName') . '%');
-        if ($request->input('netID'))
-            $query = $query->where('net_id', 'LIKE', '%' . $request->input('netID') . '%');
-        if ($request->input('email'))
-            $query = $query->where('email', 'LIKE', '%' . $request->input('email') . '%');
+        $predicateObject = [];
+        if(isset($tableState->search->predicateObject))
+            $predicateObject = $tableState->search->predicateObject; // initialize predicate object
+
+        if (isset($predicateObject->lName))
+            $query = $query->where('last_name', 'LIKE', '%' . $predicateObject->lName . '%');
+        if (isset($predicateObject->fName))
+            $query = $query->where('first_name', 'LIKE', '%' . $predicateObject->fName . '%');
+        if (isset($predicateObject->netID))
+            $query = $query->where('net_id', 'LIKE', '%' . $predicateObject->netID . '%');
+        if (isset($predicateObject->email))
+            $query = $query->where('email', 'LIKE', '%' . $predicateObject->email . '%');
 
         return $query;
     }
@@ -73,17 +77,18 @@ class UserController extends Controller
      * Build the sort query for the users controller
      *
      * @param \Illuminate\Database\Query $query
-     * @param \Illuminate\Http\Request $request
+     * @param $tableState
      * @return \Illuminate\Database\Query
      */
-    private function buildSortQuery($request, $query)
+    private function buildUserSortQuery($tableState, $query)
     {
-        if ($request->input('sort'))
-            if ($request->input('dir'))
-                $query = $query->orderBy($request->input('sort'), "desc");
+        if(isset($tableState->sort->predicate)) {
+            $sort = $tableState->sort;
+            if ($sort->reverse == 1)
+                $query = $query->orderBy($sort->predicate, "desc");
             else
-                $query = $query->orderBy($request->input('sort'));
-
+                $query = $query->orderBy($sort->predicate);
+        }
         return $query;
     }
 
@@ -95,15 +100,18 @@ class UserController extends Controller
      */
     public function getUserList(Request $request)
     {
+
+        $tableState = json_decode($request->input('table_state'));
+
         $this->authorize('manage-users');
 
         $query = \App\Models\User::query();
 
         $query = $query->with(['departments', 'roles']);
 
-        $query = $this->buildSearchQuery($request, $query);
+        $query = $this->buildUserSearchQuery($tableState, $query);
 
-        $query = $this->buildSortQuery($request, $query);
+        $query = $this->buildUserSortQuery($tableState, $query);
 
         $users = $query->paginate(10);
 
@@ -417,8 +425,8 @@ class UserController extends Controller
 
         $user = $request->get('user');
 
-        $dbUser = User::findOrFail($user->user_id);
-        $dbUser->update($request->except('user.user_id'));
+        $dbUser = User::findOrFail($user['user_id']);
+        $dbUser->update($request->except('user.user_id')['user']);
 
         return redirect('users');
     }

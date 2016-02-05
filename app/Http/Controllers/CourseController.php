@@ -158,18 +158,21 @@ class CourseController extends Controller
      * Build the search query for the courses controller
      *
      * @param \Illuminate\Database\Query $query
-     * @param \Illuminate\Http\Request $request
+     * @param $tableState
      * @return \Illuminate\Database\Query
      */
-    private function buildSearchQuery($request, $query) {
-        if($request->input('section'))
-            SearchHelper::sectionSearchQuery($query, $request->input('section'));
+    private function buildCourseSearchQuery($tableState, $query) {
 
-        if($request->input('name'))
-            $query = $query->where('course_name', 'LIKE', '%'.$request->input('name').'%');
+        $predicateObject = [];
+        if(isset($tableState->search->predicateObject))
+            $predicateObject = $tableState->search->predicateObject; // initialize predicate object
 
-        if($request->input('professor'))
-            SearchHelper::professorSearchQuery($query, $request->input('professor'));
+        if(isset($predicateObject->section))
+            SearchHelper::sectionSearchQuery($query, $predicateObject->section);
+        if(isset($predicateObject->name))
+            $query = $query->where('course_name', 'LIKE', '%'.$predicateObject->name.'%');
+        if(isset($predicateObject->professor))
+            SearchHelper::professorSearchQuery($query, $predicateObject->professor);
 
         return $query;
     }
@@ -179,14 +182,14 @@ class CourseController extends Controller
      * Build the sort query for the courses controller
      *
      * @param \Illuminate\Database\Query $query
-     * @param \Illuminate\Http\Request $request
+     * @param $tableState
      * @return \Illuminate\Database\Query
      */
-    private function buildSortQuery($request, $query) {
-        $column = $request->input('sort');
-        if ($column) {
-            if ($column == "section"){
-                if ($request->input('dir')) {
+    private function buildCourseSortQuery($tableState, $query) {
+        if(isset($tableState->sort->predicate)){
+            $sort = $tableState->sort;
+            if ($sort->predicate == "section"){
+                if ($sort->reverse == 1) {
                     $query = $query->orderBy("department", "desc");
                     $query = $query->orderBy("course_number", "desc");
                     $query = $query->orderBy("course_section", "desc");
@@ -195,8 +198,8 @@ class CourseController extends Controller
                     $query = $query->orderBy("course_number");
                     $query = $query->orderBy("course_section");
                 }
-            } else if($request->input('sort') == "professor") {
-                if($request->input('dir')) {
+            } else if($sort->predicate == "professor") {
+                if($sort->reverse == 1) {
                     $query = $query->orderBy('users.last_name', "desc");
                     $query = $query->orderBy('users.first_name', "desc");
                 } else {
@@ -204,13 +207,13 @@ class CourseController extends Controller
                     $query = $query->orderBy('users.first_name');
                 }
             } else {
-                if ($request->input('dir'))
-                    $query = $query->orderBy($request->input('sort'), "desc");
+                if ($sort->reverse == 1)
+                    $query = $query->orderBy($sort->predicate, "desc");
                 else
-                    $query = $query->orderBy($request->input('sort'));
+                    $query = $query->orderBy($sort->predicate);
 
                 // If sorting by term, sort by the dept & numbers as secondaries.
-                if ($column == 'term_id'){
+                if ($sort->predicate == 'term_id'){
                     $query = $query->orderBy("department");
                     $query = $query->orderBy("course_number");
                     $query = $query->orderBy("course_section");
@@ -229,20 +232,26 @@ class CourseController extends Controller
      */
     public function getCourseList(Request $request)
     {
+        $tableState = json_decode($request->input('table_state'));
+
         $this->authorize("view-course-list");
 
         $query = Course::visible($request->user());
 
-        if($request->input('term_id')) {
-            $query = $query->where('term_id', '=', $request->input('term_id'));
+        if(isset($tableState->status_selected) && $tableState->status_selected != "") {
+            $query = $query->where('status', '=', $tableState->status_selected);
         }
 
-        if($request->input('sort') == "professor" || $request->input('professor')) {
+
+        if((isset($tableState->sort->predicate) && $tableState->sort->predicate == "professor")
+            || isset($tableState->search->predicateObject->professor) ) { // only join when we actually need it
+
             $query->join('users','users.user_id', '=', 'courses.user_id');
+
         }
 
-        $query = $this->buildSearchQuery($request, $query);
-        $query = $this->buildSortQuery($request, $query);
+        $query = $this->buildCourseSearchQuery($tableState, $query);
+        $query = $this->buildCourseSortQuery($tableState, $query);
         $query = $query->with("term");
         $query = $query->with("user");
 

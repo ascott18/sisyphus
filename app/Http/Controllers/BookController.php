@@ -26,25 +26,32 @@ class BookController extends Controller
      * Build the search query for the books controller
      *
      * @param \Illuminate\Database\Eloquent\Builder
-     * @param \Illuminate\Http\Request $request
+     * @param $tableState
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    private function buildBookSearchQuery($request, $query) {
-        if($request->input('title'))
-            $query = $query->where('title', 'LIKE', '%'.$request->input('title').'%');
+    private function buildBookSearchQuery($tableState, $query) {
+        $predicateObject = [];
+        if(isset($tableState->search->predicateObject))
+            $predicateObject = $tableState->search->predicateObject; // initialize predicate object
 
-        if($request->input('author')) {
-            $query->join('authors', function ($join) use ($request) {
+        if(isset($predicateObject->title))
+            $query = $query->where('title', 'LIKE', '%'.$predicateObject->title.'%');
+
+        if(isset($predicateObject->author)) {
+            $query = $query->where('authors.name', 'LIKE', '%'.$predicateObject->author.'%');
+            /*
+            $query->join('authors', function ($join) use ($predicateObject) {
                 $join->on('authors.book_id', '=', 'books.book_id')
-                    ->where('authors.name', 'LIKE', '%'.$request->input('author').'%');
+                    ->where('authors.name', 'LIKE', '%'.$predicateObject->author.'%');
             });
+            */
         }
 
-        if($request->input('publisher'))
-            $query = $query->where('publisher', 'LIKE', '%'.$request->input('publisher').'%');
+        if(isset($predicateObject->publisher))
+            $query = $query->where('publisher', 'LIKE', '%'.$predicateObject->publisher.'%');
 
-        if($request->input('isbn13')) {
-            $isbn = str_replace("-", "", $request->input('isbn13'));
+        if(isset($predicateObject->isbn13)) {
+            $isbn = str_replace("-", "", $predicateObject->isbn13);
             $query = $query->where('isbn13', 'LIKE', '%' . $isbn . '%');
         }
 
@@ -56,15 +63,25 @@ class BookController extends Controller
      * Build the sort query for the books controller
      *
      * @param \Illuminate\Database\Eloquent\Builder
-     * @param \Illuminate\Http\Request $request
+     * @param \Illuminate\Http\Request $tableState
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    private function buildBookSortQuery($request, $query) {
-        if($request->input('sort'))
-            if($request->input('dir'))
-                $query = $query->orderBy($request->input('sort'), "desc");
-            else
-                $query = $query->orderBy($request->input('sort'));
+    private function buildBookSortQuery($tableState, $query) {
+        if(isset($tableState->sort->predicate)) {
+            $sort = $tableState->sort;
+            if($sort->predicate == "author") {
+                if ($sort->reverse == 1) {
+                    $query = $query->orderBy('authors.name', "desc");
+                } else {
+                    $query = $query->orderBy('authors.name');
+                }
+            } else {
+                if ($sort->reverse == 1)
+                    $query = $query->orderBy($sort->predicate, "desc");
+                else
+                    $query = $query->orderBy($sort->predicate);
+            }
+        }
 
         return $query;
     }
@@ -78,6 +95,9 @@ class BookController extends Controller
 
     public function getBookList(Request $request)
     {
+
+        $tableState = json_decode($request->input('table_state'));
+
         $this->authorize("all");
 
         $user = $request->user();
@@ -117,8 +137,15 @@ class BookController extends Controller
                     ->getQuery());
         }
 
-        $query = $this->buildBookSearchQuery($request, $query);
-        $query = $this->buildBookSortQuery($request, $query);
+        if((isset($tableState->sort->predicate) && $tableState->sort->predicate == "author")
+            || isset($tableState->search->predicateObject->author) ) { // only join when we actually need it
+
+            $query->join('authors','books.book_id', '=', 'authors.book_id');
+
+        }
+
+        $query = $this->buildBookSearchQuery($tableState, $query);
+        $query = $this->buildBookSortQuery($tableState, $query);
 
         $query = $query->with('authors');
 
@@ -131,16 +158,19 @@ class BookController extends Controller
      * Build the search query for the book detail list
      *
      * @param \Illuminate\Database\Eloquent\Builder
-     * @param \Illuminate\Http\Request $request
+     * @param $tableState
      * @return \Illuminate\Database\Eloquent\Builder
      */
 
-    private function buildDetailSearchQuery($request, $query) {
-        if($request->input('section'))
-            SearchHelper::sectionSearchQuery($query, $request->input('section')); // use search helper for section search
+    private function buildBookDetailSearchQuery($tableState, $query) {
+        $predicateObject = [];
+        if(isset($tableState->search->predicateObject))
+            $predicateObject = $tableState->search->predicateObject; // initialize predicate object
 
-        if($request->input('course_name'))
-            $query = $query->where('course_name', 'LIKE', '%'.$request->input('course_name').'%');
+        if(isset($predicateObject->section))
+            SearchHelper::sectionSearchQuery($query, $predicateObject->section); // use search helper for section search
+        if(isset($predicateObject->course_name))
+            $query = $query->where('course_name', 'LIKE', '%'.$predicateObject->course_name.'%');
 
         return $query;
     }
@@ -149,27 +179,29 @@ class BookController extends Controller
      * Build the sort query for the book detail list
      *
      * @param \Illuminate\Database\Eloquent\Builder
-     * @param \Illuminate\Http\Request $request
+     * @param $tableState
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    private function buildDetailSortQuery($request, $query) {
-        if($request->input('sort'))
-            if($request->input('sort') == "section") { // special case because of joined tables
-                if ($request->input('dir')) {
+    private function buildBookDetailSortQuery($tableState, $query) {
+        if(isset($tableState->sort->predicate)) {
+            $sort = $tableState->sort;
+            if ($sort->predicate == "section") { // special case because of joined tables
+                if ($sort->reverse == 1) {
                     $query = $query->orderBy("department", "desc")
-                                    ->orderBy("course_number", "desc")
-                                    ->orderBy("course_section", "desc");
+                        ->orderBy("course_number", "desc")
+                        ->orderBy("course_section", "desc");
                 } else {
                     $query = $query->orderBy("department")
-                                    ->orderBy("course_number")
-                                    ->orderBy("course_section");
+                        ->orderBy("course_number")
+                        ->orderBy("course_section");
                 }
             } else {
-                if ($request->input('dir'))
-                    $query = $query->orderBy($request->input('sort'), "desc");
+                if ($sort->reverse == 1)
+                    $query = $query->orderBy($sort->predicate, "desc");
                 else
-                    $query = $query->orderBy($request->input('sort'));
+                    $query = $query->orderBy($sort->predicate);
             }
+        }
 
         return $query;
     }
@@ -184,17 +216,20 @@ class BookController extends Controller
 
     public function getBookDetailList(Request $request)
     {
+        $tableState = json_decode($request->input('table_state'));
+
         $this->authorize("all");
 
         $query = \App\Models\Order::query()->with("course.term");
 
-        if($request->input('book_id'))
-            $query = $query->where('book_id', '=', $request->input('book_id')); // find the book ID
+        if($request->input('book_id')) {
+            $query = $query->where('book_id', '=', str_replace('"', "", $request->input('book_id'))); // find the book ID
+        }
 
         $query = $query->join('courses', 'orders.course_id', '=', 'courses.course_id'); // need to join the courses into the dataset
 
-        $query = $this->buildDetailSearchQuery($request, $query); // build the search terms query
-        $query = $this->buildDetailSortQuery($request, $query); // build the sort query
+        $query = $this->buildBookDetailSearchQuery($tableState, $query); // build the search terms query
+        $query = $this->buildBookDetailSortQuery($tableState, $query); // build the sort query
 
         $orders = $query->paginate(10); // get paginated result
 
@@ -211,15 +246,17 @@ class BookController extends Controller
     public function getCover(Request $request) {
         $this->authorize("all");
 
-        $cached = true;
-        $coverImage = Cache::get($request->input('isbn'));
+        if($request->input('isbn') != '') {
+            $cached = true;
+            $coverImage = Cache::get('coverThumb-' . $request->input('isbn'));
 
-        if($coverImage == NULL) {
-            $cached = false;
-            $googleResponse = json_decode(file_get_contents("https://www.googleapis.com/books/v1/volumes?q=isbn:".$request->input('isbn')));
-            if(isset($googleResponse->items[0]->volumeInfo->imageLinks->thumbnail)) {
-                $coverImage = file_get_contents($googleResponse->items[0]->volumeInfo->imageLinks->thumbnail);
-                Cache::put($request->input('isbn'), $coverImage, 43800);
+            if ($coverImage == NULL) {
+                $cached = false;
+                $googleResponse = json_decode(file_get_contents("https://www.googleapis.com/books/v1/volumes?q=isbn:" . $request->input('isbn')));
+                if (isset($googleResponse->items[0]->volumeInfo->imageLinks->thumbnail)) {
+                    $coverImage = file_get_contents($googleResponse->items[0]->volumeInfo->imageLinks->thumbnail);
+                    Cache::put('coverTumb-' . $request->input('isbn'), $coverImage, 43800);
+                }
             }
         }
 

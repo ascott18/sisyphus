@@ -9,6 +9,7 @@ use Auth;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use SearchHelper;
 
 class TicketController extends Controller
 {
@@ -103,19 +104,86 @@ class TicketController extends Controller
     }
 
     /**
+     * Build the search query for the tickets controller
+     *
+     * @param \Illuminate\Database\Eloquent\Builder
+     * @param $tableState
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    private function buildTicketSearchQuery($tableState, $query) {
+        $predicateObject = [];
+        if(isset($tableState->search->predicateObject))
+            $predicateObject = $tableState->search->predicateObject; // initialize predicate object
+
+        if(isset($predicateObject->title))
+            $query = $query->where('tickets.title', 'LIKE', '%'.$predicateObject->title.'%');
+        if(isset($predicateObject->name)) {
+            SearchHelper::professorSearchQuery($query, $predicateObject->name);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Build the sort query for the tickets controller
+     *
+     * @param \Illuminate\Database\Eloquent\Builder
+     * @param \Illuminate\Http\Request $tableState
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    private function buildTicketSortQuery($tableState, $query) {
+        if(isset($tableState->sort->predicate)) {
+            $sort = $tableState->sort;
+
+            if($sort->predicate == "name") {
+                if ($sort->reverse == 1) {
+                    $query = $query->orderBy('users.last_name', "desc");
+                    $query = $query->orderBy('users.first_name', "desc");
+                } else {
+                    $query = $query->orderBy('users.last_name');
+                    $query = $query->orderBy('users.first_name');
+                }
+            } else {
+                if ($sort->reverse == 1)
+                    $query = $query->orderBy($sort->predicate, "desc");
+                else
+                    $query = $query->orderBy($sort->predicate);
+            }
+        }
+
+        return $query;
+    }
+
+
+
+    /**
      *
      * @param Request $request
      * @return \Illuminate\Http\Response
      */
     public function getTicketList(Request $request)
     {
+        $tableState = json_decode($request->input('table_state'));
+
         $this->authorize("all");
 
         $query = Ticket::visible($request->user());
 
+        if(isset($tableState->term_selected) && $tableState->term_selected != "") {
+            $query = $query->where('term_id', '=', $tableState->term_selected);
+        }
+
+        if((isset($tableState->sort->predicate) && $tableState->sort->predicate == "name")
+            || isset($tableState->search->predicateObject->name) ) { // only join when we actually need it
+
+            $query->join('users','users.user_id', '=', 'tickets.user_id');
+
+        }
+
         // TODO: nathan do this
-//        $query = $this->buildSearchQuery($request, $query);
-//        $query = $this->buildSortQuery($request, $query);
+        $query = $this->buildTicketSearchQuery($tableState, $query);
+        $query = $this->buildTicketSortQuery($tableState, $query);
+
         $query = $query->with("user");
 
         $tickets = $query->paginate(10);

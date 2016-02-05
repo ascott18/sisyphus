@@ -141,9 +141,11 @@
                                 <tr class=" {{ $order->deleted_at != null ? "danger" : "" }}">
                                     <td>
                                         {{ $order->book->title }}
-                                        <br><span class="text-muted">
-                                            Placed by {{$order->placedBy->first_name}} {{$order->placedBy->last_name}} on {{$order->created_at->toDateString()}}
-                                        </span>
+                                        @if ($order->placedBy != null)
+                                            <br><span class="text-muted">
+                                                Placed by {{$order->placedBy->first_name}} {{$order->placedBy->last_name}} on {{$order->created_at->toDateString()}}
+                                            </span>
+                                        @endif
 
                                         @if ($order->deleted_at != null)
                                             <br><span class="text-muted">
