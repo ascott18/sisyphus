@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Listing;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Bus\SelfHandling;
 
@@ -138,16 +139,21 @@ class ParseCourseCsv extends Command
 
 
             $course = new Course;
-            $course->department = $dept;
-            $course->course_number = $courseNumber;
-            $course->course_section = $section;
-            $course->course_name = $title;
             $course->user_id = $user ? $user->user_id : null;
             $course->term_id = $term->term_id;
 
             $course->created_at = $term->order_start_date->copy()->addDays(-1);
 
             $course->save();
+
+            $listing = new Listing;
+            $listing->department = $dept;
+            $listing->number = $courseNumber;
+            $listing->section = $section;
+            $listing->name = $title;
+
+
+            $course->listings()->save($listing);
         }
 
         echo "Parsed $numParsed courses from Eaglenet csv.\n";

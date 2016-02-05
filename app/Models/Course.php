@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Course orderable($user = null)
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Listing[] $listings
  */
 class Course extends Model
 {
@@ -51,6 +52,11 @@ class Course extends Model
     public function orders()
     {
         return $this->hasMany('App\Models\Order', 'course_id', 'course_id');
+    }
+
+    public function listings()
+    {
+        return $this->hasMany('App\Models\Listing', 'course_id', 'course_id');
     }
 
     public function books()
