@@ -19,6 +19,20 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Listing extends Model
 {
+    /**
+     * The primary key of the model.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'listing_id';
+
+    /**
+     * The attributes that aren't mass assignable.
+     *
+     * @var array
+     */
+    protected $guarded = ['listing_id'];
+
     public function course()
     {
         return $this->hasOne('App\Models\Course', 'course_id', 'course_id');

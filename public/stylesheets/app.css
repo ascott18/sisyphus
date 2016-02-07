@@ -516,12 +516,27 @@ ul.alert-dropdown {
     color: #b52b27;
 }
 
+[st-sort]:after{
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    padding-left: 0.5em;
+}
+
 .st-sort-ascent:after{
-    content: '\25B2';
+    content: '\f15d';
 }
 
 .st-sort-descent:after{
-    content: '\25BC';
+    content: '\f15e';
+}
+
+[st-sort]:not(.st-sort-descent):not(.st-sort-ascent):after{
+    content: '\f0dc';
+    color: #999999;
 }
 
 .text-muted-hover-danger {

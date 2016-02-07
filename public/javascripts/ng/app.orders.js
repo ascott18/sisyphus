@@ -45,49 +45,6 @@ app.directive('isbn13', function() {
 
 
 
-app.run(['$templateCache', function($templateCache) {
-    $templateCache.put('courseWithListings',
-        '[[course.listings[0].department]] [[course.listings[0].number | zpad:3]]-[[course.listings[0].section | zpad:2]]' +
-        '<ng-transclude></ng-transclude>' +
-        '<small class="text-muted" ng-if="course.listings.length > 1"> <br> XL as [[getXlString()]] </small>');
-}]);
-app.directive('courseWithListings', function($filter) {
-    return {
-        restrict: 'E',
-        transclude: true,
-        scope: {
-            course: '='
-        },
-        templateUrl: 'courseWithListings',
-        link: function(scope, element, attrs){
-            scope.getXlString = function(){
-                var course = scope.course;
-                var listings = course.listings;
-                listings = $filter('filter')(listings, {'listing_id': '!' + listings[0].listing_id});
-                listings = $filter('orderBy')(listings, ['department', 'number', 'section']);
-
-                var str = "";
-
-                for(var i = 0; i < listings.length; i++){
-                    var listing = listings[i];
-                    var prev = i > 0 ? listings[i-1] : null;
-
-                    if (!prev || listing.department != prev.department || listing.number != prev.number){
-                        if (i != 0) str += '; ';
-                        str += listing.department + ' ' + $filter('zpad')(listing.number, 3) + '-';
-                    }
-                    else if (i != 0) {
-                        str += ', '
-                    }
-                    str += $filter('zpad')(listing.section, 2);
-                }
-
-                return str;
-            }
-        }
-    }
-});
-
 app.directive('bookDetails', function($http) {
     var noBookThumb = "/images/coverNotAvailable.jpg";
     return {

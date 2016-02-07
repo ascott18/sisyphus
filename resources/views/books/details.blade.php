@@ -77,7 +77,7 @@
                         <tr>
                             <th>Term</th>
                             <th st-sort="section">Course</th>
-                            <th st-sort="course_name">Course Name</th>
+                            <th st-sort="name">Course Name</th>
                             <th>Required</th>
                             <th>Notes</th>
                             <th width="1%"></th>
@@ -95,9 +95,9 @@
                             <tr ng-cloak ng-repeat="order in bdc.displayed">
                                 <td>[[ order.course.term.display_name ]]</td>
                                 <td>
-                                    [[ order.department ]] [[ order.course_number | zpad:3 ]]-[[ order.course_section | zpad:2 ]]
+                                    <course-with-listings course="order.course"></course-with-listings>
                                 </td>
-                                <td>[[ order.course_name ]]</td>
+                                <td>[[ order.course.listings[0].name ]]</td>
                                 <td>[[ order.required ? "Yes" : "No" ]]</td>
                                 <td>[[ order.notes ]]</td>
 
