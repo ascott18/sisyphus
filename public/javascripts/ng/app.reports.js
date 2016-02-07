@@ -7,7 +7,7 @@ app.controller('ReportsController', function($scope, $http, $filter) {
 
 
     // TODO: hook me up with some good checkbox stuff.
-    $scope.groupBySection = true;
+    //$scope.groupBySection = true;
 
 
     $scope.options = [
@@ -61,6 +61,17 @@ app.controller('ReportsController', function($scope, $http, $filter) {
             value: function(courseOrderObj){ return courseOrderObj.book.publisher }
         },
         {
+            name: 'Date Placed',
+            value: function(courseOrderObj){ return moment(courseOrderObj.order.created_at).format('l') }
+        },
+        {
+            name: 'Date Deleted',
+            value: function(courseOrderObj){ return (courseOrderObj.order.deleted_at) ? moment(courseOrderObj.order.deleted_at).format('l') : '' },
+            shouldShow: function(){
+                return !$scope.ReportType || $scope.ReportType == 'orders'
+            }
+        },
+        {
             name: 'Required?',
             value: function(courseOrderObj){ return courseOrderObj.order.required ? 'Yes' : 'No'}
         },
@@ -70,7 +81,10 @@ app.controller('ReportsController', function($scope, $http, $filter) {
         },
         {
             name: 'Course Has Requests?',
-            value: function(courseOrderObj){ return (courseOrderObj.course.orders && courseOrderObj.course.orders.length) ? 'Yes' : 'No' }
+            value: function(courseOrderObj){ return (courseOrderObj.course.orders && courseOrderObj.course.orders.length) ? 'Yes' : 'No' },
+            shouldShow: function(){
+                return !$scope.ReportType || $scope.ReportType=='courses'
+            }
         },
         {
             name: 'Request Deleted?',
@@ -78,6 +92,14 @@ app.controller('ReportsController', function($scope, $http, $filter) {
             doesAutoEnforce: true,
             autoEnforce: function(){
                 return $scope.include.deleted && $scope.include.nondeleted
+            }
+        },
+        {
+            name: 'Selected No Book?',
+            value: function(courseOrderObj){return (courseOrderObj.course.no_book)? 'Yes' : 'No'},
+            doesAutoEnforce: true,
+            autoEnforce: function(){
+                return $scope.include.noBook
             }
         }
     ];
@@ -106,12 +128,17 @@ app.controller('ReportsController', function($scope, $http, $filter) {
         $scope.stage = stage;
     };
 
+    $scope.shouldOptionShow = function(optionProperties){
+        return !optionProperties.shouldShow || optionProperties.shouldShow()
+    };
+
     $scope.resetInclude = function(){
         $scope.include.deleted = false;
         $scope.include.nondeleted = false;
         $scope.include.submitted = false;
         $scope.include.notSubmitted = false;
         $scope.include.noBook = false;
+        $scope.ColumnsSelected = $scope.options.slice();
     };
 
     $scope.onSelectTerm = function()
@@ -243,7 +270,7 @@ app.controller('ReportsController', function($scope, $http, $filter) {
             reportRows = reportRows.ToArray();
 
             $scope.reportRows = reportRows;
-
+            console.log(response.data);
         })
 
     }
