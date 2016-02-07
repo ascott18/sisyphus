@@ -24,7 +24,7 @@ class SearchServiceProvider extends ServiceProvider
     {
         $searchArray = preg_split("/[\s-]/", $search);
         foreach ($searchArray as $key => $field) {       // strip leading zeros from search terms
-            $searchArray[$key] = ltrim($field, '0');
+            $searchArray[$key] = trim(ltrim($field, '0'));
         }
 
         $query->where(function ($sQuery) use ($searchArray) {
@@ -41,7 +41,7 @@ class SearchServiceProvider extends ServiceProvider
                     $sQuery->where('department', 'LIKE', '%' . $searchArray[0] . '%')
                            ->where('number', 'LIKE', '%' . $searchArray[1] . '%');
                 }
-                elseif (is_numeric($searchArray[1])){
+                else {
                     $sQuery->Where('number', 'LIKE', '%' . $searchArray[0] . '%')
                            ->where('section', 'LIKE', '%' . $searchArray[1] . '%');
                 }

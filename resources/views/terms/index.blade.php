@@ -17,8 +17,11 @@
                 </div>
                 <div class="panel-body">
 
-                    <div ng-controller="TermsTableController as tc" class="table-responsive" st-has-default-sort="true">
-                        <table  st-pipe="tc.callServer" st-table="tc.displayed" class="table table-hover"
+                    <div ng-controller="TermsTableController as tc" class="table-responsive">
+                        <table  st-pipe="tc.callServer"
+                                st-table="tc.displayed"
+                                st-has-default-sort="true"
+                                class="table table-hover"
                                 empty-placeholder>
                             <thead>
                             <tr>

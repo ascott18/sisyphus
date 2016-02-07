@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use App\Models\User;
 use App\Models\Order;
+use App\Providers\SearchServiceProvider;
 use Illuminate\Http\Request;
 use App\Models\Term;
 use Illuminate\Database\Query\Builder;
@@ -170,7 +171,7 @@ class CourseController extends Controller
         if(isset($predicateObject->section))
             SearchHelper::sectionSearchQuery($query, $predicateObject->section);
         if(isset($predicateObject->name))
-            $query = $query->where('course_name', 'LIKE', '%'.$predicateObject->name.'%');
+            $query = $query->where('name', 'LIKE', '%'.$predicateObject->name.'%');
         if(isset($predicateObject->professor))
             SearchHelper::professorSearchQuery($query, $predicateObject->professor);
 
@@ -191,12 +192,12 @@ class CourseController extends Controller
             if ($sort->predicate == "section"){
                 if ($sort->reverse == 1) {
                     $query = $query->orderBy("department", "desc");
-                    $query = $query->orderBy("course_number", "desc");
-                    $query = $query->orderBy("course_section", "desc");
+                    $query = $query->orderBy("number", "desc");
+                    $query = $query->orderBy("section", "desc");
                 } else {
                     $query = $query->orderBy("department");
-                    $query = $query->orderBy("course_number");
-                    $query = $query->orderBy("course_section");
+                    $query = $query->orderBy("number");
+                    $query = $query->orderBy("section");
                 }
             } else if($sort->predicate == "professor") {
                 if($sort->reverse == 1) {
@@ -215,8 +216,8 @@ class CourseController extends Controller
                 // If sorting by term, sort by the dept & numbers as secondaries.
                 if ($sort->predicate == 'term_id'){
                     $query = $query->orderBy("department");
-                    $query = $query->orderBy("course_number");
-                    $query = $query->orderBy("course_section");
+                    $query = $query->orderBy("number");
+                    $query = $query->orderBy("section");
                 }
             }
         }
@@ -236,35 +237,34 @@ class CourseController extends Controller
 
         $this->authorize("view-course-list");
 
-        $query = Course::visible($request->user());
-
-        if(isset($tableState->status_selected) && $tableState->status_selected != "") {
-            $query = $query->where('status', '=', $tableState->status_selected);
-        }
+        $query = Course::visible($request->user())
+            ->select('courses.*')
+            ->distinct()
+            ->with([
+                'term',
+                'user' => function($query) {
+                    return $query->select('user_id', 'first_name', 'last_name');
+                },
+                'listings',
+            ]);
 
 
         if((isset($tableState->sort->predicate) && $tableState->sort->predicate == "professor")
-            || isset($tableState->search->predicateObject->professor) ) { // only join when we actually need it
+         || isset($tableState->search->predicateObject->professor) ) { // only join when we actually need it
 
             $query->join('users','users.user_id', '=', 'courses.user_id');
-
         }
+
+        $query = $query->join('listings', 'courses.course_id', '=', 'listings.course_id');
 
         $query = $this->buildCourseSearchQuery($tableState, $query);
         $query = $this->buildCourseSortQuery($tableState, $query);
-        $query = $query->with("term");
-        $query = $query->with("user");
 
 
-        $courses = $query->paginate(10);
+        $courses = SearchServiceProvider::paginate($query, 10);
 
         foreach ($courses as $course) {
-            $course->term->term_name = $course->term->termName();
-
-
-            $course->order_count = Order::query()
-                ->where('course_id', '=', $course->course_id)
-                ->count();
+            $course->order_count = Order::where('course_id', '=', $course->course_id)->count();
         }
 
         return response()->json($courses);

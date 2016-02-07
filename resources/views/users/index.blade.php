@@ -139,7 +139,7 @@
                                     <div class="dept-input"
                                          ng-if="user.addingDept"
                                          ng-controller="NewDepartmentController">
-                                        <input type="text" class="form-control" placeholder="DEPT"
+                                        <input type="text" class="form-control" placeholder="e.g. AAST"
                                                ng-model="newDept"
                                                autofocus="true"
                                                ng-keypress="($event.keyCode == 13) ? addDepartment() : null">

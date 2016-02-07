@@ -173,8 +173,8 @@ class BookController extends Controller
 
         if(isset($predicateObject->section))
             SearchHelper::sectionSearchQuery($query, $predicateObject->section, 'listings.course_id'); // use search helper for section search
-        if(isset($predicateObject->course_name))
-            $query = $query->where('course_name', 'LIKE', '%'.$predicateObject->course_name.'%');
+        if(isset($predicateObject->name))
+            $query = $query->where('name', 'LIKE', '%'.$predicateObject->course_name.'%');
 
         return $query;
     }
@@ -199,7 +199,7 @@ class BookController extends Controller
                         ->orderBy("number")
                         ->orderBy("section");
                 }
-            } else {
+            } elseif ($sort->predicate == "name") {
                 if ($sort->reverse == 1)
                     $query = $query->orderBy($sort->predicate, "desc");
                 else
@@ -225,7 +225,7 @@ class BookController extends Controller
         $this->authorize("all");
 
         $query = Order::query()
-            ->select($columns = 'orders.*')
+            ->select('orders.*')
             ->distinct()
             ->with(['course.term', 'course.listings']);
 
@@ -233,10 +233,10 @@ class BookController extends Controller
             $query = $query->where('book_id', '=', str_replace('"', "", $request->input('book_id'))); // find the book ID
         }
 
-        $query = $query->join('listings', 'orders.course_id', '=', 'listings.course_id'); // need to join the listings into the dataset
+        $query = $query->join('listings', 'orders.course_id', '=', 'listings.course_id');
 
-        $query = $this->buildBookDetailSearchQuery($tableState, $query); // build the search terms query
-        $query = $this->buildBookDetailSortQuery($tableState, $query); // build the sort query
+        $query = $this->buildBookDetailSearchQuery($tableState, $query);
+        $query = $this->buildBookDetailSortQuery($tableState, $query);
 
         // Use our custom paginator that can handle the distinct clause properly.
         $orders = SearchServiceProvider::paginate($query, 10);

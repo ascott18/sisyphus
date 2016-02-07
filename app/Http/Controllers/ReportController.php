@@ -25,19 +25,18 @@ class ReportController extends Controller
 
         $user = $request->user();
 
-        $userTerms = Course::visible($user)->distinct()->lists('term_id');
+        $departments = Course::visible($user)
+            ->join('listings', 'listings.course_id', '=', 'courses.course_id')
+            ->distinct()
+            ->pluck('department');
 
-        $departments=Course::visible($user)->distinct()->lists('department');
-
-        $terms = Term::whereIn('term_id', $userTerms)
+        $terms = Term::whereIn('term_id', Course::visible($user)->distinct()->select('term_id')->toBase())
             ->orderBy('order_start_date', 'DESC')
             ->get();
 
         $currentTermId = $terms->first()->term_id;
-        foreach ($terms as $term) {
-            $term['display_name'] = $term->displayName();
-        }
-        return view('reports.index',['departments' => $departments,'terms' => $terms, 'currentTermId' => $currentTermId]);
+
+        return view('reports.index', compact('departments', 'terms', 'currentTermId'));
     }
 
     public function postSubmitReport(Request $request)
