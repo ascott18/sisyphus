@@ -101,7 +101,7 @@
                             <div class="checkbox">
                                 <label>
                                     <input type="checkbox" ng-model="groupBySection" />
-                                    Group By Section
+                                    Condense Similar Rows
                                 </label>
                             </div>
                         </div>
@@ -157,7 +157,7 @@
             </div>
         </div>
 
-        <div ng-cloak class="col-lg-12" ng-show="getStage() == STAGE_VIEW_REPORT">
+        <div ng-cloak class="col-lg-12" ng-if="getStage() == STAGE_VIEW_REPORT">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="fa fa-bar-chart"></i>
@@ -186,13 +186,13 @@
                     <table class="table table-hover" id="reportTable">
                         <thead>
                             <tr>
-                                <th
-                                    ng-repeat="optionProperties in ColumnsSelected">
+                                <th ng-repeat="optionProperties in ColumnsSelected">
                                     [[optionProperties.name]]
                                 </th>
                             </tr>
                         </thead>
-                        <tbody>
+                        {{--<tbody vs-repeat vs-scroll-parent="window" vs-options="{latch: true}" vs-excess="100">--}}
+                        <tbody >
                             <tr ng-repeat="row in reportRows" >
                                 <td ng-repeat="cell in row track by $index">
                                     [[cell]]
@@ -210,6 +210,7 @@
 @section('scripts-head')
     <script src="/javascripts/angular-sanitize.min.js"></script>
     <script src="/javascripts/ng/csv/ng-csv.min.js"></script>
+    <script src="/javascripts/ng/vs-repeat/angular-vs-repeat.min.js"></script>
     <script src="/javascripts/ng/helper.isbnHyphenate.js"></script>
     <script src="/javascripts/ng/app.reports.js"></script>
     <script src="/javascripts/ui-bootstrap-tpls-0.14.3.min.js"></script>

@@ -32,7 +32,7 @@
 </head>
 <body ng-app="sisyphus">
 <div id="wrapper">
-    <i ng-spinner ng-cloak class="fa fa-spinner fa-spin "></i>
+    <i ng-spinner ng-cloak class="fa fa-spinner fa-spin " ng-show="spinnerActive"></i>
 
     <!-- Navigation-->
     <nav role="navigation" class="navbar navbar-inverse navbar-fixed-top">

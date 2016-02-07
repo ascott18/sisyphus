@@ -1,6 +1,6 @@
-var app = angular.module('sisyphus', ['sisyphus.helpers', 'sisyphus.helpers.isbnHyphenate', 'ui.bootstrap' , 'smart-table', 'ngSanitize', 'ngCsv']);
+var app = angular.module('sisyphus', ['sisyphus.helpers', 'sisyphus.helpers.isbnHyphenate', 'ui.bootstrap' , 'smart-table', 'ngSanitize', 'ngCsv', 'vs-repeat']);
 
-app.controller('ReportsController', function($scope, $http, $filter) {
+app.controller('ReportsController', function($scope, $http, $filter, $rootScope, $timeout) {
     $scope.STAGE_SELECT_FIELDS= 1;
     $scope.STAGE_VIEW_REPORT = 2;
     $scope.stage = $scope.STAGE_SELECT_FIELDS;
@@ -9,31 +9,51 @@ app.controller('ReportsController', function($scope, $http, $filter) {
     // TODO: hook me up with some good checkbox stuff.
     //$scope.groupBySection = true;
 
+    var dateGrouper = function(values){
+        if (values.Count("$") == 0)
+            return "";
+        else if (values.Count("$") == 1)
+            return values.First();
+        else
+            return values.MinBy(function(time){ return moment(time).unix()}) + ' - ' + values.MaxBy(function(time){ return moment(time).unix()});
+    };
 
     $scope.options = [
         {
             name: 'Course Title',
-            value: function(courseOrderObj){ return courseOrderObj.course.course_name }
-        },
-        {
-            name: 'Course Number',
-            value: function(courseOrderObj){ return courseOrderObj.course.course_number }
-        },
-        {
-            name: 'Course Section',
-            value: function(courseOrderObj){ return courseOrderObj.course.course_section }
+            value: function(courseOrderObj){ return courseOrderObj.course.listings[0].name }
         },
         {
             name: 'Course Subject',
-            value: function(courseOrderObj){ return courseOrderObj.course.department }
+            value: function(courseOrderObj){ return courseOrderObj.course.listings[0].department },
+            sort: true
+        },
+        {
+            name: 'Course Number',
+            value: function(courseOrderObj){ return $filter('zpad')(courseOrderObj.course.listings[0].number, 3) },
+            sort: true
+        },
+        {
+            name: 'Course Section',
+            value: function(courseOrderObj){ return $filter('zpad')(courseOrderObj.course.listings[0].section, 2) },
+            group: function(values){
+                return values.OrderBy().ToString(", ");
+            },
+            sort: true
         },
         {
             name: 'Instructor',
-            value: function(courseOrderObj){ return courseOrderObj.course.user.last_first_name }
+            value: function(courseOrderObj){
+                return courseOrderObj.course.user ? $scope.groupBySection ? courseOrderObj.course.user.last_name : courseOrderObj.course.user.last_first_name : 'TBA'
+            },
+            group: function(values){
+                return values.OrderBy().Distinct().ToString("; ");
+            }
         },
         {
             name: 'Book Title',
-            value: function(courseOrderObj){ return courseOrderObj.book.title }
+            value: function(courseOrderObj){ return courseOrderObj.book.title },
+            sort: true
         },
         {
             name: 'ISBN',
@@ -61,17 +81,6 @@ app.controller('ReportsController', function($scope, $http, $filter) {
             value: function(courseOrderObj){ return courseOrderObj.book.publisher }
         },
         {
-            name: 'Date Placed',
-            value: function(courseOrderObj){ return moment(courseOrderObj.order.created_at).format('l') }
-        },
-        {
-            name: 'Date Deleted',
-            value: function(courseOrderObj){ return (courseOrderObj.order.deleted_at) ? moment(courseOrderObj.order.deleted_at).format('l') : '' },
-            shouldShow: function(){
-                return !$scope.ReportType || $scope.ReportType == 'orders'
-            }
-        },
-        {
             name: 'Required?',
             value: function(courseOrderObj){ return courseOrderObj.order.required ? 'Yes' : 'No'}
         },
@@ -80,10 +89,15 @@ app.controller('ReportsController', function($scope, $http, $filter) {
             value: function(courseOrderObj){ return courseOrderObj.order.notes }
         },
         {
+            name: 'Date Placed',
+            value: function(courseOrderObj){ return moment(courseOrderObj.order.created_at).format('l') },
+            group: dateGrouper
+        },
+        {
             name: 'Course Has Requests?',
             value: function(courseOrderObj){ return (courseOrderObj.course.orders && courseOrderObj.course.orders.length) ? 'Yes' : 'No' },
             shouldShow: function(){
-                return !$scope.ReportType || $scope.ReportType=='courses'
+                return !$scope.ReportType || $scope.ReportType == 'courses'
             }
         },
         {
@@ -95,8 +109,16 @@ app.controller('ReportsController', function($scope, $http, $filter) {
             }
         },
         {
+            name: 'Date Deleted',
+            value: function(courseOrderObj){ return courseOrderObj.order.deleted_at ? moment(courseOrderObj.order.deleted_at).format('l') : '' },
+            shouldShow: function(){
+                return !$scope.ReportType || $scope.ReportType == 'orders'
+            },
+            groupStyle: 'dateRange'
+        },
+        {
             name: 'Selected No Book?',
-            value: function(courseOrderObj){return (courseOrderObj.course.no_book)? 'Yes' : 'No'},
+            value: function(courseOrderObj){ return courseOrderObj.course.no_book ? 'Yes' : 'No'},
             doesAutoEnforce: true,
             autoEnforce: function(){
                 return $scope.include.noBook
@@ -155,7 +177,6 @@ app.controller('ReportsController', function($scope, $http, $filter) {
         }
         return ($scope.include.submitted || $scope.include.notSubmitted || $scope.include.noBook);
     };
-
 
     $scope.getReportHeaderRow = function(){
         var row = [];
@@ -229,27 +250,31 @@ app.controller('ReportsController', function($scope, $http, $filter) {
 
             // Group by sections if the user so desires.
             if ($scope.groupBySection){
-                var sectionColumn = -1;
+                var groupColumns = [];
                 for (var i = 0; i < $scope.ColumnsSelected.length; i++) {
                     var optionProperties = $scope.ColumnsSelected[i];
-                    if (optionProperties.name == 'Course Section')
-                    {
-                        sectionColumn = i;
-                        break;
+                    if (optionProperties.group) {
+                        groupColumns.push(i);
                     }
                 }
 
-                if (sectionColumn > -1){
-                    // Group by every property of the row except the section.
+                if (groupColumns.length){
+                    // Group by every property of the row except the properties that we are grouping together.
                     reportRows = reportRows.GroupBy("", "", function(key, similarRows){
-                        // A commma-delimited string with all of the sections for which there is a row
-                        // that is otherwise identical to the key row except the section.
-                        var sectionsString = similarRows.Select(function(r){ return r[sectionColumn]}).ToString(", ");
-                        key[sectionColumn] = sectionsString;
+                        for (var i in groupColumns) {
+                            var index = groupColumns[i];
+                            var optionProperties = $scope.ColumnsSelected[index];
+
+                            var values = similarRows.Select(function(r){ return r[index]});
+                            key[index] = optionProperties.group(values);
+                        }
                         return key;
                     }, function(row){
+                        // This is our comparison function. We use a jsonified version of the row with the section
+                        // omitted to group by everything except the section and dates.
                         var selector = row.slice();
-                        selector[sectionColumn] = 0;
+                        for (var index in groupColumns)
+                            selector[groupColumns[index]] = null;
                         return JSON.stringify(selector);
                     });
                 }
@@ -267,11 +292,24 @@ app.controller('ReportsController', function($scope, $http, $filter) {
                 });
 
 
+            var hasSortedOnce = false;
+
+            for (var i = 0; i < $scope.ColumnsSelected.length; i++){
+                var optionProperties = $scope.ColumnsSelected[i];
+                if (!optionProperties.sort) continue;
+                if (!hasSortedOnce){
+                    hasSortedOnce = true;
+                    reportRows = reportRows.OrderBy('$[' + i + ']');
+                }
+                else{
+                    reportRows = reportRows.ThenBy('$[' + i + ']');
+                }
+            }
+
             reportRows = reportRows.ToArray();
 
             $scope.reportRows = reportRows;
-            console.log(response.data);
-        })
+        });
 
     }
 });

@@ -164,11 +164,6 @@ app.directive('ngSpinner', ['$http', '$rootScope', function ($http, $rootScope){
             scope.$watch(scope.isLoading, function (loading)
             {
                 $rootScope.spinnerActive = loading;
-                if(loading){
-                    elm.removeClass('ng-hide');
-                }else{
-                    elm.addClass('ng-hide');
-                }
             });
         }
     };
