@@ -86,6 +86,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Google API Key
+    |--------------------------------------------------------------------------
+    |
+    | This key is used by the Google API calls and is appended to the end of
+    | get requests on any Google API
+    */
+
+    'google_api_key' => env('GOOGLE_API_KEY', 'SomeRandomString'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Logging Configuration
     |--------------------------------------------------------------------------
     |
