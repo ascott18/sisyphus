@@ -23,7 +23,6 @@
     <link href="/stylesheets/app.css" rel="stylesheet">
     <!-- Custom Fonts-->
     <link href="/stylesheets/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
 
     <script src="/javascripts/angular.min.js"></script>
     <script src="/javascripts/ng/smart-table/smart-table.js"></script>

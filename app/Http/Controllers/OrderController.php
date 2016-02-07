@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Listing;
 use App\Models\Term;
 use Auth;
 use Carbon\Carbon;
@@ -64,11 +65,15 @@ class OrderController extends Controller
             $courses = $query
                 ->whereIn('term_id', $openTermIds)
                 ->with([
+                    'listings',
                     'orders.book',
                     'user' => function($query){
                         return $query->select('user_id', 'first_name', 'last_name');
                     }])
                 ->get();
+
+            $viewParams['courses'] = $courses;
+
 
             $book = [];
             if($request->input('isbn13') != null) {
@@ -92,6 +97,7 @@ class OrderController extends Controller
                 ->where('term_id', '=', $course->term_id)
                 ->orWhere('course_id', '=', $course->course_id)
                 ->with([
+                    'listings',
                     'orders.book',
                     'user' => function($query){
                         return $query->select('user_id', 'first_name', 'last_name');
@@ -270,10 +276,21 @@ class OrderController extends Controller
 
         $this->authorize('place-order-for-course', $course);
 
+        // Find any listings that have the same department and number,
+        // and then get the course_id of those listings.
+        // This gives us any courses that are effectively the same course as this one.
+        $similarCourseIdsQuery = Listing::select('course_id');
+        foreach ($course->listings as $listing) {
+            $similarCourseIdsQuery = $similarCourseIdsQuery
+                ->orWhere(['department' => $listing->department, 'number' => $listing->number]);
+        }
+        $similarCourseIdsQuery = $similarCourseIdsQuery
+            ->distinct()
+            ->toBase();
+
         $courses =
             Course::
-            where(['department' => $course->department, 'course_number' => $course->course_number])
-//            ->where('course_id', '!=', $id)
+            whereIn('course_id', $similarCourseIdsQuery)
             ->where('created_at', '>', Carbon::today()->subMonths(static::PAST_BOOKS_NUM_MONTHS))
             ->with([
                     "term" => function ($query){
@@ -322,7 +339,7 @@ class OrderController extends Controller
         // This way, we won't place any orders if any of them might cause the process to fail.
         $courses = [];
         foreach($params['courses'] as $section) {
-            $course = Course::with('orders.book.authors')->findOrFail($section['course_id']);
+            $course = Course::with(['orders.book.authors', 'listings'])->findOrFail($section['course_id']);
             $this->authorize('place-order-for-course', $course);
             $courses[] = $course;
         }

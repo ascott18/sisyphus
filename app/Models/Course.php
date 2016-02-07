@@ -105,9 +105,16 @@ class Course extends Model
                 $deptSubQuery = $user
                     ->departments()
                     ->select('department')
-                    ->getQuery()
-                    ->getQuery();
-                $query = $query->whereIn('courses.department', $deptSubQuery);
+                    ->toBase();
+
+                $query->whereIn('courses.course_id',
+                    Listing
+                        ::select('course_id')
+                        ->distinct()
+                        ->whereIn('listings.department', $deptSubQuery)
+                        ->toBase()
+                );
+
                 return $query = $query->orWhere('courses.user_id', '=', $user->user_id);
             });
         }

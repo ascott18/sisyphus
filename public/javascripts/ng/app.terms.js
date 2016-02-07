@@ -37,32 +37,5 @@ app.controller('TermsTableController', function($scope, $http) {
             ctrl.displayed = response.data.data;                                              // save laravel response data
             ctrl.isLoading=false;
         });
-    }
-
-    this.callServerDetail = function callServer(tableState) {
-        ctrl.isLoading = true;
-
-        var pagination = tableState.pagination;
-        var start = pagination.start || 0;
-        var end = pagination.number || 10;
-        var page = (start/end)+1;
-
-        tableState.term_id = $scope.term_id;
-        var getRequestString = '/terms/term-detail-list';
-
-        var config = {
-            params: {
-                page: page,
-                table_state: tableState
-            }
-        };
-
-        $http.get(getRequestString, config).then(function(response){
-            tableState.pagination.numberOfPages = response.data.last_page;                    // update number of pages with laravel response
-            tableState.pagination.number = response.data.per_page;                            // update entries per page with laravel response
-            ctrl.displayed = response.data.data;                                              // save laravel response data
-            ctrl.isLoading=false;
-        });
-
-    }
+    };
 });

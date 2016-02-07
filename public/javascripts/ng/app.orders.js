@@ -44,6 +44,50 @@ app.directive('isbn13', function() {
 });
 
 
+
+app.run(['$templateCache', function($templateCache) {
+    $templateCache.put('courseWithListings',
+        '[[course.listings[0].department]] [[course.listings[0].number | zpad:3]]-[[course.listings[0].section | zpad:2]]' +
+        '<ng-transclude></ng-transclude>' +
+        '<small class="text-muted" ng-if="course.listings.length > 1"> <br> XL as [[getXlString()]] </small>');
+}]);
+app.directive('courseWithListings', function($filter) {
+    return {
+        restrict: 'E',
+        transclude: true,
+        scope: {
+            course: '='
+        },
+        templateUrl: 'courseWithListings',
+        link: function(scope, element, attrs){
+            scope.getXlString = function(){
+                var course = scope.course;
+                var listings = course.listings;
+                listings = $filter('filter')(listings, {'listing_id': '!' + listings[0].listing_id});
+                listings = $filter('orderBy')(listings, ['department', 'number', 'section']);
+
+                var str = "";
+
+                for(var i = 0; i < listings.length; i++){
+                    var listing = listings[i];
+                    var prev = i > 0 ? listings[i-1] : null;
+
+                    if (!prev || listing.department != prev.department || listing.number != prev.number){
+                        if (i != 0) str += '; ';
+                        str += listing.department + ' ' + $filter('zpad')(listing.number, 3) + '-';
+                    }
+                    else if (i != 0) {
+                        str += ', '
+                    }
+                    str += $filter('zpad')(listing.section, 2);
+                }
+
+                return str;
+            }
+        }
+    }
+});
+
 app.directive('bookDetails', function($http) {
     var noBookThumb = "/images/coverNotAvailable.jpg";
     return {
@@ -178,7 +222,7 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
 
         BreadcrumbService.clear();
         BreadcrumbService.push($scope.$eval(
-            'selectedCourse.department + " " + (selectedCourse.course_number | zpad:3) + "-" + (selectedCourse.course_section | zpad:2) + " " + selectedCourse.course_name'
+            '(listing = selectedCourse.listings[0]).department + " " + (listing.number | zpad:3) + "-" + (listing.section | zpad:2) + " " + listing.name'
         ));
 
         $http.get('/requests/past-courses/' + course.course_id).then(
@@ -371,13 +415,20 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
             return true;
         }
 
-        if (course.department == $scope.selectedCourse.department
-            && course.course_number == $scope.selectedCourse.course_number
-            && course.term_id == $scope.selectedCourse.term_id
-            && course.course_section != $scope.selectedCourse.course_section)
-        {
-            return true;
-        }
+        if (course.term_id != $scope.selectedCourse.term_id || course.course_id == $scope.selectedCourse.course_id)
+            return false;
+
+        return Enumerable
+            .From(course.listings)
+            .Any(function(listing){
+                return Enumerable
+                    .From($scope.selectedCourse.listings)
+                    .Any(function(listing2){
+                        return listing.department == listing2.department
+                        && listing.number == listing2.number
+                        && listing.section != listing2.section
+                    })
+            });
     };
 
     $scope.getNumAdditionalCoursesSelected = function(){
