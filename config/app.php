@@ -144,6 +144,7 @@ return [
         App\Providers\AuthServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        App\Providers\GoogleBookProvider::class,
 
         'Zizaco\Entrust\EntrustServiceProvider',
         'Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider',
@@ -207,6 +208,7 @@ return [
         // Custom
         'Cas' => Xavrsl\Cas\Facades\Cas::class,
         'SearchHelper' => App\Providers\SearchServiceProvider::class,
+        'GoogleBooks' => App\Facades\GoogleBookFacade::class,
 
     ],
 

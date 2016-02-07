@@ -7,6 +7,7 @@ use App\Models\Book;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use SearchHelper;
+use GoogleBooks;
 
 class BookController extends Controller
 {
@@ -247,26 +248,8 @@ class BookController extends Controller
         $this->authorize("all");
 
         if($request->input('isbn') != '') {
-            $cached = true;
-            $coverImage = Cache::get('coverThumb-' . $request->input('isbn'));
-
-            if ($coverImage == NULL) {
-                $cached = false;
-                $googleResponse = json_decode(file_get_contents("https://www.googleapis.com/books/v1/volumes?q=isbn:" . $request->input('isbn')));
-                if (isset($googleResponse->items[0]->volumeInfo->imageLinks->thumbnail)) {
-                    $coverImage = file_get_contents($googleResponse->items[0]->volumeInfo->imageLinks->thumbnail);
-                    Cache::put('coverTumb-' . $request->input('isbn'), $coverImage, 43800);
-                }
-            }
+            return GoogleBooks::getCoverThumbnail($request->input('isbn'));
         }
-
-
-        return response()->json(array (
-            "image" => base64_encode($coverImage),
-                "cached" => $cached
-            )
-        );
-
     }
 
     /** GET: /books/details/{id}
