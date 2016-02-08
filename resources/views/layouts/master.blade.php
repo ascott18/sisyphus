@@ -80,7 +80,7 @@
             </ul>
 
             <!-- Sidebar Menu Items -->
-            <ul class="nav navbar-nav side-nav">
+            <div class="nav navbar-nav side-nav">
                 <li><a href="/"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a></li>
                 <li><a href="/books"><i class="fa fa-fw fa-book"></i> Books</a></li>
                 <li><a href="/requests"><i class="fa fa-fw fa-shopping-cart"></i> Requests</a></li>
@@ -98,29 +98,13 @@
                 @endcan
                 <li><a href="/tickets"><i class="fa fa-fw fa-life-ring"></i> Tickets</a></li>
 
-                {{--<li><a href="tables.html"><i class="fa fa-fw fa-table"></i> Tables</a></li>--}}
-                {{--<li><a href="forms.html"><i class="fa fa-fw fa-edit"></i> Forms</a></li>--}}
-                {{--<li><a href="bootstrap-elements.html"><i class="fa fa-fw fa-desktop"></i> Bootstrap Elements</a></li>--}}
-                {{--<li><a href="bootstrap-grid.html"><i class="fa fa-fw fa-wrench"></i> Bootstrap Grid</a></li>--}}
-                {{--<li>--}}
-                    {{--<a href="javascript:;" data-toggle="collapse" data-target="#demo"><i--}}
-                                {{--class="fa fa-fw fa-arrows-v"></i> Dropdown <i class="fa fa-fw fa-caret-down"></i></a>--}}
-                    {{--<ul id="demo" class="collapse">--}}
-                        {{--<li><a href="#">Dropdown Item</a></li>--}}
-                        {{--<li><a href="#">Dropdown Item</a></li>--}}
-                    {{--</ul>--}}
-                {{--</li>--}}
-                {{--<li><a href="blank-page.html"><i class="fa fa-fw fa-file"></i> Blank Page</a></li>--}}
-                {{--<li><a href="index-rtl.html"><i class="fa fa-fw fa-dashboard"></i> RTL Dashboard</a></li>--}}
-                <div >
-                    <a class="btn btn-primary",
-                       ng-click="toggleModal()">
-                        <i class="fa fa-plus"></i> Create Ticket
-                    </a>
 
-
+                <div class="icon-wrapper" ng-click="toggleModal()">
+                    <i class="fa fa-question custom-icon"></i>
                 </div>
-            </ul>
+
+
+            </div>
 
 
 

@@ -23,8 +23,33 @@ app.config(function($provide) {
     }]);
 });
 
-app.controller('NewTicketController', function($scope, $http) {
+app.controller('NewTicketController', ['$scope', '$http', 'HelpService', function($scope, $http, HelpService) {
     $scope.ticket = {department : 'CSCD', 'url' : 'google.com'};
+
+    $scope.STAGE_SELECT_OPTIONS = 0;
+    $scope.STAGE_CREATE_TICKET = 1;
+
+    $scope.options = [];
+    $scope.selectedOption = {};
+
+    $scope.setOptions = function(options) {
+        $scope.options = options;
+        if (options.length != 0) {
+            $scope.stage = $scope.STAGE_SELECT_OPTIONS;
+        }
+        else {
+            $scope.stage = $scope.STAGE_CREATE_TICKET
+        }
+    };
+
+    $scope.selectOption = function(option) {
+        $scope.stage = $scope.STAGE_CREATE_TICKET;
+        $scope.selectedOption = option;
+    };
+
+    $scope.getStage = function() {
+        return $scope.stage;
+    };
 
     //var unloadListener = function (e) {
     //    var confirmationMessage = 'If you leave before submitting, your changes will be lost.';
@@ -44,7 +69,7 @@ app.controller('NewTicketController', function($scope, $http) {
                 $scope.ticket = ticket;
         });
     };
-});
+}]);
 
 app.controller('TicketController', function($scope, $http) {
     $scope.ticket = {};

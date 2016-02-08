@@ -154,8 +154,13 @@ app.controller('OrdersListController', function($scope, $http) {
     }
 });
 
-app.controller('OrdersController', ['$scope', '$http', 'CartService',
-    function($scope, $http, CartService){
+app.controller('OrdersController', ['$scope', '$http', 'CartService', 'HelpService', '$location',
+    function($scope, $http, CartService, HelpService, $location){
+
+    var selectCourseHelpOptions =  [{header: "Report Error in Course List", body: "Select this option if a course you are teaching is not listed here or a course you are not teaching is listed.", href: "/tickets/create"}];
+    var selectBooksHelpOptions = [{header: "Report Problem with Book", body: "Is there a problem with a book? Please report it.", href: "/tickets/create"}];
+
+    HelpService.updateOptions(selectCourseHelpOptions);
 
     $scope.STAGE_SELECT_COURSE = 1;
     $scope.STAGE_SELECT_BOOKS = 2;
@@ -172,6 +177,13 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService',
 
     $scope.setStage = function(stage){
         $scope.stage = stage;
+
+        if ($scope.stage == $scope.STAGE_SELECT_COURSE) {
+            HelpService.updateOptions(selectCourseHelpOptions);
+        }
+        else if ($scope.stage == $scope.STAGE_SELECT_BOOKS) {
+            HelpService.updateOptions(selectBooksHelpOptions);
+        }
     };
 
     $scope.placeRequestForCourse = function(course) {

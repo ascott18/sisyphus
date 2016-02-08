@@ -296,22 +296,27 @@ var e = new k(function() {
 
 app.controller('HelpModalController', ['$scope', 'HelpService', function($scope, HelpService) {
     $scope.showModal = false;
-    $scope.options = HelpService.
+    $scope.options = HelpService.options;
 
     $scope.toggleModal = function () {
         $scope.showModal = !$scope.showModal;
     };
+
+    $scope.setSelected = function(option) {
+        HelpService.selected = option;
+    };
 }]);
 
-app.directive('modal', function () {
+app.directive('modal', ['HelpService', function(HelpService) {
     return {
         templateUrl: '/javascripts/ng/templates/helpModal.html',
-        restrict: 'E',
-        transclude: true,
+        restrict: 'EA',
         replace:true,
-        scope:true,
+        scope:false,
+        controller : 'HelpModalController',
         link: function postLink(scope, element, attrs) {
             scope.title = attrs.title;
+            scope.HelpService = HelpService;
 
             scope.$watch(attrs.visible, function(value){
                 if(value == true)
@@ -333,13 +338,21 @@ app.directive('modal', function () {
             });
         }
     };
-});
+}]);
 
-app.service("HelpService", function() {
-    var service
+app.factory("HelpService", function() {
 
-    var options = [{header: "Testing header", body: "testing body"},
-                    {header: "Testing header", body: "testing body"},
-                    {header: "Testing header", body: "testing body"}];
+    var defaultOptions = [{header: "Report a Problem", body: "Does something not look right? Let us know.",  href: "/tickets/create"},
+                            {header: "Ask a Question", body: "Need some help? Submit a question.",  href: "/tickets/create"}];
+    var options = defaultOptions;
+
+    updateOptions = function(newOptions) {
+        this.options = newOptions.concat(defaultOptions);
+    };
+
+    var service = {options       : options      ,
+                   updateOptions : updateOptions,
+                   selected      : null        };
+
     return service;
 });

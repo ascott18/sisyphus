@@ -6,46 +6,83 @@
 @section('content')
 
 
+
     <div class="row col-lg-12" ng-controller="NewTicketController">
 
+        <div class="row col-lg-12"
+             ng-init="setOptions({{json_encode($options)}})"
+             ng-show="getStage() == STAGE_SELECT_OPTIONS">
 
 
-        <div class="col-md-8">
-            <h3>New Ticket</h3>
+            <div class="col-md-8">
+                <h3>Whats the problem?</h3>
 
-            <form name="form">
-                <div class="form-group" >
-                    <label>Subject:</label>
-                    <input type="text" class="form-control" ng-model="ticket.title">
+                <div class="list-group">
+                    <a ng-repeat="option in options"
+                       class="list-group-item"
+                       ng-click="selectOption(option)">
+
+                        <h4 class="list-group-item-heading">[[ option.header ]]</h4>
+                        <p class="list-group-item-text">[[ option.body ]]</p>
+
+                    </a>
                 </div>
 
 
+            </div>
 
-                <label>Body:</label>
-                </br>
+            <div class="col-md-4">
+                </p>
+            </div>
 
-                <div class="form-group" text-angular ng-model="ticket.body">
-                </div>
-
-                <br>
-
-                <a type="button" class="btn btn-success pull-right"
-                        ng-click="submitTicket()"
-                        href="/tickets/index">
-                    <i class="fa fa-plus"></i> Submit Ticket
-                </a>
-            </form>
 
 
         </div>
 
-        <div class="col-md-4">
-            </p>
+        <div class="row col-lg-12" ng-show="getStage() == STAGE_CREATE_TICKET">
+
+
+            <div class="col-md-8">
+                <h3>New Ticket</h3>
+
+                <form name="form">
+                    <div class="form-group" >
+                        <label>Subject:</label>
+                        <input type="text" class="form-control" ng-model="ticket.title">
+                    </div>
+
+
+
+                    <label>Body:</label>
+                    </br>
+
+                    <div class="form-group" text-angular ng-model="ticket.body">
+                    </div>
+
+                    <br>
+
+                    <a type="button" class="btn btn-success pull-right"
+                       ng-click="submitTicket()"
+                       href="/tickets/index">
+                        <i class="fa fa-plus"></i> Submit Ticket
+                    </a>
+                </form>
+
+
+            </div>
+
+            <div class="col-md-4">
+                </p>
+            </div>
+
+
+
         </div>
-
-
+        </div>
 
     </div>
+
+
 
 
 @stop

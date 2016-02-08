@@ -8,21 +8,12 @@
                 </div>
             <div class="modal-body">
                 <div class="list-group">
-                    <a href="/tickets/create" class="list-group-item active">
-                        <h4 class="list-group-item-heading">Report a problem with a book</h4>
-                        <p class="list-group-item-text">Select this option if you have a problem with the books.</p>
-                    </a>
-                    <a href="/tickets/create" class="list-group-item">
-                        <h4 class="list-group-item-heading">Report a problem with courses</h4>
-                        <p class="list-group-item-text">Select this option if there is an error in the courses.</p>
-                    </a>
-                    <a href="/tickets/create" class="list-group-item">
-                        <h4 class="list-group-item-heading">Ask a question</h4>
-                        <p class="list-group-item-text">Ask a general question about the Faculty Book Ordering System.</p>
-                    </a>
-                    <a href="#" class="list-group-item">
-                        <h4 class="list-group-item-heading">Frequently asked questions</h4>
-                        <p class="list-group-item-text">Q: Why can't Maria come up with good descriptions? A: No one knows.</p>
+                    <a ng-repeat="option in HelpService.options"
+                       href="[[ option.href ]]"
+                       class="list-group-item"
+                       ng-click="setSelected(option)">
+                            <h4 class="list-group-item-heading">[[ option.header ]]</h4>
+                            <p class="list-group-item-text">[[ option.body ]]</p>
                     </a>
                 </div>
             </div>

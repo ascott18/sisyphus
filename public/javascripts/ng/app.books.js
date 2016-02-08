@@ -10,7 +10,13 @@ app.directive('bookEditor', function() {
     };
 });
 
-app.controller('BooksController', function($scope, $http) {
+app.controller('BooksController', ['$scope', '$http', 'HelpService', function($scope, $http, HelpService) {
+
+    var helpOptions =  [{header: "Report Error in Books", body: "Select this option if there is an error in the books", href: "/tickets/create"},
+        {header: "Report Error in Book Details", body: "Select this option is there is an error in the book details you would like to report",  href: "/tickets/create"}];
+
+    HelpService.updateOptions(helpOptions);
+
     var ctrl = this;
 
     this.displayed = [];
@@ -53,7 +59,7 @@ app.controller('BooksController', function($scope, $http) {
         );
 
     }
-});
+}]);
 
 app.controller('EditBookController', function($scope, $http) {
     $scope.authors = [];
@@ -100,11 +106,17 @@ app.controller('EditBookController', function($scope, $http) {
     $scope.reset();
 });
 
-app.controller('BookDetailsController', function($scope, $http) {
+app.controller('BookDetailsController', ['$scope', '$http', 'HelpService', function($scope, $http, HelpService) {
     var ctrl = this;
+
+
 
     $scope.book_id = book_id_init;
     $scope.book_isbn_13 = book_isbn_13_init;
+
+    var helpOptions =  [{header: "Report Error in Book Details", body: "Select this option is there is an error in the book details you would like to report",  href: "/tickets/create", book_id : $scope.book_id}];
+
+    HelpService.updateOptions(helpOptions);
 
     /* TODO: We need a missing thumbnail image */
     $scope.book_cover_img = "";
@@ -133,7 +145,7 @@ app.controller('BookDetailsController', function($scope, $http) {
                 }
             }
         );
-    }
+    };
 
     //$scope.getLaravelImage();
     $scope.getBookCoverImage();
@@ -178,4 +190,4 @@ app.controller('BookDetailsController', function($scope, $http) {
             }
         );
     }
-});
+}]);
