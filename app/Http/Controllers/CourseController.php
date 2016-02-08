@@ -208,6 +208,7 @@ class CourseController extends Controller
                     $query = $query->orderBy('users.first_name');
                 }
             } else {
+                // TODO NATHAN SQL INJECTION HERE
                 if ($sort->reverse == 1)
                     $query = $query->orderBy($sort->predicate, "desc");
                 else
@@ -246,15 +247,19 @@ class CourseController extends Controller
                     return $query->select('user_id', 'first_name', 'last_name');
                 },
                 'listings',
+                'orders' => function($query) {
+                    // Just grab the IDs, since the only reason that we're doing this is to count the orders.
+                    // We need the course id so that we can match up the orders that we get back with each course.
+                    return $query->select('course_id');
+                },
             ]);
-
         if(isset($tableState->term_selected) && $tableState->term_selected != "") {
             $query = $query->where('term_id', '=', $tableState->term_selected);
         }
 
         if((isset($tableState->sort->predicate) && $tableState->sort->predicate == "professor")
-         || isset($tableState->search->predicateObject->professor) ) { // only join when we actually need it
-
+         || isset($tableState->search->predicateObject->professor) ) {
+            // only join in the professor when we actually need it
             $query->join('users','users.user_id', '=', 'courses.user_id');
         }
 
@@ -265,10 +270,6 @@ class CourseController extends Controller
 
 
         $courses = SearchServiceProvider::paginate($query, 10);
-
-        foreach ($courses as $course) {
-            $course->order_count = Order::where('course_id', '=', $course->course_id)->count();
-        }
 
         return response()->json($courses);
     }

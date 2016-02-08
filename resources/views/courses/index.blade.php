@@ -62,8 +62,8 @@
                                 <td>[[ course.listings[0].name ]]</td>
                                 <td>[[ course.user.last_first_name || 'TBA' ]]</td>
                                 <td>
-                                    <div ng-show="course.order_count > 0 || course.no_book != 0">Yes</div>
-                                    <div ng-show="course.order_count == 0 && course.no_book == 0">No</div>
+                                    <div ng-show="course.orders.length > 0 || course.no_book != 0">Yes</div>
+                                    <div ng-show="course.orders.length == 0 && course.no_book == 0">No</div>
                                 </td>
                                 <td><a class="btn btn-sm btn-primary" href="/courses/details/[[course.course_id]]" role="button">
                                         Details <i class="fa fa-arrow-right"></i>

@@ -1,4 +1,4 @@
-var app = angular.module('sisyphus', ['sisyphus.helpers', 'sisyphus.helpers.isbnHyphenate', 'ui.bootstrap' , 'smart-table', 'ngSanitize', 'ngCsv', 'sly']);
+var app = angular.module('sisyphus', ['sisyphus.helpers', 'sisyphus.helpers.isbnHyphenate', 'ui.bootstrap' , 'smart-table', 'ngSanitize', 'ngCsv']);
 
 
 
@@ -66,7 +66,7 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
             name: 'Course',
             value: function(courseOrderObj){ return courseOrderObj.course.listings[0].department + ' ' + $filter('zpad')(courseOrderObj.course.listings[0].number, 3) },
             sort: true,
-            width: "6.5em"
+            width: "7em"
         },
         {
             name: 'Section',

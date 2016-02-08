@@ -78,6 +78,7 @@ class BookController extends Controller
                     $query = $query->orderBy('authors.name');
                 }
             } else {
+                // TODO NATHAN SQL INJECTION HERE
                 if ($sort->reverse == 1)
                     $query = $query->orderBy($sort->predicate, "desc");
                 else
