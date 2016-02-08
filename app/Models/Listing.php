@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -32,6 +33,29 @@ class Listing extends Model
      * @var array
      */
     protected $guarded = ['listing_id'];
+
+    /**
+     * The "booting" method of the model.
+     *
+     * @return void
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Ensure that our ordering of listings is correct.
+        // The 'primary' listing of a course is always going to be the one with the lowest pk.
+        // MySQL doesn't guarantee any sort of ordering with plain select statements, so we do
+        // this to help ensure that things are always consistent.
+        static::addGlobalScope('order', function(Builder $builder) {
+            $builder->orderBy('listing_id');
+        });
+    }
+
+    public function displayIdentifier()
+    {
+        return $this->department . ' ' . str_pad($this->number, 3, '0', STR_PAD_LEFT) . '-' . str_pad($this->section, 2, '0', STR_PAD_LEFT);
+    }
 
     public function course()
     {

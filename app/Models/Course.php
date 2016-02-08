@@ -43,12 +43,6 @@ class Course extends Model
      */
     protected $guarded = ['course_id'];
 
-
-    public function displayIdentifier()
-    {
-        return $this->department . ' ' . str_pad($this->course_number, 3, '0', STR_PAD_LEFT) . '-' . str_pad($this->course_section, 2, '0', STR_PAD_LEFT);
-    }
-
     public function orders()
     {
         return $this->hasMany('App\Models\Order', 'course_id', 'course_id');

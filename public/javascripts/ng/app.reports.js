@@ -1,21 +1,60 @@
-var app = angular.module('sisyphus', ['sisyphus.helpers', 'sisyphus.helpers.isbnHyphenate', 'ui.bootstrap' , 'smart-table', 'ngSanitize', 'ngCsv', 'vs-repeat']);
+var app = angular.module('sisyphus', ['sisyphus.helpers', 'sisyphus.helpers.isbnHyphenate', 'ui.bootstrap' , 'smart-table', 'ngSanitize', 'ngCsv', 'sly']);
 
-app.controller('ReportsController', function($scope, $http, $filter, $rootScope, $timeout) {
+
+
+app.directive('superFastTable', function($http) {
+    return {
+        restrict: 'A',
+        scope: {
+            tableData: '='
+        },
+        link: function(scope, element, attrs) {
+            scope.$watch('tableData', function(rows, oldValue) {
+                if (rows)
+                {
+                    var tbody = document.createElement("tbody");
+                    for (var r = 0; r < rows.length; r++){
+                        var tr = document.createElement("tr");
+                        var row = rows[r];
+                        for (var c = 0; c < row.length; c++){
+                            var td = document.createElement("td");
+                            td.appendChild(document.createTextNode(row[c] || ""));
+                            tr.appendChild(td);
+                        }
+                        tbody.appendChild(tr);
+                    }
+
+                    $(element).find("tbody").replaceWith(tbody);
+                }
+                else
+                {
+                    $(element).find("tbody").html("");
+                }
+            }, true);
+        }
+    }
+});
+
+
+app.controller('ReportsController', function($scope, $http, $filter, $q) {
     $scope.STAGE_SELECT_FIELDS= 1;
     $scope.STAGE_VIEW_REPORT = 2;
     $scope.stage = $scope.STAGE_SELECT_FIELDS;
 
 
-    // TODO: hook me up with some good checkbox stuff.
-    //$scope.groupBySection = true;
-
     var dateGrouper = function(values){
-        if (values.Count("$") == 0)
-            return "";
-        else if (values.Count("$") == 1)
+        var count = values.Count('');
+        if (count == 0)
+            return '';
+        else if (count == 1)
             return values.First();
-        else
-            return values.MinBy(function(time){ return moment(time).unix()}) + ' - ' + values.MaxBy(function(time){ return moment(time).unix()});
+        else{
+            var first = values.MinBy(function(time){ return moment(time).unix()});
+            var last = values.MaxBy(function(time){ return moment(time).unix()});
+            if (first == last)
+                return first;
+            return first + ' - ' + last;
+        }
     };
 
     $scope.options = [
@@ -24,17 +63,13 @@ app.controller('ReportsController', function($scope, $http, $filter, $rootScope,
             value: function(courseOrderObj){ return courseOrderObj.course.listings[0].name }
         },
         {
-            name: 'Course Subject',
-            value: function(courseOrderObj){ return courseOrderObj.course.listings[0].department },
-            sort: true
+            name: 'Course',
+            value: function(courseOrderObj){ return courseOrderObj.course.listings[0].department + ' ' + $filter('zpad')(courseOrderObj.course.listings[0].number, 3) },
+            sort: true,
+            width: "6.5em"
         },
         {
-            name: 'Course Number',
-            value: function(courseOrderObj){ return $filter('zpad')(courseOrderObj.course.listings[0].number, 3) },
-            sort: true
-        },
-        {
-            name: 'Course Section',
+            name: 'Section',
             value: function(courseOrderObj){ return $filter('zpad')(courseOrderObj.course.listings[0].section, 2) },
             group: function(values){
                 return values.OrderBy().ToString(", ");
@@ -44,7 +79,8 @@ app.controller('ReportsController', function($scope, $http, $filter, $rootScope,
         {
             name: 'Instructor',
             value: function(courseOrderObj){
-                return courseOrderObj.course.user ? $scope.groupBySection ? courseOrderObj.course.user.last_name : courseOrderObj.course.user.last_first_name : 'TBA'
+                return courseOrderObj.course.user ? courseOrderObj.course.user.last_name : 'TBA';
+                //return courseOrderObj.course.user ? $scope.groupBySection ? courseOrderObj.course.user.last_name : courseOrderObj.course.user.last_first_name : 'TBA'
             },
             group: function(values){
                 return values.OrderBy().Distinct().ToString("; ");
@@ -59,7 +95,8 @@ app.controller('ReportsController', function($scope, $http, $filter, $rootScope,
             name: 'ISBN',
             value: function(courseOrderObj){
                 return $filter('isbnHyphenate')(courseOrderObj.book.isbn13);
-            }
+            },
+            width: "10.5em"
         },
         {
             name: 'Author',
@@ -81,7 +118,7 @@ app.controller('ReportsController', function($scope, $http, $filter, $rootScope,
             value: function(courseOrderObj){ return courseOrderObj.book.publisher }
         },
         {
-            name: 'Required?',
+            name: 'Req?',
             value: function(courseOrderObj){ return courseOrderObj.order.required ? 'Yes' : 'No'}
         },
         {
@@ -93,13 +130,13 @@ app.controller('ReportsController', function($scope, $http, $filter, $rootScope,
             value: function(courseOrderObj){ return moment(courseOrderObj.order.created_at).format('l') },
             group: dateGrouper
         },
-        {
-            name: 'Course Has Requests?',
-            value: function(courseOrderObj){ return (courseOrderObj.course.orders && courseOrderObj.course.orders.length) ? 'Yes' : 'No' },
-            shouldShow: function(){
-                return !$scope.ReportType || $scope.ReportType == 'courses'
-            }
-        },
+        //{
+        //    name: 'Course Has Requests?',
+        //    value: function(courseOrderObj){ return (courseOrderObj.course.orders && courseOrderObj.course.orders.length) ? 'Yes' : 'No' },
+        //    shouldShow: function(){
+        //        return !$scope.ReportType || $scope.ReportType == 'courses'
+        //    }
+        //},
         {
             name: 'Request Deleted?',
             value: function(courseOrderObj){ return (courseOrderObj.order.deleted_at) ? 'Yes' : 'No' },
@@ -148,6 +185,9 @@ app.controller('ReportsController', function($scope, $http, $filter, $rootScope,
 
     $scope.setStage = function(stage){
         $scope.stage = stage;
+
+        if (stage == $scope.STAGE_SELECT_FIELDS && $scope.canceler)
+            $scope.canceler.resolve();
     };
 
     $scope.shouldOptionShow = function(optionProperties){
@@ -188,7 +228,7 @@ app.controller('ReportsController', function($scope, $http, $filter, $rootScope,
     };
 
     $scope.getReportCsvFileName = function(){
-        return "books-report_" + moment().format("YYYY-MM-DD-hh_mm-ss-a") + ".csv";
+        return $scope.TermSelected.display_name + " report " + moment().format("YYYY-MM-DD_hh-mm-ss-a") + ".csv";
     };
 
     $scope.submit = function()
@@ -210,6 +250,7 @@ app.controller('ReportsController', function($scope, $http, $filter, $rootScope,
             }
         }
 
+        $scope.canceler = $q.defer();
         $http.post('/reports/submit-report', {
                 startDate: $scope.reportDateStart,
                 endDate: $scope.reportDateEnd,
@@ -217,7 +258,7 @@ app.controller('ReportsController', function($scope, $http, $filter, $rootScope,
                 include: $scope.include,
                 term_id: $scope.TermSelected.term_id,
                 departments: $scope.DeptsSelected,
-        }).then(function(response) {
+        }, {timeout: $scope.canceler.promise}).then(function(response) {
             var courses = Enumerable.From(response.data['courses']);
 
             var reportRows = courses
@@ -273,18 +314,22 @@ app.controller('ReportsController', function($scope, $http, $filter, $rootScope,
                         // This is our comparison function. We use a jsonified version of the row with the section
                         // omitted to group by everything except the section and dates.
                         var selector = row.slice();
-                        for (var index in groupColumns)
-                            selector[groupColumns[index]] = null;
+                        for (var i in groupColumns)
+                            selector[groupColumns[i]] = null;
                         return JSON.stringify(selector);
                     });
                 }
             }
 
             // Filter out any columns that the user did not select.
+            var columnIsSelectedMap = [];
+            for (var i = 0; i < $scope.options.length; i++){
+                columnIsSelectedMap[i] = $scope.ColumnsSelected.indexOf($scope.options[i]) >= 0;
+            }
             reportRows = reportRows.Select(function(row){
                     var filteredRow = [];
-                    for (var i = 0; i < $scope.options.length; i++){
-                        if ($scope.ColumnsSelected.indexOf($scope.options[i]) >= 0)
+                    for (var i = 0; i < columnIsSelectedMap.length; i++){
+                        if (columnIsSelectedMap[i])
                             filteredRow.push(row[i]);
                     }
 

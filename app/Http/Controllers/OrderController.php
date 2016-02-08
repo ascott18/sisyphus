@@ -30,9 +30,9 @@ class OrderController extends Controller
      */
     public function getIndex(Request $request)
     {
-        if ($request->user()->may('place-all-orders'))
-            return $this->getList($request);
-        else
+        //if ($request->user()->may('place-all-orders'))
+        //    return $this->getList($request);
+        //else
             return $this->getCreate($request, null);
     }
 
@@ -122,22 +122,22 @@ class OrderController extends Controller
      * @param Request $request
      * @return \Illuminate\View\View
      */
-    public function getList(Request $request) {
-        $this->authorize("all");
-
-        $user = $request->user();
-
-        $currentTermIds = Term::currentTerms()->pluck('term_id');
-        $userTermIds = Course::visible($user)->distinct()->pluck('term_id');
-
-        $allRelevantTermIds = $currentTermIds->merge($userTermIds)->unique();
-
-        $terms = Term::whereIn('term_id', $allRelevantTermIds)
-            ->orderBy('term_id', 'DESC')
-            ->get();
-
-        return view('orders.list',['terms' => $terms]);
-    }
+//    public function getList(Request $request) {
+//        $this->authorize("all");
+//
+//        $user = $request->user();
+//
+//        $currentTermIds = Term::currentTerms()->pluck('term_id');
+//        $userTermIds = Course::visible($user)->distinct()->pluck('term_id');
+//
+//        $allRelevantTermIds = $currentTermIds->merge($userTermIds)->unique();
+//
+//        $terms = Term::whereIn('term_id', $allRelevantTermIds)
+//            ->orderBy('term_id', 'DESC')
+//            ->get();
+//
+//        return view('orders.list',['terms' => $terms]);
+//    }
 
     /**
      * Build the search query for the books controller

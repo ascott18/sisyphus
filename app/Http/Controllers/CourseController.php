@@ -248,6 +248,9 @@ class CourseController extends Controller
                 'listings',
             ]);
 
+        if(isset($tableState->term_selected) && $tableState->term_selected != "") {
+            $query = $query->where('term_id', '=', $tableState->term_selected);
+        }
 
         if((isset($tableState->sort->predicate) && $tableState->sort->predicate == "professor")
          || isset($tableState->search->predicateObject->professor) ) { // only join when we actually need it
