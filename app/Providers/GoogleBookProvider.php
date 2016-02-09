@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Http\Response;
 use Illuminate\Support\ServiceProvider;
 use Cache;
 
@@ -27,10 +28,17 @@ class GoogleBookProvider extends ServiceProvider
         $cachedValue = Cache::get('isbn-'.$isbn);
 
         if($cachedValue == null) {
-            $newValue = json_decode(file_get_contents('https://www.googleapis.com/books/v1/volumes?q=isbn:' . $isbn . '&key='.config('app.google_api_key')));
+            $apiURL = 'https://www.googleapis.com/books/v1/volumes?q=isbn:' . $isbn;
+            if(config('app.google_api_key') != '') {
+                $apiURL .= '&key='.config('app.google_api_key');
+            }
+
+            $newValue = json_decode(file_get_contents($apiURL));
+
             if($newValue != null) {
                 Cache::put('isbn-'.$isbn, $newValue, static::CACHE_DURATION);
             }
+
             return $newValue;
         } else {
             return $cachedValue;
@@ -58,9 +66,13 @@ class GoogleBookProvider extends ServiceProvider
 
                 Cache::put($imageURL, ['image' => $image, 'contentType' => $contentType], static::CACHE_DURATION);
 
-                return response($image, 200, ['Content-Type' => $contentType]);
+                return response($image,
+                    Response::HTTP_OK,
+                    ['Content-Type' => $contentType]);
             } else {
-                return response($cachedImage['image'], 200, ['Content-Type' => $cachedImage['contentType']]);
+                return response($cachedImage['image'],
+                    Response::HTTP_OK,
+                    ['Content-Type' => $cachedImage['contentType']]);
             }
         } else {
             return response(file_get_contents(public_path('images/coverNotAvailable.jpg')), 200, ['Content-Type' => 'image/jpeg']);

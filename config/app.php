@@ -93,7 +93,7 @@ return [
     | get requests on any Google API
     */
 
-    'google_api_key' => env('GOOGLE_API_KEY', 'SomeRandomString'),
+    'google_api_key' => env('GOOGLE_API_KEY', ''),
 
     /*
     |--------------------------------------------------------------------------

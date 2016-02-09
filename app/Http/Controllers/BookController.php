@@ -8,6 +8,7 @@ use Cache;
 use App\Models\Book;
 use App\Models\Course;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use SearchHelper;
 use GoogleBooks;
 
@@ -254,6 +255,11 @@ class BookController extends Controller
 
     public function getCover(Request $request) {
         $this->authorize("all");
+
+        if(!preg_match('/[0-9\-]{13,20}/', $request->input('isbn')))
+            return response(file_get_contents(public_path('images/badRequest.jpg')),
+                Response::HTTP_BAD_REQUEST,
+                ['Content-Type' => 'image/jpeg']);
 
         if($request->input('isbn') != '') {
             return GoogleBooks::getCoverThumbnail($request->input('isbn'));
