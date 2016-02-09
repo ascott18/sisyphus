@@ -2,6 +2,8 @@
 <div class="pull-right"><?php echo date("m/d/Y, h:i:s a");?></div>
 <h1>Textbook Request Checksheet</h1>
 
+<!-- TODO: this file is no longer used. consider getting rid of it. -->
+
 <style>
     td, th{font-family: sans-serif;font-size:10pt;}
      table {

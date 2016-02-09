@@ -22,7 +22,8 @@
                         @can('create-courses')
                             <a href="/courses/create/{{$term->term_id}}" class="btn btn-primary"><i class="fa fa-plus"></i> Create Course</a>
                         @endcan
-                        <a href="/terms/check/{{$term->term_id}}" class="btn btn-primary">View Checksheet</a>
+                        {{--<a href="/terms/check/{{$term->term_id}}" class="btn btn-primary">View Checksheet</a>--}}
+
 
                         <dl class="dl-horizontal">
                             <dt>Term</dt>

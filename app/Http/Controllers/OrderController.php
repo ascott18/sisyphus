@@ -91,18 +91,18 @@ class OrderController extends Controller
 
             // Grab all the courses that are similar to the one requested.
             // Similar means same department and course number, and offered during the same term.
-            $courses = Course::orderable()
-                ->where('department', '=', $course->department)
-                ->where('course_number', '=', $course->course_number)
+            $query = Course::orderable()
+                ->whereIn('course_id', $course->getSimilarCourseIdsQuery())
                 ->where('term_id', '=', $course->term_id)
-                ->orWhere('course_id', '=', $course->course_id)
+                ->orWhere('courses.course_id', '=', $course->course_id)
                 ->with([
                     'listings',
                     'orders.book',
                     'user' => function($query){
                         return $query->select('user_id', 'first_name', 'last_name');
-                }])
-                ->get();
+                }]);
+
+            $courses = $query->get();
 
             // Make sure that the requested course ends up in the list.
             // If we're debugging unauthorized actions, because of the way Course::orderable() works,
@@ -146,20 +146,20 @@ class OrderController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    private function buildListSearchQuery($tableState, $query) {
-        $predicateObject = [];
-        if(isset($tableState->search->predicateObject))
-            $predicateObject = $tableState->search->predicateObject; // initialize predicate object
-
-        if(isset($predicateObject->title))
-            $query = $query->where('title', 'LIKE', '%'.$predicateObject->title.'%');
-        if(isset($predicateObject->section))
-            Searchhelper::sectionSearchQuery($query, $predicateObject->section);
-        if(isset($predicateObject->course_name))
-            $query = $query->where('course_name', 'LIKE', '%'.$predicateObject->course_name.'%');
-
-        return $query;
-    }
+//    private function buildListSearchQuery($tableState, $query) {
+//        $predicateObject = [];
+//        if(isset($tableState->search->predicateObject))
+//            $predicateObject = $tableState->search->predicateObject; // initialize predicate object
+//
+//        if(isset($predicateObject->title))
+//            $query = $query->where('title', 'LIKE', '%'.$predicateObject->title.'%');
+//        if(isset($predicateObject->section))
+//            Searchhelper::sectionSearchQuery($query, $predicateObject->section);
+//        if(isset($predicateObject->course_name))
+//            $query = $query->where('course_name', 'LIKE', '%'.$predicateObject->course_name.'%');
+//
+//        return $query;
+//    }
 
     /**
      * Build the sort query for the book detail list
@@ -168,39 +168,39 @@ class OrderController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    private function buildListSortQuery($tableState, $query) {
-        if(isset($tableState->sort->predicate)) {
-            $sort = $tableState->sort;
-            if ($sort->predicate == "section") { // special case because of joined tables
-                if ($sort->reverse == 1) {
-                    $query = $query->orderBy("department", "desc")
-                        ->orderBy("course_number", "desc")
-                        ->orderBy("course_section", "desc");
-                } else {
-                    $query = $query->orderBy("department")
-                        ->orderBy("course_number")
-                        ->orderBy("course_section");
-                }
-            } else if ($sort->predicate == "created_at") { // created at needed a special case due to ambiguity
-                if ($sort->reverse == 1)
-                    $query = $query->orderBy('orders.created_at', "desc");
-                else
-                    $query = $query->orderBy('orders.created_at');
-            } else if ($sort->predicate == "course_name") {
-                if ($sort->reverse == 1)
-                    $query = $query->orderBy('courses.course_name', "desc");
-                else
-                    $query = $query->orderBy('courses.course_name');
-            } else {
-                if ($sort->reverse == 1)
-                    $query = $query->orderBy($sort->predicate, "desc");
-                else
-                    $query = $query->orderBy($sort->predicate);
-            }
-        }
-
-        return $query;
-    }
+//    private function buildListSortQuery($tableState, $query) {
+//        if(isset($tableState->sort->predicate)) {
+//            $sort = $tableState->sort;
+//            if ($sort->predicate == "section") { // special case because of joined tables
+//                if ($sort->reverse == 1) {
+//                    $query = $query->orderBy("department", "desc")
+//                        ->orderBy("course_number", "desc")
+//                        ->orderBy("course_section", "desc");
+//                } else {
+//                    $query = $query->orderBy("department")
+//                        ->orderBy("course_number")
+//                        ->orderBy("course_section");
+//                }
+//            } else if ($sort->predicate == "created_at") { // created at needed a special case due to ambiguity
+//                if ($sort->reverse == 1)
+//                    $query = $query->orderBy('orders.created_at', "desc");
+//                else
+//                    $query = $query->orderBy('orders.created_at');
+//            } else if ($sort->predicate == "course_name") {
+//                if ($sort->reverse == 1)
+//                    $query = $query->orderBy('courses.course_name', "desc");
+//                else
+//                    $query = $query->orderBy('courses.course_name');
+//            } else {
+//                if ($sort->reverse == 1)
+//                    $query = $query->orderBy($sort->predicate, "desc");
+//                else
+//                    $query = $query->orderBy($sort->predicate);
+//            }
+//        }
+//
+//        return $query;
+//    }
 
     /** GET: /orders/order-list?page={}&{sort=}&{dir=}
      * searches the order list
@@ -208,29 +208,29 @@ class OrderController extends Controller
      * @param \Illuminate\Database\Eloquent\Builder
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getOrderList(Request $request)
-    {
-        $tableState = json_decode($request->input('table_state'));
-
-        $this->authorize("all"); // TODO: fix authorize permission
-
-        $query = Course::visible($request->user());
-
-        $query = $query->join('orders', 'courses.course_id', '=', 'orders.course_id'); // join before to get order department
-        $query = $query->join('books', 'orders.book_id', '=', 'books.book_id'); // get the books
-
-        if(isset($tableState->term_id) && $tableState->term_id != "")
-            $query = $query->where('term_id', '=', $tableState->term_id);
-
-        $query = $this->buildListSearchQuery($tableState, $query); // build the search query
-        $query = $this->buildListSortQuery($tableState, $query); // build the sort query
-
-        $query->with("term"); // easily get the term name
-
-        $orders = $query->paginate(10);
-
-        return response()->json($orders);
-    }
+//    public function getOrderList(Request $request)
+//    {
+//        $tableState = json_decode($request->input('table_state'));
+//
+//        $this->authorize("all"); // TODO: fix authorize permission
+//
+//        $query = Course::visible($request->user());
+//
+//        $query = $query->join('orders', 'courses.course_id', '=', 'orders.course_id'); // join before to get order department
+//        $query = $query->join('books', 'orders.book_id', '=', 'books.book_id'); // get the books
+//
+//        if(isset($tableState->term_id) && $tableState->term_id != "")
+//            $query = $query->where('term_id', '=', $tableState->term_id);
+//
+//        $query = $this->buildListSearchQuery($tableState, $query); // build the search query
+//        $query = $this->buildListSortQuery($tableState, $query); // build the sort query
+//
+//        $query->with("term"); // easily get the term name
+//
+//        $orders = $query->paginate(10);
+//
+//        return response()->json($orders);
+//    }
 
     public function postNoBook(Request $request)
     {
@@ -266,6 +266,7 @@ class OrderController extends Controller
     }
 
 
+
     /**
      * @param $id int course id to get books for.
      * @return \Illuminate\Http\JsonResponse
@@ -279,14 +280,7 @@ class OrderController extends Controller
         // Find any listings that have the same department and number,
         // and then get the course_id of those listings.
         // This gives us any courses that are effectively the same course as this one.
-        $similarCourseIdsQuery = Listing::select('course_id');
-        foreach ($course->listings as $listing) {
-            $similarCourseIdsQuery = $similarCourseIdsQuery
-                ->orWhere(['department' => $listing->department, 'number' => $listing->number]);
-        }
-        $similarCourseIdsQuery = $similarCourseIdsQuery
-            ->distinct()
-            ->toBase();
+        $similarCourseIdsQuery = $course->getSimilarCourseIdsQuery();
 
         $courses =
             Course::

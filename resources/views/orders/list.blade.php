@@ -47,8 +47,9 @@
                             <tbody>
 
                             <tr ng-cloak ng-repeat="order in mc.displayed">
-                                <td>[[ order.department ]] [[ order.course_number | zpad:3 ]]-[[ order.course_section | zpad:2 ]]</td>
-                                <td>[[ order.course_name ]]</td>
+                                {{-- This file is unused since the upadte to accomodate for listings. --}}
+                                {{--<td>[[ order.department ]] [[ order.course_number | zpad:3 ]]-[[ order.course_section | zpad:2 ]]</td>--}}
+                                {{--<td>[[ order.course_name ]]</td>--}}
                                 <td>[[ order.title ]]</td>
                                 <td>[[ order.term.display_name ]]</td>
                                 <td>[[ order.created_at | moment:'ll' ]]</td>

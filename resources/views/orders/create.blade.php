@@ -521,7 +521,7 @@
                             </div>
                             <div class="col-md-6 col-md-vspace">
                                 <ul style="">
-                                    <li ng-repeat="courseOrder in bookData | orderBy:'course.course_section'">
+                                    <li ng-repeat="courseOrder in bookData | orderBy:'course.listings[0].section'">
                                         <course-with-listings course="courseOrder.course">
                                              -
                                             <span ng-if="!courseOrder.notPlaced">
