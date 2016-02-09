@@ -5,20 +5,20 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\User;
-use App\Models\Order;
 use App\Providers\SearchServiceProvider;
 use Illuminate\Http\Request;
 use App\Models\Term;
-use Illuminate\Database\Query\Builder;
 use SearchHelper;
 
 class CourseController extends Controller
 {
     public static $CourseValidation = [
-        'course.department' => 'required|string|min:2|max:10',
-        'course.course_name' => 'required|string',
-        'course.course_number' => 'required|numeric',
-        'course.course_section' => 'required|numeric',
+        'course.listings' => 'required',
+        'course.listings.0' => 'required',
+        'course.listings.0.name' => 'required|string',
+        'course.listings.*.department' => 'required|string|min:2|max:10',
+        'course.listings.*.number' => 'required|numeric',
+        'course.listings.*.section' => 'required|numeric',
     ];
 
     /**
@@ -73,7 +73,7 @@ class CourseController extends Controller
      */
     public function getEdit($id)
     {
-        $course = Course::findOrFail($id);
+        $course = Course::with('listings')->findOrFail($id);
 
         $this->authorize("edit-course", $course);
 
@@ -97,6 +97,23 @@ class CourseController extends Controller
 
         $course = $this->cleanCourseForCreateOrEdit($request);
         unset($course['term_id']);
+
+        $listings = $course['listings'];
+        unset($course['listings']);
+
+
+        for ($i = 0; $i < count($dbCourse->listings); $i++) {
+            $existingListing = $dbCourse->listings[$i];
+
+            if (isset($listings[$i]))
+                $existingListing->update($listings[$i]);
+            else
+                $existingListing->delete();
+        }
+        for ($i = count($dbCourse->listings); $i < count($listings); $i++){
+            $dbCourse->listings()->create($listings[$i]);
+        }
+
 
         $dbCourse->update($course);
         $dbCourse->save();
@@ -127,8 +144,15 @@ class CourseController extends Controller
     {
         $course = $request->input('course');
 
-        $course['department'] = trim($course['department']);
-        $course['course_name'] = trim($course['course_name']);
+        // TODO: silently delete any duplicate listings that come in. no need to yell at the user about it.
+
+
+        $name = $course['listings'][0]['name'] = trim($course['listings'][0]['name']);
+
+        foreach ($course['listings'] as &$listing) {
+            $listing['department'] = strtoupper(trim($listing['department']));
+            $listing['name'] = $name;
+        }
 
         // The professor of a course is nullable. Check for empty strings and manually set to null.
         if (!isset($course['user_id']) || !$course['user_id']) $course['user_id'] = null;
@@ -143,13 +167,20 @@ class CourseController extends Controller
 
         $course = $this->cleanCourseForCreateOrEdit($request);
 
+        $listings = $course['listings'];
+        unset($course['listings']);
+
         $dbCourse = new Course($course);
 
         // Authorize that the user can indeed create this course before actually saving it.
         $this->authorize("create-course", $dbCourse);
 
         // They can indeed create this course, so it is now safe to save to the database.
+
         $dbCourse->save();
+        for ($i = 0; $i < count($listings); $i++){
+            $dbCourse->listings()->create($listings[$i]);
+        }
 
         return redirect('courses/details/' . $dbCourse->course_id);
     }

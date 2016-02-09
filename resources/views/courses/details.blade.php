@@ -17,11 +17,10 @@
                 <div class="panel-body">
 
                     @can('edit-course', $course)
-                    <div class="col-md-12">
-                        <a class="btn btn-primary" href="/courses/edit/{{ $course->course_id }}" role="button">
-                            <i class="fa fa-pencil"></i> Edit
-                        </a>
-                    </div>
+                    <a class="btn btn-primary" href="/courses/edit/{{ $course->course_id }}" role="button">
+                        <i class="fa fa-pencil"></i> Edit
+                    </a>
+                    <br>
                     @endcan
 
                     <dl class="col-lg-4 col-md-6 dl-horizontal">
@@ -30,20 +29,19 @@
                             {{ $course->listings[0]->name }}
                         </dd>
 
-                        <dt>Subject</dt>
+                        <dt>Identifier</dt>
                         <dd>
-                            {{ $course->listings[0]->department }}
+                            {{ $course->listings[0]->displayIdentifier() }}
                         </dd>
 
-                        <dt>Number</dt>
-                        <dd>
-                            {{ $course->listings[0]->number }}
-                        </dd>
-
-                        <dt>Section</dt>
-                        <dd>
-                            {{ $course->listings[0]->section }}
-                        </dd>
+                        @if (count($course->listings) > 1)
+                            <dt>Cross-Listings</dt>
+                            <dd>
+                                @foreach($course->listings->slice(1) as $listing)
+                                    {{ $listing->displayIdentifier() }} <br>
+                                @endforeach
+                            </dd>
+                        @endif
                     </dl>
 
                     <dl class="col-lg-4 col-md-6 dl-horizontal">
