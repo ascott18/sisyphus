@@ -28,17 +28,17 @@ app.controller('NewTicketController', ['$scope', '$http', 'HelpService', functio
 
     $scope.STAGE_SELECT_OPTIONS = 0;
     $scope.STAGE_CREATE_TICKET = 1;
+    $scope.stage = $scope.stage = $scope.STAGE_CREATE_TICKET;
 
     $scope.options = [];
     $scope.selectedOption = {};
 
     $scope.setOptions = function(options) {
         $scope.options = options;
-        if (options.length != 0) {
-            $scope.stage = $scope.STAGE_SELECT_OPTIONS;
-        }
-        else {
-            $scope.stage = $scope.STAGE_CREATE_TICKET
+        if (options != null) {
+            if (options.length != 0) {
+                $scope.stage = $scope.STAGE_SELECT_OPTIONS;
+            }
         }
     };
 

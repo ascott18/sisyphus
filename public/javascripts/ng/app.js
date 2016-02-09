@@ -294,7 +294,7 @@ var e = new k(function() {
 });
 
 
-app.controller('HelpModalController', ['$scope', 'HelpService', function($scope, HelpService) {
+app.controller('HelpModalController', ['$scope', 'HelpService', '$http', function($scope, HelpService, $http) {
     $scope.showModal = false;
     $scope.options = HelpService.options;
 

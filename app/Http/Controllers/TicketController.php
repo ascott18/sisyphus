@@ -30,10 +30,10 @@ class TicketController extends Controller
         return view('tickets.index');
     }
 
-    public function getCreate() {
+    public function getCreate(Request $request) {
         $this->authorize("all");
         //$options = [["header" => "Header 1", "body" => "body 1"], ["header" => "Header 1", "body" => "body 1"], ["header" => "Header 1", "body" => "body 1"]];
-        $options = [];
+        $options = $request->input('options');
         return view('tickets.create', ['options' => $options]);
 
     }

@@ -158,7 +158,7 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'HelpServi
     function($scope, $http, CartService, HelpService, $location){
 
     var selectCourseHelpOptions =  [{header: "Report Error in Course List", body: "Select this option if a course you are teaching is not listed here or a course you are not teaching is listed.", href: "/tickets/create"}];
-    var selectBooksHelpOptions = [{header: "Report Problem with Book", body: "Is there a problem with a book? Please report it.", href: "/tickets/create"}];
+    var selectBooksHelpOptions = [{header: "Report Problem with Book", body: "Is there a problem with a book? Please report it.", options: {"header" : test}}];
 
     HelpService.updateOptions(selectCourseHelpOptions);
 
