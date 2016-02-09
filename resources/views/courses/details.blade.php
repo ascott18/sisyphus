@@ -1,7 +1,7 @@
 @extends('layouts.master', [
     'breadcrumbs' => [
         ['Courses', '/courses'],
-        [$course->displayIdentifier()],
+        [$course->listings[0]->displayIdentifier()],
     ]
 ])
 
@@ -27,22 +27,22 @@
                     <dl class="col-lg-4 col-md-6 dl-horizontal">
                         <dt>Title</dt>
                         <dd>
-                            {{ $course->course_name }}
+                            {{ $course->listings[0]->name }}
                         </dd>
 
                         <dt>Subject</dt>
                         <dd>
-                            {{ $course->department }}
+                            {{ $course->listings[0]->department }}
                         </dd>
 
                         <dt>Number</dt>
                         <dd>
-                            {{ $course->course_number }}
+                            {{ $course->listings[0]->number }}
                         </dd>
 
                         <dt>Section</dt>
                         <dd>
-                            {{ $course->course_section }}
+                            {{ $course->listings[0]->section }}
                         </dd>
                     </dl>
 

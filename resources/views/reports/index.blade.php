@@ -78,13 +78,13 @@
                             <div class="row">
                                 <div class="col-sm-6">
 
-                                    <h4>Select Subjects(s)</h4>
+                                    <h4>Select Subject(s)</h4>
                                     <select class="form-control"
                                             multiple
                                             size="12"
                                             ng-multiple="true"
                                             ng-model="DeptsSelected"
-                                            ng-options="dept for dept in departments">
+                                            ng-options="dept for dept in departments|orderBy:dept">
                                     </select>
                                 </div>
                                 <div class="col-sm-6 col-sm-vspace">
@@ -94,16 +94,22 @@
                                             size="12"
                                             ng-multiple="true"
                                             ng-model="ColumnsSelected"
-                                            ng-options="optionProperties.name for optionProperties in options">
+                                            ng-options="optionProperties.name for optionProperties in options | filter:{doesAutoEnforce: '!true'} | filter:shouldOptionShow">
                                     </select>
                                 </div>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" ng-model="groupBySection" />
+                                    Condense Similar Rows
+                                </label>
                             </div>
                         </div>
                     </div>
 
                     <div class="col-lg-12 col-xs-vspace">
                         <h4>What would you like included in your report?</h4>
-                        (Must select at least one)
+                        <p class="text-muted">(Must select at least one)</p>
                         <br>
 
                         <div ng-show="ReportType == 'courses'">
@@ -151,7 +157,9 @@
             </div>
         </div>
 
-        <div ng-cloak class="col-lg-12" ng-show="getStage() == STAGE_VIEW_REPORT">
+
+
+        <div ng-cloak class="col-lg-12" ng-if="getStage() == STAGE_VIEW_REPORT">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="fa fa-bar-chart"></i>
@@ -174,24 +182,32 @@
                             filename="[[getReportCsvFileName()]]">
                         <i class="fa fa-download"></i> Download CSV
                     </button>
-                    <br>
-                    <br>
 
-                    <table class="table table-hover" id="reportTable">
+
+                    <style>
+                        @media print{
+                            body {
+                                font-size: 8pt;
+                            }
+                            .panel-body > button.btn {
+                                display: none;
+                            }
+                        }
+                    </style>
+
+                    <br>
+                    <br>
+                    <table class="table table-hover" id="reportTable" super-fast-table table-data="reportRows">
                         <thead>
                             <tr>
-                                <th
-                                    ng-repeat="optionProperties in ColumnsSelected">
+                                <th ng-repeat="optionProperties in ColumnsSelected"
+                                    ng-style="{width: optionProperties.width || ''}">
                                     [[optionProperties.name]]
                                 </th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr ng-repeat="row in reportRows" >
-                                <td ng-repeat="cell in row track by $index">
-                                    [[cell]]
-                                </td>
-                            </tr>
+                        <tbody >
+                            {{-- Will be replaced by the super-fast-table directive --}}
                         </tbody>
                     </table>
                 </div>

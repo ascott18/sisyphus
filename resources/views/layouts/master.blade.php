@@ -23,7 +23,6 @@
     <link href="/stylesheets/app.css" rel="stylesheet">
     <!-- Custom Fonts-->
     <link href="/stylesheets/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
 
     <script src="/javascripts/angular.min.js"></script>
     <script src="/javascripts/ng/smart-table/smart-table.js"></script>
@@ -33,7 +32,7 @@
 </head>
 <body ng-app="sisyphus">
 <div id="wrapper">
-    <i ng-spinner ng-cloak class="fa fa-spinner fa-spin "></i>
+    <i ng-spinner ng-cloak class="fa fa-spinner fa-spin " ng-show="spinnerActive"></i>
 
     <!-- Navigation-->
     <nav role="navigation" class="navbar navbar-inverse navbar-fixed-top">
@@ -165,7 +164,7 @@
 
             <hr>
             <footer>
-                <p>&copy; 2016 - Eastern Washington University</p>
+                <p>&copy; {{date("Y")}} - Eastern Washington University</p>
                 <p class="text-muted">made with <i class="fa fa-heart" style="color: #8b001d;"></i> by EWU Computer Science students</p>
             </footer>
         </div>

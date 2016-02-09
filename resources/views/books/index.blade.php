@@ -47,7 +47,7 @@
                                 <td>[[ book.publisher ]]</td>
                                 <td>[[ book.isbn13 | isbnHyphenate]]</td>
                                 <td>
-                                    <a href="/books/details/[[ book.book_id ]]" class="btn btn-sm btn-info" role="button">
+                                    <a href="/books/details/[[ book.book_id ]]" class="btn btn-sm btn-primary" role="button">
                                         Details <i class="fa fa-arrow-right"></i>
                                     </a>
                                 </td>

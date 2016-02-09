@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
+use App\Providers\SearchServiceProvider;
 use Cache;
 use App\Models\Book;
 use App\Models\Course;
@@ -77,6 +79,7 @@ class BookController extends Controller
                     $query = $query->orderBy('authors.name');
                 }
             } else {
+                // TODO NATHAN SQL INJECTION HERE
                 if ($sort->reverse == 1)
                     $query = $query->orderBy($sort->predicate, "desc");
                 else
@@ -105,7 +108,7 @@ class BookController extends Controller
         if ($user->may('view-all-courses')){
             $query = Book::query();
         }
-        else if ($user->may('view-dept-books')){
+        else if ($user->may('view-dept-courses')){
             // Only show books that have been ordered for courses that the user
             // either teaches, or administers as a dept secretary.
             $query = Book::whereIn('books.book_id',
@@ -125,17 +128,19 @@ class BookController extends Controller
             // every single physics book just because they taught a physics class once five years ago.
             $query = Book::whereIn('books.book_id',
                 Course::where('courses.user_id', '=', $user->user_id)
-                    ->join('courses as similarCourses', function ($join) {
-                        $join->on('courses.department', '=', 'similarCourses.department')
-                            ->on('courses.course_number', '=', 'similarCourses.course_number');
+                    ->join('listings', 'courses.course_id', '=', 'listings.course_id')
+                    ->join('listings as similarListings', function ($join) {
+                        $join->on('listings.department', '=', 'similarListings.department')
+                            ->on('listings.number', '=', 'similarListings.number');
                     })
                     ->join('orders', function ($join) {
-                        $join->on('orders.course_id', '=', 'similarCourses.course_id')
+                        $join->on('orders.course_id', '=', 'similarListings.course_id')
                             ->whereNull('orders.deleted_at');
                     })
                     ->select('orders.book_id')
                     ->distinct()
-                    ->getQuery());
+                    ->getQuery()
+            );
         }
 
         if((isset($tableState->sort->predicate) && $tableState->sort->predicate == "author")
@@ -169,9 +174,9 @@ class BookController extends Controller
             $predicateObject = $tableState->search->predicateObject; // initialize predicate object
 
         if(isset($predicateObject->section))
-            SearchHelper::sectionSearchQuery($query, $predicateObject->section); // use search helper for section search
-        if(isset($predicateObject->course_name))
-            $query = $query->where('course_name', 'LIKE', '%'.$predicateObject->course_name.'%');
+            SearchHelper::sectionSearchQuery($query, $predicateObject->section, 'listings.course_id'); // use search helper for section search
+        if(isset($predicateObject->name))
+            $query = $query->where('name', 'LIKE', '%'.$predicateObject->course_name.'%');
 
         return $query;
     }
@@ -189,14 +194,14 @@ class BookController extends Controller
             if ($sort->predicate == "section") { // special case because of joined tables
                 if ($sort->reverse == 1) {
                     $query = $query->orderBy("department", "desc")
-                        ->orderBy("course_number", "desc")
-                        ->orderBy("course_section", "desc");
+                        ->orderBy("number", "desc")
+                        ->orderBy("section", "desc");
                 } else {
                     $query = $query->orderBy("department")
-                        ->orderBy("course_number")
-                        ->orderBy("course_section");
+                        ->orderBy("number")
+                        ->orderBy("section");
                 }
-            } else {
+            } elseif ($sort->predicate == "name") {
                 if ($sort->reverse == 1)
                     $query = $query->orderBy($sort->predicate, "desc");
                 else
@@ -221,21 +226,24 @@ class BookController extends Controller
 
         $this->authorize("all");
 
-        $query = \App\Models\Order::query()->with("course.term");
+        $query = Order::query()
+            ->select('orders.*')
+            ->distinct()
+            ->with(['course.term', 'course.listings']);
 
         if($request->input('book_id')) {
             $query = $query->where('book_id', '=', str_replace('"', "", $request->input('book_id'))); // find the book ID
         }
 
-        $query = $query->join('courses', 'orders.course_id', '=', 'courses.course_id'); // need to join the courses into the dataset
+        $query = $query->join('listings', 'orders.course_id', '=', 'listings.course_id');
 
-        $query = $this->buildBookDetailSearchQuery($tableState, $query); // build the search terms query
-        $query = $this->buildBookDetailSortQuery($tableState, $query); // build the sort query
+        $query = $this->buildBookDetailSearchQuery($tableState, $query);
+        $query = $this->buildBookDetailSortQuery($tableState, $query);
 
-        $orders = $query->paginate(10); // get paginated result
+        // Use our custom paginator that can handle the distinct clause properly.
+        $orders = SearchServiceProvider::paginate($query, 10);
 
         foreach ($orders as $order) {
-            $order->course->term['term_name'] = $order->course->term->displayName();
             $order->course['canView'] = $request->user()->can('view-course', $order->course);
         }
 

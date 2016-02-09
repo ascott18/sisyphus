@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Listing;
 use App\Models\Term;
 use Auth;
 use Carbon\Carbon;
@@ -29,36 +30,50 @@ class OrderController extends Controller
      */
     public function getIndex(Request $request)
     {
-        if ($request->user()->may('place-all-orders'))
-            return $this->getList($request);
-        else
+        //if ($request->user()->may('place-all-orders'))
+        //    return $this->getList($request);
+        //else
             return $this->getCreate($request, null);
     }
 
     public function getCreate(Request $request, $course_id = null)
     {
+        $user = $request->user();
+        $openTerms = Term::currentTerms()->get();
+
+        $viewParams = [
+            'openTerms' => $openTerms,
+            'current_user_id' => $user->user_id,
+            'continueUrl' => '/requests'
+        ];
+
         if ($course_id == null){
             $this->authorize('all');
-
-            $openTerms = Term::currentTerms()->get();
 
             $openTermIds = $openTerms->pluck('term_id');
 
             // If the user can place orders for everyone, don't return courses for everything here
             // because it would almost certainly crash their browser if we did.
-            if ($request->user()->may('place-all-orders'))
+            if ($request->user()->may('place-all-orders')){
                 $query = $request->user()->courses();
-            else
+                $viewParams['continueUrl'] = '/courses';
+            }
+            else{
                 $query = Course::orderable();
+            }
 
             $courses = $query
                 ->whereIn('term_id', $openTermIds)
                 ->with([
+                    'listings',
                     'orders.book',
                     'user' => function($query){
                         return $query->select('user_id', 'first_name', 'last_name');
                     }])
                 ->get();
+
+            $viewParams['courses'] = $courses;
+
 
             $book = [];
             if($request->input('isbn13') != null) {
@@ -67,8 +82,7 @@ class OrderController extends Controller
                     ->with('authors')
                     ->get();
             }
-
-            return view('orders.create', ['openTerms' => $openTerms, 'courses' => $courses, 'book' => $book]);
+			$viewParams['book'] = $book;
         }
         else {
             $course = Course::findOrFail($course_id);
@@ -83,22 +97,24 @@ class OrderController extends Controller
                 ->where('term_id', '=', $course->term_id)
                 ->orWhere('course_id', '=', $course->course_id)
                 ->with([
+                    'listings',
                     'orders.book',
                     'user' => function($query){
                         return $query->select('user_id', 'first_name', 'last_name');
                 }])
                 ->get();
 
-            $openTerms = Term::currentTerms()->get();
-
             // Make sure that the requested course ends up in the list.
             // If we're debugging unauthorized actions, because of the way Course::orderable() works,
             // it is possible that the requested course might have passed the authorize check
             // but didn't end up the query.
 
-
-            return view('orders.create', ['openTerms' => $openTerms, 'courses' => $courses, 'course' => $course]);
+            $viewParams['continueUrl'] = '/courses';
+            $viewParams['courses'] = $courses;
+            $viewParams['course'] = $course;
         }
+
+        return view('orders.create', $viewParams);
     }
 
     /** GET: /orders/list
@@ -106,22 +122,22 @@ class OrderController extends Controller
      * @param Request $request
      * @return \Illuminate\View\View
      */
-    public function getList(Request $request) {
-        $this->authorize("all");
-
-        $user = $request->user();
-
-        $currentTermIds = Term::currentTerms()->pluck('term_id');
-        $userTermIds = Course::visible($user)->distinct()->pluck('term_id');
-
-        $allRelevantTermIds = $currentTermIds->merge($userTermIds)->unique();
-
-        $terms = Term::whereIn('term_id', $allRelevantTermIds)
-            ->orderBy('term_id', 'DESC')
-            ->get();
-
-        return view('orders.list',['terms' => $terms]);
-    }
+//    public function getList(Request $request) {
+//        $this->authorize("all");
+//
+//        $user = $request->user();
+//
+//        $currentTermIds = Term::currentTerms()->pluck('term_id');
+//        $userTermIds = Course::visible($user)->distinct()->pluck('term_id');
+//
+//        $allRelevantTermIds = $currentTermIds->merge($userTermIds)->unique();
+//
+//        $terms = Term::whereIn('term_id', $allRelevantTermIds)
+//            ->orderBy('term_id', 'DESC')
+//            ->get();
+//
+//        return view('orders.list',['terms' => $terms]);
+//    }
 
     /**
      * Build the search query for the books controller
@@ -260,10 +276,21 @@ class OrderController extends Controller
 
         $this->authorize('place-order-for-course', $course);
 
+        // Find any listings that have the same department and number,
+        // and then get the course_id of those listings.
+        // This gives us any courses that are effectively the same course as this one.
+        $similarCourseIdsQuery = Listing::select('course_id');
+        foreach ($course->listings as $listing) {
+            $similarCourseIdsQuery = $similarCourseIdsQuery
+                ->orWhere(['department' => $listing->department, 'number' => $listing->number]);
+        }
+        $similarCourseIdsQuery = $similarCourseIdsQuery
+            ->distinct()
+            ->toBase();
+
         $courses =
             Course::
-            where(['department' => $course->department, 'course_number' => $course->course_number])
-//            ->where('course_id', '!=', $id)
+            whereIn('course_id', $similarCourseIdsQuery)
             ->where('created_at', '>', Carbon::today()->subMonths(static::PAST_BOOKS_NUM_MONTHS))
             ->with([
                     "term" => function ($query){
@@ -312,7 +339,7 @@ class OrderController extends Controller
         // This way, we won't place any orders if any of them might cause the process to fail.
         $courses = [];
         foreach($params['courses'] as $section) {
-            $course = Course::with('orders.book.authors')->findOrFail($section['course_id']);
+            $course = Course::with(['orders.book.authors', 'listings'])->findOrFail($section['course_id']);
             $this->authorize('place-order-for-course', $course);
             $courses[] = $course;
         }

@@ -74,54 +74,6 @@
 
                 </div>
             </div>
-
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title"><i class="fa fa-university fa-fw"></i> Term Courses</h3>
-                </div>
-                <div class="panel-body">
-                    <?php  $courses = $term->courses()->paginate(10); ?>
-
-                    <div ng-controller="TermsTableController as ttc" class="table-responsive"
-                            ng-init="term_id = {{$term->term_id}}">
-                        <table st-pipe="ttc.callServerDetail" st-table="ttc.displayed"
-                               class="table table-hover"
-                               empty-placeholder="No courses found for this term.">
-                            <thead>
-                            <tr>
-                                <th st-sort="section">Section</th>
-                                <th st-sort="course_name">Name</th>
-                                <th width="1%"></th>
-                            </tr>
-                            <tr>
-                                <th><input type="text" class="form-control" placeholder="Search..." st-search="section"/></th>
-                                <th><input type="text" class="form-control" placeholder="Search..." st-search="name"/></th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                                <tr ng-cloak ng-repeat="course in ttc.displayed">
-                                    <td>
-                                        [[ course.department ]] [[ course.course_number | zpad:3 ]]-[[ course.course_section | zpad:2 ]]
-                                    </td>
-                                    <td>[[ course.course_name ]]</td>
-                                    <td><a class="btn btn-sm btn-info" href="/courses/details/[[course.course_id]]" role="button">
-                                            Details <i class="fa fa-arrow-right"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            </tbody>
-
-                            <tfoot>
-                            <tr>
-                                <td class="text-center" st-pagination="" st-items-by-page="10" colspan="4">
-                                </td>
-                            </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 

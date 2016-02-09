@@ -131,7 +131,7 @@ class Handler extends ExceptionHandler
                 'flattenException' => config('app.debug') ? $exception : null,
             ]])->render();
 
-            return new Response($content, 404, []);
+            return new Response($content, Response::HTTP_INTERNAL_SERVER_ERROR, []);
         }
         catch(Exception $renderException){
             return parent::convertExceptionToResponse($e);

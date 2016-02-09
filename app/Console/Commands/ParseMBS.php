@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Listing;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Bus\SelfHandling;
@@ -259,11 +260,13 @@ EOL;
                     // pull all of the section numbers that we have in the database for this course.
                     $sectionNumbers = null;
                     if (trim($sectionData) == "ALL") {
-                        $sectionNumbers = Course::where([
+                        $sectionNumbers =
+                        Listing::join('courses', 'courses.course_id', '=', 'listings.course_id')
+                        ->where([
                             'term_id' => $term->term_id,
                             'department' => $deptCourses[1],
-                            'course_number' => $courseNumber,
-                        ])->lists('course_section');
+                            'number' => $courseNumber,
+                        ])->lists('section');
                     } else {
                         // If the section number is not "ALL",
                         // expand out the numbers again like we did for course numbers.
@@ -274,11 +277,12 @@ EOL;
                     foreach ($sectionNumbers as $sectionNumber) {
                         $sectionNumber = trim($sectionNumber);
 
-                        $dbCourse = Course::where([
+                        $dbCourse = Course::join('listings', 'courses.course_id', '=', 'listings.course_id')
+                        ->where([
                             'term_id' => $term->term_id,
                             'department' => $department,
-                            'course_number' => $courseNumber,
-                            'course_section' => $sectionNumber,
+                            'number' => $courseNumber,
+                            'section' => $sectionNumber,
                         ])->first();
 
                         if (!$dbCourse) {

@@ -28,6 +28,7 @@ use Zizaco\Entrust\Traits\EntrustUserTrait;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property-read string $last_first_name
+ * @property-read mixed $first_last_name
  */
 class User extends Model implements AuthenticatableContract,
                                     AuthorizableContract

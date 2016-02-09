@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Course orderable($user = null)
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Listing[] $listings
  */
 class Course extends Model
 {
@@ -42,15 +43,14 @@ class Course extends Model
      */
     protected $guarded = ['course_id'];
 
-
-    public function displayIdentifier()
-    {
-        return $this->department . ' ' . str_pad($this->course_number, 3, '0', STR_PAD_LEFT) . '-' . str_pad($this->course_section, 2, '0', STR_PAD_LEFT);
-    }
-
     public function orders()
     {
         return $this->hasMany('App\Models\Order', 'course_id', 'course_id');
+    }
+
+    public function listings()
+    {
+        return $this->hasMany('App\Models\Listing', 'course_id', 'course_id');
     }
 
     public function books()
@@ -99,9 +99,16 @@ class Course extends Model
                 $deptSubQuery = $user
                     ->departments()
                     ->select('department')
-                    ->getQuery()
-                    ->getQuery();
-                $query = $query->whereIn('courses.department', $deptSubQuery);
+                    ->toBase();
+
+                $query->whereIn('courses.course_id',
+                    Listing
+                        ::select('course_id')
+                        ->distinct()
+                        ->whereIn('listings.department', $deptSubQuery)
+                        ->toBase()
+                );
+
                 return $query = $query->orWhere('courses.user_id', '=', $user->user_id);
             });
         }

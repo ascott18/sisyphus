@@ -44,6 +44,7 @@ app.directive('isbn13', function() {
 });
 
 
+
 app.directive('bookDetails', function($http) {
     var noBookThumb = "/images/coverNotAvailable.jpg";
     return {
@@ -178,7 +179,7 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
 
         BreadcrumbService.clear();
         BreadcrumbService.push($scope.$eval(
-            'selectedCourse.department + " " + (selectedCourse.course_number | zpad:3) + "-" + (selectedCourse.course_section | zpad:2) + " " + selectedCourse.course_name'
+            '(listing = selectedCourse.listings[0]).department + " " + (listing.number | zpad:3) + "-" + (listing.section | zpad:2) + " " + listing.name'
         ));
 
         $http.get('/requests/past-courses/' + course.course_id).then(
@@ -371,13 +372,20 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
             return true;
         }
 
-        if (course.department == $scope.selectedCourse.department
-            && course.course_number == $scope.selectedCourse.course_number
-            && course.term_id == $scope.selectedCourse.term_id
-            && course.course_section != $scope.selectedCourse.course_section)
-        {
-            return true;
-        }
+        if (course.term_id != $scope.selectedCourse.term_id || course.course_id == $scope.selectedCourse.course_id)
+            return false;
+
+        return Enumerable
+            .From(course.listings)
+            .Any(function(listing){
+                return Enumerable
+                    .From($scope.selectedCourse.listings)
+                    .Any(function(listing2){
+                        return listing.department == listing2.department
+                        && listing.number == listing2.number
+                        && listing.section != listing2.section
+                    })
+            });
     };
 
     $scope.getNumAdditionalCoursesSelected = function(){

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Listing;
 use App\Models\Ticket;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -25,19 +26,18 @@ class ReportController extends Controller
 
         $user = $request->user();
 
-        $userTerms = Course::visible($user)->distinct()->lists('term_id');
+        $departments = Course::visible($user)
+            ->join('listings', 'listings.course_id', '=', 'courses.course_id')
+            ->distinct()
+            ->pluck('department');
 
-        $departments=Course::visible($user)->distinct()->lists('department');
-
-        $terms = Term::whereIn('term_id', $userTerms)
+        $terms = Term::whereIn('term_id', Course::visible($user)->distinct()->select('term_id')->toBase())
             ->orderBy('order_start_date', 'DESC')
             ->get();
 
         $currentTermId = $terms->first()->term_id;
-        foreach ($terms as $term) {
-            $term['display_name'] = $term->displayName();
-        }
-        return view('reports.index',['departments' => $departments,'terms' => $terms, 'currentTermId' => $currentTermId]);
+
+        return view('reports.index', compact('departments', 'terms', 'currentTermId'));
     }
 
     public function postSubmitReport(Request $request)
@@ -78,9 +78,10 @@ class ReportController extends Controller
         if ($include['deleted'] || $include['nondeleted']){
             $query = Order::whereIn('course_id',
                 Course::visible()
+                ->join('listings', 'listings.course_id', '=', 'courses.course_id')
                 ->where('term_id', '=', $term_id)
                 ->whereIn('department', $departments)
-                ->select('course_id')
+                ->select('courses.course_id')
                 ->toBase())
             ->withTrashed()
             ->where(function($q) use ($include, $start, $end) {
@@ -100,7 +101,7 @@ class ReportController extends Controller
                 }
             })
             ->with([
-                    'course',
+                    'course.listings',
                     'course.user' => function($q){
                         $q->select('user_id', 'first_name', 'last_name');
                     },
@@ -141,9 +142,14 @@ class ReportController extends Controller
         elseif ($include['submitted'] || $include['notSubmitted'] || $include['noBook']) {
             $query = Course::visible()
                 ->where('term_id', '=', $term_id)
-                ->whereIn('department', $departments)
+                ->addWhereExistsQuery(
+                    Listing
+                        ::whereRaw('listings.course_id = courses.course_id')
+                        ->whereIn('department', $departments)
+                        ->toBase()
+                )
                 ->where(function($q) use($include) {
-                    $courseOrdersQuery = Order::where('orders.course_id', '=', DB::raw('courses.course_id'))->toBase();
+                    $courseOrdersQuery = Order::whereRaw('orders.course_id = courses.course_id')->toBase();
 
                     if ($include['submitted']){
                         $q->addWhereExistsQuery($courseOrdersQuery, 'or');
@@ -160,6 +166,7 @@ class ReportController extends Controller
                     }
                 })
                 ->with([
+                    'listings',
                     'user' => function($q){
                         $q->select('user_id', 'first_name', 'last_name');
                     },
@@ -173,8 +180,6 @@ class ReportController extends Controller
             throw new BadRequestHttpException("No includes were specified. Report would be empty.");
         }
 
-
-
-        return (['courses' => $results, 'start' => $start]);
+        return (['courses' => $results]);
     }
 }
