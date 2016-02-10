@@ -8,15 +8,15 @@
                 </div>
             <div class="modal-body">
                 <div class="list-group">
-                    <a ng-repeat="option in HelpService.options"
-                       href="[[ option.href ]]"
+                    <a ng-repeat="option in options"
                        class="list-group-item"
-                       ng-click="setSelected(option)">
+                            ng-click="selectOption(option)">
                             <h4 class="list-group-item-heading">[[ option.header ]]</h4>
                             <p class="list-group-item-text">[[ option.body ]]</p>
                     </a>
                 </div>
             </div>
+
         </div>
     </div>
 </div>

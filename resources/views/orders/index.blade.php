@@ -13,7 +13,7 @@
     <div ng-cloak class="row" ng-controller="OrdersController"
             ng-init="
                 terms = {{$openTerms}};
-                courses = {{$courses}};
+                setCourses({{$courses}});
                 @if (isset($course))
                     placeRequestForCourse((courses | filter:{'course_id': {{$course->course_id}} })[0]);
                 @endif

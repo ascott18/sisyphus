@@ -157,13 +157,34 @@ app.controller('OrdersListController', function($scope, $http) {
 app.controller('OrdersController', ['$scope', '$http', 'CartService', 'HelpService', '$location',
     function($scope, $http, CartService, HelpService, $location){
 
-    var selectCourseHelpOptions =  [{header: "Report Error in Course List", body: "Select this option if a course you are teaching is not listed here or a course you are not teaching is listed.", href: "/tickets/create"}];
-    var selectBooksHelpOptions = [{header: "Report Problem with Book", body: "Is there a problem with a book? Please report it.", options: {"header" : test}}];
+    $scope.courses = [];
+
+    $scope.setCourses = function (courses) {
+        $scope.courses = courses;
+    };
+
+    $scope.setCourseOptions = function() {
+        var courseTitles = [];
+
+        for (var course in $scope.courses) {
+            var courseTitle = [];
+            courseTitle.push(course.department);
+            courseTitle.push(course.course_number);
+            courseTitle.push(course.section);
+
+            courseTitles.push(course.join(" "));
+        }
+
+        return courseTitles;
+    };
+
+    var selectCourseHelpOptions =  [{header: "Report Error in Course List", body: "Select this option if a course you are teaching is not listed here or a course you are not teaching is listed.", options: $scope.setCourseOptions()}];
+    var selectBooksHelpOptions = [{header: "Report Problem with Book", body: "Is there a problem with a book? Please report it.", options: [{header : "test"}]}];
 
     HelpService.updateOptions(selectCourseHelpOptions);
 
     $scope.STAGE_SELECT_COURSE = 1;
-    $scope.STAGE_SELECT_BOOKS = 2;
+    $scope.STAGE_SELECT_BOOKS  = 2;
     $scope.STAGE_REVIEW_ORDERS = 3;
     $scope.STAGE_ORDER_SUCCESS = 4;
 
@@ -185,6 +206,8 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'HelpServi
             HelpService.updateOptions(selectBooksHelpOptions);
         }
     };
+
+
 
     $scope.placeRequestForCourse = function(course) {
         $scope.setStage($scope.STAGE_SELECT_BOOKS);

@@ -7,39 +7,10 @@
 
 
 
-    <div class="row col-lg-12" ng-controller="NewTicketController">
-
-        <div class="row col-lg-12"
-             ng-init="setOptions({{json_encode($options)}})"
-             ng-show="getStage() == STAGE_SELECT_OPTIONS">
+    <div class="row col-lg-12" ng-cloak="" ng-controller="NewTicketController">
 
 
-            <div class="col-md-8">
-                <h3>Whats the problem?</h3>
-
-                <div class="list-group">
-                    <a ng-repeat="option in options"
-                       class="list-group-item"
-                       ng-click="selectOption(option)">
-
-                        <h4 class="list-group-item-heading">[[ option.header ]]</h4>
-                        <p class="list-group-item-text">[[ option.body ]]</p>
-
-                    </a>
-                </div>
-
-
-            </div>
-
-            <div class="col-md-4">
-                </p>
-            </div>
-
-
-
-        </div>
-
-        <div class="row col-lg-12" ng-show="getStage() == STAGE_CREATE_TICKET">
+        <div class="row col-lg-12">
 
 
             <div class="col-md-8">
@@ -50,8 +21,6 @@
                         <label>Subject:</label>
                         <input type="text" class="form-control" ng-model="ticket.title">
                     </div>
-
-
 
                     <label>Body:</label>
                     </br>
@@ -81,9 +50,6 @@
         </div>
 
     </div>
-
-
-
 
 @stop
 

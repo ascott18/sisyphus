@@ -298,13 +298,22 @@ app.controller('HelpModalController', ['$scope', 'HelpService', '$http', functio
     $scope.showModal = false;
     $scope.options = HelpService.options;
 
+    $scope.href = "/tickets/create/";
+    $scope.title = HelpService.title;
+
     $scope.toggleModal = function () {
         $scope.showModal = !$scope.showModal;
     };
 
-    $scope.setSelected = function(option) {
-        HelpService.selected = option;
-    };
+    $scope.selectOption = function (selected) {
+        if (selected.options && selected.options.length != 0) {
+            $scope.options = selected.options;
+        }
+        else {
+            window.location.href = $scope.href;
+            $scope.showModal = false;
+        }
+    }
 }]);
 
 app.directive('modal', ['HelpService', function(HelpService) {
@@ -342,8 +351,8 @@ app.directive('modal', ['HelpService', function(HelpService) {
 
 app.factory("HelpService", function() {
 
-    var defaultOptions = [{header: "Report a Problem", body: "Does something not look right? Let us know.",  href: "/tickets/create"},
-                            {header: "Ask a Question", body: "Need some help? Submit a question.",  href: "/tickets/create"}];
+    var defaultOptions = [{header: "Report a Problem", body: "Does something not look right? Let us know."},
+                          {header: "Ask a Question", body: "Need some help? Submit a question."}];
     var options = defaultOptions;
 
     updateOptions = function(newOptions) {
@@ -351,8 +360,7 @@ app.factory("HelpService", function() {
     };
 
     var service = {options       : options      ,
-                   updateOptions : updateOptions,
-                   selected      : null        };
+                   updateOptions : updateOptions};
 
     return service;
 });

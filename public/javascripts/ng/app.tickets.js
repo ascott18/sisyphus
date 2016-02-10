@@ -26,30 +26,6 @@ app.config(function($provide) {
 app.controller('NewTicketController', ['$scope', '$http', 'HelpService', function($scope, $http, HelpService) {
     $scope.ticket = {department : 'CSCD', 'url' : 'google.com'};
 
-    $scope.STAGE_SELECT_OPTIONS = 0;
-    $scope.STAGE_CREATE_TICKET = 1;
-    $scope.stage = $scope.stage = $scope.STAGE_CREATE_TICKET;
-
-    $scope.options = [];
-    $scope.selectedOption = {};
-
-    $scope.setOptions = function(options) {
-        $scope.options = options;
-        if (options != null) {
-            if (options.length != 0) {
-                $scope.stage = $scope.STAGE_SELECT_OPTIONS;
-            }
-        }
-    };
-
-    $scope.selectOption = function(option) {
-        $scope.stage = $scope.STAGE_CREATE_TICKET;
-        $scope.selectedOption = option;
-    };
-
-    $scope.getStage = function() {
-        return $scope.stage;
-    };
 
     //var unloadListener = function (e) {
     //    var confirmationMessage = 'If you leave before submitting, your changes will be lost.';
