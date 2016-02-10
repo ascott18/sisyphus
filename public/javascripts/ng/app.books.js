@@ -99,17 +99,8 @@ app.controller('BookDetailsController', function($scope, $http) {
     $scope.book_cover_img = "";
 
     $scope.getLaravelImage = function() {
-        $http.get("/books/cover?isbn=" + $scope.book_isbn_13).then (
-            function success(response){
-                if(response.data.image != "") {
-                    $scope.book_cover_img = "data:image/jpeg;base64," + response.data.image;
-                    $scope.isCached = response.data.cached;
-                } else {
-                    $scope.book_cover_img = "/images/coverNotAvailable.jpg";
-                }
-            }
-        )
-    }
+        $scope.book_cover_img = '/books/cover?isbn=' + $scope.book_isbn_13;
+    };
 
     $scope.getLaravelImage();
 

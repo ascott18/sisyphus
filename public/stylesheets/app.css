@@ -17,7 +17,6 @@ body {
     background-color: #F8F8F8
 }
 
-
 .table > thead > tr:not(:last-child) > * {
     border: none;
     padding-bottom: 5px;
@@ -38,6 +37,19 @@ body {
 
 .table th[st-sort]{
     cursor: pointer;
+}
+
+td[st-pagination]  {
+    padding: 0px;
+}
+
+td[st-pagination] ul {
+    margin-top: 15px;
+    margin-bottom: 0px;
+}
+
+.table {
+    margin-bottom: 0px;
 }
 
 .panel-title {
@@ -153,7 +165,7 @@ a[role="tab"]{
 }
 
 .empty-table-placeholder {
-    margin: -20px 10px 10px;
+    margin: 5px 10px 10px;
 }
 
 

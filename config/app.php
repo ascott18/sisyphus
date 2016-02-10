@@ -86,6 +86,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Google API Key
+    |--------------------------------------------------------------------------
+    |
+    | This key is used by the Google API calls and is appended to the end of
+    | get requests on any Google API
+    */
+
+    'google_api_key' => env('GOOGLE_API_KEY', ''),
+
+    /*
+    |--------------------------------------------------------------------------
     | Logging Configuration
     |--------------------------------------------------------------------------
     |
@@ -144,6 +155,7 @@ return [
         App\Providers\AuthServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        App\Providers\GoogleBookProvider::class,
 
         'Zizaco\Entrust\EntrustServiceProvider',
         'Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider',
@@ -207,6 +219,7 @@ return [
         // Custom
         'Cas' => Xavrsl\Cas\Facades\Cas::class,
         'SearchHelper' => App\Providers\SearchServiceProvider::class,
+        'GoogleBooks' => App\Facades\GoogleBookFacade::class,
 
     ],
 
