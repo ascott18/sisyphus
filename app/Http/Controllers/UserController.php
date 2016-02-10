@@ -399,19 +399,36 @@ class UserController extends Controller
     public function postCreate(Request $request)
     {
         $this->authorize("manage-users");
-        $this->validate($request, static::$UserValidation, ['user.email.unique' => 'That Email already belongs to a user.']);
-        $this->validate($request, ['user.net_id' => 'required|string|unique:users,net_id'], ['user.net_id.unique' => 'That NetID already belongs to a user.']);
 
-        $user = new User($request->except('user.net_id', 'user.user_id'));
-        $user->net_id = $request->get('user.net_id');
+        $this->validate($request, static::$UserValidation, [
+            'user.email.unique' => 'That Email already belongs to a user.'
+        ]);
+
+        $this->validate($request, [
+            'user.net_id' => 'required|string|unique:users,net_id'
+        ], [
+            'user.net_id.unique' => 'That NetID already belongs to a user.'
+        ]);
+
+        $user = new User;
+        $user->first_name = $request->input('user.first_name');
+        $user->last_name = $request->input('user.last_name');
+        $user->net_id = $request->input('user.net_id');
+        $user->email = $request->input('user.email');
         $user->save();
 
         return redirect('users');
     }
 
-    public function getEdit($user_id)
+    public function getEdit(Request $request, $user_id)
     {
-        $this->authorize("manage-users");
+        if ($request->user()->user_id == $user_id){
+            // Let users edit themselves.
+            $this->authorize('all');
+        }
+        else{
+            $this->authorize('manage-users');
+        }
 
         $user = User::findOrFail($user_id);
 
@@ -420,12 +437,19 @@ class UserController extends Controller
 
     public function postEdit(Request $request)
     {
-        $this->authorize("manage-users");
         $this->validate($request, static::$UserValidation);
-
         $user = $request->get('user');
+        $user_id = $user['user_id'];
 
-        $dbUser = User::findOrFail($user['user_id']);
+        if ($request->user()->user_id == $user_id){
+            // Let users edit themselves.
+            $this->authorize('all');
+        }
+        else{
+            $this->authorize('manage-users');
+        }
+
+        $dbUser = User::findOrFail($user_id);
         $dbUser->update($request->except('user.user_id')['user']);
 
         return redirect('users');
