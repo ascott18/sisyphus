@@ -36,10 +36,20 @@
 
     @yield('scripts-head')
 </head>
-<body ng-app="sisyphus"  ng-controller="HelpModalController">
+<body ng-app="sisyphus" >
 <div id="wrapper">
+<<<<<<< HEAD
 
     <i ng-spinner ng-cloak class="fa fa-spinner fa-spin " ng-show="spinnerActive"></i>
+=======
+    <i ng-spinner ng-cloak class="fa fa-spinner fa-spin " ng-show="spinnerActive"></i>
+
+    <modal title="Help" visible="showModal" ng-controller="HelpModalController">
+
+    </modal>
+
+    <i ng-spinner ng-cloak class="fa fa-spinner fa-spin "></i>
+>>>>>>> 8a02faccb0a1bd3da29cc7972c8e977dae9a1c39
 
     <!-- Navigation-->
     <nav role="navigation" class="navbar navbar-inverse navbar-fixed-top">
@@ -74,14 +84,14 @@
 
             <ul class="nav navbar-right top-nav">
                 @if (Auth::user())
-                    <li >
+                <li >
                         <span id="userName">
                             <i class="fa fa-user"></i>
                             <a href="/users/edit/{{Auth::user()->user_id}}">
                                 Welcome, {{ Auth::user()->net_id }}
                             </a>!
                         </span>
-                    </li>
+                </li>
                     <li class="pull-right">
                         <span style="margin-left: 25px"><a href="/logout">Logout</a></span>
                     </li>
@@ -90,9 +100,8 @@
 
             <!-- Sidebar Menu Items -->
 
-            <ul class="nav navbar-nav side-nav">
+            <div class="nav navbar-nav side-nav">
                 @can('view-dashboard')
-
                 <li><a href="/"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a></li>
                 @endcan
                 <li><a href="/requests"><i class="fa fa-fw fa-shopping-cart"></i> Requests</a></li>
@@ -139,7 +148,7 @@
                                     <li><a href="{{$breadcrumb[1]}}">{{$breadcrumb[0]}}</a></li>
                                 @elseif ($breadcrumb != null)
                                     <li>{{$breadcrumb[0]}}</li>
-                                @endif
+                        @endif
                             @endforeach
                             <li ng-cloak ng-repeat="breadcrumb in breadcrumbAppends">[[breadcrumb]]</li>
                         </ul>

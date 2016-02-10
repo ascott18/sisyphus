@@ -153,8 +153,8 @@ app.controller('OrdersListController', function($scope, $http) {
 });
 
 
-app.controller('OrdersController', ['$scope', '$http', 'CartService', 'HelpService', 'BreadcrumbService',
-    function($scope, $http, CartService, HelpService, BreadcrumbService){
+app.controller('OrdersController', ['$scope', '$http', 'CartService', 'BreadcrumbService', 'HelpService'
+    function($scope, $http, BreadcrumbService, CartService, HelpService){
 
     $scope.courses = [];
 
@@ -181,7 +181,6 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'HelpServi
     var selectBooksHelpOptions = [{header: "Report Problem with Book", body: "Is there a problem with a book? Please report it.", options: [{header : "test"}]}];
 
     HelpService.updateOptions(selectCourseHelpOptions);
-
 
     $scope.STAGE_SELECT_COURSE = 1;
     $scope.STAGE_SELECT_BOOKS  = 2;

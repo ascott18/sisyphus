@@ -247,7 +247,7 @@ a[role="tab"]{
 
     .col-sm-vspace:not(:first-child){
         padding-top: 15px;
-    }
+}
 }
 
 @media (max-width: 1199px) {
@@ -570,9 +570,9 @@ ul.alert-dropdown {
 }
 
 [st-sort]:not(.st-sort-descent):not(.st-sort-ascent):after{
-     content: '\f0dc';
-     color: #999999;
- }
+    content: '\f0dc';
+    color: #999999;
+}
 
 .custom-icon {
     font-size:20px !important;
@@ -599,8 +599,6 @@ ul.alert-dropdown {
     background:rgba(0,0,0,0.2) !important;
 }
 
-.icon-wrapper {
-}
 
 .text-muted-hover-danger {
     color: #d8d8d8;
