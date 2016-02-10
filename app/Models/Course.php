@@ -8,10 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * App\Models\Course
  *
- * @property string $department The department code for the course, e.g. "CSCD".
- * @property string $course_name The name of the course, e.g. "Programming Principles I"
- * @property int $course_number The number of the course, e.g. 210.
- * @property int $course_section The section of the course, e.g. 01.
  * @property int $term_id The id of the term that the course belongs to, referencing the terms table.
  * @property int $user_id The id of user that teaches the course.
  * @property integer $course_id The database primary key for this model.
@@ -25,6 +21,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Course orderable($user = null)
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Listing[] $listings
  */
 class Course extends Model
 {
@@ -42,22 +39,14 @@ class Course extends Model
      */
     protected $guarded = ['course_id'];
 
-
-    public function displayIdentifier()
-    {
-        return $this->department . ' ' . str_pad($this->course_number, 3, '0', STR_PAD_LEFT) . '-' . str_pad($this->course_section, 2, '0', STR_PAD_LEFT);
-    }
-
-    public function canPlaceOrder()
-    {
-        $currentTermsIds = Term::currentTerms()->select('term_id')->get()->values();
-
-        return $currentTermsIds->contains($this->term_id);
-    }
-
     public function orders()
     {
         return $this->hasMany('App\Models\Order', 'course_id', 'course_id');
+    }
+
+    public function listings()
+    {
+        return $this->hasMany('App\Models\Listing', 'course_id', 'course_id');
     }
 
     public function books()
@@ -83,6 +72,26 @@ class Course extends Model
     }
 
 
+    /**
+     * Gets a Query that represents all courseIds that are similar in department and number to this course.
+     * Does not restrict by term.
+     *
+     * @return \Illuminate\Database\Query\Builder The query that represents the similar course ids.
+     */
+    public function getSimilarCourseIdsQuery(){
+        $similarCourseIdsQuery = Listing::select('course_id');
+
+
+        $similarCourseIdsQuery->where(function($q) {
+            foreach ($this->listings as $listing) {
+                $q->orWhere(['department' => $listing->department, 'number' => $listing->number]);
+            }
+        });
+
+        return $similarCourseIdsQuery
+            ->distinct()
+            ->toBase();
+    }
 
     public function scopeVisible($query, User $user = null){
         return $this->scopeHelper($query, $user, 'view-all-courses', 'view-dept-courses');
@@ -106,13 +115,20 @@ class Course extends Model
                 $deptSubQuery = $user
                     ->departments()
                     ->select('department')
-                    ->getQuery()
-                    ->getQuery();
-                $query = $query->whereIn('department', $deptSubQuery);
-                return $query = $query->orWhere('user_id', '=', $user->user_id);
+                    ->toBase();
+
+                $query->whereIn('courses.course_id',
+                    Listing
+                        ::select('course_id')
+                        ->distinct()
+                        ->whereIn('listings.department', $deptSubQuery)
+                        ->toBase()
+                );
+
+                return $query = $query->orWhere('courses.user_id', '=', $user->user_id);
             });
         }
 
-        return $query = $query->where('user_id', '=', $user->user_id);
+        return $query = $query->where('courses.user_id', '=', $user->user_id);
     }
 }

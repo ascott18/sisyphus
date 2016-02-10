@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\Listing;
 use App\Models\Term;
 use App\Models\User;
 use Auth;
@@ -53,15 +54,6 @@ class MessageController extends Controller
     {
         $this->authorize('send-messages');
 
-        // Good luck doing this efficiently with Eloquent.
-        // Selects all users who teach at least one course.
-        // least_num_orders is the lowest number of orders that any of their courses has.
-        // 0 indicates one of their courses has no orders, anything higher indicates that
-        // all of their courses have at least one order.
-        // TODO: restrict this query to courses from the current term only.
-        // TODO: restrict this to only users that the current user should be able to send messages to.
-        // TODO: have least_num_orders skip courses that are marked as no book.
-
         $user = $request->user();
         $terms = Term::currentTerms()->get();
 
@@ -76,16 +68,26 @@ class MessageController extends Controller
         $maySendAll = $user->may('send-all-messages');
 
         $query = User
-            ::where('users.net_id', '!=', 'tba')
-            ->select(DB::raw(
+            ::select(DB::raw(
                 "users.first_name, users.last_name, users.user_id,
-                COUNT(courses.no_book_marked IS NOT NULL OR (SELECT 1 FROM `orders` WHERE courses.course_id=orders.course_id LIMIT 1) > 0) as coursesResponded,
-                COUNT(course_id) as courseCount"))
+                COUNT(
+                    courses.no_book_marked IS NOT NULL
+                OR
+                    EXISTS (SELECT * FROM `orders` WHERE courses.course_id=orders.course_id AND orders.deleted_at IS NULL)
+                ) as coursesResponded,
+                COUNT(courses.course_id) as courseCount"))
             ->join('courses', 'courses.user_id', '=', 'users.user_id')
             ->whereIn('courses.term_id', $currentTermIds);
 
         if (!$maySendAll){
-            $query = $query->whereIn('department', $departments);
+            $query = $query
+                ->whereIn('courses.course_id',
+                    Listing::select('listings.course_id')
+                        ->whereIn('department', $departments)
+                        ->whereRaw('listings.course_id = courses.course_id')
+                        ->distinct()
+                        ->toBase()
+                );
         }
 
         $usersWithCourses = $query
@@ -113,7 +115,7 @@ class MessageController extends Controller
     {
         $this->authorize('send-messages');
 
-        $cloneFrom = $request->get('message_id');
+        $cloneFrom = $request->input('message_id');
 
         if (is_null($cloneFrom))
         {
@@ -147,7 +149,7 @@ class MessageController extends Controller
      */
     public function postDeleteMessage(Request $request)
     {
-        $message_id = (int)$request->get('message_id');
+        $message_id = (int)$request->input('message_id');
         $message = Message::findOrFail($message_id);
 
         $this->authorize('touch-message', $message);
@@ -168,7 +170,7 @@ class MessageController extends Controller
      */
     public function postSaveMessage(Request $request)
     {
-        $message_id = (int)$request->get('message_id');
+        $message_id = (int)$request->input('message_id');
         $message = Message::findOrFail($message_id);
 
         $this->authorize('touch-message', $message);
@@ -181,7 +183,7 @@ class MessageController extends Controller
 
     public function postSendMessages(Request $request)
     {
-        $message = $request->get('message');
+        $message = $request->input('message');
         $currentUser = $request->user();
 
         $dbMessage = Message::findOrFail($message['message_id']);
@@ -191,14 +193,21 @@ class MessageController extends Controller
 
         $dbMessage->update(['last_sent' => Carbon::now()]);
 
-        $recipientIds = $request->get('recipients');
+        $recipientIds = $request->input('recipients');
+
+        $potentialRecipients = $this->getAllRecipients($request)['users']->pluck('user_id')->toArray();
+
+        $numRequested = 0;
+        $numSent = 0;
 
         foreach ($recipientIds as $user_id)
         {
+            $numRequested++;
             $recipient = User::find($user_id);
 
-            if ($recipient && $recipient->email && Auth::user()->can('send-message-to-user', $recipient))
+            if ($recipient && $recipient->email && in_array($user_id, $potentialRecipients))
             {
+                $numSent++;
                 Mail::queue([], [], function ($m) use ($recipient, $message, $currentUser) {
                     $email = $recipient->email;
                     // TODO: change this from address.
@@ -209,5 +218,7 @@ class MessageController extends Controller
                 });
             }
         }
+
+        return ['success' => true, 'requested' => $numRequested, 'sent' => $numSent];
     }
 }

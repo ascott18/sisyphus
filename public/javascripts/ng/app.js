@@ -25,6 +25,19 @@ app.run(['$templateCache', 'stConfig', function($templateCache, stConfig) {
         '</ul></nav>');
 }]);
 
+app.service('BreadcrumbService', function($rootScope){
+    $rootScope.breadcrumbAppends = [];
+
+    return {
+        push: function(crumb){
+            $rootScope.breadcrumbAppends.push(crumb);
+        },
+
+        clear: function(){
+            $rootScope.breadcrumbAppends = [];
+        }
+    };
+});
 
 // Filters the source array by splitting the query string on whitespace/commas, and then
 // runs the array through the 'filter' filter for each segment of the query.
@@ -54,7 +67,12 @@ app.filter('zpad', function() {
         input = input.toString();
         if(input.length >= n)
             return input;
-        var zeros = "0".repeat(n);
+
+        // string.prototype.repeat doesn't work in IE - its part of ecmascript6.
+        var zeros = "";
+        while (n-- > 0){
+            zeros += "0";
+        }
         return (zeros + input).slice(-1 * n)
     };
 });
@@ -78,18 +96,20 @@ app.directive('emptyPlaceholder', ['$http',
                    function (newValues, oldValues) {
                        if (newValues[1] && !hasStartedRequest) {
                            hasStartedRequest = true;
-                           return;
                        }
-                       if (!newValues[1] && hasStartedRequest) {
+                       else if (!newValues[1] && hasStartedRequest) {
                            hasFinishedRequest = true;
-                       }
-                       if (!hasFinishedRequest){
-                           return;
                        }
 
                        table.siblings(".empty-table-placeholder").remove();
-                       if (newValues[0] == 0) {
-                           table.after("<h2 class='text-muted empty-table-placeholder'>" +  text + "</h2>");
+                       if (newValues[0] == 0)
+                       {
+                           if ( !hasFinishedRequest){
+                               table.after("<h2 class='text-muted empty-table-placeholder'>Loading...</h2>");
+                           }
+                           else {
+                               table.after("<h2 class='text-muted empty-table-placeholder'>" +  text + "</h2>");
+                           }
                        }
                    }
                );
@@ -101,6 +121,11 @@ app.directive('emptyPlaceholder', ['$http',
 app.filter('moment', function () {
     return function (value, format) {
         return moment(value).format(format);
+    };
+});
+app.filter('momentObj', function () {
+    return function (value, format) {
+        return moment(value);
     };
 });
 
@@ -139,16 +164,54 @@ app.directive('ngSpinner', ['$http', '$rootScope', function ($http, $rootScope){
             scope.$watch(scope.isLoading, function (loading)
             {
                 $rootScope.spinnerActive = loading;
-                if(loading){
-                    elm.removeClass('ng-hide');
-                }else{
-                    elm.addClass('ng-hide');
-                }
             });
         }
     };
 }]);
 
+app.run(['$templateCache', function($templateCache) {
+    $templateCache.put('courseWithListings',
+        '[[course.listings[0].department]] [[course.listings[0].number | zpad:3]]-[[course.listings[0].section | zpad:2]]' +
+        '<ng-transclude></ng-transclude>' +
+        '<small class="text-muted" ng-if="course.listings.length > 1"> <br> XL as [[getXlString(course)]] </small>');
+}]);
+app.directive('courseWithListings', function($filter) {
+    var getXlString = function(course){
+        var listings = course.listings;
+        listings = $filter('filter')(listings, {'listing_id': '!' + listings[0].listing_id});
+        listings = $filter('orderBy')(listings, ['department', 'number', 'section']);
+
+        var str = "";
+
+        for(var i = 0; i < listings.length; i++){
+            var listing = listings[i];
+            var prev = i > 0 ? listings[i-1] : null;
+
+            if (!prev || listing.department != prev.department || listing.number != prev.number){
+                if (i != 0) str += '; ';
+                str += listing.department + ' ' + $filter('zpad')(listing.number, 3) + '-';
+            }
+            else if (i != 0) {
+                str += ', '
+            }
+            str += $filter('zpad')(listing.section, 2);
+        }
+
+        return str;
+    };
+
+    return {
+        restrict: 'E',
+        transclude: true,
+        scope: {
+            course: '='
+        },
+        templateUrl: 'courseWithListings',
+        link: function(scope, element, attrs){
+            scope.getXlString = getXlString
+        }
+    }
+});
 
 
 

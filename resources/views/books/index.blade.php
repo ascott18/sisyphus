@@ -1,7 +1,9 @@
-@extends('layouts.master')
-
-@section('area', 'Books')
-@section('page', 'All Books')
+@extends('layouts.master', [
+    'breadcrumbs' => [
+        ['Books', '/books'],
+        ['All Books'],
+    ]
+])
 
 @section('content')
     <div class="row">
@@ -36,7 +38,7 @@
                             <tbody>
 
                             <tr ng-cloak ng-repeat="book in mc.displayed">
-                                <td>[[ book.title ]]</td>
+                                <td>[[ book.title + ' ' + book.edition ]]</td>
                                 <td>
                                     <span ng-repeat="author in book.authors">
                                         [[ author.name]] [[ $last ? '' : '|']]
@@ -45,7 +47,7 @@
                                 <td>[[ book.publisher ]]</td>
                                 <td>[[ book.isbn13 | isbnHyphenate]]</td>
                                 <td>
-                                    <a href="/books/details/[[ book.book_id ]]" class="btn btn-sm btn-info" role="button">
+                                    <a href="/books/details/[[ book.book_id ]]" class="btn btn-sm btn-primary" role="button">
                                         Details <i class="fa fa-arrow-right"></i>
                                     </a>
                                 </td>
@@ -53,11 +55,9 @@
 
 
                             </tbody>
+
                             <tfoot>
-                            <tr>
-                                <td class="text-center" st-pagination="" st-items-by-page="10" colspan="4">
-                                </td>
-                            </tr>
+                                <td class="text-center" st-pagination="" st-items-by-page="10" colspan="5"></td>
                             </tfoot>
                         </table>
                     </div>

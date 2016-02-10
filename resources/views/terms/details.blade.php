@@ -1,7 +1,10 @@
-@extends('layouts.master')
+@extends('layouts.master', [
+    'breadcrumbs' => [
+        ['Terms', '/terms'],
+        [$term->display_name],
+    ]
+])
 
-@section('area', 'Terms')
-@section('page', $term->display_name)
 
 @section('content')
 
@@ -19,7 +22,8 @@
                         @can('create-courses')
                             <a href="/courses/create/{{$term->term_id}}" class="btn btn-primary"><i class="fa fa-plus"></i> Create Course</a>
                         @endcan
-                        <a href="/terms/check/{{$term->term_id}}" class="btn btn-primary">View Checksheet</a>
+                        {{--<a href="/terms/check/{{$term->term_id}}" class="btn btn-primary">View Checksheet</a>--}}
+
 
                         <dl class="dl-horizontal">
                             <dt>Term</dt>
@@ -69,54 +73,6 @@
                     </form>
                     @endcan
 
-                </div>
-            </div>
-
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title"><i class="fa fa-university fa-fw"></i> Term Courses</h3>
-                </div>
-                <div class="panel-body">
-                    <?php  $courses = $term->courses()->paginate(10); ?>
-
-                    <div ng-controller="TermsTableController as ttc" class="table-responsive"
-                            ng-init="term_id = {{$term->term_id}}">
-                        <table st-pipe="ttc.callServerDetail" st-table="ttc.displayed"
-                               class="table table-hover"
-                               empty-placeholder="No courses found for this term.">
-                            <thead>
-                            <tr>
-                                <th st-sort="section">Section</th>
-                                <th st-sort="course_name">Name</th>
-                                <th width="1%"></th>
-                            </tr>
-                            <tr>
-                                <th><input type="text" class="form-control" placeholder="Search..." st-search="section"/></th>
-                                <th><input type="text" class="form-control" placeholder="Search..." st-search="name"/></th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                                <tr ng-repeat="course in ttc.displayed">
-                                    <td>
-                                        [[ course.department ]] [[ course.course_number | zpad:3 ]]-[[ course.course_section | zpad:2 ]]
-                                    </td>
-                                    <td>[[ course.course_name ]]</td>
-                                    <td><a class="btn btn-sm btn-info" href="/courses/details/[[course.course_id]]" role="button">
-                                            Details <i class="fa fa-arrow-right"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            </tbody>
-
-                            <tfoot>
-                            <tr>
-                                <td class="text-center" st-pagination="" st-items-by-page="10" colspan="4">
-                                </td>
-                            </tr>
-                            </tfoot>
-                        </table>
-                    </div>
                 </div>
             </div>
         </div>

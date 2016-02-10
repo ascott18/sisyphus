@@ -1,7 +1,10 @@
-@extends('layouts.master')
+@extends('layouts.master', [
+    'breadcrumbs' => [
+        ['Courses', '/courses'],
+        ['All Courses'],
+    ]
+])
 
-@section('area', 'Courses')
-@section('page', 'All Courses')
 
 @section('content')
 
@@ -13,22 +16,21 @@
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">
-                        <table st-pipe="cc.callServer" st-table="cc.displayed"
+                        <table st-pipe="cc.callServer"
+                               st-table="cc.displayed"
+                               st-has-default-sort="true"
                                class="table table-hover"
                                empty-placeholder>
                             <thead>
                             <tr>
-                                <th width="170px" st-sort="section">Section</th>
-                                <th width="250px" st-sort="term_id" st-sort-default="reverse">Term</th>
-                                <th st-sort="course_name">Name</th>
+                                <th width="210px" st-sort="term_id" st-sort-default="reverse">Term</th>
+                                <th st-sort="section">Section</th>
+                                <th st-sort="name">Name</th>
                                 <th st-sort="professor">Professor</th>
-                                <th>Resoponded</th>
+                                <th>Responded</th>
                                 <th width="1%"></th>
                             </tr>
                             <tr>
-                                <th>
-                                    <input type="text" class="form-control" placeholder="Search..." st-search="section"/>
-                                </th>
                                 <th>
                                     <select class="form-control" ng-init="TermSelected = ''" ng-model="TermSelected" ng-change="updateTerm()">
                                         <option value="">All Terms</option>
@@ -36,6 +38,9 @@
                                             <option value="{{$term->term_id}}">{{$term->display_name}}</option>
                                         @endforeach
                                     </select>
+                                </th>
+                                <th>
+                                    <input type="text" class="form-control" placeholder="Search..." st-search="section"/>
                                 </th>
                                 <th>
                                     <input type="text" class="form-control" placeholder="Search..." st-search="name"/>
@@ -49,18 +54,18 @@
                             </thead>
                             <tbody>
 
-                            <tr ng-repeat="course in cc.displayed">
-                                <td>
-                                    [[ course.department ]] [[ course.course_number | zpad:3 ]]-[[ course.course_section | zpad:2 ]]
-                                </td>
+                            <tr ng-cloak ng-repeat="course in cc.displayed">
                                 <td>[[ course.term.term_name ]] [[ course.term.year ]]</td>
-                                <td>[[ course.course_name ]]</td>
-                                <td>[[ course.user.last_name ]], [[ course.user.first_name ]]</td>
                                 <td>
-                                    <div ng-show="course.order_count > 0 || course.no_book != 0">Yes</div>
-                                    <div ng-show="course.order_count == 0 && course.no_book == 0">No</div>
+                                    <course-with-listings course="course"></course-with-listings>
                                 </td>
-                                <td><a class="btn btn-sm btn-info" href="/courses/details/[[course.course_id]]" role="button">
+                                <td>[[ course.listings[0].name ]]</td>
+                                <td>[[ course.user.last_first_name || 'TBA' ]]</td>
+                                <td>
+                                    <div ng-show="course.orders.length > 0 || course.no_book != 0">Yes</div>
+                                    <div ng-show="course.orders.length == 0 && course.no_book == 0">No</div>
+                                </td>
+                                <td><a class="btn btn-sm btn-primary" href="/courses/details/[[course.course_id]]" role="button">
                                         Details <i class="fa fa-arrow-right"></i>
                                     </a>
                                 </td>
@@ -69,7 +74,7 @@
                             </tbody>
                             <tfoot>
                             <tr>
-                                <td class="text-center" st-pagination="" st-items-by-page="10" colspan="4">
+                                <td class="text-center" st-pagination="" st-items-by-page="10" colspan="6">
                                 </td>
                             </tr>
                             </tfoot>

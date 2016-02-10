@@ -7,10 +7,14 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>
-        @if (array_key_exists('action', View::getSections()))
-            @yield('action')
+        @if (isset($breadcrumbs))
+            @if (!isset($breadcrumbs[1]))
+                {{$breadcrumbs[0][0]}}
+            @else
+                {{$breadcrumbs[1][0]}} {{isset($breadcrumbs[2]) ? $breadcrumbs[2][0] : ''}}
+            @endif
         @endif
-        @yield('page') - EWU Textbook Requests
+         - EWU Textbook Requests
     </title>
 
     <!-- Bootstrap Core CSS-->
@@ -19,10 +23,9 @@
     <link href="/stylesheets/app.css" rel="stylesheet">
     <!-- Custom Fonts-->
     <link href="/stylesheets/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
 
     <script src="/javascripts/angular.min.js"></script>
-    <script src="/javascripts/ng/smart-table/smart-table.min.js"></script>
+    <script src="/javascripts/ng/smart-table/smart-table.js"></script>
     <script src="/javascripts/ng/app.js"></script>
     <script src="/javascripts/ng/app.tickets.js"></script>
     <script src="/javascripts/ng/pagination/dirPagination.js"></script>
@@ -33,10 +36,11 @@
 
     @yield('scripts-head')
 </head>
-<body ng-app="sisyphus"  ng-controller="HelpModalController">
+<body ng-app="sisyphus" >
 <div id="wrapper">
+    <i ng-spinner ng-cloak class="fa fa-spinner fa-spin " ng-show="spinnerActive"></i>
 
-    <modal title="Help" visible="showModal">
+    <modal title="Help" visible="showModal" ng-controller="HelpModalController">
 
     </modal>
 
@@ -74,16 +78,28 @@
         <div class="collapse navbar-collapse navbar-ex1-collapse">
 
             <ul class="nav navbar-right top-nav">
+                @if (Auth::user())
                 <li >
-                    <span id="userName"><i class="fa fa-user"></i> Welcome, {{ Auth::user()->net_id }}! </span>
+                        <span id="userName">
+                            <i class="fa fa-user"></i>
+                            <a href="/users/edit/{{Auth::user()->user_id}}">
+                                Welcome, {{ Auth::user()->net_id }}
+                            </a>!
+                        </span>
                 </li>
+                    <li class="pull-right">
+                        <span style="margin-left: 25px"><a href="/logout">Logout</a></span>
+                    </li>
+                @endif
             </ul>
 
             <!-- Sidebar Menu Items -->
             <div class="nav navbar-nav side-nav">
+                @can('view-dashboard')
                 <li><a href="/"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a></li>
-                <li><a href="/books"><i class="fa fa-fw fa-book"></i> Books</a></li>
+                @endcan
                 <li><a href="/requests"><i class="fa fa-fw fa-shopping-cart"></i> Requests</a></li>
+                <li><a href="/books"><i class="fa fa-fw fa-book"></i> Books</a></li>
                 @can('view-course-list')
                     <li><a href="/courses"><i class="fa fa-fw fa-university"></i> Courses</a></li>
                 @endcan
@@ -97,6 +113,9 @@
                     <li><a href="/users"><i class="fa fa-fw fa-group"></i> Users</a></li>
                 @endcan
                 <li><a href="/tickets"><i class="fa fa-fw fa-life-ring"></i> Tickets</a></li>
+                @can('make-reports')
+                <li><a href="/reports"><i class="fa fa-fw fa-bar-chart"></i> Reports</a></li>
+                @endcan
 
 
                 <div class="icon-wrapper" ng-click="toggleModal()">
@@ -116,23 +135,27 @@
             <!-- Page Heading-->
 
 
-            @if (array_key_exists('area', View::getSections()))
             <div class="row">
                 <div class="col-lg-12">
-
                     <h4 class="page-header text-muted">
-                        @yield('area') /
-                        @if (array_key_exists('action', View::getSections()))
-                            @yield('action') /
+                        @if (isset($breadcrumbs))
+                        <ul class="slash-list">
+                            @foreach($breadcrumbs as $breadcrumb)
+                                @if(isset($breadcrumb[1]))
+                                    <li><a href="{{$breadcrumb[1]}}">{{$breadcrumb[0]}}</a></li>
+                                @elseif ($breadcrumb != null)
+                                    <li>{{$breadcrumb[0]}}</li>
                         @endif
-                        @yield('page')
+                            @endforeach
+                            <li ng-cloak ng-repeat="breadcrumb in breadcrumbAppends">[[breadcrumb]]</li>
+                        </ul>
+                        @endif
                     </h4>
                 </div>
             </div>
-            @endif
 
 
-            @if (count($errors) > 0)
+            @if (isset($errors) && count($errors) > 0)
                 <div class="alert alert-danger alert-dismissible" role="alert">
                     <button type="button" class="close" aria-label="Close" ng-click="appErrors.splice(appErrors.indexOf(error), 1)"><span aria-hidden="true">&times;</span></button>
                     <ul>
@@ -153,7 +176,7 @@
 
             <hr>
             <footer>
-                <p>&copy; 2016 - Eastern Washington University</p>
+                <p>&copy; {{date("Y")}} - Eastern Washington University</p>
                 <p class="text-muted">made with <i class="fa fa-heart" style="color: #8b001d;"></i> by EWU Computer Science students</p>
             </footer>
         </div>

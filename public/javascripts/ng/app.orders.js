@@ -2,7 +2,8 @@
 var app = angular.module('sisyphus', ['sisyphus.helpers', 'sisyphus.helpers.isbnHyphenate', 'smart-table']);
 
 stripHyphens = function(isbn13) {
-    return isbn13.replace(/-/g, "");
+    if (!isbn13) return isbn13;
+    return isbn13.replace(/[\s-]/g, "");
 };
 
 app.service("CartService", function () {
@@ -43,47 +44,57 @@ app.directive('isbn13', function() {
 });
 
 
+
 app.directive('bookDetails', function($http) {
-   return {
-       restrict: 'E',
-       transclude: true,
-       scope: {
-           book: '='
-       },
-       templateUrl: '/javascripts/ng/templates/bookDetails.html',
-       link: function(scope, element, attrs) {
+    var noBookThumb = "/images/coverNotAvailable.jpg";
+    return {
+        restrict: 'E',
+        transclude: true,
+        scope: {
+            book: '=',
+            hideImage: '='
+        },
+        templateUrl: '/javascripts/ng/templates/bookDetails.html',
+        link: function(scope, element, attrs) {
 
-           $(element).find(".smallImage").on('mouseover',function(){
-               $(element).find(".largeImage").css("display", "");
-           });
-           $(element).find(".largeImage").on('mouseleave',function(){
-               $(element).find(".largeImage").hide();
-           });
+            $(element).find(".smallImage").on('mouseover', function(){
+                if (scope.thumbnail != noBookThumb)
+                    $(element).find(".largeImage").fadeIn();
+            });
+            $(element).find(".largeImage").on('mouseleave',function(){
+                $(element).find(".largeImage").fadeOut();
+            });
 
-           scope.lastIsbn = '';
-           scope.getBookCoverImage = function() {
-               var isbn = scope.book.isbn13;
-               if (isbn != scope.lastIsbn)
-               {
-                   scope.lastIsbn = isbn;
-                   scope.thumbnail = '';
+            scope.lastIsbn = '';
+            scope.getBookCoverImage = function() {
+                if (!scope.book)
+                    return;
 
-                   $http.get("https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn, {cache: true}).then(
-                       function success(response){
-                           if(response.data.items) {
-                               scope.thumbnail = response.data.items[0].volumeInfo.imageLinks.thumbnail;
-                           } else {
-                               scope.thumbnail = "/images/coverNotAvailable.jpg";
-                           }
-                       }
-                   );
-               }
-               else {
-                   return scope.thumbnail;
-               }
-           }
-       }
-   }
+                var isbn = scope.book.isbn13;
+                if (!isbn){
+                    return scope.thumbnail = noBookThumb;
+                }
+                if (isbn != scope.lastIsbn)
+                {
+                    scope.lastIsbn = isbn;
+                    scope.thumbnail = '';
+
+                    $http.get("https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn, {cache: true}).then(
+                        function success(response){
+                            if(response.data.items && response.data.items[0].volumeInfo.imageLinks) {
+                                scope.thumbnail = response.data.items[0].volumeInfo.imageLinks.thumbnail;
+                            } else {
+                                scope.thumbnail = noBookThumb;
+                            }
+                        }
+                    );
+                }
+                else {
+                    return scope.thumbnail;
+                }
+            }
+        }
+    }
 });
 
 app.controller('OrdersListController', function($scope, $http) {
@@ -120,42 +131,29 @@ app.controller('OrdersListController', function($scope, $http) {
         var end = pagination.number || 10;
         var page = (start/end)+1;
 
-        var getRequestString = '/requests/order-list?page=' + page;                                         // book list uri
+        tableState.term_id = $scope.TermSelected;
+        var getRequestString = '/requests/order-list';                                         // book list uri
 
-        if(tableState.sort.predicate) {
-            getRequestString += '&sort=' + encodeURIComponent(tableState.sort.predicate);               // build search
-            if(tableState.sort.reverse)
-                getRequestString += '&dir=desc';
-        }
+        var data = {
+            page: page,
+            table_state: tableState
+        };
 
-        if($scope.TermSelected!="")
-        {
-            getRequestString+= '&term_id=' + $scope.TermSelected;
-        }
+        var config = {
+            params: data
+        };
 
-
-        if(tableState.search.predicateObject) {
-            var predicateObject = tableState.search.predicateObject;
-            if(predicateObject.title)
-                getRequestString += '&title=' + encodeURIComponent(predicateObject.title);          // search title
-            if(predicateObject.section)
-                getRequestString += '&section=' + encodeURIComponent(predicateObject.section);       // search section
-        }
-
-        $http.get(getRequestString).then(
-            function success(response) {
-                tableState.pagination.numberOfPages = response.data.last_page;                          // update number of pages with what laravel gives back
-                tableState.pagination.number = response.data.per_page;                                  // update how many per page based on laravel response
-                ctrl.displayed = response.data.data;                                                    // get return data
-                ctrl.isLoading=false;
-            }
-        );
-
+        $http.get(getRequestString, config).then(function(response){
+            tableState.pagination.numberOfPages = response.data.last_page;                    // update number of pages with laravel response
+            tableState.pagination.number = response.data.per_page;                            // update entries per page with laravel response
+            ctrl.displayed = response.data.data;                                              // save laravel response data
+            ctrl.isLoading=false;
+        });
     }
 });
 
-app.controller('OrdersController', ['$scope', '$http', 'CartService', 'HelpService', '$location',
-    function($scope, $http, CartService, HelpService, $location){
+app.controller('OrdersController', ['$scope', '$http', 'CartService', 'BreadcrumbService', 'HelpService'
+    function($scope, $http, BreadcrumbService, CartService, HelpService){
 
     $scope.courses = [];
 
@@ -214,15 +212,27 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'HelpServi
 
         $scope.selectedCourse = course;
 
+        BreadcrumbService.clear();
+        BreadcrumbService.push($scope.$eval(
+            '(listing = selectedCourse.listings[0]).department + " " + (listing.number | zpad:3) + "-" + (listing.section | zpad:2) + " " + listing.name'
+        ));
+
         $http.get('/requests/past-courses/' + course.course_id).then(
             function success(response) {
-                console.log("got courses", response.data);
                 var pastCourses = response.data;
 
                 course['pastBooks'] = Enumerable
                     .From(pastCourses)
                     // Select an object for each order that has the course, the order, and the book on it.
                     .SelectMany("$.orders", "course,order => {course:course, order:order, book:order.book}")
+                    .Where(function(bookGrouping) {
+                        if($scope.passedBookId) {
+                            return bookGrouping.book.book_id != $scope.passedBookId;
+                        } else {
+                            return true;
+                        }
+
+                    })
                     // Group these objects by the book id, selecting a new object for each book that
                     // contains that book and the collection of the previously selected objects
                     // that belong to each book.
@@ -246,13 +256,14 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'HelpServi
                                 // For each term/user combination,
                                 // group by the term and associate all the groupings for that term as 'orderData'
                                 .GroupBy("$.course.term_id", "", "{term:$$.First().course.term, orderData: $$.ToArray()}")
+                                .OrderByDescending('$.term.term_id')
                                 .ToArray()
                         }
                     })
+                    .OrderByDescending("$.terms[0].term_id")
                     .ToArray();
             }
         );
-
     };
 
     $scope.deleteOrder = function(course, order)
@@ -282,7 +293,7 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'HelpServi
         var index = $scope.cartBooks.indexOf(bookData);
         if (index > -1) {
             $scope.cartBooks.splice(index, 1);
-            if (!bookData.isNew) {
+            if (bookData.book.book_id) {
                 $scope.selectedCourse['pastBooks'].push(bookData);
             }
         }
@@ -293,6 +304,23 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'HelpServi
         if (index > -1) {
             $scope.selectedCourse['pastBooks'].splice(index, 1);
             $scope.cartBooks.push(bookData);
+        }
+    };
+
+    $scope.addPassedBookToCart = function(book) { // isbn was passed in from book details page
+        if(book.length != 0) {
+            $scope.master = {};
+            $scope.master['title'] = book[0].title;
+            $scope.master['edition'] = book[0].edition;
+            $scope.master['publisher'] = book[0].publisher;
+            $scope.master['authors'] = book[0].authors;
+            $scope.master['orders'] = book[0].orders;
+            $scope.master['book_id'] = book[0].book_id;
+            $scope.passedBookId = book[0].book_id;
+            var bookData = {};
+            bookData['book'] = $scope.master;
+            bookData['book']['isbn13'] = stripHyphens(book[0].isbn13);
+            CartService.cartBooks.push(bookData);
         }
     };
 
@@ -311,16 +339,47 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'HelpServi
 
             $scope.submitting = true;
             $http.post('/requests/submit-order', {courses:sections, cart:CartService.cartBooks}).then(
-                function success(){
+                function success(response){
                     $scope.additionalCourses = null;
                     $scope.submitting = false;
+                    $scope.orderResults = response.data.orderResults;
+
                     $scope.setStage($scope.STAGE_ORDER_SUCCESS);
                 },
                 function failure(){
+                    $scope.orderResults = null;
                     $scope.submitting = false;
                 });
         }
     };
+
+    $scope.orderWasACompleteFailure = function(){
+        if (!$scope.orderResults)
+            return false;
+
+        return Enumerable
+            .From($scope.orderResults)
+            .SelectMany()
+            .All(function(courseOrder){
+                return courseOrder.notPlaced && !$scope.ordersAreEffectivelyEqual(courseOrder.order, courseOrder.newOrder)
+            })
+    };
+
+    $scope.orderWasACompleteSuccess = function(){
+        if (!$scope.orderResults)
+            return true;
+
+        return !Enumerable
+            .From($scope.orderResults)
+            .SelectMany()
+            .Any(function(courseOrder){
+                return courseOrder.notPlaced && !$scope.ordersAreEffectivelyEqual(courseOrder.order, courseOrder.newOrder)
+            })
+    };
+
+    $scope.ordersAreEffectivelyEqual = function(order1, order2){
+        return order1.notes == order2.notes && order1.required == order2.required;
+    }
 
     $scope.toggleAdditionalCourseSelected = function(course){
         if ($scope.additionalCourses == null)
@@ -341,19 +400,27 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'HelpServi
         return $scope.additionalCourses.indexOf(course) >= 0;
     };
 
-    $scope.similarCourses = function(value)
+    $scope.isCourseSimilarToSelected = function(course)
     {
         if ($scope.selectedCourse == null)
         {
             return true;
         }
 
-        if (value.department == $scope.selectedCourse.department
-            && value.course_number == $scope.selectedCourse.course_number
-            && value.course_section != $scope.selectedCourse.course_section)
-        {
-            return true;
-        }
+        if (course.term_id != $scope.selectedCourse.term_id || course.course_id == $scope.selectedCourse.course_id)
+            return false;
+
+        return Enumerable
+            .From(course.listings)
+            .Any(function(listing){
+                return Enumerable
+                    .From($scope.selectedCourse.listings)
+                    .Any(function(listing2){
+                        return listing.department == listing2.department
+                        && listing.number == listing2.number
+                        && listing.section != listing2.section
+                    })
+            });
     };
 
     $scope.getNumAdditionalCoursesSelected = function(){
@@ -383,6 +450,7 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", function(
     $scope.isbnChanged = function(book) {
         if ($scope.isAutoFilled) {
             $scope.isAutoFilled = false;
+            $scope.autofilledBook = null;
             $scope.authors = [];
             $scope.book = angular.copy($scope.master);
             $scope.book['isbn13'] = book['isbn13'];
@@ -399,16 +467,15 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", function(
             $http.get('/books/book-by-isbn?isbn13=' + stripped).then(
                 function success(response) {
                     var data = response.data[0];
-                    if (data) {
+                    if (data && data.isbn13 == stripHyphens($scope.book.isbn13)) {
                         $scope.book['title'] = data.title;
                         $scope.book['edition'] = data.edition;
                         $scope.book['publisher'] = data.publisher;
                         $scope.authors = data.authors;
 
+                        $scope.autofilledBook = data;
                         $scope.isAutoFilled = true;
                     }
-
-                    console.log("got book", response.data);
                 }
             );
         }
@@ -420,13 +487,12 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", function(
         }
     };
 
-    $scope.addNewBookToCart = function(book, form){
+    $scope.addNewBookToCart = function(book, form, ignoreValidation){
         $scope.submitted = true;
 
-        if (form.$valid) {
+        if (ignoreValidation || form.$valid) {
             $scope.master = angular.copy(book);
             $scope.master["authors"] = $scope.authors;
-            $scope.master["isNew"] = true;
             var bookData = {};
             bookData['book'] = $scope.master;
             bookData['book']['isbn13'] = stripHyphens(bookData['book']['isbn13']);

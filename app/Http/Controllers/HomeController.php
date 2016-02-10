@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Middleware\CASAuth;
 use App\Models\Book;
 use App\Models\Course;
 use App\Models\Term;
 use Cache;
 use Carbon\Carbon;
+use \Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class HomeController extends Controller
 {
@@ -17,18 +21,49 @@ class HomeController extends Controller
 
     /** GET: /
      *
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\View\View
      */
-    public function getIndex()
+    public function getIndex(Request $request)
     {
-        $this->authorize("all");
+        if ($request->user()->can('view-dashboard')){
+            $this->authorize('view-dashboard');
 
-        return view('welcome', static::getCachedDashboardData());
+            return view('welcome', static::getCachedDashboardData($request->user()->user_id));
+        }
+        else {
+            $this->authorize('all');
+
+            return redirect('/requests');
+        }
+
     }
 
-    private static function getCachedDashboardData(){
+
+    public function getLogout(){
+        $this->authorize('all');
+
+
+        $cas = app('cas');
+        $cas->connection();
+
+        if(!CASAuth::isPretending()){
+            if(!phpCAS::isAuthenticated())
+            {
+                $this->initializeCas();
+            }
+            phpCAS::logout(['url' => 'https://login.ewu.edu/cas/logout']);
+
+            redirect('https://login.ewu.edu/cas/logout');
+        }
+        else {
+            throw new BadRequestHttpException("Can't log out when you're pretending.");
+        }
+    }
+
+    private static function getCachedDashboardData($user_id){
         // Cache this for x minutes.
-        return Cache::remember('dashboard-' . \Auth::user()->user_id, static::CACHE_MINUTES, function() {
+        return Cache::remember('dashboard-' . $user_id, static::CACHE_MINUTES, function() {
             return [
                 'chartData' => static::getChartData(),
                 'responseStats' => static::getResponseStats(),
@@ -62,26 +97,28 @@ class HomeController extends Controller
 
             $numChartsFound++;
 
-            $orderReport = Course::visible()->where('term_id', '=', $term->term_id)
+            $orderReport = Course::visible()
+                ->where('term_id', '=', $term->term_id)
                 ->join('orders', function ($join) {
                     $join
                         ->on('orders.course_id', '=', 'courses.course_id')
-                        ->on('orders.created_at', '=', \DB::raw("(SELECT MIN(o.created_at) FROM orders o WHERE o.course_id = courses.course_id AND o.deleted_at IS NOT NULL)"))
-                        ->whereNotNull('orders.deleted_at');
+                        ->on('orders.created_at', '=', \DB::raw("(SELECT MIN(o.created_at) FROM orders o WHERE o.course_id = courses.course_id AND o.deleted_at IS NULL)"))
+                        ->whereNull('orders.deleted_at');
                 })
+                ->select(\DB::raw('count(*) as count, DATE(orders.created_at) as date'))
                 ->groupBy('date')
                 ->orderBy('date')
-                ->select(\DB::raw('count(*) as count, DATE(orders.created_at) as date'))
                 ->get();
 
             $ordersByDate = static::getAccumulationsFromReport($orderReport);
 
 
-            $noBookReport = Course::visible()->where('term_id', '=', $term->term_id)
-                ->whereRaw('UNIX_TIMESTAMP(courses.no_book_marked) != 0')
+            $noBookReport = Course::visible()
+                ->where('term_id', '=', $term->term_id)
+                ->whereNotNull('courses.no_book_marked')
+                ->select(\DB::raw('count(courses.no_book_marked) as count, DATE(courses.no_book_marked) as date'))
                 ->groupBy('date')
                 ->orderBy('date')
-                ->select(\DB::raw('count(courses.no_book_marked) as count, DATE(courses.no_book_marked) as date'))
                 ->get();
 
             $noBookByDate = static::getAccumulationsFromReport($noBookReport);
@@ -161,15 +198,12 @@ class HomeController extends Controller
 
             $coursesResponded = Course::visible()
                 ->where('term_id', '=', $term->term_id)
-                ->where(function($query) use ($term){
-                    return $query
-                        ->whereRaw('UNIX_TIMESTAMP(courses.no_book_marked) != 0 OR (SELECT COUNT(*) FROM orders where orders.course_id = courses.course_id and orders.deleted_at IS NOT NULL) > 0');
-                })
-
+                ->whereRaw('(courses.no_book_marked IS NOT NULL
+                        OR (SELECT 1 FROM orders WHERE orders.course_id = courses.course_id and orders.deleted_at IS NULL LIMIT 1))')
                 ->count();
 
             $data[] = [
-                'name' => $term->displayName(),
+                'name' => $term->display_name,
                 'responded' => $coursesResponded,
                 'total' => $courseCount,
                 'percent' => intval($coursesResponded/$courseCount*100),
@@ -189,7 +223,7 @@ class HomeController extends Controller
                 $join
                     ->on('orders.course_id', '=', 'courses.course_id')
                     ->on('courses.no_book_marked', 'IS', \DB::raw('NULL'))
-                    ->whereNotNull('orders.deleted_at');
+                    ->whereNull('orders.deleted_at');
             })
             ->groupBy('date')
             ->orderBy('date')
@@ -219,7 +253,6 @@ class HomeController extends Controller
 
         return $activityReport;
     }
-
 
     private static function getAccumulationsFromReport($reportData)
     {

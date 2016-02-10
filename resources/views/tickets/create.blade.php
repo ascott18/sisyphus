@@ -1,7 +1,10 @@
-@extends('layouts.master')
+@extends('layouts.master', [
+    'breadcrumbs' => [
+        ['Tickets', '/tickets'],
+        ['Create'],
+    ]
+])
 
-@section('area', 'Tickets')
-@section('page', 'Create Ticket')
 
 @section('content')
 
