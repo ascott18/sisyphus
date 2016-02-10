@@ -86,6 +86,11 @@
                                             ng-model="DeptsSelected"
                                             ng-options="dept for dept in departments|orderBy:dept">
                                     </select>
+                                    </br>
+                                    <button type="submit" class="btn btn-primary"
+                                            ng-click="selectAllDepts()">
+                                        <i class="fa fa-check"></i> Select All
+                                    </button>
                                 </div>
                                 <div class="col-sm-6 col-sm-vspace">
                                     <h4>Select Report Columns</h4>
@@ -96,6 +101,11 @@
                                             ng-model="ColumnsSelected"
                                             ng-options="optionProperties.name for optionProperties in options | filter:{doesAutoEnforce: '!true'} | filter:shouldOptionShow">
                                     </select>
+                                    </br>
+                                    <button type="submit" class="btn btn-primary"
+                                            ng-click="selectAllCols()">
+                                        <i class="fa fa-check"></i> Select All
+                                    </button>
                                 </div>
                             </div>
                             <div class="checkbox">
@@ -147,9 +157,11 @@
                                 </label>
                             </div>
                         </div>
+                        <span ng-show="DeptsSelected.length == 0" class="text-danger">You didn't select a subject</br></span>
+                        <span ng-show="ColumnsSelected.length == 0" class="text-danger">You didn't select a column</br></span>
                         <button type="submit" class="btn btn-success"
                                 ng-click="submit()"
-                                ng-disabled="!isCheckboxChecked()">
+                                ng-disabled="!isCheckboxChecked()||DeptsSelected.length == 0||ColumnsSelected.length == 0">
                             Submit <i class="fa fa-arrow-right"></i>
                         </button>
                     </div>

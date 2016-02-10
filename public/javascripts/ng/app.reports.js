@@ -210,6 +210,16 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
         $scope.reportDateEnd = moment(term.order_due_date).toDate();
     };
 
+    $scope.selectAllDepts = function()
+    {
+        $scope.DeptsSelected=$scope.departments.slice();
+    };
+
+    $scope.selectAllCols = function()
+    {
+        $scope.ColumnsSelected=$scope.options.slice();
+    };
+
     $scope.isCheckboxChecked = function() {
         if ($scope.ReportType == 'orders')
         {
