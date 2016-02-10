@@ -33,41 +33,36 @@ app.controller('UsersController', function($scope, $http) {
         var end = pagination.number || 10;
         var page = (start/end)+1;
 
-        var getRequestString = '/users/user-list?page=' + page;                                 // user list URI
+        var getRequestString = '/users/user-list';
 
-
-        if(tableState.sort.predicate) {
-            getRequestString += '&sort=' + tableState.sort.predicate;                           // build sort string
-            if(tableState.sort.reverse)
-                getRequestString += '&dir=desc';
-        }
-
-        if(tableState.search.predicateObject) {
-            var predicateObject = tableState.search.predicateObject;
-
-            if(predicateObject.lName)
-                getRequestString += '&lName=' + encodeURIComponent(predicateObject.lName);    // search for last name
-            if(predicateObject.fName)
-                getRequestString += '&fName=' + encodeURIComponent(predicateObject.fName);    // search for first name
-            if(predicateObject.netID)
-                getRequestString += '&netID=' + encodeURIComponent(predicateObject.netID);    // search for netID
-            if(predicateObject.email)
-                getRequestString += '&email=' + encodeURIComponent(predicateObject.email);    // search for email
-        }
-
-
-        $http.get(getRequestString).then(
-            function success(response) {
-                tableState.pagination.numberOfPages = response.data.last_page;                // update number of pages with laravel response
-                tableState.pagination.number = response.data.per_page;                        // update number of entries per page with laravel response
-                $scope.users = response.data.data; // using scope var since it was already there.
-                ctrl.isLoading=false;
+        var config = {
+            params: {
+                page: page,
+                table_state: tableState
             }
-        );
+        };
+
+        $http.get(getRequestString, config).then(function(response){
+            tableState.pagination.numberOfPages = response.data.last_page;                // update number of pages with laravel response
+            tableState.pagination.number = response.data.per_page;                        // update number of entries per page with laravel response
+            $scope.users = response.data.data; // using scope var since it was already there.
+            ctrl.isLoading=false;
+        });
 
     };
 });
 
+
+app.controller('UsersModifyController', function ($scope) {
+    $scope.submit = function(form, e){
+        if (form.$valid)
+            form.submit();
+        else{
+            form.$setSubmitted(true);
+            e.preventDefault();
+        }
+    }
+});
 
 app.controller('NewDepartmentController', function($scope, $http) {
     $scope.canAddDepartment = function(){

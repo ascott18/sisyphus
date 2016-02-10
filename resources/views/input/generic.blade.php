@@ -23,8 +23,11 @@
             @endforeach
     >
 
-    <div ng-show="form.$submitted || form['{{$nameIndexerEscaped}}'].$touched">
+    <div ng-cloak ng-show="form.$submitted || form['{{$nameIndexerEscaped}}'].$touched">
         <span class="text-danger" ng-show="form['{{$nameIndexerEscaped}}'].$error.required">{{$label}} is required.</span>
         <span class="text-danger" ng-show="form['{{$nameIndexerEscaped}}'].$error.pattern">{{$label}} {{ isset($pattern) ? $pattern : 'is invalid'}}.</span>
+        @if ($type == 'email')
+            <span class="text-danger" ng-show="form['{{$nameIndexerEscaped}}'].$error.email">{{$label}} is not a valid email address.</span>
+        @endif
     </div>
 </div>

@@ -160,6 +160,8 @@ app.controller('MessagesController', ['$scope', '$timeout', '$http', function($s
         $http.post('/messages/send-messages', request).then(
             function success(response){
                 $scope.sendingMessages = false;
+                $scope.messagesRequested = response.data.requested;
+                $scope.messagesSent = response.data.sent;
                 $scope.setStage($scope.STAGE_SENT);
                 $scope.selectNoUsers();
                 $scope.reloadMessages();

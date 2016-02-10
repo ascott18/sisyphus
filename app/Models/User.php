@@ -28,6 +28,7 @@ use Zizaco\Entrust\Traits\EntrustUserTrait;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property-read string $last_first_name
+ * @property-read mixed $first_last_name
  */
 class User extends Model implements AuthenticatableContract,
                                     AuthorizableContract
@@ -50,7 +51,7 @@ class User extends Model implements AuthenticatableContract,
      *
      * @var array
      */
-    protected $fillable = [];
+    protected $fillable = ['first_name', 'last_name', 'email'];
 
     /**
      * The accessors to append to the model's array form.
@@ -61,6 +62,10 @@ class User extends Model implements AuthenticatableContract,
 
 
 
+    public function getFirstLastNameAttribute()
+    {
+        return "$this->first_name $this->last_name";
+    }
     public function getLastFirstNameAttribute()
     {
         return "$this->last_name, $this->first_name";

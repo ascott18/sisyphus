@@ -1,7 +1,10 @@
-@extends('layouts.master')
+@extends('layouts.master', [
+    'breadcrumbs' => [
+        ['Terms', '/terms'],
+        ['All Terms'],
+    ]
+])
 
-@section('area', 'Terms')
-@section('page', 'All Terms')
 
 @section('content')
 
@@ -15,7 +18,10 @@
                 <div class="panel-body">
 
                     <div ng-controller="TermsTableController as tc" class="table-responsive">
-                        <table  st-pipe="tc.callServer" st-table="tc.displayed" class="table table-hover"
+                        <table  st-pipe="tc.callServer"
+                                st-table="tc.displayed"
+                                st-has-default-sort="true"
+                                class="table table-hover"
                                 empty-placeholder>
                             <thead>
                             <tr>
@@ -36,11 +42,13 @@
                             </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="term in tc.displayed">
+                                <tr ng-cloak ng-repeat="term in tc.displayed">
                                     <td> [[ term.term_name ]] </td>
                                     <td> [[ term.year ]] </td>
 
-                                    <td> [[ term.status ]] </td>
+                                    <td ng-class="{'text-muted': term.status.indexOf('eventually') > -1 || term.status == 'Concluded'}">
+                                        [[ term.status ]]
+                                    </td>
 
                                     <td> [[ term.order_start_date | moment:'ll' ]] </td>
                                     <td> [[ term.order_due_date | moment:'ll' ]] </td>
@@ -57,7 +65,6 @@
                             </td>
                             </tfoot>
                         </table>
-
                     </div>
                 </div>
             </div>

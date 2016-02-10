@@ -29,9 +29,15 @@ class EnsureActionAuthorized
     {
         $response = $next($request);
 
+        // Don't warn about this if we're responding with an exception,
+        // or if the status is 422, which means that validation failed.
+        if ($response->status() == 422
+            || (isset($response->exception) && $response->exception))
+        {
+            return $response;
+        }
 
-        if ((!isset($response->exception) || $response->exception == null)
-            && !$this->authProvider->getHasControllerAttemptedAuthorization()){
+        if (!$this->authProvider->getHasControllerAttemptedAuthorization()){
             $message = "Controller did not attempt any authorization.";
 
             if (config("app.debug")){

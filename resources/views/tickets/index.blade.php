@@ -1,7 +1,10 @@
-@extends('layouts.master')
+@extends('layouts.master', [
+    'breadcrumbs' => [
+        ['Tickets', '/tickets'],
+        ['All Tickets'],
+    ]
+])
 
-@section('area', 'Tickets')
-@section('page', 'All Tickets')
 
 @section('content')
 
@@ -25,9 +28,9 @@
                             <thead>
                             <tr>
                                 TODO: Nathan add sorting
-                                <th width="170px" >Title</th>
+                                <th width="170px" st-sort="title" >Title</th>
                                 <th width="250px" >Status</th>
-                                <th >Created By</th>
+                                <th st-sort="name">Created By</th>
                                 <th width="1%"></th>
                             </tr>
                             <tr>
@@ -35,8 +38,8 @@
                                     <input type="text" class="form-control" placeholder="Search..." st-search="section"/>
                                 </th>
                                 <th>
-                                    <select class="form-control"  ng-init="TermSelected = ''" ng-model="TermSelected" ng-change="updateTerm()">
-                                        <option value="">All Terms</option>
+                                    <select class="form-control"  ng-init="statusSelected = ''" ng-model="statusSelected" ng-change="updateStatus()">
+                                        <option value="">All Statuses</option>
                                             <option ng-repeat="status in statuses" value="status">
                                                 [[ status ]]
                                             </option>
@@ -51,7 +54,7 @@
                             </thead>
                             <tbody>
 
-                            <tr ng-repeat="ticket in tc.displayed">
+                            <tr ng-cloak ng-repeat="ticket in tc.displayed">
                                 <td>
                                     [[ ticket.title ]]
                                 </td>

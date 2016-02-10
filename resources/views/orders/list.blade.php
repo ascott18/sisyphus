@@ -1,7 +1,10 @@
-@extends('layouts.master')
+@extends('layouts.master', [
+    'breadcrumbs' => [
+        ['Requests', '/requests'],
+        ['All Requests'],
+    ]
+])
 
-@section('area', 'Requests')
-@section('page', 'All Requests')
 
 @section('content')
     <div class="row">
@@ -20,6 +23,7 @@
                             <thead>
                             <tr>
                                 <th st-sort="section">Section</th>
+                                <th st-sort="course_name">Course Name</th>
                                 <th st-sort="title">Title</th>
                                 <th>Term</th>
                                 <th st-sort="created_at">Order Date</th>
@@ -27,6 +31,7 @@
                             </tr>
                             <tr>
                                 <th><input type="text" class="form-control" placeholder="Search..." st-search="section"/></th>
+                                <th><input type="text" class="form-control" placeholder="Search..." st-search="course_name"></th>
                                 <th><input type="text" class="form-control" placeholder="Search..." st-search="title"/></th>
                                 <th>
                                     <select class="form-control" ng-init="TermSelected = ''" ng-model="TermSelected" ng-change="updateTerm()">
@@ -42,7 +47,9 @@
                             <tbody>
 
                             <tr ng-cloak ng-repeat="order in mc.displayed">
-                                <td>[[ order.department ]] [[ order.course_number | zpad:3 ]]-[[ order.course_section | zpad:2 ]]</td>
+                                {{-- This file is unused since the upadte to accomodate for listings. --}}
+                                {{--<td>[[ order.department ]] [[ order.course_number | zpad:3 ]]-[[ order.course_section | zpad:2 ]]</td>--}}
+                                {{--<td>[[ order.course_name ]]</td>--}}
                                 <td>[[ order.title ]]</td>
                                 <td>[[ order.term.display_name ]]</td>
                                 <td>[[ order.created_at | moment:'ll' ]]</td>

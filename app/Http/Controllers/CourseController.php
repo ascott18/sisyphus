@@ -5,18 +5,20 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\User;
-use App\Models\Order;
+use App\Providers\SearchServiceProvider;
 use Illuminate\Http\Request;
 use App\Models\Term;
-use Illuminate\Database\Query\Builder;
+use SearchHelper;
 
 class CourseController extends Controller
 {
     public static $CourseValidation = [
-        'course.department' => 'required|string|min:2|max:10',
-        'course.course_name' => 'required|string',
-        'course.course_number' => 'required|numeric',
-        'course.course_section' => 'required|numeric',
+        'course.listings' => 'required',
+        'course.listings.0' => 'required',
+        'course.listings.0.name' => 'required|string',
+        'course.listings.*.department' => 'required|string|min:2|max:10',
+        'course.listings.*.number' => 'required|numeric',
+        'course.listings.*.section' => 'required|numeric',
     ];
 
     /**
@@ -71,11 +73,12 @@ class CourseController extends Controller
      */
     public function getEdit($id)
     {
-        $course = Course::findOrFail($id);
+        $course = Course::with('listings')->findOrFail($id);
 
         $this->authorize("edit-course", $course);
 
         // All users, from which we will select a professor.
+        // TODO: restrict this, since dept secretaries can also edit courses.
         $users = User::all(['first_name', 'last_name', 'user_id']);
 
         return view('courses.edit', ['panelTitle' => 'Edit Course', 'course' => $course, 'users' => $users]);
@@ -94,6 +97,23 @@ class CourseController extends Controller
 
         $course = $this->cleanCourseForCreateOrEdit($request);
         unset($course['term_id']);
+
+        $listings = $course['listings'];
+        unset($course['listings']);
+
+
+        for ($i = 0; $i < count($dbCourse->listings); $i++) {
+            $existingListing = $dbCourse->listings[$i];
+
+            if (isset($listings[$i]))
+                $existingListing->update($listings[$i]);
+            else
+                $existingListing->delete();
+        }
+        for ($i = count($dbCourse->listings); $i < count($listings); $i++){
+            $dbCourse->listings()->create($listings[$i]);
+        }
+
 
         $dbCourse->update($course);
         $dbCourse->save();
@@ -122,10 +142,17 @@ class CourseController extends Controller
 
     private function cleanCourseForCreateOrEdit(Request $request)
     {
-        $course = $request->get('course');
+        $course = $request->input('course');
 
-        $course['department'] = trim($course['department']);
-        $course['course_name'] = trim($course['course_name']);
+        // TODO: silently delete any duplicate listings that come in. no need to yell at the user about it.
+
+
+        $name = $course['listings'][0]['name'] = trim($course['listings'][0]['name']);
+
+        foreach ($course['listings'] as &$listing) {
+            $listing['department'] = strtoupper(trim($listing['department']));
+            $listing['name'] = $name;
+        }
 
         // The professor of a course is nullable. Check for empty strings and manually set to null.
         if (!isset($course['user_id']) || !$course['user_id']) $course['user_id'] = null;
@@ -140,13 +167,20 @@ class CourseController extends Controller
 
         $course = $this->cleanCourseForCreateOrEdit($request);
 
+        $listings = $course['listings'];
+        unset($course['listings']);
+
         $dbCourse = new Course($course);
 
         // Authorize that the user can indeed create this course before actually saving it.
         $this->authorize("create-course", $dbCourse);
 
         // They can indeed create this course, so it is now safe to save to the database.
+
         $dbCourse->save();
+        for ($i = 0; $i < count($listings); $i++){
+            $dbCourse->listings()->create($listings[$i]);
+        }
 
         return redirect('courses/details/' . $dbCourse->course_id);
     }
@@ -156,54 +190,21 @@ class CourseController extends Controller
      * Build the search query for the courses controller
      *
      * @param \Illuminate\Database\Query $query
-     * @param \Illuminate\Http\Request $request
+     * @param $tableState
      * @return \Illuminate\Database\Query
      */
-    private function buildSearchQuery($request, $query) {
-        if($request->input('section')) {
-            $searchArray = preg_split("/[\s-]/", $request->input('section'));
-            foreach($searchArray as $key => $field) {
-                $searchArray[$key] = ltrim($field, '0');
-            }
-            if(count($searchArray) == 2) {
-                $query = $query->where('department', 'LIKE', '%'.$searchArray[0].'%')
-                    ->where('course_number', 'LIKE', '%'.$searchArray[1].'%')
-                    ->orWhere('course_number', 'LIKE', '%'.$searchArray[0].'%')
-                    ->where('course_section', 'LIKE', '%'.$searchArray[1].'%')
-                    ->orWhere('department', 'LIKE', '%'.$searchArray[0].'%')
-                    ->where('course_section', 'LIKE', '%'.$searchArray[1].'%');
-            } elseif(count($searchArray) == 3) {
-                $query = $query->where('department', 'LIKE', '%'.$searchArray[0].'%')
-                                ->where('course_number', 'LIKE', '%'.$searchArray[1].'%')
-                                ->where('course_section', 'LIKE', '%'.$searchArray[2].'%');
-            } else {
-                for($i=0; $i<count($searchArray); $i++) {
-                    $query = $query->where('department', 'LIKE', '%'.$searchArray[$i].'%')
-                        ->orWhere('course_number', 'LIKE', '%'.$searchArray[$i].'%')
-                        ->orWhere('course_section', 'LIKE', '%'.$searchArray[$i].'%');
-                }
-            }
-        }
+    private function buildCourseSearchQuery($tableState, $query) {
 
-        if($request->input('name'))
-            $query = $query->where('course_name', 'LIKE', '%'.$request->input('name').'%');
+        $predicateObject = [];
+        if(isset($tableState->search->predicateObject))
+            $predicateObject = $tableState->search->predicateObject; // initialize predicate object
 
-        if($request->input('professor')) {
-            $query = $query->where(function($sQuery) use ($request) {
-                $sQuery = $sQuery->where('users.first_name', 'LIKE', '%'.$request->input('professor').'%')
-                    ->orWhere('users.last_name', 'LIKE', '%'.$request->input('professor').'%');
-
-                $searchArray = preg_split("/[\s,]+/", $request->input('professor'));
-                if(count($searchArray) == 2) {
-                    $sQuery = $sQuery->orWhere('users.first_name', 'LIKE', '%'.$searchArray[0].'%')
-                        ->where('users.last_name', 'LIKE', '%'.$searchArray[1].'%')
-                        ->orWhere('users.last_name', 'LIKE', '%'.$searchArray[0].'%')
-                        ->where('users.first_name', 'LIKE', '%'.$searchArray[1].'%');
-                }
-
-                return $sQuery;
-            });
-        }
+        if(isset($predicateObject->section))
+            SearchHelper::sectionSearchQuery($query, $predicateObject->section);
+        if(isset($predicateObject->name))
+            $query = $query->where('name', 'LIKE', '%'.$predicateObject->name.'%');
+        if(isset($predicateObject->professor))
+            SearchHelper::professorSearchQuery($query, $predicateObject->professor);
 
         return $query;
     }
@@ -213,24 +214,24 @@ class CourseController extends Controller
      * Build the sort query for the courses controller
      *
      * @param \Illuminate\Database\Query $query
-     * @param \Illuminate\Http\Request $request
+     * @param $tableState
      * @return \Illuminate\Database\Query
      */
-    private function buildSortQuery($request, $query) {
-        $column = $request->input('sort');
-        if ($column) {
-            if ($column == "section"){
-                if ($request->input('dir')) {
+    private function buildCourseSortQuery($tableState, $query) {
+        if(isset($tableState->sort->predicate)){
+            $sort = $tableState->sort;
+            if ($sort->predicate == "section"){
+                if ($sort->reverse == 1) {
                     $query = $query->orderBy("department", "desc");
-                    $query = $query->orderBy("course_number", "desc");
-                    $query = $query->orderBy("course_section", "desc");
+                    $query = $query->orderBy("number", "desc");
+                    $query = $query->orderBy("section", "desc");
                 } else {
                     $query = $query->orderBy("department");
-                    $query = $query->orderBy("course_number");
-                    $query = $query->orderBy("course_section");
+                    $query = $query->orderBy("number");
+                    $query = $query->orderBy("section");
                 }
-            } else if($request->input('sort') == "professor") {
-                if($request->input('dir')) {
+            } else if($sort->predicate == "professor") {
+                if($sort->reverse == 1) {
                     $query = $query->orderBy('users.last_name', "desc");
                     $query = $query->orderBy('users.first_name', "desc");
                 } else {
@@ -238,16 +239,17 @@ class CourseController extends Controller
                     $query = $query->orderBy('users.first_name');
                 }
             } else {
-                if ($request->input('dir'))
-                    $query = $query->orderBy($request->input('sort'), "desc");
+                // TODO NATHAN SQL INJECTION HERE
+                if ($sort->reverse == 1)
+                    $query = $query->orderBy($sort->predicate, "desc");
                 else
-                    $query = $query->orderBy($request->input('sort'));
+                    $query = $query->orderBy($sort->predicate);
 
                 // If sorting by term, sort by the dept & numbers as secondaries.
-                if ($column == 'term_id'){
+                if ($sort->predicate == 'term_id'){
                     $query = $query->orderBy("department");
-                    $query = $query->orderBy("course_number");
-                    $query = $query->orderBy("course_section");
+                    $query = $query->orderBy("number");
+                    $query = $query->orderBy("section");
                 }
             }
         }
@@ -263,34 +265,42 @@ class CourseController extends Controller
      */
     public function getCourseList(Request $request)
     {
+        $tableState = json_decode($request->input('table_state'));
+
         $this->authorize("view-course-list");
 
-        $query = Course::visible($request->user());
-
-        if($request->input('term_id')) {
-            $query = $query->where('term_id', '=', $request->input('term_id'));
+        $query = Course::visible($request->user())
+            ->select('courses.*')
+            ->distinct()
+            ->with([
+                'term',
+                'user' => function($query) {
+                    return $query->select('user_id', 'first_name', 'last_name');
+                },
+                'listings',
+                'orders' => function($query) {
+                    // Just grab the IDs, since the only reason that we're doing this is to count the orders.
+                    // We need the course id so that we can match up the orders that we get back with each course.
+                    return $query->select('course_id');
+                },
+            ]);
+        if(isset($tableState->term_selected) && $tableState->term_selected != "") {
+            $query = $query->where('term_id', '=', $tableState->term_selected);
         }
 
-        if($request->input('sort') == "professor" || $request->input('professor')) {
+        if((isset($tableState->sort->predicate) && $tableState->sort->predicate == "professor")
+         || isset($tableState->search->predicateObject->professor) ) {
+            // only join in the professor when we actually need it
             $query->join('users','users.user_id', '=', 'courses.user_id');
         }
 
-        $query = $this->buildSearchQuery($request, $query);
-        $query = $this->buildSortQuery($request, $query);
-        $query = $query->with("term");
-        $query = $query->with("user");
+        $query = $query->join('listings', 'courses.course_id', '=', 'listings.course_id');
+
+        $query = $this->buildCourseSearchQuery($tableState, $query);
+        $query = $this->buildCourseSortQuery($tableState, $query);
 
 
-        $courses = $query->paginate(10);
-
-        foreach ($courses as $course) {
-            $course->term->term_name = $course->term->termName();
-
-
-            $course->order_count = Order::query()
-                ->where('course_id', '=', $course->course_id)
-                ->count();
-        }
+        $courses = SearchServiceProvider::paginate($query, 10);
 
         return response()->json($courses);
     }

@@ -1,7 +1,10 @@
-@extends('layouts.master')
+@extends('layouts.master', [
+    'breadcrumbs' => [
+        ['Courses', '/courses'],
+        [$course->listings[0]->displayIdentifier()],
+    ]
+])
 
-@section('area', 'Courses')
-@section('page', $course->displayIdentifier())
 
 @section('content')
 
@@ -14,39 +17,41 @@
                 <div class="panel-body">
 
                     @can('edit-course', $course)
-                    <div class="col-md-12">
-                        <a class="btn btn-primary" href="/courses/edit/{{ $course->course_id }}" role="button">
-                            <i class="fa fa-pencil"></i> Edit
-                        </a>
-                    </div>
+                    <a class="btn btn-primary" href="/courses/edit/{{ $course->course_id }}" role="button">
+                        <i class="fa fa-pencil"></i> Edit
+                    </a>
+                    <br>
                     @endcan
 
-                    <dl class="col-md-4 dl-horizontal">
+                    <dl class="col-lg-4 col-md-6 dl-horizontal">
                         <dt>Title</dt>
                         <dd>
-                            {{ $course->course_name }}
+                            {{ $course->listings[0]->name }}
                         </dd>
 
-                        <dt>Department</dt>
+                        <dt>Identifier</dt>
                         <dd>
-                            {{ $course->department }}
+                            {{ $course->listings[0]->displayIdentifier() }}
                         </dd>
 
-                        <dt>Number</dt>
-                        <dd>
-                            {{ $course->course_number }}
-                        </dd>
-
-                        <dt>Section</dt>
-                        <dd>
-                            {{ $course->course_section }}
-                        </dd>
+                        @if (count($course->listings) > 1)
+                            <dt>Cross-Listings</dt>
+                            <dd>
+                                @foreach($course->listings->slice(1) as $listing)
+                                    {{ $listing->displayIdentifier() }} <br>
+                                @endforeach
+                            </dd>
+                        @endif
                     </dl>
 
-                    <dl class="col-md-4 dl-horizontal">
+                    <dl class="col-lg-4 col-md-6 dl-horizontal">
                         <dt>Term</dt>
                         <dd>
-                            <a href="/terms/details/{{ $course->term->term_id }}">{{ $course->term->displayName() }}</a>
+                            @can('view-terms')
+                                <a href="/terms/details/{{ $course->term->term_id }}">{{ $course->term->displayName() }}</a>
+                            @else
+                                {{ $course->term->displayName() }}
+                            @endcan
                         </dd>
 
                         <dt>Request Period</dt>
@@ -62,7 +67,7 @@
                         @endif
                     </dl>
 
-                    <dl class="col-md-4 dl-horizontal">
+                    <dl class="col-lg-4 col-md-6 dl-horizontal">
                         @if ($course->user != null)
                             <dt>Professor</dt>
                             <dd>
@@ -71,7 +76,7 @@
 
                             <dt>Email</dt>
                             <dd>
-                                {{ $course->user->email }}
+                                <a href="mailto:{{ $course->user->email }}">{{ $course->user->email }}</a>
                             </dd>
                         @else
                             <dt>Professor</dt>
@@ -89,7 +94,7 @@
                     <h3 class="panel-title"><i class="fa fa-shopping-cart fa-fw"></i> Requests</h3>
                 </div>
                 <div class="panel-body">
-                    @if ($course->canPlaceOrder())
+                    @can('place-order-for-course', $course)
                         <a href="/requests/create/{{$course->course_id}}" class="btn btn-primary" role="button">
                             Place a request <i class="fa fa-arrow-right"></i>
                         </a>
@@ -103,7 +108,7 @@
                                 <i class="fa fa-times"></i> No Book Needed
                             </button>
                         @endif
-                    @endif
+                    @endcan
 
                     {{-- being no_book and having orders are no mutually exclusive. A course might be no_book and also have deleted orders, which are listed here.--}}
                     @if ($course->no_book)
@@ -134,9 +139,11 @@
                                 <tr class=" {{ $order->deleted_at != null ? "danger" : "" }}">
                                     <td>
                                         {{ $order->book->title }}
-                                        <br><span class="text-muted">
-                                            Placed by {{$order->placedBy->first_name}} {{$order->placedBy->last_name}} on {{$order->created_at->toDateString()}}
-                                        </span>
+                                        @if ($order->placedBy != null)
+                                            <br><span class="text-muted">
+                                                Placed by {{$order->placedBy->first_name}} {{$order->placedBy->last_name}} on {{$order->created_at->toDateString()}}
+                                            </span>
+                                        @endif
 
                                         @if ($order->deleted_at != null)
                                             <br><span class="text-muted">
@@ -146,7 +153,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        [["{{ $order->book->isbn13 }}" | isbnHyphenate ]]
+                                        <span ng-bind=":: '{{ $order->book->isbn13 }}' | isbnHyphenate">{{ $order->book->isbn13 }}</span>
                                     </td>
                                     <td>
                                         {{ $order->book->publisher }}
@@ -164,7 +171,7 @@
                                             <form action="/requests/delete/{{$order->order_id}}" method="POST" name="form">
                                                 {!! csrf_field() !!}
                                                 <button type="button" class="btn btn-sm btn-danger" role="button" ng-confirm-click="submit" >
-                                                    <i class="fa fa-times"></i> Delete Request
+                                                    <i class="fa fa-trash-o"></i> Delete Request
                                                 </button>
                                             </form>
                                         @endif

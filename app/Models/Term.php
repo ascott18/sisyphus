@@ -73,7 +73,7 @@ class Term extends Model
      * @var array
      */
     public static $termOrdering = [
-        10, 20, 25, 30, 35, 40, 15
+        10, 25, 20, 35, 30, 15, 40
     ];
 
 
@@ -92,27 +92,33 @@ class Term extends Model
 
                 switch ($term_number){
                     case 10: // Winter
-                        $start = Carbon::create($year - 1, 10, 01);
+                        $end = Carbon::create($year - 1, 12, 4);
+                        break;
+                    case 25: // Spring Semester
+                        $end = Carbon::create($year - 1, 12, 4);
                         break;
                     case 20: // Spring
-                    case 25: // Spring Semester
-                        $start = Carbon::create($year, 1, 01);
+                        $end = Carbon::create($year, 2, 28);
+                        break;
+                    case 35: // Summer semester
+                        $end = Carbon::create($year, 4, 8);
                         break;
                     case 30: // Summer
-                    case 35: // Summer semester
-                        $start = Carbon::create($year, 4, 01);
+                        $end = Carbon::create($year, 5, 20);
+                        break;
+                    case 15: // Fall semester
+                        $end = Carbon::create($year, 7, 21);
                         break;
                     case 40: // Fall
-                    case 15: // Fall semester
-                        $start = Carbon::create($year, 7, 01);
+                        $end = Carbon::create($year, 8, 21);
                         break;
                 }
 
                 // TODO: figure out what these dates should look like, roughly, from the bookstore.
 
                 $term = new static([
-                    'order_start_date' => $start->copy(),
-                    'order_due_date' => $start->copy()->addMonths(1)->addDays(20),
+                    'order_start_date' => $end->copy()->addMonths(-3),
+                    'order_due_date' => $end->copy(),
                 ]);
 
                 // Add these manually - they shouldn't be mass assignable.
@@ -258,7 +264,7 @@ class Term extends Model
 
 
     /**
-     * Gets the terms which ended within the given number of days.
+     * Gets the terms which started on or before today
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */

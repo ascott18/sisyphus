@@ -97,30 +97,13 @@ class AuthServiceProvider extends ServiceProvider
         });
 
 
-        $gate->define('view-order', function (User $user, Order $order) {
-            if ($user->may('view-all-orders')) {
-                return true;
-            }
-
-            if ($user->may('view-dept-orders') &&
-                $user->departments()->where('department', '=', $order->course()->department)->count()){
-                return true;
-            }
-
-            if ($user->user_id == $order->course()->user_id){
-                return true;
-            }
-
-            return false;
-        });
-
         $courseFilter = function (User $user, Course $course, $allPermission, $deptPermission) {
             if ($user->may($allPermission)) {
                 return true;
             }
 
             if ($user->may($deptPermission) &&
-                $user->departments()->where('department', '=', $course->department)->count()){
+                $user->departments()->whereIn('department', $course->listings->pluck('department'))->count()){
                 return true;
             }
 
@@ -158,17 +141,8 @@ class AuthServiceProvider extends ServiceProvider
             return $user->may('create-all-courses') || $user->may('create-dept-courses');
         });
 
-        $gate->define('create-course', function (User $user, Course $course) {
-            if ($user->may('create-all-courses')) {
-                return true;
-            }
-
-            if ($user->may('create-dept-courses') &&
-                $user->departments()->where('department', '=', $course->department)->count()){
-                return true;
-            }
-
-            return false;
+        $gate->define('create-course', function (User $user, Course $course) use ($courseFilter) {
+            return $courseFilter($user, $course, 'create-all-courses', 'create-dept-courses');
         });
 
 
@@ -213,27 +187,19 @@ class AuthServiceProvider extends ServiceProvider
             || $user->may('send-dept-messages');
         });
 
-        $gate->define('send-message-to-user', function (User $user, User $recipient) {
-            if ($user->may('send-all-messages'))
-                return true;
-
-            $userDepartments = $user->departments();
-
-            // TODO: test if this works
-            if ($user->may('send-dept-messages') &&
-                $recipient->courses()->whereIn('department', $userDepartments)->first() != null){
-                return true;
-            }
-
-            return false;
-        });
-
-
-
 
         $gate->define('view-ticket', function (User $user, Ticket $ticket) {
             // TODO: make this correct (check department, and have permissions for viewing department tickets, etc).
             return $ticket->user_id == $user->user_id;
+        });
+
+
+        $gate->define('view-dashboard', function (User $user) {
+            return $user->may('view-dashboard');
+        });
+
+        $gate->define('make-reports', function (User $user) {
+           return $user->may("make-reports");
         });
     }
 

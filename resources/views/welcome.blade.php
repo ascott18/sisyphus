@@ -1,81 +1,82 @@
-@extends('layouts.master')
-
-@section('area', 'Dashboard')
-@section('page', 'Overview')
+@extends('layouts.master', [
+    'breadcrumbs' => [
+        ['Dashboard'],
+    ]
+])
 
 
 @section('content')
 
-<div class="row">
-    <div class="col-lg-3 col-xs-6">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-xs-3"><i class="fa fa-calendar fa-5x"></i></div>
-                    <div class="col-xs-9 text-right">
-                        <div class="huge">{{$openTermsCount}}</div>
-                        <div>Open Terms!</div>
-                    </div>
-                </div>
-            </div>
-            <a href="#">
-                <div class="panel-footer">
-                    <span class="pull-left">View Details</span><span class="pull-right"><i
-                                class="fa fa-arrow-circle-right"></i></span>
+{{--<div class="row">--}}
+    {{--<div class="col-lg-3 col-xs-6">--}}
+        {{--<div class="panel panel-primary">--}}
+            {{--<div class="panel-heading">--}}
+                {{--<div class="row">--}}
+                    {{--<div class="col-xs-3"><i class="fa fa-calendar fa-5x"></i></div>--}}
+                    {{--<div class="col-xs-9 text-right">--}}
+                        {{--<div class="huge">{{$openTermsCount}}</div>--}}
+                        {{--<div>Open Terms!</div>--}}
+                    {{--</div>--}}
+                {{--</div>--}}
+            {{--</div>--}}
+            {{--<a href="#">--}}
+                {{--<div class="panel-footer">--}}
+                    {{--<span class="pull-left">View Details</span><span class="pull-right"><i--}}
+                                {{--class="fa fa-arrow-circle-right"></i></span>--}}
 
-                    <div class="clearfix"></div>
-                </div>
-            </a>
-        </div>
-    </div>
+                    {{--<div class="clearfix"></div>--}}
+                {{--</div>--}}
+            {{--</a>--}}
+        {{--</div>--}}
+    {{--</div>--}}
 
 
-    @can('edit-books')
-    <div class="col-lg-3 col-xs-6">
-        <div class="panel panel-green">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-xs-3"><i class="fa fa-book fa-5x"></i></div>
-                    <div class="col-xs-9 text-right">
-                        <div class="huge">{{$newBookCount}}</div>
-                        <div>New Books (30 days)</div>
-                    </div>
-                </div>
-            </div>
-            <a href="#">
-                <div class="panel-footer">
-                    <span class="pull-left">View Details</span><span class="pull-right"><i
-                                class="fa fa-arrow-circle-right"></i></span>
+    {{--@can('edit-books')--}}
+    {{--<div class="col-lg-3 col-xs-6">--}}
+        {{--<div class="panel panel-green">--}}
+            {{--<div class="panel-heading">--}}
+                {{--<div class="row">--}}
+                    {{--<div class="col-xs-3"><i class="fa fa-book fa-5x"></i></div>--}}
+                    {{--<div class="col-xs-9 text-right">--}}
+                        {{--<div class="huge">{{$newBookCount}}</div>--}}
+                        {{--<div>New Books (30 days)</div>--}}
+                    {{--</div>--}}
+                {{--</div>--}}
+            {{--</div>--}}
+            {{--<a href="#">--}}
+                {{--<div class="panel-footer">--}}
+                    {{--<span class="pull-left">View Details</span><span class="pull-right"><i--}}
+                                {{--class="fa fa-arrow-circle-right"></i></span>--}}
 
-                    <div class="clearfix"></div>
-                </div>
-            </a>
-        </div>
-    </div>
-    @endcan
+                    {{--<div class="clearfix"></div>--}}
+                {{--</div>--}}
+            {{--</a>--}}
+        {{--</div>--}}
+    {{--</div>--}}
+    {{--@endcan--}}
 
-    <div class="col-lg-3 col-xs-6">
-        <div class="panel panel-red">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-xs-3"><i class="fa fa-support fa-5x"></i></div>
-                    <div class="col-xs-9 text-right">
-                        <div class="huge">13</div>
-                        <div>Support Tickets!</div>
-                    </div>
-                </div>
-            </div>
-            <a href="#">
-                <div class="panel-footer">
-                    <span class="pull-left">View Details</span><span class="pull-right"><i
-                                class="fa fa-arrow-circle-right"></i></span>
+    {{--<div class="col-lg-3 col-xs-6">--}}
+        {{--<div class="panel panel-red">--}}
+            {{--<div class="panel-heading">--}}
+                {{--<div class="row">--}}
+                    {{--<div class="col-xs-3"><i class="fa fa-support fa-5x"></i></div>--}}
+                    {{--<div class="col-xs-9 text-right">--}}
+                        {{--<div class="huge">13</div>--}}
+                        {{--<div>Support Tickets!</div>--}}
+                    {{--</div>--}}
+                {{--</div>--}}
+            {{--</div>--}}
+            {{--<a href="#">--}}
+                {{--<div class="panel-footer">--}}
+                    {{--<span class="pull-left">View Details</span><span class="pull-right"><i--}}
+                                {{--class="fa fa-arrow-circle-right"></i></span>--}}
 
-                    <div class="clearfix"></div>
-                </div>
-            </a>
-        </div>
-    </div>
-</div>
+                    {{--<div class="clearfix"></div>--}}
+                {{--</div>--}}
+            {{--</a>--}}
+        {{--</div>--}}
+    {{--</div>--}}
+{{--</div>--}}
 <!-- /.row--><!-- Morris Charts CSS-->
 
 <div class="row">
@@ -142,6 +143,9 @@
     {{--<script src="javascripts/plugins/morris/morris-data.js"></script>--}}
 
     <script>
+
+    var app = angular.module('sisyphus', ['sisyphus.helpers']);
+
     $(function() {
         @foreach($chartData as $term)
             var data = {!! json_encode($term['data']) !!}
