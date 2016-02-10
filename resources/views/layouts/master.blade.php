@@ -68,7 +68,12 @@
             <ul class="nav navbar-right top-nav">
                 @if (Auth::user())
                     <li >
-                        <span id="userName"><i class="fa fa-user"></i> Welcome, {{ Auth::user()->net_id }}! </span>
+                        <span id="userName">
+                            <i class="fa fa-user"></i>
+                            <a href="/users/edit/{{Auth::user()->user_id}}">
+                                Welcome, {{ Auth::user()->net_id }}
+                            </a>!
+                        </span>
                     </li>
                     <li class="pull-right">
                         <span style="margin-left: 25px"><a href="/logout">Logout</a></span>

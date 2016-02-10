@@ -8,10 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * App\Models\Course
  *
- * @property string $department The department code for the course, e.g. "CSCD".
- * @property string $course_name The name of the course, e.g. "Programming Principles I"
- * @property int $course_number The number of the course, e.g. 210.
- * @property int $course_section The section of the course, e.g. 01.
  * @property int $term_id The id of the term that the course belongs to, referencing the terms table.
  * @property int $user_id The id of user that teaches the course.
  * @property integer $course_id The database primary key for this model.
@@ -76,6 +72,26 @@ class Course extends Model
     }
 
 
+    /**
+     * Gets a Query that represents all courseIds that are similar in department and number to this course.
+     * Does not restrict by term.
+     *
+     * @return \Illuminate\Database\Query\Builder The query that represents the similar course ids.
+     */
+    public function getSimilarCourseIdsQuery(){
+        $similarCourseIdsQuery = Listing::select('course_id');
+
+
+        $similarCourseIdsQuery->where(function($q) {
+            foreach ($this->listings as $listing) {
+                $q->orWhere(['department' => $listing->department, 'number' => $listing->number]);
+            }
+        });
+
+        return $similarCourseIdsQuery
+            ->distinct()
+            ->toBase();
+    }
 
     public function scopeVisible($query, User $user = null){
         return $this->scopeHelper($query, $user, 'view-all-courses', 'view-dept-courses');

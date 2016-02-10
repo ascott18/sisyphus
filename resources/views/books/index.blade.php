@@ -55,11 +55,9 @@
 
 
                             </tbody>
+
                             <tfoot>
-                            <tr>
-                                <td class="text-center" st-pagination="" st-items-by-page="10" colspan="5">
-                                </td>
-                            </tr>
+                                <td class="text-center" st-pagination="" st-items-by-page="10" colspan="5"></td>
                             </tfoot>
                         </table>
                     </div>

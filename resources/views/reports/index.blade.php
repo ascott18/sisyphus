@@ -205,6 +205,11 @@
                                 display: none;
                             }
                         }
+
+                        #reportTable th,
+                        #reportTable td {
+                            padding: 2px 5px;
+                        }
                     </style>
 
                     <br>

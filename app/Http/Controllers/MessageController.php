@@ -195,12 +195,19 @@ class MessageController extends Controller
 
         $recipientIds = $request->input('recipients');
 
+        $potentialRecipients = $this->getAllRecipients($request)['users']->pluck('user_id')->toArray();
+
+        $numRequested = 0;
+        $numSent = 0;
+
         foreach ($recipientIds as $user_id)
         {
+            $numRequested++;
             $recipient = User::find($user_id);
 
-            if ($recipient && $recipient->email && Auth::user()->can('send-message-to-user', $recipient))
+            if ($recipient && $recipient->email && in_array($user_id, $potentialRecipients))
             {
+                $numSent++;
                 Mail::queue([], [], function ($m) use ($recipient, $message, $currentUser) {
                     $email = $recipient->email;
                     // TODO: change this from address.
@@ -211,5 +218,7 @@ class MessageController extends Controller
                 });
             }
         }
+
+        return ['success' => true, 'requested' => $numRequested, 'sent' => $numSent];
     }
 }

@@ -86,6 +86,23 @@ app.controller('CoursesModifyController', function($filter, $scope) {
         }
     };
 
+    $scope.deleteListing = function(listing){
+        $scope.course.listings.splice($scope.course.listings.indexOf(listing), 1);
+    };
+
+    $scope.addListing = function(){
+        var last = $scope.course.listings[$scope.course.listings.length - 1];
+        $scope.course.listings.push({
+            department: last.department,
+            number: last.number,
+            section: last.section
+        })
+    };
+
+    $scope.makeFormKey = function(index, property){
+        return "course[listings][" + index + "][" + property + "]";
+    };
+
     $scope.submit = function(form, e){
         if (form.$valid)
             form.submit();

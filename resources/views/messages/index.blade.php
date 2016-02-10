@@ -216,11 +216,16 @@
                 <i class="fa fa-arrow-left fa-fw"></i> Send Another
             </button>
 
-            <h2 class="" style="width: 100%; display: block; text-align:center;">Message sent to
-                <ng-pluralize count="numSendingMessages"
+            <h2 class="text-center" style="width: 100%; display: block;">Message sent  to [[messagesSent]] of
+                <ng-pluralize count="messagesRequested"
                               when="{'one': '{} user',
                                      'other': '{} users'}">
-                </ng-pluralize>!</h2>
+                </ng-pluralize>!
+            </h2>
+            <h4 class="text-center">
+                Some of the users might not have known email addresses.
+            </h4>
+
         </div>
     </div>
 

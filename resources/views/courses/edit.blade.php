@@ -2,16 +2,16 @@
     'breadcrumbs' => [
         ['Courses', '/courses'],
         [isset($course) ? 'Edit' : 'Create'],
-        isset($course) ? [$course->displayIdentifier()] : null,
+        isset($course) ? [$course->listings[0]->displayIdentifier()] : null,
     ]
 ])
 
 
-@section('content')
 
+@section('content')
     <div class="row"
          ng-controller="CoursesModifyController"
-         ng-init="course = {{isset($course) ? $course : '{}' }}">
+         ng-init="course = {{isset($course) ? $course : '{listings: [{}]}' }}">
         <div class="col-lg-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
@@ -27,15 +27,115 @@
                             <h4>{{$term_name}}</h4>
                         @endif
 
+                        <div class="form-group">
+                            <label>
+                                Title
+                            </label>
+                            <input class="form-control"
+                                   name="course[listings][0][name]"
+                                   placeholder="Title"
+                                   ng-model="course.listings[0].name"
+                                   required>
 
-                        @include('input.generic', ['name' => 'course.course_name', 'label' => 'Title',
-                            'attrs' => ['required' => 'true']])
-                        @include('input.generic', ['name' => 'course.department', 'label' => 'Subject',
-                            'attrs' => ['required' => 'true', 'pattern' => '[A-Z]{2,10}'], 'pattern' => 'must be 2-10 uppercase characters'])
-                        @include('input.generic', ['name' => 'course.course_number', 'label' => 'Number',
-                            'attrs' => ['required' => 'true', 'pattern' => '\d+'], 'pattern' => 'must be a number'])
-                        @include('input.generic', ['name' => 'course.course_section', 'label' => 'Section',
-                            'attrs' => ['required' => 'true', 'pattern' => '\d+'], 'pattern' => 'must be a number'])
+                            <div ng-cloak ng-show="form.$submitted || form['course[listings][0][name]'].$touched">
+                                <span class="text-danger" ng-show="form['course[listings][0][name]'].$error.required">
+                                    Title is required.
+                                </span>
+                            </div>
+                        </div>
+
+
+                        <div ng-repeat="listing in course.listings" class="row">
+                            <div>
+                                <div class="col-xs-4 form-group">
+                                    <label ng-show="$first">
+                                        Subject
+                                    </label>
+                                    <input class="form-control"
+                                           {{-- We concat on the first bracket here because we cant have "[[[" since "[" is our angular character.--}}
+                                           name="course[listings][['['+$index]]][department]"
+                                           placeholder="Subject"
+                                           style="text-transform: uppercase;"
+                                           ng-model="listing.department"
+                                           required
+                                           pattern="[a-zA-Z]{2,10}" >
+
+                                    <span ng-cloak ng-show="form.$submitted || form[makeFormKey($index, 'department')].$touched">
+                                        <span class="text-danger" ng-show="form[makeFormKey($index, 'department')].$error.required">
+                                            Subject is required.
+                                        </span>
+                                        <span class="text-danger" ng-show="form[makeFormKey($index, 'department')].$error.pattern">
+                                            Subject must be 2-10 letters.
+                                        </span>
+                                    </span>
+                                </div>
+
+
+                                <div class="col-xs-4 form-group">
+                                    <label ng-show="$first">
+                                        Number
+                                    </label>
+                                    <input class="form-control"
+                                            {{-- We concat on the first bracket here because we cant have "[[[" since "[" is our angular character.--}}
+                                           name="course[listings][['['+$index]]][number]"
+                                           placeholder="Subject"
+                                           ng-model="listing.number"
+                                           required
+                                           pattern="[0-9]{1,10}" >
+
+                                    <span ng-cloak ng-show="form.$submitted || form[makeFormKey($index, 'number')].$touched">
+                                        <span class="text-danger" ng-show="form[makeFormKey($index, 'number')].$error.required">
+                                            Number is required.
+                                        </span>
+                                        <span class="text-danger" ng-show="form[makeFormKey($index, 'number')].$error.pattern">
+                                            Number must be ... a number.
+                                        </span>
+                                    </span>
+                                </div>
+
+
+                                <div class="col-xs-4">
+                                    <label ng-show="$first">
+                                        Section
+                                    </label>
+                                    <div style="display: table;">
+
+                                        <input class="form-control"
+                                               style="display: table-cell;"
+                                                {{-- We concat on the first bracket here because we cant have "[[[" since "[" is our angular character.--}}
+                                               name="course[listings][['['+$index]]][section]"
+                                               placeholder="Section"
+                                               ng-model="listing.section"
+                                               required
+                                               pattern="[0-9]{1,10}" >
+
+                                            <span
+                                                style="display: table-cell;">
+                                            <a class="btn btn-danger" style="margin-left: 10px"
+                                               ng-show="!$first"
+                                               ng-click="deleteListing(listing)">
+                                                <i class="fa fa-times"></i>
+                                            </a>
+                                        </span>
+                                    </div>
+
+                                    <span ng-cloak ng-show="form.$submitted || form[makeFormKey($index, 'section')].$touched">
+                                        <span class="text-danger" ng-show="form[makeFormKey($index, 'section')].$error.required">
+                                            Section is required.
+                                        </span>
+                                        <span class="text-danger" ng-show="form[makeFormKey($index, 'section')].$error.pattern">
+                                            Section must be a number.
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <a class="btn btn-primary" ng-click="addListing()">
+                            <i class="fa fa-plus"></i>
+                            <span ng-show="course.listings.length > 1">Add Another Cross-Listing</span>
+                            <span ng-show="course.listings.length == 1">Add a Cross-Listing</span>
+                        </a>
                     </div>
 
                     <div class="col-md-6 col-md-vspace"
@@ -67,7 +167,9 @@
                             </div>
                         </div>
 
-                        @include('input.generic', ['type' => 'hidden', 'name' => 'course.user_id', 'label' => 'Professor', 'attrs' => []])
+                        <input type="hidden"
+                               name="course[user_id]"
+                               ng-value="course.user_id">
 
                         <div ng-cloak ng-show="userSearch">
                             <div class="list-group">
