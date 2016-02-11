@@ -38,18 +38,12 @@
 </head>
 <body ng-app="sisyphus" >
 <div id="wrapper">
-<<<<<<< HEAD
 
-    <i ng-spinner ng-cloak class="fa fa-spinner fa-spin " ng-show="spinnerActive"></i>
-=======
+ 
     <i ng-spinner ng-cloak class="fa fa-spinner fa-spin " ng-show="spinnerActive"></i>
 
-    <modal title="Help" visible="showModal" ng-controller="HelpModalController">
-
+    <modal title="Help" visible="showModal">
     </modal>
-
-    <i ng-spinner ng-cloak class="fa fa-spinner fa-spin "></i>
->>>>>>> 8a02faccb0a1bd3da29cc7972c8e977dae9a1c39
 
     <!-- Navigation-->
     <nav role="navigation" class="navbar navbar-inverse navbar-fixed-top">
@@ -99,7 +93,10 @@
             </ul>
 
             <!-- Sidebar Menu Items -->
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0ff1f0fad8e2129cb0333158b3330d2e049aa617
             <div class="nav navbar-nav side-nav">
                 @can('view-dashboard')
                 <li><a href="/"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a></li>

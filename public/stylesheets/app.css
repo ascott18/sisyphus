@@ -213,7 +213,7 @@ a[role="tab"]{
 
     .col-md-vspace:not(:first-child){
         padding-top: 15px;
-    }
+}
 }
 
 @media (max-width: 767px) {
@@ -598,7 +598,6 @@ ul.alert-dropdown {
 .custom-icon:hover {
     background:rgba(0,0,0,0.2) !important;
 }
-
 
 .text-muted-hover-danger {
     color: #d8d8d8;
