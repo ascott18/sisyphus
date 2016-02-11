@@ -46,7 +46,6 @@ app.directive('isbn13', function() {
 
 
 app.directive('bookDetails', function($http) {
-    var noBookThumb = "/images/coverNotAvailable.jpg";
     return {
         restrict: 'E',
         transclude: true,
@@ -58,8 +57,7 @@ app.directive('bookDetails', function($http) {
         link: function(scope, element, attrs) {
 
             $(element).find(".smallImage").on('mouseover', function(){
-                if (scope.thumbnail != noBookThumb)
-                    $(element).find(".largeImage").fadeIn();
+                $(element).find(".largeImage").fadeIn();
             });
             $(element).find(".largeImage").on('mouseleave',function(){
                 $(element).find(".largeImage").fadeOut();
@@ -77,17 +75,7 @@ app.directive('bookDetails', function($http) {
                 if (isbn != scope.lastIsbn)
                 {
                     scope.lastIsbn = isbn;
-                    scope.thumbnail = '';
-
-                    $http.get("https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn, {cache: true}).then(
-                        function success(response){
-                            if(response.data.items && response.data.items[0].volumeInfo.imageLinks) {
-                                scope.thumbnail = response.data.items[0].volumeInfo.imageLinks.thumbnail;
-                            } else {
-                                scope.thumbnail = noBookThumb;
-                            }
-                        }
-                    );
+                    scope.thumbnail = '/books/cover?isbn=' + isbn;
                 }
                 else {
                     return scope.thumbnail;
