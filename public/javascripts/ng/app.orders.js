@@ -152,8 +152,8 @@ app.controller('OrdersListController', function($scope, $http) {
     }
 });
 
-app.controller('OrdersController', ['$scope', '$http', 'CartService', 'BreadcrumbService', 'HelpService'
-    function($scope, $http, BreadcrumbService, CartService, HelpService){
+app.controller('OrdersController', ['$scope', '$http', 'CartService', 'BreadcrumbService', 'HelpService',
+    function($scope, $http, CartService, BreadcrumbService, HelpService){
 
     $scope.courses = [];
 
@@ -379,7 +379,7 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
 
     $scope.ordersAreEffectivelyEqual = function(order1, order2){
         return order1.notes == order2.notes && order1.required == order2.required;
-    }
+    };
 
     $scope.toggleAdditionalCourseSelected = function(course){
         if ($scope.additionalCourses == null)
@@ -429,7 +429,6 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
 
         return $scope.additionalCourses.length;
     };
-
 }]);
 
 

@@ -36,15 +36,12 @@
 
     @yield('scripts-head')
 </head>
-<body ng-app="sisyphus" >
+<body ng-app="sisyphus"  ng-controller="HelpModalController">
 <div id="wrapper">
     <i ng-spinner ng-cloak class="fa fa-spinner fa-spin " ng-show="spinnerActive"></i>
 
-    <modal title="Help" visible="showModal" ng-controller="HelpModalController">
-
+    <modal title="Help" visible="showModal">
     </modal>
-
-    <i ng-spinner ng-cloak class="fa fa-spinner fa-spin "></i>
 
     <!-- Navigation-->
     <nav role="navigation" class="navbar navbar-inverse navbar-fixed-top">
