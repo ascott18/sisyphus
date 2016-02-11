@@ -17,6 +17,8 @@ class TicketController extends Controller
         0 => 'New',
     ];
 
+
+
     /**
      * Display a listing of the resource.
      *
@@ -29,10 +31,12 @@ class TicketController extends Controller
         return view('tickets.index');
     }
 
-    public function getCreate() {
+    public function getCreate(Request $request) {
         $this->authorize("all");
+        $options = [["header" => "Header 1", "body" => "body 1"], ["header" => "Header 1", "body" => "body 1"], ["header" => "Header 1", "body" => "body 1"]];
+//        $options = $request->input('options');
+        return view('tickets.create', ['options' => $options]);
 
-        return view('tickets.create');
     }
 
     /**

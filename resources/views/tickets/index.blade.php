@@ -11,10 +11,7 @@
     <div class="row">
         <div class="col-lg-12">
 
-            <a class="btn btn-primary"
-               href="/tickets/create">
-                <i class="fa fa-plus"></i> Create Ticket
-            </a>
+
             <br>
             <br>
 

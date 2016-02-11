@@ -58,7 +58,7 @@ app.controller('MessageSaver', function($scope, $timeout, $http){
     $scope.$watch('message.body', debounceSaveUpdates);
 });
 
-app.controller('MessagesController', function($scope, $timeout, $http){
+app.controller('MessagesController', ['$scope', '$timeout', '$http', function($scope, $timeout, $http){
 
     // STAGE CONTROL
 
@@ -208,4 +208,4 @@ app.controller('MessagesController', function($scope, $timeout, $http){
 
 
 
-})
+}]);

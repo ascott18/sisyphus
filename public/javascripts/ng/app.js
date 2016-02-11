@@ -355,3 +355,75 @@ var e = new k(function() {
     $("body").append(el);
     el.animate({bottom: "-20px"}, 1000, null).delay(1000).animate({bottom: "-75px"}, 1000, null);
 });
+
+
+app.controller('HelpModalController', ['$scope', 'HelpService', '$http', function($scope, HelpService, $http) {
+    $scope.showModal = false;
+    $scope.options = HelpService.options;
+
+    $scope.href = "/tickets/create/";
+    $scope.title = HelpService.title;
+
+    $scope.toggleModal = function () {
+        $scope.showModal = !$scope.showModal;
+    };
+
+    $scope.selectOption = function (selected) {
+        if (selected.options && selected.options.length != 0) {
+            $scope.options = selected.options;
+        }
+        else {
+            window.location.href = $scope.href;
+            $scope.showModal = false;
+        }
+    }
+}]);
+
+app.directive('modal', ['HelpService', function(HelpService) {
+    return {
+        templateUrl: '/javascripts/ng/templates/helpModal.html',
+        restrict: 'EA',
+        replace:true,
+        scope:false,
+        controller : 'HelpModalController',
+        link: function postLink(scope, element, attrs) {
+            scope.title = attrs.title;
+            scope.HelpService = HelpService;
+
+            scope.$watch(attrs.visible, function(value){
+                if(value == true)
+                    $(element).modal('show');
+                else
+                    $(element).modal('hide');
+            });
+
+            $(element).on('shown.bs.modal', function(){
+                scope.$apply(function(){
+                    scope.$parent[attrs.visible] = true;
+                });
+            });
+
+            $(element).on('hidden.bs.modal', function(){
+                scope.$apply(function(){
+                    scope.$parent[attrs.visible] = false;
+                });
+            });
+        }
+    };
+}]);
+
+app.factory("HelpService", function() {
+
+    var defaultOptions = [{header: "Report a Problem", body: "Does something not look right? Let us know."},
+                          {header: "Ask a Question", body: "Need some help? Submit a question."}];
+    var options = defaultOptions;
+
+    updateOptions = function(newOptions) {
+        this.options = newOptions.concat(defaultOptions);
+    };
+
+    var service = {options       : options      ,
+                   updateOptions : updateOptions};
+
+    return service;
+});
