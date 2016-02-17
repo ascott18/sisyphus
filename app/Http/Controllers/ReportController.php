@@ -20,7 +20,7 @@ class ReportController extends Controller
 {
 
 
-    public function getIndex(Request $request)
+    public function getIndex(Request $request, $term_id = null)
     {
         $this->authorize("make-reports");
 
@@ -35,7 +35,8 @@ class ReportController extends Controller
             ->orderBy('order_start_date', 'DESC')
             ->get();
 
-        $currentTermId = $terms->first()->term_id;
+        $currentTermId = $term_id ? intval($term_id) : $terms->first()->term_id;
+
 
         return view('reports.index', compact('departments', 'terms', 'currentTermId'));
     }

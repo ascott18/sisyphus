@@ -17,7 +17,6 @@
                     <h3 class="panel-title"><i class="fa fa-bar-chart"></i> What would you like to base your report on?</h3>
                 </div>
                 <div class="panel-body">
-
                     <div class="radio">
                         <label >
                             <input type="radio" ng-model="ReportType" ng-change="resetInclude()" value="orders" />

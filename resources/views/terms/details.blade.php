@@ -17,14 +17,27 @@
                 </div>
                 <div class="panel-body">
 
-                    <div class="col-lg-4 col-md-12">
-
+                    <div class="col-lg-12">
                         @can('create-courses')
-                            <a href="/courses/create/{{$term->term_id}}" class="btn btn-primary"><i class="fa fa-plus"></i> Create Course</a>
+                        <a href="/courses/create/{{$term->term_id}}" class="btn btn-primary">
+                            <i class="fa fa-plus"></i> Create Course
+                        </a>
+                        &nbsp;
                         @endcan
                         {{--<a href="/terms/check/{{$term->term_id}}" class="btn btn-primary">View Checksheet</a>--}}
+                        <a href="/reports/index/{{$term->term_id}}" class="btn btn-primary">
+                            <i class="fa fa-bar-chart"></i> Create Report
+                        </a> &nbsp;
+
+                        <a href="/courses/index/{{$term->term_id}}" class="btn btn-primary">
+                            <i class="fa fa-university"></i> View Courses
+                        </a>
+                    </div>
 
 
+                    <div class="col-lg-4 col-md-12">
+                        <br>
+                        <br>
                         <dl class="dl-horizontal">
                             <dt>Term</dt>
                             <dd>{{ $term->term_name }}</dd>
@@ -67,9 +80,11 @@
                                             show-weeks="false"></uib-datepicker>
                         </div>
 
-                        <button type="submit" class="btn btn-success pull-right">
-                            <i class="fa fa-check"></i> Save Dates
-                        </button>
+                        <div class="col-lg-12 ">
+                            <button type="submit" class="btn btn-success pull-right" style="margin-top: 15px;">
+                                <i class="fa fa-check"></i> Save Dates
+                            </button>
+                        </div>
                     </form>
                     @endcan
 
