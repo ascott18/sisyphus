@@ -47,7 +47,7 @@ app.controller('BooksController', ['$scope', '$http', 'HelpService', function($s
             ctrl.isLoading=false;
         });
     }
-});
+}]);
 
 app.controller('EditBookController', function($scope, $http) {
     $scope.authors = [];
@@ -138,4 +138,4 @@ app.controller('BookDetailsController', function($scope, $http) {
             ctrl.isLoading=false;
         });
     }
-}]);
+});

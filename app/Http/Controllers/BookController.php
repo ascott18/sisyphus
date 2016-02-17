@@ -73,21 +73,30 @@ class BookController extends Controller
     private function buildBookSortQuery($tableState, $query) {
         if(isset($tableState->sort->predicate)) {
             $sort = $tableState->sort;
-            if($sort->predicate == "author") {
-                if ($sort->reverse == 1) {
-                    $query = $query->orderBy('authors.name', "desc");
-                } else {
-                    $query = $query->orderBy('authors.name');
+
+            $order = $sort->reverse ? "desc" : "asc";
+            $sorts = [
+                'title' => [
+                    'title', '',
+                ],
+                'author' => [
+                    'authors.name', '',
+                ],
+                'publisher' => [
+                    'publisher', '',
+                ],
+                'isbn13' => [
+                    'isbn13', '',
+                ]
+            ];
+
+            if(isset($sorts[$sort->predicate])) {
+                $cols = $sorts[$sort->predicate];
+                for($i = 0; $i< count($cols); $i+=2) {
+                    $query->orderBy($cols[$i],  $cols[$i+1] ? $cols[$i+1] : $order);
                 }
-            } else {
-                // TODO NATHAN SQL INJECTION HERE
-                if ($sort->reverse == 1)
-                    $query = $query->orderBy($sort->predicate, "desc");
-                else
-                    $query = $query->orderBy($sort->predicate);
             }
         }
-
         return $query;
     }
 
@@ -182,6 +191,10 @@ class BookController extends Controller
         return $query;
     }
 
+
+
+
+
     /**
      * Build the sort query for the book detail list
      *
@@ -192,24 +205,26 @@ class BookController extends Controller
     private function buildBookDetailSortQuery($tableState, $query) {
         if(isset($tableState->sort->predicate)) {
             $sort = $tableState->sort;
-            if ($sort->predicate == "section") { // special case because of joined tables
-                if ($sort->reverse == 1) {
-                    $query = $query->orderBy("department", "desc")
-                        ->orderBy("number", "desc")
-                        ->orderBy("section", "desc");
-                } else {
-                    $query = $query->orderBy("department")
-                        ->orderBy("number")
-                        ->orderBy("section");
+
+            $order = $sort->reverse ? "desc" : "asc";
+            $sorts = [
+                'section' => [
+                    'department', '',
+                    'number', '',
+                    'section', '',
+                ],
+                'name' => [
+                    'name', '',
+                ]
+            ];
+
+            if(isset($sorts[$sort->predicate])) {
+                $cols = $sorts[$sort->predicate];
+                for($i = 0; $i< count($cols); $i+=2) {
+                    $query->orderBy($cols[$i],  $cols[$i+1] ? $cols[$i+1] : $order);
                 }
-            } elseif ($sort->predicate == "name") {
-                if ($sort->reverse == 1)
-                    $query = $query->orderBy($sort->predicate, "desc");
-                else
-                    $query = $query->orderBy($sort->predicate);
             }
         }
-
         return $query;
     }
 

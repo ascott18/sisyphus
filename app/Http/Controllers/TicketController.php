@@ -137,22 +137,28 @@ class TicketController extends Controller
      */
     private function buildTicketSortQuery($tableState, $query) {
         if(isset($tableState->sort->predicate)) {
-            $sort = $tableState->sort;
+            if(isset($tableState->sort->predicate)) {
+                $sort = $tableState->sort;
 
-            if($sort->predicate == "name") {
-                if ($sort->reverse == 1) {
-                    $query = $query->orderBy('users.last_name', "desc");
-                    $query = $query->orderBy('users.first_name', "desc");
-                } else {
-                    $query = $query->orderBy('users.last_name');
-                    $query = $query->orderBy('users.first_name');
+                $order = $sort->reverse ? "desc" : "asc";
+                $sorts = [
+                    'title' => [
+                        'tickets.title', '',
+                    ],
+                    'name' => [
+                        'users.last_name', '',
+                        'users.first_name', '',
+                    ]
+                ];
+
+                if(isset($sorts[$sort->predicate])) {
+                    $cols = $sorts[$sort->predicate];
+                    for($i = 0; $i< count($cols); $i+=2) {
+                        $query->orderBy($cols[$i], $cols[$i+1] ? $cols[$i+1] : $order);
+                    }
                 }
-            } else {
-                if ($sort->reverse == 1)
-                    $query = $query->orderBy($sort->predicate, "desc");
-                else
-                    $query = $query->orderBy($sort->predicate);
             }
+            return $query;
         }
 
         return $query;

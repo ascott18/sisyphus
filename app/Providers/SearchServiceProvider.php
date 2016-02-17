@@ -20,6 +20,12 @@ class SearchServiceProvider extends ServiceProvider
         //
     }
 
+    /**
+     * Adds a search to a query that has the course listings joined
+     *
+     * @param $query
+     * @param $search
+     */
     public static function sectionSearchQuery($query, $search)
     {
         $searchArray = preg_split("/[\s-]/", $search);
@@ -55,6 +61,13 @@ class SearchServiceProvider extends ServiceProvider
         });
     }
 
+    /**
+     * Adds a search for a professor name to a query that
+     * has professors already joined.
+     *
+     * @param $query
+     * @param $search
+     */
     public static function professorSearchQuery($query, $search) {
         $query = $query->where(function($sQuery) use ($search) {
             $sQuery = $sQuery->where('users.first_name', 'LIKE', '%'.$search.'%')

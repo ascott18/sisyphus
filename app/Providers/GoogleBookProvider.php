@@ -24,6 +24,14 @@ class GoogleBookProvider extends ServiceProvider
         //
     }
 
+
+    /**
+     * gets the book information from the google API
+     * and caches it if we don't already have it
+     *
+     * @param $isbn
+     * @return mixed
+     */
     public function getRawSearchResults($isbn) {
         $cachedValue = Cache::get('isbn-'.$isbn);
 
@@ -45,6 +53,12 @@ class GoogleBookProvider extends ServiceProvider
         }
     }
 
+    /**
+     * returns the cover image and caches it if we have not already
+     *
+     * @param $isbn
+     * @return Response
+     */
     public function getCoverThumbnail($isbn) {
         $rawSearch = $this->getRawSearchResults($isbn);
 
