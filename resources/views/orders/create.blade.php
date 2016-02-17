@@ -13,7 +13,7 @@
             ng-init="
                 terms = {{$openTerms}};
                 current_user_id = {{$current_user_id}};
-                courses = {{$courses}};
+                courses = setCourses({{$courses}});
                 @if (isset($course))
                     placeRequestForCourse((courses | filter:{'course_id': {{$course->course_id}} })[0]);
                 @endif
