@@ -8,8 +8,10 @@ use App\Models\Course;
 use App\Models\Term;
 use Cache;
 use Carbon\Carbon;
+use Illuminate\Contracts\Auth\Guard;
 use \Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use phpCAS;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class HomeController extends Controller
@@ -40,18 +42,15 @@ class HomeController extends Controller
     }
 
 
-    public function getLogout(){
+    public function getLogout(Guard $auth){
         $this->authorize('all');
 
-
-        $cas = app('cas');
-        $cas->connection();
-
         if(!CASAuth::isPretending()){
-            if(!phpCAS::isAuthenticated())
-            {
-                $this->initializeCas();
-            }
+            $cas = app('cas');
+            $cas->connection();
+
+            $auth->logout();
+
             phpCAS::logout(['url' => 'https://login.ewu.edu/cas/logout']);
 
             redirect('https://login.ewu.edu/cas/logout');
@@ -97,6 +96,7 @@ class HomeController extends Controller
 
             $numChartsFound++;
 
+            // TODO: how does this react to many orders placed at the same instant?
             $orderReport = Course::visible()
                 ->where('term_id', '=', $term->term_id)
                 ->join('orders', function ($join) {

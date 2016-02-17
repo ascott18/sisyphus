@@ -59,8 +59,8 @@ class CASAuth {
             // This will throw an exception if authentication fails,
             // and will immediately redirect to login.ewu.edu if authentication is needed.
             // We call out to phpCas manually because Xavrsl/Cas swallows up exceptions in $cas->authenticate() for some reason.
-
 //          $cas->authenticate();
+
             if(!$this->isPretending()){
                 phpCAS::forceAuthentication();
             }
