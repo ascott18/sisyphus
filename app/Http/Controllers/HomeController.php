@@ -6,6 +6,7 @@ use App\Http\Middleware\CASAuth;
 use App\Models\Book;
 use App\Models\Course;
 use App\Models\Term;
+use Auth;
 use Cache;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\Guard;
@@ -42,21 +43,23 @@ class HomeController extends Controller
     }
 
 
-    public function getLogout(Guard $auth){
+    public function getLogout(){
         $this->authorize('all');
+
+
+        Auth::logout();
+
 
         if(!CASAuth::isPretending()){
             $cas = app('cas');
             $cas->connection();
 
-            $auth->logout();
-
             phpCAS::logout(['url' => 'https://login.ewu.edu/cas/logout']);
 
-            redirect('https://login.ewu.edu/cas/logout');
+            return redirect('https://login.ewu.edu/cas/logout');
         }
         else {
-            throw new BadRequestHttpException("Can't log out when you're pretending.");
+            return redirect('/');
         }
     }
 
