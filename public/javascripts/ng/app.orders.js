@@ -46,7 +46,6 @@ app.directive('isbn13', function() {
 
 
 app.directive('bookDetails', function($http) {
-    var noBookThumb = "/images/coverNotAvailable.jpg";
     return {
         restrict: 'E',
         transclude: true,
@@ -58,8 +57,7 @@ app.directive('bookDetails', function($http) {
         link: function(scope, element, attrs) {
 
             $(element).find(".smallImage").on('mouseover', function(){
-                if (scope.thumbnail != noBookThumb)
-                    $(element).find(".largeImage").fadeIn();
+                $(element).find(".largeImage").fadeIn();
             });
             $(element).find(".largeImage").on('mouseleave',function(){
                 $(element).find(".largeImage").fadeOut();
@@ -77,17 +75,7 @@ app.directive('bookDetails', function($http) {
                 if (isbn != scope.lastIsbn)
                 {
                     scope.lastIsbn = isbn;
-                    scope.thumbnail = '';
-
-                    $http.get("https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn, {cache: true}).then(
-                        function success(response){
-                            if(response.data.items && response.data.items[0].volumeInfo.imageLinks) {
-                                scope.thumbnail = response.data.items[0].volumeInfo.imageLinks.thumbnail;
-                            } else {
-                                scope.thumbnail = noBookThumb;
-                            }
-                        }
-                    );
+                    scope.thumbnail = '/books/cover?isbn=' + isbn;
                 }
                 else {
                     return scope.thumbnail;
@@ -152,11 +140,37 @@ app.controller('OrdersListController', function($scope, $http) {
     }
 });
 
-app.controller('OrdersController', ['$scope', '$http', 'CartService', 'BreadcrumbService',
-    function($scope, $http, CartService, BreadcrumbService){
+app.controller('OrdersController', ['$scope', '$http', 'CartService', 'BreadcrumbService', 'HelpService',
+    function($scope, $http, CartService, BreadcrumbService, HelpService){
+
+    $scope.courses = [];
+
+    $scope.setCourses = function (courses) {
+        $scope.courses = courses;
+    };
+
+    $scope.setCourseOptions = function() {
+        var courseTitles = [];
+
+        for (var course in $scope.courses) {
+            var courseTitle = [];
+            courseTitle.push(course.department);
+            courseTitle.push(course.course_number);
+            courseTitle.push(course.section);
+
+            courseTitles.push(course.join(" "));
+        }
+
+        return courseTitles;
+    };
+
+    var selectCourseHelpOptions =  [{header: "Report Error in Course List", body: "Select this option if a course you are teaching is not listed here or a course you are not teaching is listed.", options: $scope.setCourseOptions()}];
+    var selectBooksHelpOptions = [{header: "Report Problem with Book", body: "Is there a problem with a book? Please report it.", options: [{header : "test"}]}];
+
+    HelpService.updateOptions(selectCourseHelpOptions);
 
     $scope.STAGE_SELECT_COURSE = 1;
-    $scope.STAGE_SELECT_BOOKS = 2;
+    $scope.STAGE_SELECT_BOOKS  = 2;
     $scope.STAGE_REVIEW_ORDERS = 3;
     $scope.STAGE_ORDER_SUCCESS = 4;
 
@@ -170,7 +184,16 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
 
     $scope.setStage = function(stage){
         $scope.stage = stage;
+
+        if ($scope.stage == $scope.STAGE_SELECT_COURSE) {
+            HelpService.updateOptions(selectCourseHelpOptions);
+        }
+        else if ($scope.stage == $scope.STAGE_SELECT_BOOKS) {
+            HelpService.updateOptions(selectBooksHelpOptions);
+        }
     };
+
+
 
     $scope.placeRequestForCourse = function(course) {
         $scope.setStage($scope.STAGE_SELECT_BOOKS);
@@ -344,7 +367,7 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
 
     $scope.ordersAreEffectivelyEqual = function(order1, order2){
         return order1.notes == order2.notes && order1.required == order2.required;
-    }
+    };
 
     $scope.toggleAdditionalCourseSelected = function(course){
         if ($scope.additionalCourses == null)
@@ -394,7 +417,6 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
 
         return $scope.additionalCourses.length;
     };
-
 }]);
 
 

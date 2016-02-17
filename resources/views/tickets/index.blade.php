@@ -11,10 +11,7 @@
     <div class="row">
         <div class="col-lg-12">
 
-            <a class="btn btn-primary"
-               href="/tickets/create">
-                <i class="fa fa-plus"></i> Create Ticket
-            </a>
+
             <br>
             <br>
 
@@ -38,7 +35,7 @@
                             </tr>
                             <tr>
                                 <th>
-                                    <input type="text" class="form-control" placeholder="Search..." st-search="section"/>
+                                    <input type="text" class="form-control" placeholder="Search..." st-search="title"/>
                                 </th>
                                 <th>
                                     <select class="form-control"  ng-init="statusSelected = ''" ng-model="statusSelected" ng-change="updateStatus()">

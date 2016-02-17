@@ -27,12 +27,24 @@
     <script src="/javascripts/angular.min.js"></script>
     <script src="/javascripts/ng/smart-table/smart-table.js"></script>
     <script src="/javascripts/ng/app.js"></script>
+    <script src="/javascripts/ng/app.tickets.js"></script>
+    <script src="/javascripts/ng/pagination/dirPagination.js"></script>
+
+    <script src='/javascripts/ng/text/textAngular-rangy.min.js'></script>
+    <script src='/javascripts/ng/text/textAngular-sanitize.min.js'></script>
+    <script src='/javascripts/ng/text/textAngular.min.js'></script>
 
     @yield('scripts-head')
 </head>
-<body ng-app="sisyphus">
+<body ng-app="sisyphus" ng-controller="HelpModalController">
+
 <div id="wrapper">
+
+ 
     <i ng-spinner ng-cloak class="fa fa-spinner fa-spin " ng-show="spinnerActive"></i>
+
+    <modal title="Help" visible="showModal">
+    </modal>
 
     <!-- Navigation-->
     <nav role="navigation" class="navbar navbar-inverse navbar-fixed-top">
@@ -67,14 +79,14 @@
 
             <ul class="nav navbar-right top-nav">
                 @if (Auth::user())
-                    <li >
+                <li >
                         <span id="userName">
                             <i class="fa fa-user"></i>
                             <a href="/users/edit/{{Auth::user()->user_id}}">
-                                Welcome, {{ Auth::user()->net_id }}
-                            </a>!
+                                Welcome, {{ Auth::user()->net_id }}!
+                            </a>
                         </span>
-                    </li>
+                </li>
                     <li class="pull-right">
                         <span style="margin-left: 25px"><a href="/logout">Logout</a></span>
                     </li>
@@ -82,7 +94,7 @@
             </ul>
 
             <!-- Sidebar Menu Items -->
-            <ul class="nav navbar-nav side-nav">
+            <div class="nav navbar-nav side-nav">
                 @can('view-dashboard')
                 <li><a href="/"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a></li>
                 @endcan
@@ -105,22 +117,12 @@
                 <li><a href="/reports"><i class="fa fa-fw fa-bar-chart"></i> Reports</a></li>
                 @endcan
 
-                {{--<li><a href="tables.html"><i class="fa fa-fw fa-table"></i> Tables</a></li>--}}
-                {{--<li><a href="forms.html"><i class="fa fa-fw fa-edit"></i> Forms</a></li>--}}
-                {{--<li><a href="bootstrap-elements.html"><i class="fa fa-fw fa-desktop"></i> Bootstrap Elements</a></li>--}}
-                {{--<li><a href="bootstrap-grid.html"><i class="fa fa-fw fa-wrench"></i> Bootstrap Grid</a></li>--}}
-                {{--<li>--}}
-                    {{--<a href="javascript:;" data-toggle="collapse" data-target="#demo"><i--}}
-                                {{--class="fa fa-fw fa-arrows-v"></i> Dropdown <i class="fa fa-fw fa-caret-down"></i></a>--}}
-                    {{--<ul id="demo" class="collapse">--}}
-                        {{--<li><a href="#">Dropdown Item</a></li>--}}
-                        {{--<li><a href="#">Dropdown Item</a></li>--}}
-                    {{--</ul>--}}
-                {{--</li>--}}
-                {{--<li><a href="blank-page.html"><i class="fa fa-fw fa-file"></i> Blank Page</a></li>--}}
-                {{--<li><a href="index-rtl.html"><i class="fa fa-fw fa-dashboard"></i> RTL Dashboard</a></li>--}}
-            </ul>
-        </div>
+
+                <div class="icon-wrapper" ng-click="toggleModal()">
+                    <i class="fa fa-question custom-icon"></i>
+                </div>
+            </div>
+		</div>
     </nav>
     <div id="page-wrapper">
         <div class="container-fluid">
@@ -138,7 +140,7 @@
                                     <li><a href="{{$breadcrumb[1]}}">{{$breadcrumb[0]}}</a></li>
                                 @elseif ($breadcrumb != null)
                                     <li>{{$breadcrumb[0]}}</li>
-                                @endif
+                        @endif
                             @endforeach
                             <li ng-cloak ng-repeat="breadcrumb in breadcrumbAppends">[[breadcrumb]]</li>
                         </ul>

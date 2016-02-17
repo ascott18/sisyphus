@@ -220,42 +220,39 @@ class CourseController extends Controller
      * @return \Illuminate\Database\Query
      */
     private function buildCourseSortQuery($tableState, $query) {
-        if(isset($tableState->sort->predicate)){
+        if(isset($tableState->sort->predicate)) {
             $sort = $tableState->sort;
-            if ($sort->predicate == "section"){
-                if ($sort->reverse == 1) {
-                    $query = $query->orderBy("department", "desc");
-                    $query = $query->orderBy("number", "desc");
-                    $query = $query->orderBy("section", "desc");
-                } else {
-                    $query = $query->orderBy("department");
-                    $query = $query->orderBy("number");
-                    $query = $query->orderBy("section");
-                }
-            } else if($sort->predicate == "professor") {
-                if($sort->reverse == 1) {
-                    $query = $query->orderBy('users.last_name', "desc");
-                    $query = $query->orderBy('users.first_name', "desc");
-                } else {
-                    $query = $query->orderBy('users.last_name');
-                    $query = $query->orderBy('users.first_name');
-                }
-            } else {
-                // TODO NATHAN SQL INJECTION HERE
-                if ($sort->reverse == 1)
-                    $query = $query->orderBy($sort->predicate, "desc");
-                else
-                    $query = $query->orderBy($sort->predicate);
 
-                // If sorting by term, sort by the dept & numbers as secondaries.
-                if ($sort->predicate == 'term_id'){
-                    $query = $query->orderBy("department");
-                    $query = $query->orderBy("number");
-                    $query = $query->orderBy("section");
+            $order = $sort->reverse ? "desc" : "asc";
+            $sorts = [
+                'term_id' => [
+                    'term_id', '',
+                    'department', 'asc',
+                    'number', 'asc',
+                    'section', 'asc',
+                ],
+                'section' => [
+                    'department', '',
+                    'number', '',
+                    'section', '',
+                ],
+                'professor' => [
+                    'users.last_name', '',
+                    'users.first_name', '',
+                ],
+                'name' => [
+                    'name', '',
+                ]
+            ];
+
+            if(isset($sorts[$sort->predicate])) {
+                $cols = $sorts[$sort->predicate];
+                for($i = 0; $i< count($cols); $i+=2) {
+                    $query->orderBy($cols[$i], $cols[$i+1] ? $cols[$i+1] : $order);
                 }
             }
         }
-
+        
         return $query;
     }
 
