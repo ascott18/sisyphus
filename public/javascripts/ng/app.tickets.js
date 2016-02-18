@@ -23,8 +23,9 @@ app.config(function($provide) {
     }]);
 });
 
-app.controller('NewTicketController', function($scope, $http) {
+app.controller('NewTicketController', ['$scope', '$http', 'HelpService', function($scope, $http, HelpService) {
     $scope.ticket = {department : 'CSCD', 'url' : 'google.com'};
+
 
     //var unloadListener = function (e) {
     //    var confirmationMessage = 'If you leave before submitting, your changes will be lost.';
@@ -44,7 +45,7 @@ app.controller('NewTicketController', function($scope, $http) {
                 $scope.ticket = ticket;
         });
     };
-});
+}]);
 
 app.controller('TicketController', function($scope, $http) {
     $scope.ticket = {};
@@ -162,3 +163,5 @@ app.controller('TicketsIndexController', function($scope, $http) {
         });
     }
 });
+
+

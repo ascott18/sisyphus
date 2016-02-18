@@ -1,0 +1,3849 @@
+ISBN 9780785814535
+Title Edgar Allan Poe:complete Tales+Poem
+ISBN 9780486275574
+Title Romeo and Juliet-Unabridged
+9781594601552
+African American Studies Reader    
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "UHrWQgAACAAJ",
+   "etag": "OR592mxisVw",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/UHrWQgAACAAJ",
+   "volumeInfo": {
+    "title": "The African American Studies Reader",
+    "authors": [
+     "Nathaniel Norment"
+    ],
+    "publishedDate": "2007",
+    "description": "This book is the most comprehensive anthology in the field. The intellectual, political, and social aspects of African American Studies continue to evolve, as do the ways in which the discipline will advance knowledge about African Americans for the future. This edition contains new authors; updated introductions to each section and the bibliography; an expanded glossary of biographies; and review questions and critical analyses for each section. Topics include: The Discipline; African American Women¿s Studies; Historical Perspectives; Philosophical Perspectives; Theoretical Foundations; Political Perspectives; Critical Issues and Perspectives; and Curriculum Development and Program Models.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "1594601550"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9781594601552"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 896,
+    "printType": "BOOK",
+    "categories": [
+     "Social Science"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=UHrWQgAACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=UHrWQgAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=UHrWQgAACAAJ&dq=isbn:9781594601552&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=UHrWQgAACAAJ&dq=isbn:9781594601552&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/The_African_American_Studies_Reader.html?hl=&id=UHrWQgAACAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=UHrWQgAACAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "This book is the most comprehensive anthology in the field."
+   }
+  }
+ ]
+}
+
+9781423208501
+Black History Pre Civil War        
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "pIRpPgAACAAJ",
+   "etag": "VI4S9DInb+g",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/pIRpPgAACAAJ",
+   "volumeInfo": {
+    "title": "Black History",
+    "subtitle": "Pre-Civil War",
+    "authors": [
+     "BarCharts Inc., Staff"
+    ],
+    "publisher": "Quickstudy",
+    "publishedDate": "2009-05-31",
+    "description": "Black history in America: Santa Maria to Fort Sumter. Helpful with school studies at any level or reference for personal interest.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "1423208501"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9781423208501"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 6,
+    "printType": "BOOK",
+    "categories": [
+     "History"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=pIRpPgAACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=pIRpPgAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=pIRpPgAACAAJ&dq=isbn:9781423208501&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=pIRpPgAACAAJ&dq=isbn:9781423208501&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Black_History.html?hl=&id=pIRpPgAACAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=pIRpPgAACAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "Black history in America: Santa Maria to Fort Sumter. Helpful with school studies at any level or reference for personal interest."
+   }
+  }
+ ]
+}
+
+9781423208518
+Black History Civil War-Present    
+{
+ "kind": "books#volumes",
+ "totalItems": 0
+}
+
+9780321092687
+Get It Together                    
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "znMlAQAAMAAJ",
+   "etag": "J8+Z7zSxrFs",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/znMlAQAAMAAJ",
+   "volumeInfo": {
+    "title": "Get it Together",
+    "subtitle": "Readings about African American Life",
+    "authors": [
+     "Akua Duku Anokye",
+     "Jacqueline Brice-Finch"
+    ],
+    "publisher": "Longman Publishing Group",
+    "publishedDate": "2003",
+    "description": "Get It Together is a thematically-organized reader that focuses on issues and events that concern African Americans and promotes critical thinking about how these issues impact the lives of all Americans. An underlying notion of the book is that the key issues for African Americans have not substantially changed through American history. The readings were chosen to assert a need for initiative on the part of the student writer and encourage change through analysis, research, discussion, and involvement. Students are presented with the opportunity to formulate their own initiatives to \"get it together.\"",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "0321092686"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9780321092687"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 360,
+    "printType": "BOOK",
+    "categories": [
+     "Biography & Autobiography"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=znMlAQAAMAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=znMlAQAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=znMlAQAAMAAJ&dq=isbn:9780321092687&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=znMlAQAAMAAJ&dq=isbn:9780321092687&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Get_it_Together.html?hl=&id=znMlAQAAMAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=znMlAQAAMAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "An underlying notion of the book is that the key issues for African Americans have not substantially changed through American history."
+   }
+  }
+ ]
+}
+
+9780415924078
+Upon These Shores                  
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "YDixdxBkU7QC",
+   "etag": "hyIOzBOGjmA",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/YDixdxBkU7QC",
+   "volumeInfo": {
+    "title": "Upon These Shores",
+    "subtitle": "Themes in the African-American Experience, 1600 to the Present",
+    "authors": [
+     "William Randolph Scott",
+     "William G. Shade"
+    ],
+    "publisher": "Psychology Press",
+    "publishedDate": "2000",
+    "description": "This one-volume, comprehensive overview of African American history brings together original essays by some of the foremost authorities in the field. Arranged both thematically and chronologically, these papers discuss a wide range of topics - from the Middle Passage to the Civil Rights Movement; from abolition to the Great Migration; from issues in religion, class and family to literature, education and politics.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "0415924073"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9780415924078"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": true
+    },
+    "pageCount": 450,
+    "printType": "BOOK",
+    "categories": [
+     "History"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "0.0.1.0.preview.1",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=YDixdxBkU7QC&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=YDixdxBkU7QC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=YDixdxBkU7QC&printsec=frontcover&dq=isbn:9780415924078&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=YDixdxBkU7QC&dq=isbn:9780415924078&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Upon_These_Shores.html?hl=&id=YDixdxBkU7QC"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "PARTIAL",
+    "embeddable": true,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=YDixdxBkU7QC&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "SAMPLE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "This one-volume, comprehensive overview of African American history brings together original essays by some of the foremost authorities in the field."
+   }
+  }
+ ]
+}
+
+9780205969067
+African Americans:conc.hist.,combin
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "UCfymQEACAAJ",
+   "etag": "AAhNaDdYAlc",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/UCfymQEACAAJ",
+   "volumeInfo": {
+    "title": "African Americans",
+    "subtitle": "A Concise History",
+    "authors": [
+     "Darlene Clark Hine",
+     "William C. Hine",
+     "Stanley Harrold"
+    ],
+    "publisher": "Pearson College Division",
+    "publishedDate": "2013",
+    "description": "A compelling story of agency, survival, struggle and triumph over adversity African Americans: A Concise History illuminates the central place of African-Americans in U.S. history by telling the story of what it has meant to be black in America and how African-American history is inseparably woven into the greater context of American history. It follows the long and turbulent journey of African-Americans, the rich culture they have nurtured throughout their history and the quest for freedom through which African-Americans have sought to counter oppression and racism. MyHistoryLab is an integral part of the Hine / Hine / Harrold program. Key learning applications include Closer Looks, MyHistoryLibrary, and writing assessment. A better teaching and learning experience This program will provide a better teaching and learning experience--for you and your students. Here's how: Personalize Learning - MyHistoryLab is an online homework, tutorial, and assessment program. It helps students prepare for class and instructor gauge individual and class performance. Improve Critical Thinking - Focus Questions and end-of-chapter Review Questions help students think critically about the chapter content. Engage Students - Voices boxes engage students in the works and words of African Americans. S upport Instructors - A full set of supplements, including MyHistory, provides instructors with all the resources and support they need. Note: MyHistoryLab does not come automatically packaged with this text.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "0205969062"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9780205969067"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 696,
+    "printType": "BOOK",
+    "categories": [
+     "History"
+    ],
+    "averageRating": 4.0,
+    "ratingsCount": 1,
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=UCfymQEACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=UCfymQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=UCfymQEACAAJ&dq=isbn:9780205969067&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=UCfymQEACAAJ&dq=isbn:9780205969067&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/African_Americans.html?hl=&id=UCfymQEACAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=UCfymQEACAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "S upport Instructors - A full set of supplements, including MyHistory, provides instructors with all the resources and support they need. Note: MyHistoryLab does not come automatically packaged with this text."
+   }
+  }
+ ]
+}
+
+9780077407513
+From Slavery To Freedom-Vol.one>Cus
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "Nn_wugAACAAJ",
+   "etag": "HuyVWljteIQ",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/Nn_wugAACAAJ",
+   "volumeInfo": {
+    "title": "From Slavery to Freedom",
+    "subtitle": "A History of African Americans",
+    "authors": [
+     "John Hope Franklin",
+     "Evelyn Brooks Higginbotham"
+    ],
+    "publishedDate": "2011",
+    "description": "Documents the African American experience, from their origin in Africa to slavery in the Western Hemisphere and their successful struggle for freedom.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "0077407512"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9780077407513"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 710,
+    "printType": "BOOK",
+    "categories": [
+     "History"
+    ],
+    "averageRating": 4.0,
+    "ratingsCount": 25,
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=Nn_wugAACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=Nn_wugAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=Nn_wugAACAAJ&dq=isbn:9780077407513&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=Nn_wugAACAAJ&dq=isbn:9780077407513&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/From_Slavery_to_Freedom.html?hl=&id=Nn_wugAACAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=Nn_wugAACAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "Documents the African American experience, from their origin in Africa to slavery in the Western Hemisphere and their successful struggle for freedom."
+   }
+  }
+ ]
+}
+
+9780990314103
+Dead Or In Prison                  
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "WQe5oAEACAAJ",
+   "etag": "lmiAjj8QlBs",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/WQe5oAEACAAJ",
+   "volumeInfo": {
+    "title": "Dead Or in Prison",
+    "subtitle": "My Journey Through Foster Care",
+    "authors": [
+     "George Duvall",
+     "Derek Humfleet"
+    ],
+    "publishedDate": "2014-05",
+    "description": "Crime . . . Poverty . . Racism. George rose above it all. His journey through Foster Care was at times difficult, at times touching and at times very funny. His story will inspire anyone working with young people. Especially those in Foster and Adoptive Care, from Foster Parents to Youth, Social Workers and Foster Care Agencies. While his story begin with crime, poverty and racism, it ends with love, belonging and hope. Love . . . Belonging . . . Hope",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "0990314103"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9780990314103"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 130,
+    "printType": "BOOK",
+    "categories": [
+     "Biography & Autobiography"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=WQe5oAEACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=WQe5oAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=WQe5oAEACAAJ&dq=isbn:9780990314103&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=WQe5oAEACAAJ&dq=isbn:9780990314103&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Dead_Or_in_Prison.html?hl=&id=WQe5oAEACAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=WQe5oAEACAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "Crime . . . Poverty . . Racism. George rose above it all. His journey through Foster Care was at times difficult, at times touching and at times very funny. His story will inspire anyone working with young people."
+   }
+  }
+ ]
+}
+
+9780312115944
+Dred Scott V.sandford              
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "NBFdTqumz9sC",
+   "etag": "BXWw5z880EQ",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/NBFdTqumz9sC",
+   "volumeInfo": {
+    "title": "Dred Scott V. Sandford",
+    "subtitle": "A Brief History with Documents",
+    "authors": [
+     "Paul Finkelman"
+    ],
+    "publisher": "Macmillan",
+    "publishedDate": "1997-03-15",
+    "description": "Perhaps no other Supreme Court decision has had the political impact of Dred Scott v. Sandford. Using a variety of documents that reflect regional opinions and political debates, Paul Finkelman examines the 1857 decision that helped set in motion the events that eventually led to a new birth of freedom and the abolition of slavery in the United States.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "0312115946"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9780312115944"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 240,
+    "printType": "BOOK",
+    "categories": [
+     "History"
+    ],
+    "averageRating": 3.0,
+    "ratingsCount": 2,
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=NBFdTqumz9sC&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=NBFdTqumz9sC&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=NBFdTqumz9sC&dq=isbn:9780312115944&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=NBFdTqumz9sC&dq=isbn:9780312115944&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Dred_Scott_V_Sandford.html?hl=&id=NBFdTqumz9sC"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=NBFdTqumz9sC&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "Using a variety of documents that reflect regional opinions and political debates, Paul Finkelman examines the 1857 decision that helped set in motion the events that eventually led to a new birth of freedom and the abolition of slavery in ..."
+   }
+  }
+ ]
+}
+
+9780375702747
+Forever Free                       
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "10NdBej1_JEC",
+   "etag": "VrjSLmu4ePA",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/10NdBej1_JEC",
+   "volumeInfo": {
+    "title": "Forever Free",
+    "subtitle": "The Story of Emancipation And Reconstruction",
+    "authors": [
+     "Eric Foner"
+    ],
+    "publisher": "Vintage Books USA",
+    "publishedDate": "2006",
+    "description": "Analyzes the post-Civil War era of Emancipation and Reconstruction with an emphasis on discovering the larger political and cultural meaning for contemporary America of the lives of the newly freed slaves and the rise of the Ku Klux Klan. Reprint. 10,000 first printing.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_13",
+      "identifier": "9780375702747"
+     },
+     {
+      "type": "ISBN_10",
+      "identifier": "0375702741"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 268,
+    "printType": "BOOK",
+    "categories": [
+     "History"
+    ],
+    "averageRating": 4.0,
+    "ratingsCount": 39,
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=10NdBej1_JEC&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=10NdBej1_JEC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=10NdBej1_JEC&printsec=frontcover&dq=isbn:9780375702747&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=10NdBej1_JEC&dq=isbn:9780375702747&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Forever_Free.html?hl=&id=10NdBej1_JEC"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "PARTIAL",
+    "embeddable": true,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED_FOR_ACCESSIBILITY",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=10NdBej1_JEC&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "SAMPLE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "Analyzes the post-Civil War era of Emancipation and Reconstruction with an emphasis on discovering the larger political and cultural meaning for contemporary America of the lives of the newly freed slaves and the rise of the Ku Klux Klan."
+   }
+  }
+ ]
+}
+
+9780205940455
+African-American Odyssey,combined-T
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "ZrzCmAEACAAJ",
+   "etag": "q8ZxCYOtFw8",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/ZrzCmAEACAAJ",
+   "volumeInfo": {
+    "title": "The African-American Odyssey",
+    "authors": [
+     "Darlene Clark Hine",
+     "William C. Hine",
+     "Stanley Harrold"
+    ],
+    "publisher": "Pearson College Division",
+    "publishedDate": "2013-08-20",
+    "description": "\"Combined volume\" includes both volumes 1 and 2.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "0205940455"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9780205940455"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 712,
+    "printType": "BOOK",
+    "categories": [
+     "History"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=ZrzCmAEACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=ZrzCmAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=ZrzCmAEACAAJ&dq=isbn:9780205940455&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=ZrzCmAEACAAJ&dq=isbn:9780205940455&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/The_African_American_Odyssey.html?hl=&id=ZrzCmAEACAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=ZrzCmAEACAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "&quot;Combined volume&quot; includes both volumes 1 and 2."
+   }
+  }
+ ]
+}
+
+9780077407520
+From Slavery To Freedom-Vol.two>Cus
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "r535ugAACAAJ",
+   "etag": "j8X/SiHn6SQ",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/r535ugAACAAJ",
+   "volumeInfo": {
+    "title": "From Slavery to Freedom (V2) 9th",
+    "authors": [
+     "John Hope Franklin",
+     "Evelyn Brooks Higginbotham"
+    ],
+    "publisher": "McGraw-Hill",
+    "publishedDate": "2011",
+    "description": "Documents the African American experience, from their origin in Africa to slavery in the Western Hemisphere and their successful struggle for freedom.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "0077407520"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9780077407520"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 710,
+    "printType": "BOOK",
+    "categories": [
+     "History"
+    ],
+    "averageRating": 4.0,
+    "ratingsCount": 25,
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=r535ugAACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=r535ugAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=r535ugAACAAJ&dq=isbn:9780077407520&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=r535ugAACAAJ&dq=isbn:9780077407520&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/From_Slavery_to_Freedom_V2_9th.html?hl=&id=r535ugAACAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=r535ugAACAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "Documents the African American experience, from their origin in Africa to slavery in the Western Hemisphere and their successful struggle for freedom."
+   }
+  }
+ ]
+}
+
+9780312111526
+Brown V.board Of Education         
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "xE_KlhMdtZQC",
+   "etag": "UHdeOEhuxzY",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/xE_KlhMdtZQC",
+   "volumeInfo": {
+    "title": "Brown V. Board of Education",
+    "subtitle": "A Brief History with Documents",
+    "authors": [
+     "Waldo E. Martin"
+    ],
+    "publisher": "Macmillan",
+    "publishedDate": "1998-04-15",
+    "description": "This book addresses the origins, development, meanings, and consequences of the 1954 Supreme Court decision to end Jim Crow segregation. Using legal documents to frame the debates surrounding the case, Waldo Martin presents Brown v. Board of Education as an event, a symbol, and a key marker in the black liberation struggle.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "0312111525"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9780312111526"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 253,
+    "printType": "BOOK",
+    "categories": [
+     "History"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=xE_KlhMdtZQC&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=xE_KlhMdtZQC&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=xE_KlhMdtZQC&dq=isbn:9780312111526&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=xE_KlhMdtZQC&dq=isbn:9780312111526&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Brown_V_Board_of_Education.html?hl=&id=xE_KlhMdtZQC"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=xE_KlhMdtZQC&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "This book addresses the origins, development, meanings, and consequences of the 1954 Supreme Court decision to end Jim Crow segregation. Using legal documents to frame the debates surrounding the case, Waldo Martin presents Brown v."
+   }
+  }
+ ]
+}
+
+9780805083354
+Waiting 'til The Midnight Hour     
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "Q_71R9mdYTgC",
+   "etag": "dH5WmrBOMYM",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/Q_71R9mdYTgC",
+   "volumeInfo": {
+    "title": "Waiting 'Til the Midnight Hour",
+    "subtitle": "A Narrative History of Black Power in America",
+    "authors": [
+     "Peniel E. Joseph"
+    ],
+    "publisher": "Macmillan",
+    "publishedDate": "2007-07-10",
+    "description": "A history of the Black Power movement in the United States traces the origins and evolution of the influential movement and examines the ways in which Black Power redefined racial identity and culture.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "0805083359"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9780805083354"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 399,
+    "printType": "BOOK",
+    "categories": [
+     "History"
+    ],
+    "averageRating": 3.0,
+    "ratingsCount": 33,
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=Q_71R9mdYTgC&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=Q_71R9mdYTgC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=Q_71R9mdYTgC&printsec=frontcover&dq=isbn:9780805083354&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=Q_71R9mdYTgC&dq=isbn:9780805083354&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Waiting_Til_the_Midnight_Hour.html?hl=&id=Q_71R9mdYTgC"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "PARTIAL",
+    "embeddable": true,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=Q_71R9mdYTgC&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "SAMPLE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "A history of the Black Power movement in the United States traces the origins and evolution of the influential movement and examines the ways in which Black Power redefined racial identity and culture."
+   }
+  }
+ ]
+}
+
+9780618071975
+African American Experience-V.ii   
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "l_93BAAACAAJ",
+   "etag": "iNb/H2viWMQ",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/l_93BAAACAAJ",
+   "volumeInfo": {
+    "title": "The African American Experience: From Reconstruction (chap. 11-23)",
+    "authors": [
+     "Joe William Trotter"
+    ],
+    "publisher": "Wadsworth Publishing Company",
+    "publishedDate": "2000-12-08",
+    "description": "This work is a narrative text covering the African American experience in United States history, with particular emphasis on work and community and on recurring discrimination.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "0618071970"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9780618071975"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 448,
+    "printType": "BOOK",
+    "categories": [
+     "History"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=l_93BAAACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=l_93BAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=l_93BAAACAAJ&dq=isbn:9780618071975&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=l_93BAAACAAJ&dq=isbn:9780618071975&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/The_African_American_Experience_From_Rec.html?hl=&id=l_93BAAACAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=l_93BAAACAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "This work is a narrative text covering the African American experience in United States history, with particular emphasis on work and community and on recurring discrimination."
+   }
+  }
+ ]
+}
+
+9780312395056
+Martin Luther King Jr.,malcolm X...
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "sIFuQgAACAAJ",
+   "etag": "iVO9/D9GtEc",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/sIFuQgAACAAJ",
+   "volumeInfo": {
+    "title": "Martin Luther King, Jr., Malcolm X, and the Civil Rights Struggle of the 1950s and 1960s",
+    "subtitle": "A Brief History with Documents",
+    "authors": [
+     "David Howard-Pitney"
+    ],
+    "publisher": "Bedford/St. Martin's",
+    "publishedDate": "2004-02-20",
+    "description": "The civil rights movement’s most prominent leaders, Martin Luther King, Jr. (1929–1968) and Malcolm X (1925–1965), represent two wings of the revolt against racism: nonviolent resistance and revolution \"by any means necessary.\" This volume presents the two leaders’ relationship to the civil rights movement beyond a simplified dualism. A rich selection of speeches, essays, and excerpts from Malcolm X’s autobiography and King’s sermons shows the breadth and range of each man’s philosophy, demonstrating their differences, similarities, and evolution over time. Organized into six topical groups, the documents allow students to compare the leaders’ views on subjects including integration, the American dream, means of struggle, and opposing racial philosophies. An interpretive introductory essay, chronology, selected bibliography, document headnotes, and questions for consideration provide further pedagogical support.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "0312395051"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9780312395056"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 207,
+    "printType": "BOOK",
+    "categories": [
+     "History"
+    ],
+    "averageRating": 4.0,
+    "ratingsCount": 5,
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=sIFuQgAACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=sIFuQgAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=sIFuQgAACAAJ&dq=isbn:9780312395056&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=sIFuQgAACAAJ&dq=isbn:9780312395056&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Martin_Luther_King_Jr_Malcolm_X_and_the.html?hl=&id=sIFuQgAACAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=sIFuQgAACAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "&quot; This volume presents the two leaders’ relationship to the civil rights movement beyond a simplified dualism."
+   }
+  }
+ ]
+}
+
+9780205851713
+African Experience                 
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "05xcuAAACAAJ",
+   "etag": "UxevWa+s+5U",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/05xcuAAACAAJ",
+   "volumeInfo": {
+    "title": "The African Experience",
+    "subtitle": "An Introduction",
+    "authors": [
+     "Vincent B. Khapoya"
+    ],
+    "publisher": "Prentice Hall",
+    "publishedDate": "2013",
+    "description": "ALERT: Before you purchase, check with your instructor or review your course syllabus to ensure that you select the correct ISBN. Several versions of Pearson's MyLab & Mastering products exist for each title, including customized versions for individual schools, and registrations are not transferable. In addition, you may need a CourseID, provided by your instructor, to register for and use Pearson's MyLab & Mastering products. Packages Access codes for Pearson's MyLab & Mastering products may not be included when purchasing or renting from companies other than Pearson; check with the seller before completing your purchase. Used or rental books If you rent or purchase a used book with an access code, the access code may have been redeemed previously and you may have to purchase a new access code. Access codes Access codes that are purchased from sellers other than Pearson carry a higher risk of being either the wrong ISBN or a previously redeemed code. Check with the seller prior to purchase. -- Updated in its 4th edition, The African Experience is the only interdisciplinary survey to examine this region of the world from geographic, linguistic, social, historical, and political perspectives. Drawing on research from all of the social sciences, this text captures Africa in its complex totality. The African Experience helps readers develop a comprehensive and critical understanding of Africa, one that allows them to grasp the region's internal dynamics and its evolving place in the world. 0205208606 / 9780205208609 The African Experience Plus MySearchLab with eText -- Access Card Package Package consists of: 0205239927 / 9780205239924 MySearchLab with Pearson eText -- Valuepack Access Card 0205851711 / 9780205851713 The African Experience",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "0205851711"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9780205851713"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 278,
+    "printType": "BOOK",
+    "categories": [
+     "Biography & Autobiography"
+    ],
+    "averageRating": 4.0,
+    "ratingsCount": 2,
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=05xcuAAACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=05xcuAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=05xcuAAACAAJ&dq=isbn:9780205851713&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=05xcuAAACAAJ&dq=isbn:9780205851713&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/The_African_Experience.html?hl=&id=05xcuAAACAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=05xcuAAACAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "Drawing on research from all of the social sciences, this text captures Africa in its complex totality."
+   }
+  }
+ ]
+}
+
+9780230308473
+History Of Africa                  
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "spFdtQAACAAJ",
+   "etag": "gHQcqGOGc40",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/spFdtQAACAAJ",
+   "volumeInfo": {
+    "title": "History of Africa",
+    "authors": [
+     "Kevin Shillington"
+    ],
+    "publisher": "Palgrave Macmillan",
+    "publishedDate": "2012-05-15",
+    "description": "History of Africa offers a richly illustrated introduction to the history of the entire continent, from earliest times right up to the present day. The third edition has been revised and updated in the light of recent research and provides more coverage of modern Africa. This successful text is now supported by a companion website. History of Africa, third edition: • offers a wealth of specially-drawn maps and carefully chosen photographs, a number of which are new for this edition • takes a deliberately African viewpoint of the European involvement in Africa • provides a carefully constructed examination of the colonial period and the problems of post-colonial Africa • presents expanded coverage of modern Africa with more on issues such as economic concerns, globalization, international organizations, climate change, HIV/AIDS, and the role of China • opens with a new Introduction which includes a helpful historiographical overview • features a companion website containing additional critical material on key subjects and a range of resources to enhance the learning experience. Eminently clear and approachable, History of Africa remains the essential text for anyone with an interest in this remarkable continent and its fascinating past.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "0230308473"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9780230308473"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 528,
+    "printType": "BOOK",
+    "categories": [
+     "History"
+    ],
+    "averageRating": 3.5,
+    "ratingsCount": 12,
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=spFdtQAACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=spFdtQAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=spFdtQAACAAJ&dq=isbn:9780230308473&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=spFdtQAACAAJ&dq=isbn:9780230308473&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/History_of_Africa.html?hl=&id=spFdtQAACAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=spFdtQAACAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "The third edition has been revised and updated in the light of recent research and provides more coverage of modern Africa. This successful text is now supported by a companion website."
+   }
+  }
+ ]
+}
+
+9780812985856
+Every Day Is For The Thief         
+{
+ "kind": "books#volumes",
+ "totalItems": 0
+}
+
+9781412936385
+Black Families                     
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "oFamfw1i5S8C",
+   "etag": "WL6735Bu5P4",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/oFamfw1i5S8C",
+   "volumeInfo": {
+    "title": "Black Families",
+    "authors": [
+     "Harriette Pipes McAdoo"
+    ],
+    "publisher": "SAGE Publications",
+    "publishedDate": "2007",
+    "description": "Following the success of its best-selling predecessors, the Fourth Edition of Harriette Pipes McAdoo's Black Families retains several now classic contributions while including updated versions of earlier chapters and many entirely new chapters. The goal through each revision of this core text has been to compile a book that focuses on positive dimensions of African American families. The book remains the most complete assessment of black families available in both depth and breadth of coverage. Cross-disciplinary in nature, the book boasts contributions from such fields as family studies, anthropology, education, psychology, social work, and public policy.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "1412936381"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9781412936385"
+     }
+    ],
+    "readingModes": {
+     "text": true,
+     "image": false
+    },
+    "pageCount": 364,
+    "printType": "BOOK",
+    "categories": [
+     "Family & Relationships"
+    ],
+    "averageRating": 5.0,
+    "ratingsCount": 1,
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "1.0.1.0.preview.2",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=oFamfw1i5S8C&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=oFamfw1i5S8C&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=oFamfw1i5S8C&dq=isbn:9781412936385&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=oFamfw1i5S8C&dq=isbn:9781412936385&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Black_Families.html?hl=&id=oFamfw1i5S8C"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": true
+    },
+    "pdf": {
+     "isAvailable": true
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=oFamfw1i5S8C&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "Following the success of its best-selling predecessors, the Fourth Edition of Harriette Pipes McAdoo&#39;s Black Families retains several now classic contributions while including updated versions of earlier chapters and many entirely new ..."
+   }
+  }
+ ]
+}
+
+9780534552961
+Black Family:essays+Studies        
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "6ZoaAQAAIAAJ",
+   "etag": "2tA35yNAuDc",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/6ZoaAQAAIAAJ",
+   "volumeInfo": {
+    "title": "The Black Family",
+    "subtitle": "Essays and Studies",
+    "authors": [
+     "Robert Staples"
+    ],
+    "publisher": "Cengage Learning",
+    "publishedDate": "1999",
+    "description": "A collection of essays and articles on issues that affect African American families, including such matters as sexual harassment, health care, interracial marriage, and AIDS",
+    "industryIdentifiers": [
+     {
+      "type": "OTHER",
+      "identifier": "STANFORD:36105023092930"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 376,
+    "printType": "BOOK",
+    "categories": [
+     "Family & Relationships"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=6ZoaAQAAIAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=6ZoaAQAAIAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=6ZoaAQAAIAAJ&dq=isbn:9780534552961&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=6ZoaAQAAIAAJ&dq=isbn:9780534552961&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/The_Black_Family.html?hl=&id=6ZoaAQAAIAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=6ZoaAQAAIAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "A collection of essays and articles on issues that affect African American families, including such matters as sexual harassment, health care, interracial marriage, and AIDS"
+   }
+  }
+ ]
+}
+
+9780393911558
+Norton Anth.of African-Amer.,lit.v1
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "KhfBjgEACAAJ",
+   "etag": "1s0fEu1KxyA",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/KhfBjgEACAAJ",
+   "volumeInfo": {
+    "title": "The Norton Anthology of African American Literature",
+    "authors": [
+     "Henry Louis Gates (Jr.)",
+     "Nellie Y. McKay"
+    ],
+    "publishedDate": "2014",
+    "description": "Collaborating on The Norton Anthology of African American Literature, editors Henry Louis Gates Jr. and Nellie Y. McKay have compiled what may be the definitive collection of its kind. Organized chronologically, the massive work gathers writings from six periods of black history: slavery and freedom; Reconstruction; the Harlem Renaissance; Realism, Naturalism and Modernism; the Black Arts Movement and the period since the 1970s. The work begins with the vernacular tradition of spirituals, gospel and the blues; continues through work songs, jazz and rap; ranges through sermons and folktales; and embraces letters and journals, poetry, short fiction, novels, autobiography and drama.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "0393911551"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9780393911558"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 2991,
+    "printType": "BOOK",
+    "categories": [
+     "African Americans"
+    ],
+    "averageRating": 4.0,
+    "ratingsCount": 29,
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=KhfBjgEACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=KhfBjgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=KhfBjgEACAAJ&dq=isbn:9780393911558&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=KhfBjgEACAAJ&dq=isbn:9780393911558&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/The_Norton_Anthology_of_African_American.html?hl=&id=KhfBjgEACAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=KhfBjgEACAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "Collaborating on The Norton Anthology of African American Literature, editors Henry Louis Gates Jr. and Nellie Y. McKay have compiled what may be the definitive collection of its kind."
+   }
+  }
+ ]
+}
+
+9781556520747
+Assata:autobiography               
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "kVVp9RLqlYwC",
+   "etag": "ghUWRnqLfQI",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/kVVp9RLqlYwC",
+   "volumeInfo": {
+    "title": "Assata",
+    "subtitle": "An Autobiography",
+    "authors": [
+     "Assata Shakur"
+    ],
+    "publisher": "Zed Books",
+    "publishedDate": "1987-01",
+    "description": "The author, formerly known as JoAnne Chesimard, relates the formative experiences of her youth that led her to a life of activism in Black nationalist organizations and, eventually, to prison",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "1556520743"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9781556520747"
+     }
+    ],
+    "readingModes": {
+     "text": true,
+     "image": true
+    },
+    "pageCount": 274,
+    "printType": "BOOK",
+    "categories": [
+     "Biography & Autobiography"
+    ],
+    "averageRating": 4.5,
+    "ratingsCount": 357,
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "0.0.2.0.preview.3",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=kVVp9RLqlYwC&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=kVVp9RLqlYwC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=kVVp9RLqlYwC&printsec=frontcover&dq=isbn:9781556520747&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=kVVp9RLqlYwC&dq=isbn:9781556520747&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Assata.html?hl=&id=kVVp9RLqlYwC"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "PARTIAL",
+    "embeddable": true,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": true,
+     "acsTokenLink": "http://books.google.com/books/download/Assata-sample-epub.acsm?id=kVVp9RLqlYwC&format=epub&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=kVVp9RLqlYwC&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "SAMPLE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "The author, formerly known as JoAnne Chesimard, relates the formative experiences of her youth that led her to a life of activism in Black nationalist organizations and, eventually, to prison"
+   }
+  }
+ ]
+}
+
+9780307278449
+Bluest Eye                         
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "GT0zaVLwOdwC",
+   "etag": "acg0vxeum78",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/GT0zaVLwOdwC",
+   "volumeInfo": {
+    "title": "The Bluest Eye",
+    "subtitle": "A Novel",
+    "authors": [
+     "Toni Morrison"
+    ],
+    "publisher": "Vintage Books",
+    "publishedDate": "1970",
+    "description": "The story of Pecola Breedlove profiles an eleven-year-old African-American girl growing up in an America that values blue-eyed blondes and the tragedy that results from her longing to be accepted.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_13",
+      "identifier": "9780307278449"
+     },
+     {
+      "type": "ISBN_10",
+      "identifier": "0307278441"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 205,
+    "printType": "BOOK",
+    "categories": [
+     "Fiction"
+    ],
+    "averageRating": 3.5,
+    "ratingsCount": 1500,
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "2.1.0.0.preview.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=GT0zaVLwOdwC&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=GT0zaVLwOdwC&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=GT0zaVLwOdwC&dq=isbn:9780307278449&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=GT0zaVLwOdwC&dq=isbn:9780307278449&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/The_Bluest_Eye.html?hl=&id=GT0zaVLwOdwC"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": true
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=GT0zaVLwOdwC&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "The story of Pecola Breedlove profiles an eleven-year-old African-American girl growing up in an America that values blue-eyed blondes and the tragedy that results from her longing to be accepted."
+   }
+  }
+ ]
+}
+
+9781565842564
+Words Of Fire                      
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "yHWHYc4a6FwC",
+   "etag": "dHBhybadRT8",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/yHWHYc4a6FwC",
+   "volumeInfo": {
+    "title": "Words of Fire",
+    "subtitle": "An Anthology of African-American Feminist Thought",
+    "authors": [
+     "Beverly Guy-Sheftall"
+    ],
+    "publisher": "The New Press",
+    "publishedDate": "1995",
+    "description": "Collects essays and letters from African American feminists, addressing race and gender issues in the United States",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_13",
+      "identifier": "9781565842564"
+     },
+     {
+      "type": "ISBN_10",
+      "identifier": "1565842561"
+     }
+    ],
+    "readingModes": {
+     "text": true,
+     "image": true
+    },
+    "pageCount": 577,
+    "printType": "BOOK",
+    "categories": [
+     "History"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "0.3.2.0.preview.3",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=yHWHYc4a6FwC&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=yHWHYc4a6FwC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=yHWHYc4a6FwC&printsec=frontcover&dq=isbn:9781565842564&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=yHWHYc4a6FwC&dq=isbn:9781565842564&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Words_of_Fire.html?hl=&id=yHWHYc4a6FwC"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "PARTIAL",
+    "embeddable": true,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": true,
+     "acsTokenLink": "http://books.google.com/books/download/Words_of_Fire-sample-epub.acsm?id=yHWHYc4a6FwC&format=epub&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=yHWHYc4a6FwC&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "SAMPLE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "Collects essays and letters from African American feminists, addressing race and gender issues in the United States"
+   }
+  }
+ ]
+}
+
+9781259605420
+Financial Acct W/connect+Qkbks-F15 
+{
+ "kind": "books#volumes",
+ "totalItems": 0
+}
+
+9781423221500
+Acct 1                             
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "07CsngEACAAJ",
+   "etag": "r+g0DuzOBpE",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/07CsngEACAAJ",
+   "volumeInfo": {
+    "title": "Accounting 1",
+    "authors": [
+     "BarCharts, Inc.",
+     "Michael P. Griffin"
+    ],
+    "publisher": "Quickstudy",
+    "publishedDate": "2013-12-31",
+    "description": "We ve taken our popular Accounting 1 guide and made it even better Updated content and an additional panel of information not only make this an essential companion for students in introductory accounting courses, but also a refresher for those in higher level courses. In this edition you will find more coverage of the subject including expanded sections on financial statements and accounting in business, making this a study tool you won t want to be without \"",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "1423221508"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9781423221500"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 6,
+    "printType": "BOOK",
+    "categories": [
+     "Business & Economics"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=07CsngEACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=07CsngEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=07CsngEACAAJ&dq=isbn:9781423221500&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=07CsngEACAAJ&dq=isbn:9781423221500&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Accounting_1.html?hl=&id=07CsngEACAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=07CsngEACAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "In this edition you will find more coverage of the subject including expanded sections on financial statements and accounting in business, making this a study tool you won t want to be without &quot;"
+   }
+  }
+ ]
+}
+
+9781423216315
+Acct 2                             
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "krNsewAACAAJ",
+   "etag": "NPAwfLpuNRw",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/krNsewAACAAJ",
+   "volumeInfo": {
+    "title": "Accounting 2",
+    "authors": [
+     "Barcharts, Inc."
+    ],
+    "publisher": "Quickstudy",
+    "publishedDate": "2011-05-31",
+    "description": "Our best-selling Accounting 2 guide has now gotten even better, thanks to the latest up-to-date information added to the original text. The new material within this 3-panel (6 page)guide goes further into the various accounting practices that businesses use to keep financially afloat; mathematical equations, charts, and tables are also included in an easy-to-use format. \"",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "1423216318"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9781423216315"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 6,
+    "printType": "BOOK",
+    "categories": [
+     "Business & Economics"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=krNsewAACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=krNsewAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=krNsewAACAAJ&dq=isbn:9781423216315&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=krNsewAACAAJ&dq=isbn:9781423216315&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Accounting_2.html?hl=&id=krNsewAACAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=krNsewAACAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "Our best-selling Accounting 2 guide has now gotten even better, thanks to the latest up-to-date information added to the original text."
+   }
+  }
+ ]
+}
+
+9781308547572
+Managerial Acct W/connect  F'15    
+{
+ "kind": "books#volumes",
+ "totalItems": 0
+}
+
+9780077638986
+Law For Business (Looseleaf)       
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "_oPUngEACAAJ",
+   "etag": "iA/kD7KneqI",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/_oPUngEACAAJ",
+   "volumeInfo": {
+    "title": "Loose-Leaf for Barnes, Law for Business 12e",
+    "authors": [
+     "Eric Richards",
+     "Terry M. Dworkin",
+     "A. James Barnes"
+    ],
+    "publisher": "McGraw-Hill Education",
+    "publishedDate": "2014-01-22",
+    "description": "Overview: Law for Business has provided students with a comprehensive, yet concise treatment of the legal issues of fundamental importance to business students and the business profession. The cases, which have always been a strong feature, are edited and re-written by the authors, who divide the material into three categories: facts, issues, decisions. The authors, Barnes, Dworkin, and Richards, choose cases that are appropriate to explain precedent and history as well as include “hot topic” cases that relate to current events. In addition to case applications, the authors use such techniques as content summaries to apply concepts to practice. Effective managers and employees must develop knowledge of both law and business because people involved in business also are involved in, and greatly affected by, the laws concerning business.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "0077638980"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9780077638986"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "printType": "BOOK",
+    "categories": [
+     "Law"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=_oPUngEACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=_oPUngEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=_oPUngEACAAJ&dq=isbn:9780077638986&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=_oPUngEACAAJ&dq=isbn:9780077638986&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Loose_Leaf_for_Barnes_Law_for_Business_1.html?hl=&id=_oPUngEACAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=_oPUngEACAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "The authors, Barnes, Dworkin, and Richards, choose cases that are appropriate to explain precedent and history as well as include “hot topic” cases that relate to current events."
+   }
+  }
+ ]
+}
+
+9781572228702
+Business Law                       
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "DxUUOAAACAAJ",
+   "etag": "z/dcluzPejg",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/DxUUOAAACAAJ",
+   "volumeInfo": {
+    "title": "Business Law",
+    "authors": [
+     "BarCharts Inc., Staff",
+     "Barcharts, Inc."
+    ],
+    "publisher": "Quickstudy",
+    "publishedDate": "2005-01-01",
+    "description": "Business Law Full array of business law topics, ranging from contracts to ethics. This guide can be helpful for students as well as for corporate managers.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "1572228709"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9781572228702"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 4,
+    "printType": "BOOK",
+    "categories": [
+     "Business & Economics"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=DxUUOAAACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=DxUUOAAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=DxUUOAAACAAJ&dq=isbn:9781572228702&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=DxUUOAAACAAJ&dq=isbn:9781572228702&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Business_Law.html?hl=&id=DxUUOAAACAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=DxUUOAAACAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "Business Law Full array of business law topics, ranging from contracts to ethics. This guide can be helpful for students as well as for corporate managers."
+   }
+  }
+ ]
+}
+
+9781259542848
+Intermediate Acct.(Ll)W/air...-W/ac
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "ycsHrgEACAAJ",
+   "etag": "f3zG3WJVU1k",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/ycsHrgEACAAJ",
+   "volumeInfo": {
+    "title": "LooseLeaf Intermediate Accounting w/ Annual Report; Connect Access Card",
+    "authors": [
+     "J. David Spiceland"
+    ],
+    "publisher": "McGraw-Hill Education",
+    "publishedDate": "2014-09-15",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "125954284X"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9781259542848"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "printType": "BOOK",
+    "categories": [
+     "Business & Economics"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=ycsHrgEACAAJ&dq=isbn:9781259542848&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=ycsHrgEACAAJ&dq=isbn:9781259542848&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/LooseLeaf_Intermediate_Accounting_w_Annu.html?hl=&id=ycsHrgEACAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=ycsHrgEACAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   }
+  }
+ ]
+}
+
+9780077924911
+Intermediate Acct.(Ll)Airfrance+Acc
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "mzWvMQEACAAJ",
+   "etag": "NqlJwEcKHTM",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/mzWvMQEACAAJ",
+   "volumeInfo": {
+    "title": "Loose Leaf Intermediate Accounting with Annual Report + Connect Plus",
+    "authors": [
+     "J. David Spiceland",
+     "James Sepe",
+     "Mark Nelson",
+     "Lawrence Tomassini"
+    ],
+    "publisher": "McGraw-Hill/Irwin",
+    "publishedDate": "2011-11-09",
+    "description": "Financial accounting is undergoing a period of unprecedented change. The FASB and IASB have been working together to issue converged accounting standards that will dramatically change key reporting areas, and more generally have sought to converge accounting standards over time. In late 2011, the SEC will announce its decision on whether large public companies in the U.S. will be able to choose whether to report under U.S. GAAP or IFRS or if all companies are anticipated to be reporting under IFRS in the near future. So, while there currently is considerable overlap between U.S. GAAP and IFRS, and that overlap is increasing as convergence continues, important differences remain. To help instructors deal with the challenging environment, the Spiceland team is committed to providing current, comprehensive and clear coverage of intermediate accounting. The 7th edition reflects this commitment with the following innovations.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "0077924916"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9780077924911"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "printType": "BOOK",
+    "categories": [
+     "Business & Economics"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=mzWvMQEACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=mzWvMQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=mzWvMQEACAAJ&dq=isbn:9780077924911&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=mzWvMQEACAAJ&dq=isbn:9780077924911&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Loose_Leaf_Intermediate_Accounting_with.html?hl=&id=mzWvMQEACAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=mzWvMQEACAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "The 7th edition reflects this commitment with the following innovations."
+   }
+  }
+ ]
+}
+
+9781423216414
+Cost Accounting                    
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "K5l0MAEACAAJ",
+   "etag": "vVeRk1S+Cy4",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/K5l0MAEACAAJ",
+   "volumeInfo": {
+    "title": "Cost Accounting",
+    "authors": [
+     "Michael P. Griffin",
+     "BarCharts, Inc"
+    ],
+    "publisher": "Quickstudy",
+    "publishedDate": "2011-05-31",
+    "description": "We ve taken our best-selling Cost Accounting guide and enhanced it with fresh, up-to-date information that every company should know Like the original, our 3-panel edition details the many aspects of accounting within businesses; key definitions and examples of accounting practices are listed for easy reference. New to this edition are helpful charts, diagrams, and tables that further illustrate the subject. \"",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "1423216415"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9781423216414"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 6,
+    "printType": "BOOK",
+    "categories": [
+     "Business & Economics"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=K5l0MAEACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=K5l0MAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=K5l0MAEACAAJ&dq=isbn:9781423216414&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=K5l0MAEACAAJ&dq=isbn:9781423216414&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Cost_Accounting.html?hl=&id=K5l0MAEACAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=K5l0MAEACAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "New to this edition are helpful charts, diagrams, and tables that further illustrate the subject. &quot;"
+   }
+  }
+ ]
+}
+
+9781308210391
+Fund. Of Cost Acct. W/conn+ & Lsmar
+{
+ "kind": "books#volumes",
+ "totalItems": 0
+}
+
+9780078025815
+Essen.of Acct.f/gov.+Not-For-Profit
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "J8DynAEACAAJ",
+   "etag": "wu9Y+B/yAdo",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/J8DynAEACAAJ",
+   "volumeInfo": {
+    "title": "Essentials of Accounting for Governmental and Not-for-Profit Organizations",
+    "authors": [
+     "Paul Copley"
+    ],
+    "publisher": "McGraw-Hill Education",
+    "publishedDate": "2014-01-21",
+    "description": "Copley's Essentials of Accounting for Governmental and Not-for-Profit Organizations, 12e is best suited for those professors whose objective is to provide more concise coverage than what is available in larger texts. The main focus of this text is on the preparation of external financial statements which is a challenge for governmental reporting. The approach in this edition is similar to that used in practice. Specifically, day to day events are recorded at the fund level using the basis of accounting for fund financial statements. Governmental activities are recorded using the modified accrual basis. The fund-basis statements are then used as input in the preparation of government-wide statements. The preparation of government-wide statements is presented in an Excel worksheet.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "0078025818"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9780078025815"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 480,
+    "printType": "BOOK",
+    "categories": [
+     "Business & Economics"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=J8DynAEACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=J8DynAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=J8DynAEACAAJ&dq=isbn:9780078025815&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=J8DynAEACAAJ&dq=isbn:9780078025815&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Essentials_of_Accounting_for_Governmenta.html?hl=&id=J8DynAEACAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=J8DynAEACAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "The main focus of this text is on the preparation of external financial statements which is a challenge for governmental reporting. The approach in this edition is similar to that used in practice."
+   }
+  }
+ ]
+}
+
+9780912503387
+Systems Understanding Aid (New Only
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "HiIhnwEACAAJ",
+   "etag": "5Js2DTsLyIk",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/HiIhnwEACAAJ",
+   "volumeInfo": {
+    "title": "Systems Understanding Aid",
+    "authors": [
+     "Alvin A. Arens",
+     "D. Dewey Ward"
+    ],
+    "publisher": "Ingram",
+    "publishedDate": "2012",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "0912503386"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9780912503387"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "printType": "BOOK",
+    "categories": [
+     "Accounting"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=HiIhnwEACAAJ&dq=isbn:9780912503387&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=HiIhnwEACAAJ&dq=isbn:9780912503387&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Systems_Understanding_Aid.html?hl=&id=HiIhnwEACAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=HiIhnwEACAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   }
+  }
+ ]
+}
+
+9781118022306
+Core Concepts Of Acct.information S
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "L6fttgAACAAJ",
+   "etag": "AUC/EWjUPSE",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/L6fttgAACAAJ",
+   "volumeInfo": {
+    "title": "Core Concepts of Accounting Information Systems",
+    "authors": [
+     "Mark G. Simkin",
+     "Jacob M. Rose",
+     "Carolyn S. Norman"
+    ],
+    "publisher": "Wiley",
+    "publishedDate": "2011-11-22",
+    "description": "Simkin & Norman's 12th Edition of Concepts of Accounting Information Systems builds upon previous issues with more in-depth focus on topical issues essential to accountants such as Sarbanes-Oxley, Cobit Version 4, XBRL, and of risk and governance in a much more concise, user-friendly way. More Case in Point sections highlight how the concepts are applied in the field and additional multiple choice questions have been added at the end of the chapters to help reinforce the material. An enhanced and updated database chapter also provides hands-on instruction in Microsoft Access.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "1118022300"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9781118022306"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 544,
+    "printType": "BOOK",
+    "categories": [
+     "Business & Economics"
+    ],
+    "averageRating": 4.0,
+    "ratingsCount": 2,
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=L6fttgAACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=L6fttgAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=L6fttgAACAAJ&dq=isbn:9781118022306&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=L6fttgAACAAJ&dq=isbn:9781118022306&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Core_Concepts_of_Accounting_Information.html?hl=&id=L6fttgAACAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=L6fttgAACAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "Simkin &amp; Norman&#39;s 12th Edition of Concepts of Accounting Information Systems builds upon previous issues with more in-depth focus on topical issues essential to accountants such as Sarbanes-Oxley, Cobit Version 4, XBRL, and of risk and ..."
+   }
+  }
+ ]
+}
+
+9780133125689
+Auditing+Assurance Services(Loose)-
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "uIwHlwEACAAJ",
+   "etag": "g3h+zH3F+FY",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/uIwHlwEACAAJ",
+   "volumeInfo": {
+    "title": "Auditing and Assurance Services, Student Value Edition",
+    "authors": [
+     "Alvin A. Arens",
+     "Randal J. Elder",
+     "Mark S. Beasley"
+    ],
+    "publisher": "Prentice Hall",
+    "publishedDate": "2013-01-29",
+    "description": "ALERT: Before you purchase, check with your instructor or review your course syllabus to ensure that you select the correct ISBN. Several versions of Pearson's MyLab & Mastering products exist for each title, including customized versions for individual schools, and registrations are not transferable. In addition, you may need a CourseID, provided by your instructor, to register for and use Pearson's MyLab & Mastering products. Packages Access codes for Pearson's MyLab & Mastering products may not be included when purchasing or renting from companies other than Pearson; check with the seller before completing your purchase. Used or rental books If you rent or purchase a used book with an access code, the access code may have been redeemed previously and you may have to purchase a new access code. Access codes Access codes that are purchased from sellers other than Pearson carry a higher risk of being either the wrong ISBN or a previously redeemed code. Check with the seller prior to purchase. -- Directed primarily toward Accounting college/university majors, this text also provides practical content to current and aspiring industry professionals. Auditing and Assurance Services: An Integrated Approach presents an integrated concepts approach that shows readers the auditing process from start to finish. This text prepares readers for real-world audit decision making by using illustrative examples of key audit decisions, with an emphasis on audit planning, risk assessment processes and collecting and evaluating evidence in response to risks. 013312956X / 9780133129564 Auditing and Assurance Services and NEW MyAccountingLab with eText -- Access Card Package Package consists of 0133125637 / 9780133125634 Auditing and Assurance Services 0133127397 / 9780133127393 NEW MyAccountingLab with Pearson eText -- CourseSmart eCode -- for Auditing and Assurance Services",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "0133125688"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9780133125689"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 864,
+    "printType": "BOOK",
+    "categories": [
+     "Business & Economics"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=uIwHlwEACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=uIwHlwEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=uIwHlwEACAAJ&dq=isbn:9780133125689&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=uIwHlwEACAAJ&dq=isbn:9780133125689&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Auditing_and_Assurance_Services_Student.html?hl=&id=uIwHlwEACAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=uIwHlwEACAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "This text prepares readers for real-world audit decision making by using illustrative examples of key audit decisions, with an emphasis on audit planning, risk assessment processes and collecting and evaluating evidence in response to risks ..."
+   }
+  }
+ ]
+}
+
+9780912503561
+Integrated Audit Practice Case     
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "HEP0oAEACAAJ",
+   "etag": "aaSxxjZRZVE",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/HEP0oAEACAAJ",
+   "volumeInfo": {
+    "title": "Integrated Audit Practice Case 6th Edition",
+    "authors": [
+     "Armond Dalton Publishers, Incorporated",
+     "David S. Kerr",
+     "Randal J. Elder",
+     "Alvin A. Arens"
+    ],
+    "publishedDate": "2014",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "0912503564"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9780912503561"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "printType": "BOOK",
+    "categories": [
+     "Auditing"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=HEP0oAEACAAJ&dq=isbn:9780912503561&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=HEP0oAEACAAJ&dq=isbn:9780912503561&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Integrated_Audit_Practice_Case_6th_Editi.html?hl=&id=HEP0oAEACAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=HEP0oAEACAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   }
+  }
+ ]
+}
+
+9781617402548
+Individual Taxation 2016 Ed        
+{
+ "kind": "books#volumes",
+ "totalItems": 0
+}
+
+9780205763139
+Social Gerontology                 
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "uF1TQgAACAAJ",
+   "etag": "Fme8XAEbqsw",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/uF1TQgAACAAJ",
+   "volumeInfo": {
+    "title": "Social Gerontology",
+    "subtitle": "A Multidisciplinary Perspective",
+    "authors": [
+     "Nancy R. Hooyman",
+     "H. Asuman Kiyak"
+    ],
+    "publisher": "Prentice Hall",
+    "publishedDate": "2011",
+    "description": "This textbook provides a survey of the field of social gerontology, taking a multi-disciplinary approach to the social aspects of aging and/or working with older adults. The authors demonstrate how age-related changes in the biological, functional, and psychological domains can influence the older person's interactions with his/her social and physical environment. They offer a view that presents aging positively, portraying concepts of active aging and resiliency, and defining \"productive aging\" by elaborating on the numerous ways elders contribute to society and their families. Based on the latest research findings, it offers understanding to critical issues of aging, attending to differences by age and cohort, gender, ethnic minority status, sexual orientation, and socio-economic status.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "0205763138"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9780205763139"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 788,
+    "printType": "BOOK",
+    "categories": [
+     "Social Science"
+    ],
+    "averageRating": 2.5,
+    "ratingsCount": 3,
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=uF1TQgAACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=uF1TQgAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=uF1TQgAACAAJ&dq=isbn:9780205763139&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=uF1TQgAACAAJ&dq=isbn:9780205763139&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Social_Gerontology.html?hl=&id=uF1TQgAACAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=uF1TQgAACAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "This textbook provides a survey of the field of social gerontology, taking a multi-disciplinary approach to the social aspects of aging and/or working with older adults."
+   }
+  }
+ ]
+}
+
+9780078028502
+Drugs In Perspective               
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "aiNutwAACAAJ",
+   "etag": "69m4DXDLXk0",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/aiNutwAACAAJ",
+   "volumeInfo": {
+    "title": "Drugs in Perspective: Causes, Assessment, Family, Prevention, Intervention, and Treatment",
+    "authors": [
+     "Richard Fields"
+    ],
+    "publisher": "McGraw-Hill Education",
+    "publishedDate": "2012-03-05",
+    "description": "Over the past 30 years Dr. Richard Fields has performed clinical work with substance abusers and their families. Drugs in Perspective is a thorough user-friendly compilation of reports, literature, and case studies on alcohol and drug prevention, intervention, and treatment.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "0078028507"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9780078028502"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 416,
+    "printType": "BOOK",
+    "categories": [
+     "Self-Help"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=aiNutwAACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=aiNutwAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=aiNutwAACAAJ&dq=isbn:9780078028502&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=aiNutwAACAAJ&dq=isbn:9780078028502&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Drugs_in_Perspective_Causes_Assessment_F.html?hl=&id=aiNutwAACAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=aiNutwAACAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "Over the past 30 years Dr. Richard Fields has performed clinical work with substance abusers and their families."
+   }
+  }
+ ]
+}
+
+9780840028549
+Theory+Prac.of Counseling+Psych.-Te
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "NASxLWfwApoC",
+   "etag": "RRdXonyRu+k",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/NASxLWfwApoC",
+   "volumeInfo": {
+    "title": "Theory and Practice of Counseling and Psychotherapy",
+    "authors": [
+     "Gerald Corey"
+    ],
+    "publisher": "Cengage Learning",
+    "publishedDate": "2012-01-01",
+    "description": "Incorporating the thinking, feeling, and behaving dimensions of human experience, the ninth edition of Corey’s best-selling text offers an easy-to-understand text that helps students compare and contrast the therapeutic models expressed in counseling theories. Corey introduces students to the major theories (psychoanalytic, Adlerian, existential, person-centered, Gestalt, reality, behavior, cognitive-behavior, family systems, feminist, and postmodern approaches) and demonstrates how each theory can be applied to a single case (Stan). With his trademark style, he shows students how to apply those theories in practice, and helps them learn to integrate the theories into an individualized counseling style. This book is the center of a suite of products that includes a revised student manual, Case Approach to Counseling and Psychotherapy (2013), The Art of Integrative Counseling (2013) and media resources like the DVDs titled DVD for Theory and Practice of Counseling and Psychotherapy: The Case of Stan and Lecturettes, and DVD for Integrative Counseling: The Case of Ruth and Lecturettes, which features the same videos as the Integrative Counseling CD-ROM redesigned for today’s classrooms. Important Notice: Media content referenced within the product description or the product text may not be available in the ebook version.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_13",
+      "identifier": "9780840028549"
+     },
+     {
+      "type": "ISBN_10",
+      "identifier": "0840028547"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": true
+    },
+    "pageCount": 552,
+    "printType": "BOOK",
+    "categories": [
+     "Education"
+    ],
+    "averageRating": 3.5,
+    "ratingsCount": 30,
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "0.1.0.0.preview.1",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=NASxLWfwApoC&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=NASxLWfwApoC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=NASxLWfwApoC&printsec=frontcover&dq=isbn:9780840028549&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=NASxLWfwApoC&dq=isbn:9780840028549&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Theory_and_Practice_of_Counseling_and_Ps.html?hl=&id=NASxLWfwApoC"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "PARTIAL",
+    "embeddable": true,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=NASxLWfwApoC&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "SAMPLE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "This book is the center of a suite of products that includes a revised student manual, Case Approach to Counseling and Psychotherapy (2013), The Art of Integrative Counseling (2013) and media resources like the DVDs titled DVD for Theory ..."
+   }
+  }
+ ]
+}
+
+9781133309345
+Theory+Prac.of Counsel.+Psych.-Std.
+{
+ "kind": "books#volumes",
+ "totalItems": 2,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "yw0uCQAAQBAJ",
+   "etag": "Kx+vMzOTf0s",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/yw0uCQAAQBAJ",
+   "volumeInfo": {
+    "title": "Student Manual for Corey's Theory and Practice of Counseling and Psychotherapy",
+    "subtitle": "",
+    "authors": [
+     "Gerald Corey"
+    ],
+    "publisher": "Cengage Learning",
+    "publishedDate": "2012-01-01",
+    "description": "Important Notice: Media content referenced within the product description or the product text may not be available in the ebook version.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_13",
+      "identifier": "9781133309345"
+     },
+     {
+      "type": "ISBN_10",
+      "identifier": "1133309348"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": true
+    },
+    "pageCount": 257,
+    "printType": "BOOK",
+    "categories": [
+     "Education"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=yw0uCQAAQBAJ&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=yw0uCQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=yw0uCQAAQBAJ&printsec=frontcover&dq=isbn:9781133309345&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=yw0uCQAAQBAJ&dq=isbn:9781133309345&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Student_Manual_for_Corey_s_Theory_and_Pr.html?hl=&id=yw0uCQAAQBAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "PARTIAL",
+    "embeddable": true,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=yw0uCQAAQBAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "SAMPLE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "Important Notice: Media content referenced within the product description or the product text may not be available in the ebook version."
+   }
+  },
+  {
+   "kind": "books#volume",
+   "id": "UJxZXwAACAAJ",
+   "etag": "RT1X1bPQVJE",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/UJxZXwAACAAJ",
+   "volumeInfo": {
+    "title": "Student Manual for Corey's Theory and Practice of Counseling and Psychotherapy",
+    "subtitle": "",
+    "authors": [
+     "Gerald Corey"
+    ],
+    "publisher": "Cengage Learning",
+    "publishedDate": "2012-01-01",
+    "description": "Important Notice: Media content referenced within the product description or the product text may not be available in the ebook version.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_13",
+      "identifier": "9781133309345"
+     },
+     {
+      "type": "ISBN_10",
+      "identifier": "1133309348"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 257,
+    "printType": "BOOK",
+    "categories": [
+     "Education"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=UJxZXwAACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=UJxZXwAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=UJxZXwAACAAJ&dq=isbn:9781133309345&hl=&cd=2&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=UJxZXwAACAAJ&dq=isbn:9781133309345&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Student_Manual_for_Corey_s_Theory_and_Pr.html?hl=&id=UJxZXwAACAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=UJxZXwAACAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "To help your students apply theory to practice, this manual contains structured self-awareness exercises that help students gain a deeper self-understanding and grasp the concepts of the various approaches."
+   }
+  }
+ ]
+}
+
+9780123944481
+Treatment Planning F/person-Centere
+{
+ "kind": "books#volumes",
+ "totalItems": 0
+}
+
+9780470972342
+Clinical Handbook Of Adol. Addictio
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "1XKZGq0w7BEC",
+   "etag": "k3rCdLxliIM",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/1XKZGq0w7BEC",
+   "volumeInfo": {
+    "title": "Clinical Handbook of Adolescent Addiction",
+    "authors": [
+     "Richard Rosner"
+    ],
+    "publisher": "John Wiley & Sons",
+    "publishedDate": "2013-02-11",
+    "description": "Since 1960, the burden of adolescent illness has shifted from the traditional causes of disease to the more behavior-related problems, such as drinking, smoking and drug abuse (nearly half of American adolescents have used an illicit drug sometime during their life). Instilling in adolescents the knowledge, skills, and values that foster physical and mental health will require substantial changes in the way health professionals work and the way they connect with families, schools, and community organizations. At the same time, the major textbooks on addiction medicine and addiction psychiatry devote relatively little attention to the special problems of diagnosing and treating adolescent addicts. Similarly, the major textbooks on general and child and adolescent psychiatry direct relatively little attention to the issues surrounding adolescent addiction. The Clinical Handbook of Adolescent Addiction is one response to the challenge of meeting the mental health needs and behavior-related problems of addicted teenagers. The work has been edited as an independent project by members of the American Society for Adolescent Psychiatry, the oldest professional organization of psychiatrists devoted solely to the mental health care and treatment of teenagers in the USA. The forensic psychiatry perspective permeates the entire book. It will help to produce health providers with a deep and sensitive understanding of the developmental needs and behavior-related problems of adolescents. The Clinical Handbook of Adolescent Addiction is a practical tool for all those who help adolescents: practitioners of family medicine, general psychiatrists, child/adolescent psychiatrists, adolescent psychiatrists, addiction psychiatrists, non-psychiatric physicians specializing in addiction medicine, forensic psychiatrists, psychologists, clinical social workers, mental health administrators, Court/Probation/ Parole/Correctional health workers. The book is organized in a user-friendly format so that readers can easily locate the chapters that provide the information that is required. In some instances, topics of special importance deliberately have been addressed in more than one chapter, to illuminate the topics from a variety of vantage points. One aim of the editors is to move the topic from being a specialist area to a generalist one by providing tools for generalist to use.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "0470972343"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9780470972342"
+     }
+    ],
+    "readingModes": {
+     "text": true,
+     "image": false
+    },
+    "pageCount": 520,
+    "printType": "BOOK",
+    "categories": [
+     "Medical"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=1XKZGq0w7BEC&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=1XKZGq0w7BEC&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=1XKZGq0w7BEC&dq=isbn:9780470972342&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=1XKZGq0w7BEC&dq=isbn:9780470972342&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Clinical_Handbook_of_Adolescent_Addictio.html?hl=&id=1XKZGq0w7BEC"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=1XKZGq0w7BEC&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "The Clinical Handbook of Adolescent Addiction is one response to the challenge of meeting the mental health needs and behavior-related problems of addicted teenagers."
+   }
+  }
+ ]
+}
+
+9780890425565
+Desk Ref.to Diag.criteria From Dsm-
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "SiK9lgEACAAJ",
+   "etag": "MOHiv5HRTiU",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/SiK9lgEACAAJ",
+   "volumeInfo": {
+    "title": "Desk Reference to the Diagnostic Criteria from DSM-5",
+    "authors": [
+     "American Psychiatric Association"
+    ],
+    "publisher": "Amer Psychiatric Pub Incorporated",
+    "publishedDate": "2013",
+    "description": "\"This handy reference provides all ICD-9-CM and ICD-10-CM codes, coding notes, and recording procedures included in the DSM-5\"--p. vii.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "0890425566"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9780890425565"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 395,
+    "printType": "BOOK",
+    "categories": [
+     "Medical"
+    ],
+    "averageRating": 3.0,
+    "ratingsCount": 2,
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=SiK9lgEACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=SiK9lgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=SiK9lgEACAAJ&dq=isbn:9780890425565&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=SiK9lgEACAAJ&dq=isbn:9780890425565&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Desk_Reference_to_the_Diagnostic_Criteri.html?hl=&id=SiK9lgEACAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=SiK9lgEACAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "&quot;This handy reference provides all ICD-9-CM and ICD-10-CM codes, coding notes, and recording procedures included in the DSM-5&quot;--p. vii."
+   }
+  }
+ ]
+}
+
+9780495468790
+Anth 101 Package-Fall 07           
+{
+ "kind": "books#volumes",
+ "totalItems": 0
+}
+
+9781572228245
+Anthropology                       
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "jZ1mNwAACAAJ",
+   "etag": "JZY39xUuyIM",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/jZ1mNwAACAAJ",
+   "volumeInfo": {
+    "title": "Anthropology",
+    "authors": [
+     "Michael S. Harris, Ph.D.",
+     "Douglas Broadfield, Ph.D.",
+     "BarCharts Inc., Staff"
+    ],
+    "publisher": "Quickstudy",
+    "publishedDate": "2004-06-28",
+    "description": "Defines the most important aspects of various forms of anthropology, including archeology, cultural and biological anthropology. For students studying anthropology; most helpful for those in introductory anthropology.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "1572228245"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9781572228245"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 6,
+    "printType": "BOOK",
+    "categories": [
+     "Social Science"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=jZ1mNwAACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=jZ1mNwAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=jZ1mNwAACAAJ&dq=isbn:9781572228245&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=jZ1mNwAACAAJ&dq=isbn:9781572228245&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Anthropology.html?hl=&id=jZ1mNwAACAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=jZ1mNwAACAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "Defines the most important aspects of various forms of anthropology, including archeology, cultural and biological anthropology. For students studying anthropology; most helpful for those in introductory anthropology."
+   }
+  }
+ ]
+}
+
+9780134007175
+Revel For Cultural Anthro: Global P
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "KCgnrgEACAAJ",
+   "etag": "Vi7mGypQBqk",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/KCgnrgEACAAJ",
+   "volumeInfo": {
+    "title": "Revel for Cultural Anthropology",
+    "subtitle": "A Global Perspective -- Access Card",
+    "authors": [
+     "Raymond Scupin"
+    ],
+    "publisher": "Pearson",
+    "publishedDate": "2015-04-12",
+    "description": "REVEL(TM) for\" Cultural Anthropology: A Global Perspective,\" Ninth Edition acquaints students with the cultural discipline of anthropological studies. The text recognizes that in the nature of our 21st century world, humans need a much greater capacity for understanding different cultures than ever before. By examining classical and current research, the text brings students closer to the theories, data, and critical thinking skills needed to understand global humanity. REVEL is Pearson's newest way of delivering our respected content. Fully digital and highly engaging, REVEL offers an immersive learning experience designed for the way today's students read, think, and learn. Enlivening course content with media interactives and assessments, REVEL empowers educators to increase engagement with the course, and to better connect with students. NOTE: REVEL is a fully digital delivery of Pearson content. This ISBN is for the standalone REVEL access card. In addition to this access card, you will need a course invite link, provided by your instructor, to register for and use REVEL.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "0134007174"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9780134007175"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 480,
+    "printType": "BOOK",
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=KCgnrgEACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=KCgnrgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=KCgnrgEACAAJ&dq=isbn:9780134007175&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=KCgnrgEACAAJ&dq=isbn:9780134007175&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Revel_for_Cultural_Anthropology.html?hl=&id=KCgnrgEACAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=KCgnrgEACAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "The text recognizes that in the nature of our 21st century world, humans need a much greater capacity for understanding different cultures than ever before."
+   }
+  }
+ ]
+}
+
+9780030119194
+Trobrianders Of Papua New Guinea   
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "bAKBAAAAMAAJ",
+   "etag": "Dj+apNtkRV8",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/bAKBAAAAMAAJ",
+   "volumeInfo": {
+    "title": "The Trobrianders of Papua New Guinea",
+    "authors": [
+     "Annette B. Weiner"
+    ],
+    "publisher": "Wadsworth Publishing Company",
+    "publishedDate": "1988-01",
+    "description": "This re-examination of the Trobrianders of Papua New Guinea, the people described in Malinowski’s classic ethnographic work of the early 20th century, provides a balanced view of the society from a male and female perspective, including coverage of new discoveries about the importance of woman’s work and wealth in the society.",
+    "industryIdentifiers": [
+     {
+      "type": "OTHER",
+      "identifier": "UOM:39015013277994"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 184,
+    "printType": "BOOK",
+    "categories": [
+     "Social Science"
+    ],
+    "averageRating": 3.0,
+    "ratingsCount": 8,
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=bAKBAAAAMAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=bAKBAAAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=bAKBAAAAMAAJ&dq=isbn:9780030119194&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=bAKBAAAAMAAJ&dq=isbn:9780030119194&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/The_Trobrianders_of_Papua_New_Guinea.html?hl=&id=bAKBAAAAMAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=bAKBAAAAMAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "This re-examination of the Trobrianders of Papua New Guinea, the people described in Malinowski’s classic ethnographic work of the early 20th century, provides a balanced view of the society from a male and female perspective, including ..."
+   }
+  }
+ ]
+}
+
+9780374533403
+Spirit Catches You+You Fall Down   
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "a8oc9o4yPNgC",
+   "etag": "Dw3Q5VxmHQ8",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/a8oc9o4yPNgC",
+   "volumeInfo": {
+    "title": "The Spirit Catches You and You Fall Down",
+    "subtitle": "A Hmong Child, Her American Doctors, and the Collision of Two Cultures",
+    "authors": [
+     "Anne Fadiman"
+    ],
+    "publisher": "Macmillan",
+    "publishedDate": "2012-04-24",
+    "description": "A study in the collision between Western medicine and the beliefs of a traditional culture focuses on a hospitalized child of Laotian immigrants whose belief that illness is a spiritual matter comes into conflict with doctors' methods.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_13",
+      "identifier": "9780374533403"
+     },
+     {
+      "type": "ISBN_10",
+      "identifier": "0374533407"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 368,
+    "printType": "BOOK",
+    "categories": [
+     "Family & Relationships"
+    ],
+    "averageRating": 4.0,
+    "ratingsCount": 2159,
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=a8oc9o4yPNgC&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=a8oc9o4yPNgC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=a8oc9o4yPNgC&printsec=frontcover&dq=isbn:9780374533403&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=a8oc9o4yPNgC&dq=isbn:9780374533403&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/The_Spirit_Catches_You_and_You_Fall_Down.html?hl=&id=a8oc9o4yPNgC"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "PARTIAL",
+    "embeddable": true,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=a8oc9o4yPNgC&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "SAMPLE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "A study in the collision between Western medicine and the beliefs of a traditional culture focuses on a hospitalized child of Laotian immigrants whose belief that illness is a spiritual matter comes into conflict with doctors&#39; methods."
+   }
+  }
+ ]
+}
+
+9780881337921
+To The Mountain And Back           
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "8qAWAAAAYAAJ",
+   "etag": "AToa41ZOBKo",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/8qAWAAAAYAAJ",
+   "volumeInfo": {
+    "title": "To the Mountain and Back",
+    "subtitle": "The Mysteries of Guatemalan Highland Family Life",
+    "authors": [
+     "Jody Glittenberg"
+    ],
+    "publisher": "Waveland PressInc",
+    "publishedDate": "1994-01-01",
+    "description": "This text is the author's involving account of three work experiences in highland Guatemala & of her own growth as a nurse, & anthropologist, & a person becoming aware of the world community.",
+    "industryIdentifiers": [
+     {
+      "type": "OTHER",
+      "identifier": "UVA:X002643523"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": false
+    },
+    "pageCount": 203,
+    "printType": "BOOK",
+    "categories": [
+     "Social Science"
+    ],
+    "averageRating": 2.0,
+    "ratingsCount": 3,
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=8qAWAAAAYAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=8qAWAAAAYAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=8qAWAAAAYAAJ&dq=isbn:9780881337921&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=8qAWAAAAYAAJ&dq=isbn:9780881337921&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/To_the_Mountain_and_Back.html?hl=&id=8qAWAAAAYAAJ"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "NO_PAGES",
+    "embeddable": false,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=8qAWAAAAYAAJ&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "NONE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "This text is the author&#39;s involving account of three work experiences in highland Guatemala &amp; of her own growth as a nurse, &amp; anthropologist, &amp; a person becoming aware of the world community."
+   }
+  }
+ ]
+}
+
+9780816519835
+Chicano Popular Culture            
+{
+ "kind": "books#volumes",
+ "totalItems": 1,
+ "items": [
+  {
+   "kind": "books#volume",
+   "id": "yM57nO5ZdA0C",
+   "etag": "E5tHKavtR2Q",
+   "selfLink": "https://www.googleapis.com/books/v1/volumes/yM57nO5ZdA0C",
+   "volumeInfo": {
+    "title": "Chicano popular culture",
+    "subtitle": "",
+    "authors": [
+     "Charles M. Tatum"
+    ],
+    "publisher": "University of Arizona Press",
+    "publishedDate": "2001",
+    "description": "Over the past several decades, Mexican Americans have made an indelible mark on American culture through the music of bands such as Santana and Los Lobos, films such as Zoot Suit, and a wide range of literature, such as Sandra Cisneros's The House on Mango Street. Now Charles Tatum introduces students to these and other forms of artistic expression in the first volume to provide a wide-ranging overview of Chicano popular culture. Tatum explores the broad and complex arena of popular culture among Americans of Mexican descent and explains what popular culture can tell them about themselves. Reviewing a range of expressive arts, from traditional forms to electronic media, he explains the differences and similarities between Chicano popular culture and that of other ethnic groups or of Anglo society and shows how Chicano arts reflect a people's traditions and heritage. The book's coverage focuses on five areas of popular culture. It explores - Mexican American and Chicano music from the sixteenth century to the present day; - cinema, focusing on Chicano films of the past three decades; - newspapers, radio, and television, explaining the interrelationship between these media; - literature, emphasizing fiction, theater, and poetry of the last thirty years; - and fiestas, celebrations, and art, including mural and graffiti art. Tatum provides a brief overview of Mexican American social history, paying particular attention to changing cultural perspectives over the past 150 years and the evolution of el movimiento chicano. He also introduces theories of popular culture and makes them accessible to students, enabling them to better understand the material covered in the text. No other book offers such a wide-ranging introduction to these cultural expressions of Mexican Americans today. Chicano Popular Culture invites readers to share the excitement of these vital arts and, through them, to learn more about the uniqueness of America's fastest-growing minority. Chicano Popular Culture and Mexican Americans and Health are the first volumes in the series The Mexican American Experience, a cluster of modular texts designed to provide greater flexibility in undergraduate education. Each book deals with a single topic concerning the Mexican American population. Instructors can create a semester-length course from any combination of volumes, or may choose to use one or two volumes to complement other texts.",
+    "industryIdentifiers": [
+     {
+      "type": "ISBN_10",
+      "identifier": "0816519838"
+     },
+     {
+      "type": "ISBN_13",
+      "identifier": "9780816519835"
+     }
+    ],
+    "readingModes": {
+     "text": false,
+     "image": true
+    },
+    "pageCount": 212,
+    "printType": "BOOK",
+    "categories": [
+     "Social Science"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "preview-1.0.0",
+    "imageLinks": {
+     "smallThumbnail": "http://books.google.com/books/content?id=yM57nO5ZdA0C&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+     "thumbnail": "http://books.google.com/books/content?id=yM57nO5ZdA0C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+    },
+    "language": "en",
+    "previewLink": "http://books.google.com/books?id=yM57nO5ZdA0C&printsec=frontcover&dq=isbn:9780816519835&hl=&cd=1&source=gbs_api",
+    "infoLink": "http://books.google.com/books?id=yM57nO5ZdA0C&dq=isbn:9780816519835&hl=&source=gbs_api",
+    "canonicalVolumeLink": "http://books.google.com/books/about/Chicano_popular_culture.html?hl=&id=yM57nO5ZdA0C"
+   },
+   "saleInfo": {
+    "country": "US",
+    "saleability": "NOT_FOR_SALE",
+    "isEbook": false
+   },
+   "accessInfo": {
+    "country": "US",
+    "viewability": "PARTIAL",
+    "embeddable": true,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+     "isAvailable": false
+    },
+    "pdf": {
+     "isAvailable": false
+    },
+    "webReaderLink": "http://books.google.com/books/reader?id=yM57nO5ZdA0C&hl=&printsec=frontcover&output=reader&source=gbs_api",
+    "accessViewStatus": "SAMPLE",
+    "quoteSharingAllowed": false
+   },
+   "searchInfo": {
+    "textSnippet": "Chicano Popular Culture and Mexican Americans and Health are the first volumes in the series The Mexican American Experience, a cluster of modular texts designed to provide greater flexibility in undergraduate education."
+   }
+  }
+ ]
+}
+
+9780321198433
+U.s.latino Literature Today        
+
+                                                                                                                        
+  [ErrorException]                                                                                                      
+  file_get_contents(https://www.googleapis.com/books/v1/volumes?q=isbn:9780321198433): failed to open stream: HTTP req  
+  uest failed! HTTP/1.0 403 Forbidden                                                                                   
+                                                                                                                        
+

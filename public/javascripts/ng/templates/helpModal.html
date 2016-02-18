@@ -1,0 +1,22 @@
+<div class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">[[ title ]]</h4>
+
+                </div>
+            <div class="modal-body">
+                <div class="list-group">
+                    <a ng-repeat="option in options"
+                       class="list-group-item"
+                            ng-click="selectOption(option)">
+                            <h4 class="list-group-item-heading">[[ option.header ]]</h4>
+                            <p class="list-group-item-text">[[ option.body ]]</p>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

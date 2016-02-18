@@ -9,47 +9,50 @@
 @section('content')
 
 
-    <div class="row col-lg-12" ng-controller="NewTicketController">
+
+    <div class="row col-lg-12" ng-cloak="" ng-controller="NewTicketController">
 
 
-
-        <div class="col-md-8">
-            <h3>New Ticket</h3>
-
-            <form name="form">
-                <div class="form-group" >
-                    <label>Subject:</label>
-                    <input type="text" class="form-control" ng-model="ticket.title">
-                </div>
+        <div class="row col-lg-12">
 
 
+            <div class="col-md-8">
+                <h3>New Ticket</h3>
 
-                <label>Body:</label>
-                </br>
+                <form name="form">
+                    <div class="form-group" >
+                        <label>Subject:</label>
+                        <input type="text" class="form-control" ng-model="ticket.title">
+                    </div>
 
-                <div class="form-group" text-angular ng-model="ticket.body">
-                </div>
+                    <label>Body:</label>
+                    </br>
 
-                <br>
+                    <div class="form-group" text-angular ng-model="ticket.body">
+                    </div>
 
-                <a type="button" class="btn btn-success pull-right"
-                        ng-click="submitTicket()"
-                        href="/tickets/index">
-                    <i class="fa fa-plus"></i> Submit Ticket
-                </a>
-            </form>
+                    <br>
+
+                    <a type="button" class="btn btn-success pull-right"
+                       ng-click="submitTicket()"
+                       href="/tickets/index">
+                        <i class="fa fa-plus"></i> Submit Ticket
+                    </a>
+                </form>
+
+
+            </div>
+
+            <div class="col-md-4">
+                </p>
+            </div>
+
 
 
         </div>
-
-        <div class="col-md-4">
-            </p>
         </div>
-
-
 
     </div>
-
 
 @stop
 
