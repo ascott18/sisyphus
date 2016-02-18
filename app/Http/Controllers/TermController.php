@@ -101,21 +101,31 @@ class TermController extends Controller
      * @return \Illuminate\Database\Eloquent\Builder
      */
     private function buildTermSortQuery($tableState, $query) {
-        if(isset($tableState->sort->predicate)){
+        if(isset($tableState->sort->predicate)) {
             $sort = $tableState->sort;
-            if($sort->predicate == "term") {
-                if($sort->reverse == 1) {
-                    $query = $query->orderBy("term_number", "desc")
-                                    ->orderBy("year", "desc");
-                } else {
-                    $query = $query->orderBy("term_number")
-                                    ->orderBy("year");
+
+            $order = $sort->reverse ? "desc" : "asc";
+            $sorts = [
+                'term' => [
+                    'term_number', '',
+                    'year', '',
+                ],
+                'term_id' => [
+                    'term_id', '',
+                ],
+                'order_start_date' => [
+                    'order_start_date', '',
+                ],
+                'order_end_date' => [
+                    'order_end_date', '',
+                ]
+            ];
+
+            if(isset($sorts[$sort->predicate])) {
+                $cols = $sorts[$sort->predicate];
+                for($i = 0; $i< count($cols); $i+=2) {
+                    $query->orderBy($cols[$i], $order);
                 }
-            } else {
-                if ($sort->reverse == 1)
-                    $query = $query->orderBy($sort->predicate, "desc");
-                else
-                    $query = $query->orderBy($sort->predicate);
             }
         }
         return $query;

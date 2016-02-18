@@ -84,10 +84,29 @@ class UserController extends Controller
     {
         if(isset($tableState->sort->predicate)) {
             $sort = $tableState->sort;
-            if ($sort->reverse == 1)
-                $query = $query->orderBy($sort->predicate, "desc");
-            else
-                $query = $query->orderBy($sort->predicate);
+
+            $order = $sort->reverse ? "desc" : "asc";
+            $sorts = [
+                'last_name' => [
+                    'last_name', '',
+                ],
+                'first_name' => [
+                    'first_name', '',
+                ],
+                'net_id' => [
+                    'net_id', '',
+                ],
+                'email' => [
+                    'email', '',
+                ]
+            ];
+
+            if(isset($sorts[$sort->predicate])) {
+                $cols = $sorts[$sort->predicate];
+                for($i = 0; $i< count($cols); $i+=2) {
+                    $query->orderBy($cols[$i], $order);
+                }
+            }
         }
         return $query;
     }
