@@ -35,7 +35,7 @@
                             </tr>
                             <tr>
                                 <th>
-                                    <input type="text" class="form-control" placeholder="Search..." st-search="section"/>
+                                    <input type="text" class="form-control" placeholder="Search..." st-search="title"/>
                                 </th>
                                 <th>
                                     <select class="form-control"  ng-init="statusSelected = ''" ng-model="statusSelected" ng-change="updateStatus()">

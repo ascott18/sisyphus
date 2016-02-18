@@ -93,7 +93,7 @@ class BookController extends Controller
             if(isset($sorts[$sort->predicate])) {
                 $cols = $sorts[$sort->predicate];
                 for($i = 0; $i< count($cols); $i+=2) {
-                    $query->orderBy($cols[$i], $order);
+                    $query->orderBy($cols[$i],  $cols[$i+1] ? $cols[$i+1] : $order);
                 }
             }
         }
@@ -221,7 +221,7 @@ class BookController extends Controller
             if(isset($sorts[$sort->predicate])) {
                 $cols = $sorts[$sort->predicate];
                 for($i = 0; $i< count($cols); $i+=2) {
-                    $query->orderBy($cols[$i], $order);
+                    $query->orderBy($cols[$i],  $cols[$i+1] ? $cols[$i+1] : $order);
                 }
             }
         }
