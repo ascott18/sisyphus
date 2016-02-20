@@ -6,13 +6,45 @@
                 <h4 class="modal-title">[[ title ]]</h4>
 
                 </div>
+
             <div class="modal-body">
-                <div class="list-group">
-                    <a ng-repeat="option in options"
+                <div class="list-group" ng-show="getStage() === SELECT_OPTION">
+                    <a ng-repeat="option in HelpService.options"
                        class="list-group-item"
                             ng-click="selectOption(option)">
                             <h4 class="list-group-item-heading">[[ option.header ]]</h4>
                             <p class="list-group-item-text">[[ option.body ]]</p>
+                    </a>
+                </div>
+
+                <div class="list-group" ng-show="getStage() === COURSE_OPTIONS">
+                    <a ng-repeat="option in options"
+                       class="list-group-item"
+                       ng-click="createTicket(option)">
+
+                        <div ng-show="option.course">
+                            <course-with-listings course="option.course">
+                                [[option.course.listings[0].name]]
+                            </course-with-listings>
+                        </div>
+
+                        <div ng-show="!option.course">
+                            <h4 class="list-group-item-heading">[[ option.header ]]</h4>
+                            <p class="list-group-item-text">[[ option.body ]]</p>
+                        </div>
+
+                    </a>
+                </div>
+
+
+
+                <div class="list-group" ng-show="getStage() === BOOK_OPTIONS">
+                    <a ng-repeat="option in options"
+                       class="list-group-item"
+                       ng-click="createTicket(option)">
+                        <course-with-listings course="option">
+                            [[option.listings[0].name]]
+                        </course-with-listings>
                     </a>
                 </div>
             </div>

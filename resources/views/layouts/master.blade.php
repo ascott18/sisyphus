@@ -36,7 +36,7 @@
 
     @yield('scripts-head')
 </head>
-<body ng-app="sisyphus" >
+<body ng-app="sisyphus" ng-controller="HelpModalController">
 <div id="wrapper">
 
  
@@ -93,10 +93,6 @@
             </ul>
 
             <!-- Sidebar Menu Items -->
-<<<<<<< HEAD
-
-=======
->>>>>>> 0ff1f0fad8e2129cb0333158b3330d2e049aa617
             <div class="nav navbar-nav side-nav">
                 @can('view-dashboard')
                 <li><a href="/"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a></li>
@@ -124,7 +120,7 @@
                 <div class="icon-wrapper" ng-click="toggleModal()">
                     <i class="fa fa-question custom-icon"></i>
                 </div>
-            </ul>
+            </div>
 
 
         </div>

@@ -15,7 +15,9 @@
 
             <dt>Linked To</dt>
             <dd>
-                [[ ticket['url'] ]]
+                <a ng-href="[[ ticket['url'] ]]">
+                   [[ ticket['url'] ]]
+                </a>
             </dd>
 
             <dt>Created By</dt>
@@ -39,7 +41,7 @@
                                  'label label-warning': {{ticket['status'] == 1}},
                                  'label label-primary': {{ticket['status'] == 2}},
                                  'label label-success': {{ticket['status'] == 3}}}">
-                    [[ ticket['status'] | ticketStatus ]]
+                    [[ ticket['status'] | status ]]
                 </span>
 
             </dd>

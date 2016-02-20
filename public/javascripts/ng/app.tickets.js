@@ -23,8 +23,8 @@ app.config(function($provide) {
     }]);
 });
 
-app.controller('NewTicketController', ['$scope', '$http', 'HelpService', function($scope, $http, HelpService) {
-    $scope.ticket = {department : 'CSCD', 'url' : 'google.com'};
+app.controller('NewTicketController', ['$scope', '$http', 'HelpService', 'statusFilter', function($scope, $http, HelpService, statusFilter) {
+    $scope.ticket = {};
 
 
     //var unloadListener = function (e) {
@@ -36,10 +36,14 @@ app.controller('NewTicketController', ['$scope', '$http', 'HelpService', functio
 
     //window.addEventListener("beforeunload", unloadListener);
 
+    $scope.setTicket = function(ticket) {
+        $scope.ticket = ticket;
+    };
+
     $scope.submitTicket = function(){
         //window.removeEventListener("beforeunload", unloadListener);
 
-        $http.post('/tickets/submit-ticket', {ticket : $scope.ticket }).then(
+        $http.post('/tickets/submit-ticket', {ticket : $scope.ticket}).then(
             function success(response){
                 var ticket = response.data;
                 $scope.ticket = ticket;
@@ -47,34 +51,13 @@ app.controller('NewTicketController', ['$scope', '$http', 'HelpService', functio
     };
 }]);
 
-app.controller('TicketController', function($scope, $http) {
-    $scope.ticket = {};
-    $scope.comments = [];
-    $scope.comment = {body: ""};
 
-    $scope.setTicket = function(ticket) {
-        $scope.ticket = ticket;
-        $scope.comments = ticket.comments;
-    };
-
-    $scope.submitComment = function() {
-
-        if ($scope.comment['body'].trim()) {
-            $http.post('/tickets/submit-comment', {comment: $scope.comment, ticketId: $scope.ticket["ticket_id"]}).then(
-                function success(response){
-                    $scope.comment = {body: ""};
-                    $scope.comments = response.data.comments;
-                });
-        }
-    };
-});
-
-app.filter('ticketStatus', function () {
+app.filter('status', function () {
     return function(input) {
         switch(input) {
             case 0:
                 out = "New";
-                break
+                break;
             case 1:
                 out = "Waiting";
                 break;
@@ -89,6 +72,31 @@ app.filter('ticketStatus', function () {
     };
 });
 
+app.controller('TicketController', ['$scope', '$http', 'TicketsService', 'statusFilter', function($scope, $http, TicketsService, statusFilter) {
+    $scope.ticket = {};
+    $scope.comments = [];
+    $scope.comment = {body: ""};
+
+    $scope.statuses = TicketsService.statuses;
+    $scope.statusSelected = "";
+
+    $scope.setTicket = function(ticket) {
+        $scope.ticket = ticket;
+        $scope.comments = ticket.comments;
+    };
+
+    $scope.submitComment = function() {
+
+        if ($scope.comment['body'].trim()) {
+            $http.post('/tickets/submit-comment', {comment: $scope.comment, ticketId: $scope.ticket["ticket_id"], ticketStatus : $scope.statusSelected}).then(
+                function success(response){
+                    $scope.comment = {body: ""};
+                    $scope.comments = response.data.comments;
+                });
+        }
+    };
+}]);
+
 app.directive('ticketDetails', function() {
     return {
         restrict: 'E',
@@ -100,16 +108,26 @@ app.directive('ticketDetails', function() {
     };
 });
 
-app.controller('TicketsIndexController', function($scope, $http) {
+app.service('TicketsService', function () {
+    var statuses = ["New", "Waiting", "In Progress", "Closed"];
+
+    var service = {
+        statuses: statuses
+    };
+
+    return service;
+});
+
+app.controller('TicketsIndexController', ['$scope', '$http', 'TicketsService', 'statusFilter', function($scope, $http, TicketService, statusFilter) {
     var ctrl1 = this;
     $scope.stCtrl=null;
     $scope.stTableRef=null;
 
     this.displayed = [];
 
-    $scope.statuses = ["New", "Waiting", "In Progress", "Closed"];
+    $scope.statuses = TicketService.statuses;
 
-    $scope.updateStatus=function()
+    $scope.updateStatus= function()
     {
         if($scope.stCtrl)
             $scope.stCtrl.pipe();
@@ -162,6 +180,6 @@ app.controller('TicketsIndexController', function($scope, $http) {
             ctrl1.isLoading=false;
         });
     }
-});
+}]);
 
 

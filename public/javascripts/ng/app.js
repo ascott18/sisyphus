@@ -175,6 +175,7 @@ app.run(['$templateCache', function($templateCache) {
         '<ng-transclude></ng-transclude>' +
         '<small class="text-muted" ng-if="course.listings.length > 1"> <br> XL as [[getXlString(course)]] </small>');
 }]);
+
 app.directive('courseWithListings', function($filter) {
     var getXlString = function(course){
         var listings = course.listings;
@@ -357,12 +358,22 @@ var e = new k(function() {
 });
 
 
-app.controller('HelpModalController', ['$scope', 'HelpService', '$http', function($scope, HelpService, $http) {
-    $scope.showModal = false;
-    $scope.options = HelpService.options;
+app.controller('HelpModalController', ['$scope', 'HelpService', function($scope, HelpService) {
 
+    $scope.SELECT_OPTION = 0;
+    $scope.COURSE_OPTIONS = 1;
+    $scope.BOOK_OPTIONS = 2;
+
+    $scope.stage = $scope.SELECT_OPTION;
+
+    $scope.showModal = false;
+    $scope.options = [];
     $scope.href = "/tickets/create/";
     $scope.title = HelpService.title;
+
+    $scope.getStage = function() {
+        return $scope.stage;
+    };
 
     $scope.toggleModal = function () {
         $scope.showModal = !$scope.showModal;
@@ -371,11 +382,15 @@ app.controller('HelpModalController', ['$scope', 'HelpService', '$http', functio
     $scope.selectOption = function (selected) {
         if (selected.options && selected.options.length != 0) {
             $scope.options = selected.options;
+            $scope.stage = selected.optionsType;
         }
         else {
-            window.location.href = $scope.href;
-            $scope.showModal = false;
+            $scope.createTicket(selected);
         }
+    };
+
+    $scope.createTicket = function (option) {
+        window.location.href = $scope.href + "?url=" + option.url + "&title=" + option.title;
     }
 }]);
 
@@ -407,6 +422,7 @@ app.directive('modal', ['HelpService', function(HelpService) {
                 scope.$apply(function(){
                     scope.$parent[attrs.visible] = false;
                 });
+                scope.stage = scope.SELECT_OPTION;
             });
         }
     };
@@ -418,8 +434,12 @@ app.factory("HelpService", function() {
                           {header: "Ask a Question", body: "Need some help? Submit a question."}];
     var options = defaultOptions;
 
-    updateOptions = function(newOptions) {
+    var updateOptions = function(newOptions) {
         this.options = newOptions.concat(defaultOptions);
+    };
+
+    var addCourseOptions = function(courses) {
+
     };
 
     var service = {options       : options      ,

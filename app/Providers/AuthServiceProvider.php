@@ -193,6 +193,11 @@ class AuthServiceProvider extends ServiceProvider
             return $ticket->user_id == $user->user_id;
         });
 
+        $gate->define('view-ticket', function (User $user, Ticket $ticket) {
+            // TODO: make this correct (check department, and have permissions for viewing department tickets, etc).
+            return $ticket->user_id == $user->user_id;
+        });
+
 
         $gate->define('view-dashboard', function (User $user) {
             return $user->may('view-dashboard');

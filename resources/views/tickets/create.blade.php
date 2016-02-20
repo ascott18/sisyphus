@@ -13,7 +13,7 @@
     <div class="row col-lg-12" ng-cloak="" ng-controller="NewTicketController">
 
 
-        <div class="row col-lg-12">
+        <div class="row col-lg-12" ng-init="setTicket({{$ticket}})">
 
 
             <div class="col-md-8">
@@ -34,8 +34,7 @@
                     <br>
 
                     <a type="button" class="btn btn-success pull-right"
-                       ng-click="submitTicket()"
-                       href="/tickets/index">
+                       ng-click="submitTicket()">
                         <i class="fa fa-plus"></i> Submit Ticket
                     </a>
                 </form>

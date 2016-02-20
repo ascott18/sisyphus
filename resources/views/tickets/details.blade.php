@@ -51,14 +51,35 @@
                                 </div>
                             </div>
 
+                            {{--New Ticket Comment--}}
+
                             <div class="panel-list-item clearfix">
+
                                 <div class="form-group">
                                     <input class="form-control" type="text" placeholder="Your comments" ng-model="comment.body"/>
+
                                 </div>
+
+
+                                <div class="form-group pull-left">
+
+                                    <select class="form-control">
+                                        <option ng-repeat="status in statuses" ng-selected="$index == ticket.status" ng-value="$index"  ng-model="statusSelected">
+                                            [[ status ]]
+                                        </option>
+
+                                    </select>
+
+
+                                </div>
+
                                 <div class="form-group pull-right">
                                     <button class="btn btn-success"
                                             ng-click="submitComment()">Add</button>
                                 </div>
+
+
+
                             </div>
 
                         </div>
@@ -81,9 +102,4 @@
 
 @section('scripts-head')
     <script src="/javascripts/ng/app.tickets.js"></script>
-    <script src="/javascripts/ng/pagination/dirPagination.js"></script>
-
-    <script src='/javascripts/ng/text/textAngular-rangy.min.js'></script>
-    <script src='/javascripts/ng/text/textAngular-sanitize.min.js'></script>
-    <script src='/javascripts/ng/text/textAngular.min.js'></script>
 @stop

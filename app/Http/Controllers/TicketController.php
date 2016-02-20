@@ -33,26 +33,36 @@ class TicketController extends Controller
 
     public function getCreate(Request $request) {
         $this->authorize("all");
-        $options = [["header" => "Header 1", "body" => "body 1"], ["header" => "Header 1", "body" => "body 1"], ["header" => "Header 1", "body" => "body 1"]];
-//        $options = $request->input('options');
-        return view('tickets.create', ['options' => $options]);
+
+        $url = $request->input('url');
+        $department = $request->input('department');
+        $title = $request->input('title');
+
+        $ticket = new Ticket();
+        if ($title != null) {
+            $ticket->title = $title;
+        }
+        $ticket->url = $url;
+        $ticket->department = $department;
+        $ticket->user_id = Auth::user()->user_id;
+
+        return view('tickets.create', ['ticket' => $ticket]);
 
     }
 
     /**
      * Show the form for creating a new resource.
      *
+     * @param Request $request
      * @return \Illuminate\Http\Response
      */
     public function postSubmitTicket(Request $request)
     {
         $this->authorize("all");
+        $ticket = $request->get("ticket");
 
-        $ticket = $request->input("ticket");
-        $user_id = Auth::user()->user_id;
-
-        Ticket::create([
-            'user_id' => $user_id,
+        $ticket = Ticket::create([
+            'user_id' => $ticket['user_id'],
             'department' => $ticket['department'],
             'url' => $ticket['url'],
             'body' => $ticket['body'],
@@ -60,7 +70,7 @@ class TicketController extends Controller
             'status' => 0
         ]);
 
-        return response()->json($ticket);
+        return response()->json(['ticket' => $ticket]);
     }
 
     public function postSubmitComment(Request $request) {
