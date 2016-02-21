@@ -24,6 +24,14 @@
     <!-- Custom Fonts-->
     <link href="/stylesheets/font-awesome.min.css" rel="stylesheet" type="text/css">
 
+    <!--[if lte IE 9]>
+        <script src="/javascripts/es5-shim.min.js"></script>
+        <script src="/javascripts/es5-sham.min.js"></script>
+    <![endif]-->
+    <!--[if lt IE 9]>
+        <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
     <script src="/javascripts/angular.min.js"></script>
     <script src="/javascripts/ng/smart-table/smart-table.js"></script>
     <script src="/javascripts/ng/app.js"></script>
@@ -35,6 +43,7 @@
     @yield('scripts-head')
 </head>
 <body ng-app="sisyphus" ng-controller="HelpModalController">
+
 
 <div id="wrapper">
 
@@ -130,7 +139,28 @@
             </div>
 		</div>
     </nav>
+
+
     <div id="page-wrapper">
+
+        <!--[if lt IE 9]>
+        <div id="oldIE" class="text-center" style="width: 100%; height: 300px; margin-top: 150px;" >
+            <h3>This site does not work on Internet Explorer 8 or older.
+                <i class="fa fa-internet-explorer"></i>
+                <i class="fa fa-frown-o"></i>
+            </h3>
+            <br>
+            <h2>Please switch to a modern browser like
+                <i class="fa fa-firefox"></i> <a href="https://www.firefox.com">Firefox</a>
+                or <i class="fa fa-chrome"></i> <a href="https://www.chrome.com">Chrome</a>.</h2>
+        </div>
+        <style>
+            .container-fluid {
+                display: none;
+            }
+        </style>
+        <![endif]-->
+
         <div class="container-fluid">
 
             <!-- Page Heading-->
