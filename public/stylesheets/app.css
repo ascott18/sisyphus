@@ -164,6 +164,10 @@ a[role="tab"]{
     display: table-cell;
 }
 
+.navbar-brand img {
+    width: 139px;
+}
+
 .empty-table-placeholder {
     margin: 5px 10px 10px;
 }

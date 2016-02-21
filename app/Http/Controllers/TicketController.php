@@ -138,9 +138,6 @@ class TicketController extends Controller
     private function buildTicketSortQuery($tableState, $query) {
         if(isset($tableState->sort->predicate)) {
             if(isset($tableState->sort->predicate)) {
-                $sort = $tableState->sort;
-
-                $order = $sort->reverse ? "desc" : "asc";
                 $sorts = [
                     'title' => [
                         'tickets.title', '',
@@ -151,12 +148,7 @@ class TicketController extends Controller
                     ]
                 ];
 
-                if(isset($sorts[$sort->predicate])) {
-                    $cols = $sorts[$sort->predicate];
-                    for($i = 0; $i< count($cols); $i+=2) {
-                        $query->orderBy($cols[$i], $cols[$i+1] ? $cols[$i+1] : $order);
-                    }
-                }
+                SearchHelper::buildSortQuery($query, $tableState->sort, $sorts);
             }
             return $query;
         }

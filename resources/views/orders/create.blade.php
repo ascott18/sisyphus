@@ -35,7 +35,7 @@
                         </h3>
                     </div>
                     <div class="panel-body">
-                        <h3 ng-hide="courses.length" class="text-muted">
+                        <h3 class="text-muted">
 
                             <span ng-if="terms.length == 0">
                                 No terms are open for ordering.

@@ -102,9 +102,6 @@ class TermController extends Controller
      */
     private function buildTermSortQuery($tableState, $query) {
         if(isset($tableState->sort->predicate)) {
-            $sort = $tableState->sort;
-
-            $order = $sort->reverse ? "desc" : "asc";
             $sorts = [
                 'term' => [
                     'term_number', '',
@@ -121,12 +118,7 @@ class TermController extends Controller
                 ]
             ];
 
-            if(isset($sorts[$sort->predicate])) {
-                $cols = $sorts[$sort->predicate];
-                for($i = 0; $i< count($cols); $i+=2) {
-                    $query->orderBy($cols[$i],  $cols[$i+1] ? $cols[$i+1] : $order);
-                }
-            }
+            SearchHelper::buildSortQuery($query, $tableState->sort, $sorts);
         }
         return $query;
     }

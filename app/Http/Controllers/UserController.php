@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use Illuminate\Http\Response;
+use SearchHelper;
 
 class UserController extends Controller
 {
@@ -83,9 +84,6 @@ class UserController extends Controller
     private function buildUserSortQuery($tableState, $query)
     {
         if(isset($tableState->sort->predicate)) {
-            $sort = $tableState->sort;
-
-            $order = $sort->reverse ? "desc" : "asc";
             $sorts = [
                 'last_name' => [
                     'last_name', '',
@@ -101,12 +99,7 @@ class UserController extends Controller
                 ]
             ];
 
-            if(isset($sorts[$sort->predicate])) {
-                $cols = $sorts[$sort->predicate];
-                for($i = 0; $i< count($cols); $i+=2) {
-                    $query->orderBy($cols[$i],  $cols[$i+1] ? $cols[$i+1] : $order);
-                }
-            }
+            SearchHelper::buildSortQuery($query, $tableState->sort, $sorts);
         }
         return $query;
     }
