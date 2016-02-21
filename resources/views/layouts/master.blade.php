@@ -36,8 +36,11 @@
 
     @yield('scripts-head')
 </head>
-<body ng-app="sisyphus"  ng-controller="HelpModalController">
+<body ng-app="sisyphus" ng-controller="HelpModalController">
+
 <div id="wrapper">
+
+ 
     <i ng-spinner ng-cloak class="fa fa-spinner fa-spin " ng-show="spinnerActive"></i>
 
     <modal title="Help" visible="showModal">
@@ -80,8 +83,8 @@
                         <span id="userName">
                             <i class="fa fa-user"></i>
                             <a href="/users/edit/{{Auth::user()->user_id}}">
-                                Welcome, {{ Auth::user()->net_id }}
-                            </a>!
+                                Welcome, {{ Auth::user()->net_id }}!
+                            </a>
                         </span>
                 </li>
                     <li class="pull-right">
@@ -118,13 +121,8 @@
                 <div class="icon-wrapper" ng-click="toggleModal()">
                     <i class="fa fa-question custom-icon"></i>
                 </div>
-
-
             </div>
-
-
-
-        </div>
+		</div>
     </nav>
     <div id="page-wrapper">
         <div class="container-fluid">

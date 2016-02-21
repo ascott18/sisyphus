@@ -6,10 +6,13 @@ use App\Http\Middleware\CASAuth;
 use App\Models\Book;
 use App\Models\Course;
 use App\Models\Term;
+use Auth;
 use Cache;
 use Carbon\Carbon;
+use Illuminate\Contracts\Auth\Guard;
 use \Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use phpCAS;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class HomeController extends Controller
@@ -44,20 +47,19 @@ class HomeController extends Controller
         $this->authorize('all');
 
 
-        $cas = app('cas');
-        $cas->connection();
+        Auth::logout();
+
 
         if(!CASAuth::isPretending()){
-            if(!phpCAS::isAuthenticated())
-            {
-                $this->initializeCas();
-            }
+            $cas = app('cas');
+            $cas->connection();
+
             phpCAS::logout(['url' => 'https://login.ewu.edu/cas/logout']);
 
-            redirect('https://login.ewu.edu/cas/logout');
+            return redirect('https://login.ewu.edu/cas/logout');
         }
         else {
-            throw new BadRequestHttpException("Can't log out when you're pretending.");
+            return redirect('/');
         }
     }
 
@@ -97,6 +99,7 @@ class HomeController extends Controller
 
             $numChartsFound++;
 
+            // TODO: how does this react to many orders placed at the same instant?
             $orderReport = Course::visible()
                 ->where('term_id', '=', $term->term_id)
                 ->join('orders', function ($join) {
