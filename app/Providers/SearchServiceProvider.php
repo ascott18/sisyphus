@@ -85,6 +85,27 @@ class SearchServiceProvider extends ServiceProvider
         });
     }
 
+    /**
+     *
+     * Checks for which columns to sort based on predicate column pairs passed
+     * from the calling function.
+     *
+     * @param $query
+     * @param $sortInput
+     * @param $sorts
+     */
+
+    public static function buildSortQuery($query, $sortInput, $sorts) {
+        $order = $sortInput->reverse ? "desc" : "asc";
+
+        if(isset($sorts[$sortInput->predicate])) {
+            $cols = $sorts[$sortInput->predicate];
+            for($i = 0; $i< count($cols); $i+=2) {
+                $query->orderBy($cols[$i],  $cols[$i+1] ? $cols[$i+1] : $order);
+            }
+        }
+    }
+
 
     /**
      *

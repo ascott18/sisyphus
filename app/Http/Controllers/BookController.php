@@ -72,9 +72,6 @@ class BookController extends Controller
      */
     private function buildBookSortQuery($tableState, $query) {
         if(isset($tableState->sort->predicate)) {
-            $sort = $tableState->sort;
-
-            $order = $sort->reverse ? "desc" : "asc";
             $sorts = [
                 'title' => [
                     'title', '',
@@ -90,12 +87,8 @@ class BookController extends Controller
                 ]
             ];
 
-            if(isset($sorts[$sort->predicate])) {
-                $cols = $sorts[$sort->predicate];
-                for($i = 0; $i< count($cols); $i+=2) {
-                    $query->orderBy($cols[$i],  $cols[$i+1] ? $cols[$i+1] : $order);
-                }
-            }
+            SearchHelper::buildSortQuery($query, $tableState->sort, $sorts);
+
         }
         return $query;
     }
@@ -204,9 +197,6 @@ class BookController extends Controller
      */
     private function buildBookDetailSortQuery($tableState, $query) {
         if(isset($tableState->sort->predicate)) {
-            $sort = $tableState->sort;
-
-            $order = $sort->reverse ? "desc" : "asc";
             $sorts = [
                 'section' => [
                     'department', '',
@@ -218,12 +208,7 @@ class BookController extends Controller
                 ]
             ];
 
-            if(isset($sorts[$sort->predicate])) {
-                $cols = $sorts[$sort->predicate];
-                for($i = 0; $i< count($cols); $i+=2) {
-                    $query->orderBy($cols[$i],  $cols[$i+1] ? $cols[$i+1] : $order);
-                }
-            }
+            SearchHelper::buildSortQuery($query, $tableState->sort, $sorts);
         }
         return $query;
     }
