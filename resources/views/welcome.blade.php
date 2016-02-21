@@ -79,6 +79,11 @@
 {{--</div>--}}
 <!-- /.row--><!-- Morris Charts CSS-->
 
+    <!--[if IE 9]>
+        <div ng-init="appErrors = [{title: 'You are using an outdated browser!',
+        messages: ['This page is not well-optimized for Internet Explorer 9. It is strongly recommended that you switch to a modern browser like Chrome or Firefox.']}]"></div>
+    <![endif]-->
+
 <div class="row">
     @foreach($chartData as $term)
     <div class="col-lg-6">

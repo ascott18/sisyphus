@@ -75,7 +75,7 @@
 
             <a href="/" class="navbar-brand">
                 <div >
-                    <img src="/images/logoWhite.svg" class="pull-left" >
+                    <img src="/images/logoWhite.svg" class="pull-left" title="test">
 
                     <h2>Textbook Requests
                         @inject('auth', 'App\Providers\AuthServiceProvider')

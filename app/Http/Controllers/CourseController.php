@@ -87,9 +87,6 @@ class CourseController extends Controller
 
     public function postEdit(Request $request, $id)
     {
-        // TODO: always uppercase the department so that we don't require
-        // the user to make it uppercase when they type it in.
-
         $dbCourse = Course::findOrFail($id);
 
         $this->authorize("edit-course", $dbCourse);

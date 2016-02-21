@@ -42,8 +42,7 @@ class ParseCourseCsv extends Command
         "thomasBraceCapaul" => "tcapaul",
     ];
 
-    // TODO: when this blacklisting makes it into the real data harvesting,
-    // make this list configurable by administrators.
+    // TODO: when this blacklisting makes it into the real data harvesting, make this list configurable by administrators.
     protected $ignoredNumbers = [
         199, // Directed & Independent study
         299, // Directed & Independent study

@@ -114,7 +114,6 @@ class Term extends Model
                         break;
                 }
 
-                // TODO: figure out what these dates should look like, roughly, from the bookstore.
 
                 $term = new static([
                     'order_start_date' => $end->copy()->addMonths(-3),

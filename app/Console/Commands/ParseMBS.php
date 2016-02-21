@@ -56,7 +56,6 @@ EOL;
             $termFileSection = preg_replace($pageHeaderReg, "", $termFileSection);
 
             // Parse the term from the report.
-            // TODO: what does this string look like for summer?
             $term = [];
             preg_match("/([FWS])(\\d+)/", $headerContents[0], $term);
 
@@ -215,7 +214,6 @@ EOL;
             }
 
             // Make sure we found every book that the report said was in there.
-            // TODO: figure out why this doesn't work
             if ($booksExpected != $booksFound){
                 echo "Didn't get all books. Expected $booksExpected. Got $booksFound.\n";
                 exit;

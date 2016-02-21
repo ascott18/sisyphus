@@ -210,7 +210,6 @@ class MessageController extends Controller
                 $numSent++;
                 Mail::queue([], [], function ($m) use ($recipient, $message, $currentUser) {
                     $email = $recipient->email;
-                    // TODO: change this from address.
                     $m->from($currentUser->email, "$currentUser->first_name $currentUser->last_name");
                     $m->to($email, $recipient->first_name . ' ' . $recipient->last_name);
                     $m->subject($message['subject']);
