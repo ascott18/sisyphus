@@ -17,7 +17,6 @@
                     <h3 class="panel-title"><i class="fa fa-bar-chart"></i> What would you like to base your report on?</h3>
                 </div>
                 <div class="panel-body">
-
                     <div class="radio">
                         <label >
                             <input type="radio" ng-model="ReportType" ng-change="resetInclude()" value="orders" />
@@ -87,6 +86,11 @@
                                             ng-model="DeptsSelected"
                                             ng-options="dept for dept in departments|orderBy:dept">
                                     </select>
+                                    </br>
+                                    <button type="submit" class="btn btn-primary"
+                                            ng-click="selectAllDepts()">
+                                        <i class="fa fa-check"></i> Select All
+                                    </button>
                                 </div>
                                 <div class="col-sm-6 col-sm-vspace">
                                     <h4>Select Report Columns</h4>
@@ -97,6 +101,11 @@
                                             ng-model="ColumnsSelected"
                                             ng-options="optionProperties.name for optionProperties in options | filter:{doesAutoEnforce: '!true'} | filter:shouldOptionShow">
                                     </select>
+                                    </br>
+                                    <button type="submit" class="btn btn-primary"
+                                            ng-click="selectAllCols()">
+                                        <i class="fa fa-check"></i> Select All
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -112,13 +121,13 @@
                                 <div class="checkbox">
                                     <label >
                                         <input type="checkbox" ng-model="include.submitted" />
-                                        Courses that have submitted orders
+                                        Courses that have submitted requests
                                     </label>
                                 </div>
                                 <div class="checkbox">
                                     <label >
                                         <input type="checkbox" ng-model="include.notSubmitted" />
-                                        Courses that have not submitted orders
+                                        Courses that have not responded
                                     </label>
                                 </div>
                                 <div class="checkbox">
@@ -165,6 +174,13 @@
                                 Submit <i class="fa fa-arrow-right"></i>
                             </button>
                         </div>
+                        <span ng-show="DeptsSelected.length == 0" class="text-danger">You didn't select a subject</br></span>
+                        <span ng-show="ColumnsSelected.length == 0" class="text-danger">You didn't select a column</br></span>
+                        <button type="submit" class="btn btn-success"
+                                ng-click="submit()"
+                                ng-disabled="!isCheckboxChecked()||DeptsSelected.length == 0||ColumnsSelected.length == 0">
+                            Submit <i class="fa fa-arrow-right"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -230,7 +246,7 @@
                     </table>
 
                     <br>
-                    <h1 class="text-muted text-center" ng-show="reportRows == null">Looking for some data. Hang on a sec...</h1>
+                    <h1 class="text-muted text-center" ng-show="reportRows == null">Looking for the data. Hang on a sec...</h1>
                     <h1 class="text-muted text-center" ng-show="reportRows.length == 0">No results.</h1>
                 </div>
             </div>

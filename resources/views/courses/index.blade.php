@@ -31,7 +31,7 @@
                             </tr>
                             <tr>
                                 <th>
-                                    <select class="form-control" ng-init="TermSelected = ''" ng-model="TermSelected" ng-change="updateTerm()">
+                                    <select class="form-control" ng-init="TermSelected = '{{$term_id}}'" ng-model="TermSelected" ng-change="updateTerm()">
                                         <option value="">All Terms</option>
                                         @foreach($terms as $term)
                                             <option value="{{$term->term_id}}">{{$term->display_name}}</option>

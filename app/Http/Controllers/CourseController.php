@@ -27,7 +27,7 @@ class CourseController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\Response
      */
-    public function getIndex(Request $request)
+    public function getIndex(Request $request, $term_id = null)
     {
         $this->authorize("view-course-list");
 
@@ -42,7 +42,9 @@ class CourseController extends Controller
             ->orderBy('term_id', 'DESC')
             ->get();
 
-        return view('courses.index', ['terms' => $terms]);
+        $term_id = $term_id ? intval($term_id) : '';
+
+        return view('courses.index', ['terms' => $terms, 'term_id' => $term_id]);
     }
 
 

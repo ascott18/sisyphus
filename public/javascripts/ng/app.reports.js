@@ -64,7 +64,11 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
         },
         {
             name: 'Course',
-            value: function(courseOrderObj){ return courseOrderObj.course.listings[0].department + ' ' + $filter('zpad')(courseOrderObj.course.listings[0].number, 3) },
+            value: function(courseOrderObj){
+                var listings = courseOrderObj.course.listings;
+                return listings[0].department + ' ' +
+                    $filter('zpad')(listings[0].number, 3)
+            },
             sort: true,
             width: "7em"
         },
@@ -75,6 +79,21 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
                 return values.OrderBy().ToString(", ");
             },
             sort: true
+        },
+        {
+            name: 'Cross Listings',
+            value: function(courseOrderObj){
+                var result = '';
+                var listings = courseOrderObj.course.listings;
+                for(var i = 1; i < listings.length; i++)
+                {
+                    result +=
+                        listings[i].department + ' ' +
+                        $filter('zpad')(listings[i].number, 3) + '-' +
+                        $filter('zpad')(listings[i].section, 2) + (i == courses - 1 ? '' : ', ');
+                }
+                return result;
+            }
         },
         {
             name: 'Instructor',
@@ -210,6 +229,16 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
         $scope.reportDateEnd = moment(term.order_due_date).toDate();
     };
 
+    $scope.selectAllDepts = function()
+    {
+        $scope.DeptsSelected = $scope.departments.slice();
+    };
+
+    $scope.selectAllCols = function()
+    {
+        $scope.ColumnsSelected = $scope.options.slice();
+    };
+
     $scope.isCheckboxChecked = function() {
         if ($scope.ReportType == 'orders')
         {
@@ -260,8 +289,9 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
                 departments: $scope.DeptsSelected,
         }, {timeout: $scope.canceler.promise}).then(function(response) {
             var courses = Enumerable.From(response.data['courses']);
-
+            console.log(response.data['courses']);
             var reportRows = courses
+
                 // Select an object for each order that has been returned back to us.
                 .SelectMany("course => course.orders", "course, order => {course: course, order: order, book:order.book}")
                 // Also select an object for each course that doesn't have any orders at all.
@@ -354,6 +384,7 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
             reportRows = reportRows.ToArray();
 
             $scope.reportRows = reportRows;
+            //console.log($scope.reportRows);
         });
 
     }
