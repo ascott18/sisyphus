@@ -1,61 +1,25 @@
 
 var app = angular.module('sisyphus', ['sisyphus.helpers', 'smart-table', 'angularUtils.directives.dirPagination', 'sisyphus.helpers.isbnHyphenate']);
 
-app.controller('CoursesIndexController', function($scope, $http) {
-    var ctrl1 = this;
+app.controller('CoursesIndexController', function($scope, StHelper) {
 
-    $scope.stCtrl=null;
-    $scope.stTableRef=null;
-    $scope.updateTerm=function()
+    $scope.updateTerm = function()
     {
-        if($scope.stCtrl)
-            $scope.stCtrl.pipe();
-
-        if($scope.stTableRef)
-            $scope.stTableRef.pagination.start = 0;
+        StHelper.reset($scope.stCtrl);
     };
 
-    this.displayed = [];
-
-    this.callServer = function callServer(tableState, ctrl) {
-
-        ctrl1.isLoading = true;
-        if(!$scope.stCtrl&&ctrl)
-        {
-            $scope.stCtrl=ctrl;
-        }
-
-        if(!$scope.stTableRef&&tableState)
-        {
-            $scope.stTableRef=tableState;
-        }
-
-        if(!tableState&&$scope.stCtrl){
-            $scope.stCtrl.pipe();
-            return;
-        }
-        var pagination = tableState.pagination;
-        var start = pagination.start || 0;
-        var end = pagination.number || 10;
-        var page = (start/end)+1;
+    $scope.callServer = function(tableState, ctrl) {
+        // Keep track of the smart-table controller so that we can
+        // reset the table when the user changes the term filter.
+        $scope.stCtrl = ctrl;
 
         tableState.term_selected = $scope.TermSelected;
-        var getRequestString = '/courses/course-list';
 
         var config = {
-            params: {
-                page: page,
-                table_state: tableState
-            }
+            url: '/courses/course-list'
         };
 
-        $http.get(getRequestString, config).then(function(response){
-            tableState.pagination.numberOfPages = response.data.last_page;                    // update number of pages with laravel response
-            tableState.pagination.number = response.data.per_page;                            // update entries per page with laravel response
-            ctrl1.displayed = response.data.data;                                              // save laravel response data
-            ctrl1.isLoading=false;
-        });
-
+        StHelper.callServer(tableState, config, $scope );
     }
 });
 

@@ -13,6 +13,22 @@ app.config(function($httpProvider) {
     $httpProvider.defaults.headers.common = { 'X-Requested-With' : 'XMLHttpRequest' }
 });
 
+app.run(function($rootScope){
+    $rootScope.espanol = function(){
+        $rootScope.espanol = function(){};
+        $("body").append(
+            '<div id="google_translate_element" style="display: none;"></div>' +
+            '<script type="text/javascript">' +
+            'function googleTranslateElementInit() {' +
+            '    new google.translate.TranslateElement({pageLanguage: "en", includedLanguages: "en,es",' +
+            '        layout: google.translate.TranslateElement.FloatPosition.BOTTOM_RIGHT, autoDisplay: false}, "google_translate_element");' +
+            ' console.log($(".goog-te-combo").val("es")); } </script>' +
+            '<style>body{top: 0 !important;} .skiptranslate{display: none;}</style>' +
+            '<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>'
+            );
+    }
+});
+
 app.run(['$templateCache', 'stConfig', function($templateCache, stConfig) {
     stConfig.pagination.template = 'stPaginationTemplate';
     $templateCache.put('stPaginationTemplate',
@@ -35,6 +51,39 @@ app.service('BreadcrumbService', function($rootScope){
 
         clear: function(){
             $rootScope.breadcrumbAppends = [];
+        }
+    };
+});
+
+app.service('StHelper', function($http){
+    return {
+        callServer: function(tableState, config, $scope ){
+            var pagination = tableState.pagination;
+            var start = pagination.start || 0;
+            var end = pagination.number || 10;
+            var page = (start/end) + 1;
+
+            config.method = 'GET';
+            config.params = config.params || {};
+            config.params.table_state = tableState;
+            config.params.page = page;
+            config.headers = {
+                'X-ST-PIPE': true
+            };
+
+            $http(config).then(function(response){
+                tableState.pagination.numberOfPages = response.data.last_page;                    // update number of pages with laravel response
+                tableState.pagination.number = response.data.per_page;                            // update entries per page with laravel response
+                $scope.displayed = response.data.data;                                              // save laravel response data
+            });
+        },
+
+        reset: function(stCtrl){
+            if (stCtrl)
+            {
+                stCtrl.tableState().pagination.start = 0;
+                stCtrl.pipe();
+            }
         }
     };
 });
@@ -85,13 +134,18 @@ app.directive('emptyPlaceholder', ['$http',
                var text = attr.emptyPlaceholder || "No results found.";
                var table = $(element);
 
-               var tbody = table.find("tbody");
                var hasStartedRequest = false;
                var hasFinishedRequest = false;
                scope.$watchGroup(
                    [
-                       function () { return tbody.children().length; },
-                       function () { return $http.pendingRequests.length > 0; }
+                       function () { return table.find("tbody").children().length; },
+                       function () {
+                           for (var i = 0; i < $http.pendingRequests.length; i++){
+                               if ($http.pendingRequests[i].headers['X-ST-PIPE'])
+                                   return true;
+                           }
+                           return false;
+                       }
                    ],
                    function (newValues, oldValues) {
                        if (newValues[1] && !hasStartedRequest) {
@@ -102,7 +156,7 @@ app.directive('emptyPlaceholder', ['$http',
                        }
 
                        table.siblings(".empty-table-placeholder").remove();
-                       if (newValues[0] == 0)
+                       if (newValues[0] == 0) // The number of children that the table has currently.
                        {
                            if ( !hasFinishedRequest){
                                table.after("<h2 class='text-muted empty-table-placeholder'>Loading...</h2>");
@@ -175,6 +229,7 @@ app.run(['$templateCache', function($templateCache) {
         '<ng-transclude></ng-transclude>' +
         '<small class="text-muted" ng-if="course.listings.length > 1"> <br> XL as [[getXlString(course)]] </small>');
 }]);
+
 app.directive('courseWithListings', function($filter) {
     var getXlString = function(course){
         var listings = course.listings;
@@ -383,8 +438,8 @@ app.directive('modal', ['HelpService', function(HelpService) {
     return {
         templateUrl: '/javascripts/ng/templates/helpModal.html',
         restrict: 'EA',
-        replace:true,
-        scope:false,
+        replace: true,
+        scope: false,
         controller : 'HelpModalController',
         link: function postLink(scope, element, attrs) {
             scope.title = attrs.title;

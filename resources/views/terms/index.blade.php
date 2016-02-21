@@ -17,10 +17,9 @@
                 </div>
                 <div class="panel-body">
 
-                    <div ng-controller="TermsTableController as tc" class="table-responsive">
-                        <table  st-pipe="tc.callServer"
-                                st-table="tc.displayed"
-                                st-has-default-sort="true"
+                    <div ng-controller="TermsTableController" class="table-responsive">
+                        <table  st-pipe="callServer"
+                                st-table="displayed"
                                 class="table table-hover"
                                 empty-placeholder>
                             <thead>
@@ -42,7 +41,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                                <tr ng-cloak ng-repeat="term in tc.displayed">
+                                <tr ng-cloak ng-repeat="term in displayed">
                                     <td> [[ term.term_name ]] </td>
                                     <td> [[ term.year ]] </td>
 

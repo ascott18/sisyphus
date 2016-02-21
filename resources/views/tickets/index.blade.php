@@ -10,19 +10,16 @@
 
     <div class="row">
         <div class="col-lg-12">
-
-
             <br>
             <br>
 
-
-            <div class="panel panel-default"  ng-controller="TicketsIndexController as tc">
+            <div class="panel panel-default"  ng-controller="TicketsIndexController">
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="fa fa-life-ring fa-fw"></i> All Tickets</h3>
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">
-                        <table st-pipe="tc.callServer" st-table="tc.displayed"
+                        <table st-pipe="callServer" st-table="displayed"
                                class="table table-hover"
                                empty-placeholder>
                             <thead>
@@ -54,7 +51,7 @@
                             </thead>
                             <tbody>
 
-                            <tr ng-cloak ng-repeat="ticket in tc.displayed">
+                            <tr ng-cloak ng-repeat="ticket in displayed">
                                 <td>
                                     [[ ticket.title ]]
                                 </td>

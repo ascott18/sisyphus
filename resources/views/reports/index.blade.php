@@ -42,7 +42,8 @@
                 </div>
                 <div class="panel-body">
                     <div class="row">
-                        <div ng-class="[ReportType == 'orders' ? 'col-lg-7' : 'col-lg-12']">
+                        {{--<div ng-class="[ReportType == 'orders' ? 'col-lg-7' : 'col-lg-12']">--}}
+                        <div class="col-lg-7">
                             <h4>Select Term</h4>
                             <select class="form-control"
                                     ng-init="TermSelected=(terms | filter:{term_id: {{$currentTermId}}})[0]; onSelectTerm()"
@@ -81,7 +82,7 @@
                                     <h4>Select Subject(s)</h4>
                                     <select class="form-control"
                                             multiple
-                                            size="12"
+                                            size="14"
                                             ng-multiple="true"
                                             ng-model="DeptsSelected"
                                             ng-options="dept for dept in departments|orderBy:dept">
@@ -91,67 +92,79 @@
                                     <h4>Select Report Columns</h4>
                                     <select class="form-control"
                                             multiple
-                                            size="12"
+                                            size="14"
                                             ng-multiple="true"
                                             ng-model="ColumnsSelected"
                                             ng-options="optionProperties.name for optionProperties in options | filter:{doesAutoEnforce: '!true'} | filter:shouldOptionShow">
                                     </select>
                                 </div>
                             </div>
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" ng-model="groupBySection" />
-                                    Condense Similar Rows
-                                </label>
-                            </div>
                         </div>
                     </div>
 
-                    <div class="col-lg-12 col-xs-vspace">
-                        <h4>What would you like included in your report?</h4>
-                        <p class="text-muted">(Must select at least one)</p>
+                    <div class="row">
                         <br>
+                        <div class="col-lg-12 col-xs-vspace">
+                            <h4>What would you like included in your report?</h4>
+                            <small class="text-muted">(Must select at least one)</small>
 
-                        <div ng-show="ReportType == 'courses'">
-                            <div class="checkbox">
-                                <label >
-                                    <input type="checkbox" ng-model="include.submitted" />
-                                    Courses that have submitted orders
-                                </label>
+                            <div ng-show="ReportType == 'courses'">
+                                <div class="checkbox">
+                                    <label >
+                                        <input type="checkbox" ng-model="include.submitted" />
+                                        Courses that have submitted orders
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label >
+                                        <input type="checkbox" ng-model="include.notSubmitted" />
+                                        Courses that have not submitted orders
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label >
+                                        <input type="checkbox" ng-model="include.noBook" />
+                                        Courses that specified no book
+                                    </label>
+                                </div>
                             </div>
-                            <div class="checkbox">
-                                <label >
-                                    <input type="checkbox" ng-model="include.notSubmitted" />
-                                    Courses that have not submitted orders
-                                </label>
-                            </div>
-                            <div class="checkbox">
-                                <label >
-                                    <input type="checkbox" ng-model="include.noBook" />
-                                    Courses that specified no book
-                                </label>
-                            </div>
-                        </div>
 
-                        <div ng-show="ReportType == 'orders'">
-                            <div class="checkbox">
-                                <label >
-                                    <input type="checkbox" ng-model="include.nondeleted" />
-                                    Placed Requests
-                                </label>
+                            <div ng-show="ReportType == 'orders'">
+                                <div class="checkbox">
+                                    <label >
+                                        <input type="checkbox" ng-model="include.nondeleted" />
+                                        Placed Requests
+                                        <small class="text-muted">(date range uses placed date)</small>
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label >
+                                        <input type="checkbox" ng-model="include.deleted" />
+                                        Deleted Requests
+                                        <small class="text-muted">(date range uses deletion date)</small>
+                                    </label>
+                                </div>
                             </div>
-                            <div class="checkbox">
-                                <label >
-                                    <input type="checkbox" ng-model="include.deleted" />
-                                    Deleted Requests
-                                </label>
+
+                            <br>
+                            <h4>Other Options</h4>
+                            <div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" ng-model="groupBySection" />
+                                        Combine Similar Rows
+                                        <small class="text-muted">(recommended)</small>
+                                    </label>
+                                </div>
                             </div>
+
+                            <br>
+                            <button type="submit" class="btn btn-success"
+                                    ng-click="submit()"
+                                    ng-disabled="!isCheckboxChecked()">
+                                Submit <i class="fa fa-arrow-right"></i>
+                            </button>
                         </div>
-                        <button type="submit" class="btn btn-success"
-                                ng-click="submit()"
-                                ng-disabled="!isCheckboxChecked()">
-                            Submit <i class="fa fa-arrow-right"></i>
-                        </button>
                     </div>
                 </div>
             </div>
@@ -202,7 +215,7 @@
 
                     <br>
                     <br>
-                    <table class="table table-hover" id="reportTable" super-fast-table table-data="reportRows">
+                    <table class="table table-hover" id="reportTable" super-fast-table="reportRows">
                         <thead>
                             <tr>
                                 <th ng-repeat="optionProperties in ColumnsSelected"
@@ -215,6 +228,10 @@
                             {{-- Will be replaced by the super-fast-table directive --}}
                         </tbody>
                     </table>
+
+                    <br>
+                    <h1 class="text-muted text-center" ng-show="reportRows == null">Looking for some data. Hang on a sec...</h1>
+                    <h1 class="text-muted text-center" ng-show="reportRows.length == 0">No results.</h1>
                 </div>
             </div>
         </div>

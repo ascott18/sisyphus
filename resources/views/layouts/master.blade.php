@@ -40,8 +40,16 @@
 
 <div id="wrapper">
 
- 
-    <i ng-spinner ng-cloak class="fa fa-spinner fa-spin " ng-show="spinnerActive"></i>
+    {{--Uncomment this. I dare you.--}}
+    {{--<div style="height: 0;">--}}
+        {{--<button class="btn btn-lg btn-primary"--}}
+                {{--style="position: relative; top: -35px; left: 60%; z-index: 100000"--}}
+                {{--ng-click="espanol()">--}}
+            {{--en español--}}
+        {{--</button>--}}
+    {{--</div>--}}
+
+    <i ng-spinner ng-cloak class="fa fa-spinner fa-spin" ng-show="spinnerActive"></i>
 
     <modal title="Help" visible="showModal">
     </modal>
@@ -79,14 +87,14 @@
 
             <ul class="nav navbar-right top-nav">
                 @if (Auth::user())
-                <li >
+                    <li >
                         <span id="userName">
                             <i class="fa fa-user"></i>
                             <a href="/users/edit/{{Auth::user()->user_id}}">
                                 Welcome, {{ Auth::user()->net_id }}!
                             </a>
                         </span>
-                </li>
+                    </li>
                     <li class="pull-right">
                         <span style="margin-left: 25px"><a href="/logout">Logout</a></span>
                     </li>

@@ -10,15 +10,14 @@
 
     <div class="row">
         <div class="col-lg-12">
-            <div class="panel panel-default"  ng-controller="CoursesIndexController as cc">
+            <div class="panel panel-default"  ng-controller="CoursesIndexController">
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="fa fa-university fa-fw"></i> All Courses</h3>
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">
-                        <table st-pipe="cc.callServer"
-                               st-table="cc.displayed"
-                               st-has-default-sort="true"
+                        <table st-pipe="callServer"
+                               st-table="displayed"
                                class="table table-hover"
                                empty-placeholder>
                             <thead>
@@ -54,7 +53,7 @@
                             </thead>
                             <tbody>
 
-                            <tr ng-cloak ng-repeat="course in cc.displayed">
+                            <tr ng-cloak ng-repeat="course in displayed">
                                 <td>[[ course.term.term_name ]] [[ course.term.year ]]</td>
                                 <td>
                                     <course-with-listings course="course"></course-with-listings>

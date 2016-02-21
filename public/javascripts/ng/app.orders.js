@@ -85,60 +85,6 @@ app.directive('bookDetails', function($http) {
     }
 });
 
-app.controller('OrdersListController', function($scope, $http) {
-    var ctrl = this;
-    $scope.stCtrl=null;
-    $scope.stTableRef=null;
-
-    $scope.updateTerm=function()
-    {
-        if($scope.stCtrl)
-            $scope.stCtrl.pipe();
-
-        if($scope.stTableRef)
-            $scope.stTableRef.pagination.start = 0;
-    };
-
-    this.displayed = [];
-
-    this.callServer = function callServer(tableState, ctrl1) {
-        ctrl.isLoading = true;
-
-        if(!$scope.stCtrl&&ctrl1)
-        {
-            $scope.stCtrl=ctrl1;
-        }
-
-        if(!$scope.stTableRef&&tableState)
-        {
-            $scope.stTableRef=tableState;
-        }
-
-        var pagination = tableState.pagination;
-        var start = pagination.start || 0;
-        var end = pagination.number || 10;
-        var page = (start/end)+1;
-
-        tableState.term_id = $scope.TermSelected;
-        var getRequestString = '/requests/order-list';                                         // book list uri
-
-        var data = {
-            page: page,
-            table_state: tableState
-        };
-
-        var config = {
-            params: data
-        };
-
-        $http.get(getRequestString, config).then(function(response){
-            tableState.pagination.numberOfPages = response.data.last_page;                    // update number of pages with laravel response
-            tableState.pagination.number = response.data.per_page;                            // update entries per page with laravel response
-            ctrl.displayed = response.data.data;                                              // save laravel response data
-            ctrl.isLoading=false;
-        });
-    }
-});
 
 app.controller('OrdersController', ['$scope', '$http', 'CartService', 'BreadcrumbService', 'HelpService',
     function($scope, $http, CartService, BreadcrumbService, HelpService){

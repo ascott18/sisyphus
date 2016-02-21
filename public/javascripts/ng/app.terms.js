@@ -8,34 +8,15 @@ app.controller('TermsController', function($scope) {
     }
 });
 
-app.controller('TermsTableController', function($scope, $http) {
+app.controller('TermsTableController', function($scope, StHelper) {
 
-    var ctrl = this;
-    this.displayed = [];
-    this.callServer = function callServer(tableState) {
-
-        ctrl.isLoading = true;
-        var pagination = tableState.pagination;
-        var start = pagination.start || 0;
-        var end = pagination.number || 15;
-
-        var page = (start/end)+1;
-
+    $scope.callServer = function(tableState) {
         tableState.term_selected = $scope.TermSelected;
-        var getRequestString = '/terms/term-list';
 
         var config = {
-            params: {
-                page: page,
-                table_state: tableState
-            }
+            url: '/terms/term-list'
         };
 
-        $http.get(getRequestString, config).then(function(response){
-            tableState.pagination.numberOfPages = response.data.last_page;                    // update number of pages with laravel response
-            tableState.pagination.number = response.data.per_page;                            // update entries per page with laravel response
-            ctrl.displayed = response.data.data;                                              // save laravel response data
-            ctrl.isLoading=false;
-        });
+        StHelper.callServer(tableState, config, $scope );
     };
 });

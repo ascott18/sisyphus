@@ -8,7 +8,13 @@
 
 @section('content')
 
-<div ng-controller="BookDetailsController as bdc"  class="row">
+<div class="row"
+     ng-controller="BookDetailsController"
+     ng-init="
+        book_id = {{ $book->book_id }};
+        book_isbn_13 = '{{ $book->isbn13 }}';
+    "
+    >
     <div class="col-lg-12">
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -57,7 +63,7 @@
                     </dl>
                 </div>
                 <div class="col-sm-6">
-                    <img ng-src="[[ book_cover_img ]]"/>
+                    <img ng-src="[[ getBookCoverImageUrl() ]]"/>
                 </div>
 
             </div>
@@ -70,7 +76,7 @@
             </div>
             <div class="panel-body">
                 <div class="table-responsive">
-                    <table st-pipe="bdc.callServer" st-table="bdc.displayed"
+                    <table st-pipe="callServer" st-table="displayed"
                            class="table table-hover"
                            empty-placeholder>
                         <thead>
@@ -92,7 +98,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                            <tr ng-cloak ng-repeat="order in bdc.displayed">
+                            <tr ng-cloak ng-repeat="order in displayed">
                                 <td>[[ order.course.term.display_name ]]</td>
                                 <td>
                                     <course-with-listings course="order.course"></course-with-listings>
@@ -124,12 +130,6 @@
 @stop
 
 @section('scripts-head')
-    <script>
-        // TODO: use ng-init, or just hardcode this into a function call to the getImage function.
-        book_id_init = new String('{{ $book->book_id }}');
-        book_isbn_13_init = new String('{{ $book->isbn13 }}');
-    </script>
-
     <script src="/javascripts/ng/helper.isbnHyphenate.js"></script>
     <script src="/javascripts/ng/app.books.js"></script>
 @stop

@@ -1,7 +1,7 @@
 
 var app = angular.module('sisyphus', ['sisyphus.helpers', 'smart-table']);
 
-app.controller('UsersController', function($scope, $http) {
+app.controller('UsersController', function($scope, $http, StHelper) {
     $scope.removeDepartment = function(user, department){
 
         $http.post('/users/remove-department', {
@@ -19,36 +19,12 @@ app.controller('UsersController', function($scope, $http) {
         );
     };
 
-
-
-    var ctrl = this;
-
-    this.displayed = [];
-
-    this.callServer = function callServer(tableState) {
-        ctrl.isLoading = true;
-
-        var pagination = tableState.pagination;
-        var start = pagination.start || 0;
-        var end = pagination.number || 10;
-        var page = (start/end)+1;
-
-        var getRequestString = '/users/user-list';
-
+    $scope.callServer = function(tableState) {
         var config = {
-            params: {
-                page: page,
-                table_state: tableState
-            }
+            url: '/users/user-list'
         };
 
-        $http.get(getRequestString, config).then(function(response){
-            tableState.pagination.numberOfPages = response.data.last_page;                // update number of pages with laravel response
-            tableState.pagination.number = response.data.per_page;                        // update number of entries per page with laravel response
-            $scope.users = response.data.data; // using scope var since it was already there.
-            ctrl.isLoading=false;
-        });
-
+        StHelper.callServer(tableState, config, $scope );
     };
 });
 

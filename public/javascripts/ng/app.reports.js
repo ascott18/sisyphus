@@ -6,10 +6,10 @@ app.directive('superFastTable', function($http) {
     return {
         restrict: 'A',
         scope: {
-            tableData: '='
+            superFastTable: '='
         },
         link: function(scope, element, attrs) {
-            scope.$watch('tableData', function(rows, oldValue) {
+            scope.$watch('superFastTable', function(rows, oldValue) {
                 if (rows)
                 {
                     var tbody = document.createElement("tbody");

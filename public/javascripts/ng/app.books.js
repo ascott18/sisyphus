@@ -17,12 +17,7 @@ app.controller('BooksController', ['$scope', '$http', 'HelpService', function($s
 
     HelpService.updateOptions(helpOptions);
 
-    var ctrl = this;
-
-    this.displayed = [];
-
-    this.callServer = function callServer(tableState) {
-        ctrl.isLoading = true;
+    $scope.callServer = function callServer(tableState) {
 
         var pagination = tableState.pagination;
         var start = pagination.start || 0;
@@ -43,8 +38,7 @@ app.controller('BooksController', ['$scope', '$http', 'HelpService', function($s
         $http.get(getRequestString, config).then(function(response){
             tableState.pagination.numberOfPages = response.data.last_page;                    // update number of pages with laravel response
             tableState.pagination.number = response.data.per_page;                            // update entries per page with laravel response
-            ctrl.displayed = response.data.data;                                              // save laravel response data
-            ctrl.isLoading=false;
+            $scope.displayed = response.data.data;                                              // save laravel response data
         });
     }
 }]);
@@ -94,48 +88,21 @@ app.controller('EditBookController', function($scope, $http) {
     $scope.reset();
 });
 
-app.controller('BookDetailsController', function($scope, $http) {
-    var ctrl = this;
-
-    $scope.book_id = book_id_init;
-    $scope.book_isbn_13 = book_isbn_13_init;
-
-    /* TODO: We need a missing thumbnail image */
-    $scope.isCached = false;
-    $scope.book_cover_img = "";
-
-    $scope.getLaravelImage = function() {
-        $scope.book_cover_img = '/books/cover?isbn=' + $scope.book_isbn_13;
+app.controller('BookDetailsController', function($scope, StHelper) {
+    $scope.getBookCoverImageUrl = function(){
+        return '/books/cover?isbn=' + $scope.book_isbn_13;
     };
 
-    $scope.getLaravelImage();
-
-
-    this.displayed = [];
-
-    this.callServer = function callServer(tableState) { // TODO: move this into other controller
-        ctrl.isLoading = true;
-
-        var pagination = tableState.pagination;
-        var start = pagination.start || 0;
-        var end = pagination.number || 10;
-        var page = (start/end)+1;
-
-        var getRequestString = '/books/book-detail-list';
+    $scope.callServer = function(tableState) {
 
         var config = {
+            url: '/books/book-detail-list',
             params: {
-                book_id: $scope.book_id,
-                page: page,
-                table_state: tableState
+                book_id: $scope.book_id
             }
         };
 
-        $http.get(getRequestString, config).then(function(response){
-            tableState.pagination.numberOfPages = response.data.last_page;                    // update number of pages with laravel response
-            tableState.pagination.number = response.data.per_page;                            // update entries per page with laravel response
-            ctrl.displayed = response.data.data;                                              // save laravel response data
-            ctrl.isLoading=false;
-        });
-    }
+        StHelper.callServer(tableState, config, $scope );
+    };
+
 });

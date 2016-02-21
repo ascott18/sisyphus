@@ -33,7 +33,7 @@
                             </label>
                             <input class="form-control"
                                    name="course[listings][0][name]"
-                                   placeholder="Title"
+                                   placeholder="e.g. Introduction to Biology"
                                    ng-model="course.listings[0].name"
                                    required>
 
@@ -51,11 +51,10 @@
                                     <label ng-show="$first">
                                         Subject
                                     </label>
-                                    <input class="form-control"
+                                    <input class="form-control uppercase"
                                            {{-- We concat on the first bracket here because we cant have "[[[" since "[" is our angular character.--}}
                                            name="course[listings][['['+$index]]][department]"
-                                           placeholder="Subject"
-                                           style="text-transform: uppercase;"
+                                           placeholder="e.g. BIOL"
                                            ng-model="listing.department"
                                            required
                                            pattern="[a-zA-Z]{2,10}" >
@@ -78,7 +77,7 @@
                                     <input class="form-control"
                                             {{-- We concat on the first bracket here because we cant have "[[[" since "[" is our angular character.--}}
                                            name="course[listings][['['+$index]]][number]"
-                                           placeholder="Subject"
+                                           placeholder="e.g. 100"
                                            ng-model="listing.number"
                                            required
                                            pattern="[0-9]{1,10}" >
@@ -104,14 +103,14 @@
                                                style="display: table-cell;"
                                                 {{-- We concat on the first bracket here because we cant have "[[[" since "[" is our angular character.--}}
                                                name="course[listings][['['+$index]]][section]"
-                                               placeholder="Section"
+                                               placeholder="e.g. 2"
                                                ng-model="listing.section"
                                                required
                                                pattern="[0-9]{1,10}" >
 
-                                            <span
-                                                style="display: table-cell;">
-                                            <a class="btn btn-danger" style="margin-left: 10px"
+                                        <span ng-cloak style="display: table-cell;">
+                                            <a class="btn btn-danger"
+                                               style="margin-left: 10px"
                                                ng-show="!$first"
                                                ng-click="deleteListing(listing)">
                                                 <i class="fa fa-times"></i>
@@ -133,7 +132,7 @@
 
                         <a class="btn btn-primary" ng-click="addListing()">
                             <i class="fa fa-plus"></i>
-                            <span ng-show="course.listings.length > 1">Add Another Cross-Listing</span>
+                            <span ng-cloak ng-show="course.listings.length > 1">Add Another Cross-Listing</span>
                             <span ng-show="course.listings.length == 1">Add a Cross-Listing</span>
                         </a>
                     </div>
@@ -154,7 +153,7 @@
                             <div ng-cloak class="col-lg-6 col-lg-vspace">
 
                                 <p >
-                                    <strong >Selected:</strong>
+                                    <strong >Selected Professor:</strong>
                                     <a class="btn btn-xs btn-danger" style="margin-left: 15px;" ng-click="course.user_id = null" ng-show="getSelectedUser()">
                                         <i class="fa fa-times"></i> Clear Selection
                                     </a>
@@ -184,9 +183,9 @@
                             <dir-pagination-controls></dir-pagination-controls>
                         </div>
                     </div>
-                    <div class="col-md-offset-6 col-md-6 ">
+                    <div class="col-md-offset-6 col-md-6 col-md-vspace ">
                         <button type="submit" class="btn btn-success">
-                            <i class="fa fa-check"></i> Save
+                            <i class="fa fa-check"></i> Save Course
                         </button>
                     </div>
                 </form>

@@ -104,9 +104,13 @@ td[st-pagination] ul {
     color: #cccccc;
 }
 
+label + h4 {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
 
 select[multiple] option{
-    padding: 10px 15px;
+    padding: 5px 15px;
     border-bottom: 1px solid #ddd;
 }
 
@@ -114,6 +118,22 @@ select[multiple]{
     padding: 0;
 }
 
+
+input.uppercase {
+    text-transform: uppercase;
+}
+input.uppercase::-webkit-input-placeholder { /* WebKit browsers */
+    text-transform: none;
+}
+input.uppercase:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    text-transform: none;
+}
+input.uppercase::-moz-placeholder { /* Mozilla Firefox 19+ */
+    text-transform: none;
+}
+input.uppercase:-ms-input-placeholder { /* Internet Explorer 10+ */
+    text-transform: none;
+}
 
 
 .book-details-images {
@@ -197,7 +217,7 @@ a[role="tab"]{
 
 [ng-spinner] {
     position: fixed;
-    top: 0.5em;
+    top: 0.35em;
     left: 50%;
     font-size: 3.2em !important;
     color: white;
@@ -213,7 +233,7 @@ a[role="tab"]{
 
     .col-md-vspace:not(:first-child){
         padding-top: 15px;
-}
+    }
 }
 
 @media (max-width: 767px) {

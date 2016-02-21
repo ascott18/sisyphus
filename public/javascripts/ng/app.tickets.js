@@ -100,67 +100,26 @@ app.directive('ticketDetails', function() {
     };
 });
 
-app.controller('TicketsIndexController', function($scope, $http) {
-    var ctrl1 = this;
-    $scope.stCtrl=null;
-    $scope.stTableRef=null;
-
-    this.displayed = [];
-
+app.controller('TicketsIndexController', function($scope, StHelper) {
     $scope.statuses = ["New", "Waiting", "In Progress", "Closed"];
 
-    $scope.updateStatus=function()
+    $scope.updateStatus = function()
     {
-        if($scope.stCtrl)
-            $scope.stCtrl.pipe();
-
-        if($scope.stTableRef)
-            $scope.stTableRef.pagination.start = 0;
+        StHelper.reset($scope.stCtrl);
     };
 
-    this.callServer = function callServer(tableState, ctrl) {
+    $scope.callServer = function(tableState, ctrl) {
+        // Keep track of the smart-table controller so that we can
+        // reset the table when the user changes the status filter.
+        $scope.stCtrl = ctrl;
 
-        ctrl1.isLoading = true;
-        if(!$scope.stCtrl&&ctrl)
-        {
-            $scope.stCtrl=ctrl;
-        }
-
-        if(!$scope.stTableRef&&tableState)
-        {
-            $scope.stTableRef=tableState;
-        }
-
-        if(!tableState&&$scope.stCtrl){
-            $scope.stCtrl.pipe();
-            return;
-        }
-
-        ctrl.isLoading = true;
-
-        var pagination = tableState.pagination;
-        var start = pagination.start || 0;
-        var end = pagination.number || 10;
-        var page = (start/end)+1;
-
-        console.log($scope.statusSelected);
         tableState.statusSelected = $scope.statusSelected;
-        var getRequestString = '/tickets/ticket-list';
 
         var config = {
-            params: {
-                page: page,
-                table_state: tableState
-            }
+            url: '/tickets/ticket-list'
         };
 
-        $http.get(getRequestString, config).then(function(response){
-            tableState.pagination.numberOfPages = response.data.last_page;                    // update number of pages with laravel response
-            tableState.pagination.number = response.data.per_page;                            // update entries per page with laravel response
-            console.log(response.data.data.length);
-            ctrl1.displayed = response.data.data;                                              // save laravel response data
-            ctrl1.isLoading=false;
-        });
+        StHelper.callServer(tableState, config, $scope );
     }
 });
 

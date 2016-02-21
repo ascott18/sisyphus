@@ -29,7 +29,7 @@
         allRoles.unshift({name:"", display_name:"Faculty"});
     </script>
 
-    <div class="row" ng-controller="UsersController as uc">
+    <div class="row" ng-controller="UsersController">
         <div class="col-lg-12">
             <a class="btn btn-primary"
                href="/users/roles">
@@ -50,7 +50,8 @@
 
 
                     <div class="table-responsive">
-                        <table st-pipe="uc.callServer" st-table="users"
+                        <table st-pipe="callServer"
+                               st-table="displayed"
                                class="table table-hover">
                             <thead>
                             <tr>
@@ -75,7 +76,7 @@
                             <tbody>
 
                             <tr ng-cloak
-                                ng-repeat="user in users">
+                                ng-repeat="user in displayed">
                                 <td>
                                     <a class="btn btn-default btn-xs" href="/users/edit/[[user.user_id]]">
                                         <i class="fa fa-pencil"></i> Edit

@@ -15,8 +15,9 @@
                 <div class="panel-body">
 
 
-                    <div ng-controller="BooksController as mc" class="table-responsive">
-                        <table st-pipe="mc.callServer" st-table="mc.displayed"
+                    <div ng-controller="BooksController" class="table-responsive">
+                        <table st-pipe="callServer"
+                               st-table="displayed"
                                class="table table-hover"
                                empty-placeholder>
                             <thead>
@@ -37,7 +38,7 @@
                             </thead>
                             <tbody>
 
-                            <tr ng-cloak ng-repeat="book in mc.displayed">
+                            <tr ng-cloak ng-repeat="book in displayed">
                                 <td>[[ book.title + ' ' + book.edition ]]</td>
                                 <td>
                                     <span ng-repeat="author in book.authors">
