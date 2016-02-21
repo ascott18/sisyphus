@@ -60,8 +60,8 @@
                                 </tr>
                             </tbody>
                             <tfoot>
-                            <td class="text-center" st-pagination="" st-items-by-page="15" colspan="6">
-                            </td>
+                                <td class="text-center" st-pagination="" st-items-by-page="15" colspan="6">
+                                </td>
                             </tfoot>
                         </table>
                     </div>

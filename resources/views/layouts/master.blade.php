@@ -27,8 +27,6 @@
     <script src="/javascripts/angular.min.js"></script>
     <script src="/javascripts/ng/smart-table/smart-table.js"></script>
     <script src="/javascripts/ng/app.js"></script>
-    <script src="/javascripts/ng/app.tickets.js"></script>
-    <script src="/javascripts/ng/pagination/dirPagination.js"></script>
 
     <script src='/javascripts/ng/text/textAngular-rangy.min.js'></script>
     <script src='/javascripts/ng/text/textAngular-sanitize.min.js'></script>
