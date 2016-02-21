@@ -77,6 +77,18 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
             sort: true
         },
         {
+            name: 'Cross Listings',
+            value: function(courseOrderObj){
+                var result='';
+                var courses=courseOrderObj.course.listings.length;
+                for(var i=1; i<courses; i++)
+                {
+                    result+= courseOrderObj.course.listings[i].department+' '+courseOrderObj.course.listings[i].number+'-'+courseOrderObj.course.listings[i].section+(i == courses - 1 ? '' : ', ');
+                }
+                return result;
+            }
+        },
+        {
             name: 'Instructor',
             value: function(courseOrderObj){
                 return courseOrderObj.course.user ? courseOrderObj.course.user.last_name : 'TBA';
@@ -270,8 +282,9 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
                 departments: $scope.DeptsSelected,
         }, {timeout: $scope.canceler.promise}).then(function(response) {
             var courses = Enumerable.From(response.data['courses']);
-
+            console.log(response.data['courses']);
             var reportRows = courses
+
                 // Select an object for each order that has been returned back to us.
                 .SelectMany("course => course.orders", "course, order => {course: course, order: order, book:order.book}")
                 // Also select an object for each course that doesn't have any orders at all.
@@ -364,6 +377,7 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
             reportRows = reportRows.ToArray();
 
             $scope.reportRows = reportRows;
+            //console.log($scope.reportRows);
         });
 
     }

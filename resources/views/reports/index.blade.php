@@ -131,7 +131,7 @@
                             <div class="checkbox">
                                 <label >
                                     <input type="checkbox" ng-model="include.notSubmitted" />
-                                    Courses that have not submitted orders
+                                    Courses that have not responded
                                 </label>
                             </div>
                             <div class="checkbox">
