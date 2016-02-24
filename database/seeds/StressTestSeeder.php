@@ -61,7 +61,7 @@ class StressTestSeeder extends Seeder
                 foreach ($term->courses as $course) {
                     // course has between zero and 2 orders.
                     $numOrders = rand(0, 2);
-                    for ($i = 0; $i <= $numOrders; $i++){
+                    for ($i = 0; $i < $numOrders; $i++){
                         $order = new Order;
 
                         $order->created_at = $term->order_start_date->copy()->addDays(rand(0, $termPeriodDayLength));

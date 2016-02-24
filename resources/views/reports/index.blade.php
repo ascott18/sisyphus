@@ -9,7 +9,7 @@
 
     <div class="row"
          ng-controller="ReportsController"
-         ng-init="init({{$terms}},{{$departments}})"
+         ng-init="init({{$terms}}, {{$departments}})"
     >
         <div class="col-lg-12" ng-show="getStage() == STAGE_SELECT_FIELDS">
             <div class="panel panel-default">
@@ -21,12 +21,14 @@
                         <label >
                             <input type="radio" ng-model="ReportType" ng-change="resetInclude()" value="orders" />
                             Requests
+                            <small class="text-muted"><br>Allows for date filtering and for reporting on deleted requests.</small>
                         </label>
                     </div>
                     <div class="radio">
                         <label >
                             <input type="radio" ng-model="ReportType" ng-change="resetInclude()" value="courses" />
                             Courses
+                            <small class="text-muted"><br>Allows for reporting on courses that haven't responded.</small>
                         </label>
                     </div>
                 </div>
@@ -78,7 +80,15 @@
                             <div class="row">
                                 <div class="col-sm-6">
 
-                                    <h4>Select Subject(s)</h4>
+                                    <div class="clearfix">
+                                        <h4 class="pull-left">Select Subject(s)</h4>
+
+                                        <button class="btn btn-sm btn-default pull-right"
+                                                ng-click="selectAllDepts()">
+                                            <i class="fa fa-check"></i> Select All
+                                        </button>
+                                    </div>
+
                                     <select class="form-control"
                                             multiple
                                             size="14"
@@ -86,14 +96,17 @@
                                             ng-model="DeptsSelected"
                                             ng-options="dept for dept in departments|orderBy:dept">
                                     </select>
-                                    </br>
-                                    <button type="submit" class="btn btn-primary"
-                                            ng-click="selectAllDepts()">
-                                        <i class="fa fa-check"></i> Select All
-                                    </button>
                                 </div>
                                 <div class="col-sm-6 col-sm-vspace">
-                                    <h4>Select Report Columns</h4>
+                                    <div class="clearfix">
+                                        <h4 class="pull-left">Select Columns</h4>
+
+                                        <button class="btn btn-sm btn-default pull-right"
+                                                ng-click="selectAllCols()">
+                                            <i class="fa fa-check"></i> Select All
+                                        </button>
+                                    </div>
+
                                     <select class="form-control"
                                             multiple
                                             size="14"
@@ -101,19 +114,21 @@
                                             ng-model="ColumnsSelected"
                                             ng-options="optionProperties.name for optionProperties in options | filter:{doesAutoEnforce: '!true'} | filter:shouldOptionShow">
                                     </select>
-                                    </br>
-                                    <button type="submit" class="btn btn-primary"
-                                            ng-click="selectAllCols()">
-                                        <i class="fa fa-check"></i> Select All
-                                    </button>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="text-muted col-lg-12">
+                                    <small>
+                                        Hold CTRL to select multiple. Hold SHIFT to select a range. Press the buttons above to select all.
+                                    </small>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="row">
-                        <br>
-                        <div class="col-lg-12 col-xs-vspace">
+                        <div class="col-lg-12 col-lg-vspace">
                             <h4>What would you like included in your report?</h4>
                             <small class="text-muted">(Must select at least one)</small>
 
@@ -168,19 +183,17 @@
                             </div>
 
                             <br>
-                            <button type="submit" class="btn btn-success"
+
+                            <p ng-show="DeptsSelected.length == 0" class="text-danger">You didn't select any subjects</p>
+                            <p ng-show="ColumnsSelected.length == 0" class="text-danger">You didn't select any columns</p>
+
+                            <button type="submit"
+                                    class="btn btn-success"
                                     ng-click="submit()"
-                                    ng-disabled="!isCheckboxChecked()">
-                                Submit <i class="fa fa-arrow-right"></i>
+                                    ng-disabled="!isCheckboxChecked() || DeptsSelected.length == 0 || ColumnsSelected.length == 0">
+                                Generate Report <i class="fa fa-arrow-right"></i>
                             </button>
                         </div>
-                        <span ng-show="DeptsSelected.length == 0" class="text-danger">You didn't select a subject</br></span>
-                        <span ng-show="ColumnsSelected.length == 0" class="text-danger">You didn't select a column</br></span>
-                        <button type="submit" class="btn btn-success"
-                                ng-click="submit()"
-                                ng-disabled="!isCheckboxChecked()||DeptsSelected.length == 0||ColumnsSelected.length == 0">
-                            Submit <i class="fa fa-arrow-right"></i>
-                        </button>
                     </div>
                 </div>
             </div>
@@ -246,7 +259,7 @@
                     </table>
 
                     <br>
-                    <h1 class="text-muted text-center" ng-show="reportRows == null">Looking for the data. Hang on a sec...</h1>
+                    <h1 class="text-muted text-center" ng-show="reportRows == null">Getting the data. Hang on a sec...</h1>
                     <h1 class="text-muted text-center" ng-show="reportRows.length == 0">No results.</h1>
                 </div>
             </div>

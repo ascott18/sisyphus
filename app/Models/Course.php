@@ -122,7 +122,6 @@ class Course extends Model
                 return $query = $query->orWhereIn('courses.course_id',
                     Listing::withoutGlobalScope('order')
                         ->select('course_id')
-                        ->distinct()
                         ->whereIn('listings.department', $deptSubQuery)
                         ->toBase()
                 );

@@ -235,7 +235,8 @@ a[role="tab"]{
         bottom: 0.5em;
     }
 
-    .col-md-vspace:not(:first-child){
+    .col-md-vspace:not(:first-child),
+    .row + .row > .col-md-vspace:first-child{
         padding-top: 15px;
     }
 }
@@ -260,7 +261,11 @@ a[role="tab"]{
     .navbar-brand {
         padding-top: 10px;
     }
-    
+
+    .navbar-brand img {
+        width: 93px;
+    }
+
     .navbar-header, .navbar-brand h2, .navbar-brand img {
         height: 30px;
     }
@@ -269,18 +274,22 @@ a[role="tab"]{
         font-size: 100%;
     }
 
-    .col-sm-vspace:not(:first-child){
+    .col-sm-vspace:not(:first-child),
+    .row + .row > .col-sm-vspace:first-child{
         padding-top: 15px;
 }
 }
 
 @media (max-width: 1199px) {
-    .col-lg-vspace:not(:first-child){
+    .col-lg-vspace:not(:first-child),
+    .row + .row > .col-lg-vspace:first-child{
         padding-top: 15px;
     }
 }
 
-.col-xs-vspace:not(:first-child){
+.col-xs-vspace:not(:first-child),
+.row + .row > .col-xs-vspace:first-child
+{
     padding-top: 15px;
 }
 
@@ -354,6 +363,7 @@ input[type="checkbox"].input-validation-error {
 
 #page-wrapper {
     width: 100%;
+    padding-top: 15px;
 }
 
 #page-wrapper > div {
