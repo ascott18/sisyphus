@@ -27,7 +27,6 @@
                                empty-placeholder>
                             <thead>
                             <tr>
-                                TODO: Nathan add sorting
                                 <th width="170px" st-sort="title" >Title</th>
                                 <th width="250px" >Status</th>
                                 <th st-sort="name">Created By</th>
@@ -58,7 +57,7 @@
                                 <td>
                                     [[ ticket.title ]]
                                 </td>
-                                <td>[[ ticket.status_display ]]</td>
+                                <td>[[ ticket.status || status ]]</td>
                                 <td>user name stuff</td>
                                 <td><a class="btn btn-sm btn-info" href="/tickets/details/[[ticket.ticket_id]]" role="button">
                                         Details <i class="fa fa-arrow-right"></i>

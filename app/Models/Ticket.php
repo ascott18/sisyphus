@@ -42,26 +42,46 @@ class Ticket extends Model
         return $this->hasMany('App\Models\TicketComment', 'ticket_id', 'ticket_id');
     }
 
+    private static function getAssignableUsersQuery($department = null){
+        $query = User::
+            join('role_user', 'role_user.user_id', '=', 'users.user_id')
+            ->join('user_departments', 'user_departments.user_id', '=', 'users.user_id');
+
+        if (!$department)
+            $query->whereRaw('user_departments.department = tickets.department');
+        else
+            $query->where('user_departments.department', '=', $department);
+
+        return $query->whereIn('role_user.role_id',
+            Permission::where(['name' => 'receive-dept-tickets'])->firstOrFail()
+                ->roles()
+                ->select('role_id')
+                ->toBase()
+        );
+    }
+
+    public function getAssignableUsers(){
+        return static::getAssignableUsersQuery($this->department)->get();
+    }
+
     public function scopeVisible($query, User $user = null){
         if ($user == null)
             $user = \Auth::user();
 
+        if ($user->may('receive-all-tickets')){
+            $query->where(function($q) use($user){
+                $q->where('tickets.user_id', '=', $user->user_id)
+                    ->orWhereNull('tickets.department');
+            });
+        }
+        else{
+            $query->where(function($q) use($user){
+                $q->where('tickets.user_id', '=', $user->user_id)
+                    ->orWhereIn(\DB::raw($user->user_id), static::getAssignableUsersQuery()->select('users.user_id')->toBase());
+            });
 
-        // TODO: this
-
-//
-//        if ($user->may('view-dept-courses'))
-//        {
-//            $departments = $user->departments()->lists('department');
-//            $query = $query->where(function($query) use ($departments, $user) {
-//                $query = $query->whereIn('department', $departments);
-//                return $query = $query->orWhere('user_id', $user->user_id);
-//            });
-//        }
-//        elseif (!$user->may('view-all-courses'))
-//        {
-//            $query = $query->where('user_id', $user->user_id);
-//        }
+            //dd($query->toSql());
+        }
 
         return $query;
     }

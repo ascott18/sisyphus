@@ -360,9 +360,9 @@ var e = new k(function() {
 
 app.controller('HelpModalController', ['$scope', 'HelpService', function($scope, HelpService) {
 
-    $scope.SELECT_OPTION = 0;
-    $scope.COURSE_OPTIONS = 1;
-    $scope.BOOK_OPTIONS = 2;
+    $scope.SELECT_OPTION = HelpService.SELECT_OPTION;
+    $scope.COURSE_OPTION = HelpService.COURSE_OPTION;
+    $scope.BOOK_OPTION = HelpService.BOOK_OPTION;
 
     $scope.stage = $scope.SELECT_OPTION;
 
@@ -382,15 +382,15 @@ app.controller('HelpModalController', ['$scope', 'HelpService', function($scope,
     $scope.selectOption = function (selected) {
         if (selected.options && selected.options.length != 0) {
             $scope.options = selected.options;
-            $scope.stage = selected.optionsType;
+            $scope.stage = selected.optionType;
         }
         else {
             $scope.createTicket(selected);
         }
     };
 
-    $scope.createTicket = function (option) {
-        window.location.href = $scope.href + "?url=" + option.url + "&title=" + option.title;
+    $scope.createTicket = function (ticketInfo) {
+        window.location.href = $scope.href + "?url=" + ticketInfo.url + "&title=" + ticketInfo.title + "&department=" + ticketInfo.department;
     }
 }]);
 
@@ -432,18 +432,73 @@ app.factory("HelpService", function() {
 
     var defaultOptions = [{header: "Report a Problem", body: "Does something not look right? Let us know."},
                           {header: "Ask a Question", body: "Need some help? Submit a question."}];
+
+    var SELECT_OPTION = 0;
+    var COURSE_OPTION = 1;
+    var BOOK_OPTION = 2;
+
+
     var options = defaultOptions;
 
-    var updateOptions = function(newOptions) {
-        this.options = newOptions.concat(defaultOptions);
+    var updateOptions = function(option) {
+        this.options = defaultOptions.push(option);
     };
 
-    var addCourseOptions = function(courses) {
+    var addCourseHelpOption = function(courses) {
+        var selectCourseHelpOption =  {header: "Report Error in Course List",
+            body: "Select this option if a course you are teaching is not listed here or a course you are not teaching is listed.",
+            optionType: COURSE_OPTION};
 
+        var options = [];
+
+        for (var index in courses) {
+            var option = {};
+            var course = courses[index];
+            option['course'] = course;
+            option['url'] = "/courses/details/" + course.course_id;
+            option['title'] = "test";
+            option['department'] = course.listings[0].department;
+            options.push(option);
+        }
+
+        var option = {};
+        option['body'] = "Missing course";
+        option['url'] = null;
+        options.push(option);
+
+        selectCourseHelpOption['options'] = options;
+
+        updateOptions(selectCourseHelpOption);
     };
 
-    var service = {options       : options      ,
-                   updateOptions : updateOptions};
+    var addBookHelpOption = function(books) {
+        var selectBooksHelpOptions = [{header: "Report Problem with Book",
+                                       body: "Is there a problem with a book? Please report it.",
+                                       optionType: BOOK_OPTION}];
 
+        var options = [];
+
+        for (var index in books) {
+            var option = {};
+            var book = books[index];
+            option['book'] = book;
+            option['url'] = "/books/details/" + book.book_id;
+            option['title'] = "test";
+            options.push(option);
+        }
+
+        selectBooksHelpOptions['options'] = options;
+
+        updateOptions(selectBooksHelpOptions);
+    };
+
+
+    var service = {options              : options,
+                   updateOptions        : updateOptions,
+                   addCourseHelpOption  : addCourseHelpOption,
+                   addBookHelpOption    : addBookHelpOption,
+                   SELECT_OPTION        : SELECT_OPTION,
+                   COURSE_OPTION       : COURSE_OPTION,
+                   BOOK_OPTION        : BOOK_OPTION};
     return service;
 });

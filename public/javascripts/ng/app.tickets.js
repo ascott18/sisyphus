@@ -59,9 +59,6 @@ app.filter('status', function () {
                 out = "New";
                 break;
             case 1:
-                out = "Waiting";
-                break;
-            case 2:
                 out = "In Progress";
                 break;
             default:
@@ -78,20 +75,22 @@ app.controller('TicketController', ['$scope', '$http', 'TicketsService', 'status
     $scope.comment = {body: ""};
 
     $scope.statuses = TicketsService.statuses;
-    $scope.statusSelected = "";
+    $scope.statusSelected;
 
     $scope.setTicket = function(ticket) {
         $scope.ticket = ticket;
+        $scope.statusSelected = $scope.statuses[$scope.ticket.status];
         $scope.comments = ticket.comments;
     };
 
     $scope.submitComment = function() {
 
         if ($scope.comment['body'].trim()) {
-            $http.post('/tickets/submit-comment', {comment: $scope.comment, ticketId: $scope.ticket["ticket_id"], ticketStatus : $scope.statusSelected}).then(
+            $http.post('/tickets/submit-comment', {comment: $scope.comment, ticket_id: $scope.ticket["ticket_id"], status : $scope.statusSelected.key}).then(
                 function success(response){
                     $scope.comment = {body: ""};
                     $scope.comments = response.data.comments;
+                    $scope.ticket.status = response.data.status;
                 });
         }
     };
@@ -109,7 +108,9 @@ app.directive('ticketDetails', function() {
 });
 
 app.service('TicketsService', function () {
-    var statuses = ["New", "Waiting", "In Progress", "Closed"];
+    var statuses = [{key : 0, value: "New"},
+                    {key : 1, value: "In progress"},
+                    {key : 2, value: "Closed"}];
 
     var service = {
         statuses: statuses

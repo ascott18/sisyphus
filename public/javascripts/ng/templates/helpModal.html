@@ -17,7 +17,7 @@
                     </a>
                 </div>
 
-                <div class="list-group" ng-show="getStage() === COURSE_OPTIONS">
+                <div class="list-group" ng-show="getStage() === COURSE_OPTION">
                     <a ng-repeat="option in options"
                        class="list-group-item"
                        ng-click="createTicket(option)">
@@ -38,7 +38,7 @@
 
 
 
-                <div class="list-group" ng-show="getStage() === BOOK_OPTIONS">
+                <div class="list-group" ng-show="getStage() === BOOK_OPTION">
                     <a ng-repeat="option in options"
                        class="list-group-item"
                        ng-click="createTicket(option)">

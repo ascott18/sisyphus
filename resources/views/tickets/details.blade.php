@@ -8,9 +8,9 @@
 
 @section('content')
 
-    <div class="row">
-        <div class="col-lg-7" ng-controller="TicketController as tc">
-            <div class="panel panel-default" ng-init="setTicket({{$ticket}})">
+    <div class="row" ng-controller="TicketController as tc" ng-init="setTicket({{$ticket}})">
+        <div class="col-lg-7" >
+            <div class="panel panel-default" >
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="fa fa-life-ring fa-fw"></i>
                         [[ ticket.title ]]
@@ -38,7 +38,7 @@
                                 <div style="padding-left: 10px; display: table-cell; vertical-align: top;">
                                     <small >
                                         <span>
-                                            <b>[[comment.author.first_name]] [[comment.author.last_name]]</b>
+                                            <b>[[comment.user.first_name]] [[comment.user.last_name]]</b>
                                             <span class="text-muted" >
                                                 on <moment>[[comment.created_at ]] </moment>
                                             </span>
@@ -63,13 +63,10 @@
 
                                 <div class="form-group pull-left">
 
-                                    <select class="form-control">
-                                        <option ng-repeat="status in statuses" ng-selected="$index == ticket.status" ng-value="$index"  ng-model="statusSelected">
-                                            [[ status ]]
-                                        </option>
-
+                                    <select class="form-control"
+                                            ng-options="status as status.value for status in statuses track by status.key"
+                                            ng-model="statusSelected">
                                     </select>
-
 
                                 </div>
 
@@ -90,10 +87,54 @@
 
         </div>
         <div class="col-lg-5">
-            <ticket-details
-                    ticket="{{$ticket}}"
-                    author="{{$ticket->user}}">
-            </ticket-details>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><i class="fa fa-info fa-fw"></i>
+                        Details
+                    </h3>
+                </div>
+                <div class="panel-body">
+
+                    <dl class="col-md-12 dl-horizontal">
+                        <dt>Assigned To</dt>
+                        <dd>
+                            [[ ticket['assignedToDisplay'] ]]
+                        </dd>
+
+                        <dt>Linked To</dt>
+                        <dd>
+                            <a ng-href="[[ ticket['url'] ]]">
+                                [[ ticket['url'] ]]
+                            </a>
+                        </dd>
+
+                        <dt>Created By</dt>
+                        <dd>
+                            [[ ticket.user['last_first_name'] ]]
+                        </dd>
+
+                        <dt>Created On</dt>
+                        <dd>
+                            [[ ticket['created_at'] ]]
+                        </dd>
+
+                        <dt>Email</dt>
+                        <dd>
+                            [[ ticket.user['email'] ]]
+                        </dd>
+
+                        <dt>Status</dt>
+                        <dd>
+                <span ng-class="{'label label-default': ticket['status'] == 0,
+                                 'label label-primary': ticket['status'] == 1,
+                                 'label label-success': ticket['status'] == 2}">
+                    [[ ticket['status'] | status ]]
+                </span>
+
+                        </dd>
+                    </dl>
+                </div>
+            </div>
         </div>
     </div>
 

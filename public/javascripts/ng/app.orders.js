@@ -148,45 +148,11 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
 	$scope.STAGE_SELECT_BOOKS  = 2;
 	$scope.STAGE_REVIEW_ORDERS = 3;
 	$scope.STAGE_ORDER_SUCCESS = 4;
-	var selectCourseHelpOptions = [];
-	var selectBooksHelpOptions = [];
-
-    var initCourseOptions = function () {
-        var options = [];
-
-        for (var index in $scope.courses) {
-            var option = {};
-            var course = $scope.courses[index];
-            option['course'] = course;
-            option['url'] = "/courses/details/" + course.course_id;
-            option['title'] = "test";
-            options.push(option);
-        }
-
-        var option = {};
-        option['body'] = "Missing course";
-        option['url'] = null;
-        options.push(option);
-
-        return options;
-    };
-
-
-	var initOptions = function () {
-
-		selectCourseHelpOptions =  [{header: "Report Error in Course List", body: "Select this option if a course you are teaching is not listed here or a course you are not teaching is listed.", options: initCourseOptions(), optionsType: $scope.COURSE_OPTIONS}];
-		selectBooksHelpOptions = [{header: "Report Problem with Book", body: "Is there a problem with a book? Please report it.", options: [{header : "test"}], optionsType: $scope.BOOK_OPTIONS}];
-
-		HelpService.updateOptions(selectCourseHelpOptions);
-	};
 
 	$scope.setCourses = function (courses) {
 		$scope.courses = courses;
-		initOptions();
+		HelpService.addCourseHelpOption(courses);
 	};
-
-
-
 
 	$scope.cartBooks = CartService.cartBooks;
 
@@ -200,10 +166,10 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
 		$scope.stage = stage;
 
 		if ($scope.stage == $scope.STAGE_SELECT_COURSE) {
-			HelpService.updateOptions(selectCourseHelpOptions);
+			HelpService.addCourseHelpOption($scope.courses);
 		}
 		else if ($scope.stage == $scope.STAGE_SELECT_BOOKS) {
-			HelpService.updateOptions(selectBooksHelpOptions);
+			HelpService.addBookHelpOption([]);
 		}
 	};
 
