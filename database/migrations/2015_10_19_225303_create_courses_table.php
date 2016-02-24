@@ -21,7 +21,10 @@ class CreateCoursesTable extends Migration
             $table->integer('course_number')->unsigned();
             $table->integer('course_section')->unsigned();
 
-            $table->timestamps();
+
+
+            // See https://github.com/laravel/framework/issues/11518 for why this is nullable.
+            $table->nullableTimestamps();
         });
     }
 

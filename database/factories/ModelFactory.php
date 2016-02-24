@@ -67,8 +67,6 @@ $factory->define(App\Models\User::class, function (Faker\Generator $faker) {
 
 $factory->define(App\Models\Order::class, function (Faker\Generator $faker) {
     return [
-        'quantity_requested' => $faker->numberBetween(5, 50),
-        'ordered_by_name' => $faker->name,
         'book_id' => dbRandom(App\Models\Book::class, 'book_id'),
         'course_id' => dbRandom(App\Models\Course::class, 'course_id'),
     ];

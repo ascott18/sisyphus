@@ -289,7 +289,7 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
                 departments: $scope.DeptsSelected,
         }, {timeout: $scope.canceler.promise}).then(function(response) {
             var courses = Enumerable.From(response.data['courses']);
-            console.log(response.data['courses']);
+
             var reportRows = courses
 
                 // Select an object for each order that has been returned back to us.
@@ -384,7 +384,6 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
             reportRows = reportRows.ToArray();
 
             $scope.reportRows = reportRows;
-            //console.log($scope.reportRows);
         });
 
     }

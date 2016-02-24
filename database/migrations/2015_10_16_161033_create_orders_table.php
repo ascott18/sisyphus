@@ -21,7 +21,10 @@ class CreateOrdersTable extends Migration
             $table->integer('status')->unsigned(); // this has since been removed.
             $table->string('ordered_by_name'); // this has since been removed.
             $table->integer('quantity_requested')->unsigned(); // this has since been removed.
-            $table->timestamps();
+
+
+            // See https://github.com/laravel/framework/issues/11518 for why this is nullable.
+            $table->nullableTimestamps();
         });
     }
 

@@ -20,7 +20,10 @@ class CreateTermsTable extends Migration
             $table->date('order_due_date');
             $table->unsignedInteger('year');
 
-            $table->timestamps();
+
+
+            // See https://github.com/laravel/framework/issues/11518 for why this is nullable.
+            $table->nullableTimestamps();
         });
 
         Schema::table('courses', function(Blueprint $table) {

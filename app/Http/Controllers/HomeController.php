@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Middleware\CASAuth;
 use App\Models\Book;
 use App\Models\Course;
+use App\Models\Order;
 use App\Models\Term;
 use Auth;
 use Cache;
@@ -102,13 +103,7 @@ class HomeController extends Controller
             // TODO: how does this react to many orders placed at the same instant?
             $orderReport = Course::visible()
                 ->where('term_id', '=', $term->term_id)
-                ->join('orders', function ($join) {
-                    $join
-                        ->on('orders.course_id', '=', 'courses.course_id')
-                        ->on('orders.created_at', '=', \DB::raw("(SELECT MIN(o.created_at) FROM orders o WHERE o.course_id = courses.course_id AND o.deleted_at IS NULL)"))
-                        ->whereNull('orders.deleted_at');
-                })
-                ->select(\DB::raw('count(*) as count, DATE(orders.created_at) as date'))
+                ->select(\DB::raw('count(*) as count, (SELECT DATE(MIN(o.created_at)) FROM orders o WHERE o.course_id = courses.course_id AND o.deleted_at IS NULL) as date'))
                 ->groupBy('date')
                 ->orderBy('date')
                 ->get();
@@ -221,31 +216,56 @@ class HomeController extends Controller
 
         $start = Carbon::today()->subDays(static::ACTIVITY_STATS_DAYS);
 
-        $activityReport = Course::visible()
-            ->join('orders', function ($join) {
-                $join
-                    ->on('orders.course_id', '=', 'courses.course_id')
-                    ->on('courses.no_book_marked', 'IS', \DB::raw('NULL'))
-                    ->whereNull('orders.deleted_at');
-            })
+
+        // Create the union of order creation, deletion, and no book marking.
+        $activitySources = Course::visible()
+
+            // Get all the order creation events. We want to include the creation of deleted orders.
+            ->join('orders', 'orders.course_id', '=', 'courses.course_id')
+            ->selectRaw('orders.course_id, DATE(orders.created_at) as date')
+            ->where('orders.created_at', '>=', $start)
+
+            // Union on all the order deletion events.
+            ->union(
+                Course::visible()
+                    ->join('orders', 'orders.course_id', '=', 'courses.course_id')
+                    ->selectRaw('orders.course_id, DATE(orders.deleted_at) as date')
+                    ->where('orders.deleted_at', '>=', $start)
+                    ->toBase()
+            )
+
+            // Union on all the no book marked events.
+            ->union(
+                // Note that this is not a perfect way of doing this since
+                // the no book marked event can change at any time.
+                Course::visible()
+                    ->selectRaw('courses.course_id, DATE(courses.no_book_marked) as date')
+                    ->where('courses.no_book_marked', '>=', $start)
+                    ->toBase()
+            )
+            ->toBase();
+
+
+        // Select from our union of our three different stats that we care about
+        // to generate our actual report data.
+        $activityReport = \DB::table( \DB::raw("({$activitySources->toSql()}) as activities") )
+            ->mergeBindings($activitySources)
+            ->selectRaw('count(*) as count, date')
             ->groupBy('date')
             ->orderBy('date')
-            ->having('date', '>=', $start)
-            ->select(\DB::raw('count(*) as count,
-                DATE(CASE WHEN no_book_marked is not NULL
-                    THEN no_book_marked
-                    ELSE orders.created_at end) as date'))
             ->get();
 
+
+        $activityReportOut = $activityReport;
         while ($start < Carbon::today()){
-            $f = $activityReport->filter(function($value) use ($start){
-                return $value['date'] == $start->toDateString();
+            $f = collect($activityReport)->filter(function($value) use ($start){
+                return $value->date == $start->toDateString();
             });
 
             $count = count($f);
 
             if ($count == 0){
-                $activityReport[] = [
+                $activityReportOut[] = [
                     'date' => $start->toDateString(),
                     'count' => 0
                 ];
@@ -254,7 +274,7 @@ class HomeController extends Controller
             $start->addDays(1);
         }
 
-        return $activityReport;
+        return $activityReportOut;
     }
 
     private static function getAccumulationsFromReport($reportData)
@@ -262,7 +282,8 @@ class HomeController extends Controller
         $result = [];
         $total = 0;
         foreach ($reportData as $line) {
-            $result[$line->date] = $total = $total + $line->count;
+            if ($line->date)
+                $result[$line->date] = $total = $total + $line->count;
         }
 
         return $result;

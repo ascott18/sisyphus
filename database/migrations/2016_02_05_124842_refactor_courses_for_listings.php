@@ -26,7 +26,8 @@ class RefactorCoursesForListings extends Migration
             $table->index('department', 'idx_department');
             $table->index('number', 'idx_number');
 
-            $table->timestamps();
+            // See https://github.com/laravel/framework/issues/11518 for why this is nullable.
+            $table->nullableTimestamps();
         });
 
         Schema::table('courses', function(Blueprint $table) {

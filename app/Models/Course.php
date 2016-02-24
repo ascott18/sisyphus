@@ -117,18 +117,20 @@ class Course extends Model
                     ->select('department')
                     ->toBase();
 
-                $query->whereIn('courses.course_id',
-                    Listing
-                        ::select('course_id')
+                $query->where('courses.user_id', '=', $user->user_id);
+
+                return $query = $query->orWhereIn('courses.course_id',
+                    Listing::withoutGlobalScope('order')
+                        ->select('course_id')
                         ->distinct()
                         ->whereIn('listings.department', $deptSubQuery)
                         ->toBase()
                 );
-
-                return $query = $query->orWhere('courses.user_id', '=', $user->user_id);
             });
         }
-
-        return $query = $query->where('courses.user_id', '=', $user->user_id);
+        else {
+            return $query = $query->where('courses.user_id', '=', $user->user_id);
+        }
     }
+
 }

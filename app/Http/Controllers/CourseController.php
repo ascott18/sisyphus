@@ -272,6 +272,8 @@ class CourseController extends Controller
                     return $query->select('course_id');
                 },
             ]);
+
+
         if(isset($tableState->term_selected) && $tableState->term_selected != "") {
             $query = $query->where('term_id', '=', $tableState->term_selected);
         }

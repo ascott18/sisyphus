@@ -17,7 +17,10 @@ class CreateBooksTable extends Migration
             $table->string('title', 255);
             $table->string('isbn13', 13);
             $table->string('asin', 15); // Let this be 15 for future proofing - ASINs are only 10 chars.
-            $table->timestamps();
+
+
+            // See https://github.com/laravel/framework/issues/11518 for why this is nullable.
+            $table->nullableTimestamps();
         });
     }
 

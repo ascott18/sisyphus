@@ -333,7 +333,7 @@ EOL;
                             //if ($classCapacity){
                             //    $dbOrder->notes = "Class Capacity: $classCapacity";
                             //}
-                            $dbOrder->save();
+                            //$dbOrder->save();
 
 
                             // TODO: this date is fake data.

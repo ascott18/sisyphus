@@ -22,7 +22,9 @@ class CreateAuthorsTable extends Migration
 
             $table->foreign('book_id')->references('book_id')->on('books')->onDelete('cascade');
 
-            $table->timestamps();
+
+            // See https://github.com/laravel/framework/issues/11518 for why this is nullable.
+            $table->nullableTimestamps();
         });
     }
 

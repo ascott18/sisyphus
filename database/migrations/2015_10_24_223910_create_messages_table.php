@@ -21,7 +21,10 @@ class CreateMessagesTable extends Migration
             $table->integer('owner_user_id')->unsigned();
             $table->foreign('owner_user_id')->references('user_id')->on('users');
 
-            $table->timestamps();
+
+
+            // See https://github.com/laravel/framework/issues/11518 for why this is nullable.
+            $table->nullableTimestamps();
         });
 
         Schema::table('users', function(Blueprint $table) {

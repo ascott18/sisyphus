@@ -15,7 +15,9 @@ class CreateTickets extends Migration
         Schema::create('tickets', function(Blueprint $table) {
             $table->increments('ticket_id');
 
-            $table->timestamps();
+
+            // See https://github.com/laravel/framework/issues/11518 for why this is nullable.
+            $table->nullableTimestamps();
 
             $table->string('title');
             $table->string('url');
@@ -31,7 +33,9 @@ class CreateTickets extends Migration
             $table->increments('ticket_comment_id');
             $table->mediumText('body');
 
-            $table->timestamps();
+
+            // See https://github.com/laravel/framework/issues/11518 for why this is nullable.
+            $table->nullableTimestamps();
 
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('user_id')->on('users');
