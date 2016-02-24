@@ -10,12 +10,8 @@ app.directive('bookEditor', function() {
     };
 });
 
-app.controller('BooksController', ['$scope', '$http', 'HelpService', function($scope, $http, HelpService) {
+app.controller('BooksController', ['$scope', '$http', function($scope, $http) {
 
-    var helpOptions =  [{header: "Report Error in Books", body: "Select this option if there is an error in the books", href: "/tickets/create"},
-        {header: "Report Error in Book Details", body: "Select this option is there is an error in the book details you would like to report",  href: "/tickets/create"}];
-
-    HelpService.updateOptions(helpOptions);
 
     $scope.callServer = function callServer(tableState) {
 
@@ -88,7 +84,13 @@ app.controller('EditBookController', function($scope, $http) {
     $scope.reset();
 });
 
-app.controller('BookDetailsController', function($scope, StHelper) {
+app.controller('BookDetailsController', function($scope, StHelper, HelpService) {
+
+    $scope.setHelpOption = function(book) {
+        HelpService.addBookHelpOption([book]);
+    };
+
+
     $scope.getBookCoverImageUrl = function(){
         return '/books/cover?isbn=' + $scope.book_isbn_13;
     };

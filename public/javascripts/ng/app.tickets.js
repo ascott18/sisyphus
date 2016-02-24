@@ -52,22 +52,17 @@ app.controller('NewTicketController', ['$scope', '$http', 'HelpService', 'status
 }]);
 
 
-app.filter('status', function () {
+app.filter('status', ['TicketsService', function (TicketsService) {
     return function(input) {
-        switch(input) {
-            case 0:
-                out = "New";
-                break;
-            case 1:
-                out = "In Progress";
-                break;
-            default:
-                out = "Closed";
-                break;
+        var statuses = TicketsService.statuses;
+        for (var index in statuses) {
+            if (input == statuses[index].key) {
+                return statuses[index].value;
+            }
         }
-        return out;
+        return statuses[statuses.length - 1].value;
     };
-});
+}]);
 
 app.controller('TicketController', ['$scope', '$http', 'TicketsService', 'statusFilter', function($scope, $http, TicketsService, statusFilter) {
     $scope.ticket = {};

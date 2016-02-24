@@ -526,9 +526,9 @@ app.factory("HelpService", function() {
     };
 
     var addBookHelpOption = function(books) {
-        var selectBooksHelpOptions = [{header: "Report Problem with Book",
+        var selectBooksHelpOptions = {header: "Report Problem with Book",
                                        body: "Is there a problem with a book? Please report it.",
-                                       optionType: BOOK_OPTION}];
+                                       optionType: BOOK_OPTION};
 
         var options = [];
 

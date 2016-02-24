@@ -13,6 +13,7 @@
      ng-init="
         book_id = {{ $book->book_id }};
         book_isbn_13 = '{{ $book->isbn13 }}';
+        setHelpOption({{$book}});
     "
     >
     <div class="col-lg-12">
