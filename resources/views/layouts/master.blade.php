@@ -43,8 +43,6 @@
     @yield('scripts-head')
 </head>
 <body ng-app="sisyphus" ng-controller="HelpModalController">
-
-
 <div id="wrapper">
 
     {{--Uncomment this. I dare you.--}}
@@ -52,7 +50,7 @@
         {{--<button class="btn btn-lg btn-primary"--}}
                 {{--style="position: relative; top: -35px; left: 60%; z-index: 100000"--}}
                 {{--ng-click="espanol()">--}}
-            {{--en espaÃ±ol--}}
+            {{--en español--}}
         {{--</button>--}}
     {{--</div>--}}
 

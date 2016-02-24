@@ -1,5 +1,5 @@
 
-var app = angular.module('sisyphus', ['sisyphus.helpers', 'angularUtils.directives.dirPagination', 'textAngular']);
+var app = angular.module('sisyphus', ['sisyphus.helpers', 'textAngular']);
 
 
 app.config(function($provide) {
@@ -23,8 +23,8 @@ app.config(function($provide) {
     }]);
 });
 
-app.controller('NewTicketController', ['$scope', '$http', 'HelpService', function($scope, $http, HelpService) {
-    $scope.ticket = {department : 'CSCD', 'url' : 'google.com'};
+app.controller('NewTicketController', ['$scope', '$http', 'HelpService', 'statusFilter', function($scope, $http, HelpService, statusFilter) {
+    $scope.ticket = {};
 
 
     //var unloadListener = function (e) {
@@ -36,10 +36,14 @@ app.controller('NewTicketController', ['$scope', '$http', 'HelpService', functio
 
     //window.addEventListener("beforeunload", unloadListener);
 
+    $scope.setTicket = function(ticket) {
+        $scope.ticket = ticket;
+    };
+
     $scope.submitTicket = function(){
         //window.removeEventListener("beforeunload", unloadListener);
 
-        $http.post('/tickets/submit-ticket', {ticket : $scope.ticket }).then(
+        $http.post('/tickets/submit-ticket', {ticket : $scope.ticket}).then(
             function success(response){
                 var ticket = response.data;
                 $scope.ticket = ticket;
@@ -47,38 +51,14 @@ app.controller('NewTicketController', ['$scope', '$http', 'HelpService', functio
     };
 }]);
 
-app.controller('TicketController', function($scope, $http) {
-    $scope.ticket = {};
-    $scope.comments = [];
-    $scope.comment = {body: ""};
 
-    $scope.setTicket = function(ticket) {
-        $scope.ticket = ticket;
-        $scope.comments = ticket.comments;
-    };
-
-    $scope.submitComment = function() {
-
-        if ($scope.comment['body'].trim()) {
-            $http.post('/tickets/submit-comment', {comment: $scope.comment, ticketId: $scope.ticket["ticket_id"]}).then(
-                function success(response){
-                    $scope.comment = {body: ""};
-                    $scope.comments = response.data.comments;
-                });
-        }
-    };
-});
-
-app.filter('ticketStatus', function () {
+app.filter('status', function () {
     return function(input) {
         switch(input) {
             case 0:
                 out = "New";
-                break
-            case 1:
-                out = "Waiting";
                 break;
-            case 2:
+            case 1:
                 out = "In Progress";
                 break;
             default:
@@ -88,6 +68,33 @@ app.filter('ticketStatus', function () {
         return out;
     };
 });
+
+app.controller('TicketController', ['$scope', '$http', 'TicketsService', 'statusFilter', function($scope, $http, TicketsService, statusFilter) {
+    $scope.ticket = {};
+    $scope.comments = [];
+    $scope.comment = {body: ""};
+
+    $scope.statuses = TicketsService.statuses;
+    $scope.statusSelected;
+
+    $scope.setTicket = function(ticket) {
+        $scope.ticket = ticket;
+        $scope.statusSelected = $scope.statuses[$scope.ticket.status];
+        $scope.comments = ticket.comments;
+    };
+
+    $scope.submitComment = function() {
+
+        if ($scope.comment['body'].trim()) {
+            $http.post('/tickets/submit-comment', {comment: $scope.comment, ticket_id: $scope.ticket["ticket_id"], status : $scope.statusSelected.key}).then(
+                function success(response){
+                    $scope.comment = {body: ""};
+                    $scope.comments = response.data.comments;
+                    $scope.ticket.status = response.data.status;
+                });
+        }
+    };
+}]);
 
 app.directive('ticketDetails', function() {
     return {
@@ -100,8 +107,20 @@ app.directive('ticketDetails', function() {
     };
 });
 
-app.controller('TicketsIndexController', function($scope, StHelper) {
-    $scope.statuses = ["New", "Waiting", "In Progress", "Closed"];
+app.service('TicketsService', function () {
+    var statuses = [{key : 0, value: "New"},
+                    {key : 1, value: "In progress"},
+                    {key : 2, value: "Closed"}];
+
+    var service = {
+        statuses: statuses
+    };
+
+    return service;
+});
+
+app.controller('TicketsIndexController', function($scope, StHelper, statusFilter, TicketsService) {
+    $scope.statuses = TicketsService.statuses;
 
     $scope.updateStatus = function()
     {

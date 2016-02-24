@@ -90,35 +90,15 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
     function($scope, $http, CartService, BreadcrumbService, HelpService){
 
     $scope.courses = [];
+	$scope.STAGE_SELECT_COURSE = 1;
+	$scope.STAGE_SELECT_BOOKS  = 2;
+	$scope.STAGE_REVIEW_ORDERS = 3;
+	$scope.STAGE_ORDER_SUCCESS = 4;
 
     $scope.setCourses = function (courses) {
         $scope.courses = courses;
+		HelpService.addCourseHelpOption(courses);
     };
-
-    $scope.setCourseOptions = function() {
-        var courseTitles = [];
-
-        for (var course in $scope.courses) {
-            var courseTitle = [];
-            courseTitle.push(course.department);
-            courseTitle.push(course.course_number);
-            courseTitle.push(course.section);
-
-            courseTitles.push(course.join(" "));
-        }
-
-        return courseTitles;
-    };
-
-    var selectCourseHelpOptions =  [{header: "Report Error in Course List", body: "Select this option if a course you are teaching is not listed here or a course you are not teaching is listed.", options: $scope.setCourseOptions()}];
-    var selectBooksHelpOptions = [{header: "Report Problem with Book", body: "Is there a problem with a book? Please report it.", options: [{header : "test"}]}];
-
-    HelpService.updateOptions(selectCourseHelpOptions);
-
-    $scope.STAGE_SELECT_COURSE = 1;
-    $scope.STAGE_SELECT_BOOKS  = 2;
-    $scope.STAGE_REVIEW_ORDERS = 3;
-    $scope.STAGE_ORDER_SUCCESS = 4;
 
     $scope.cartBooks = CartService.cartBooks;
 
@@ -132,10 +112,10 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
         $scope.stage = stage;
 
         if ($scope.stage == $scope.STAGE_SELECT_COURSE) {
-            HelpService.updateOptions(selectCourseHelpOptions);
+			HelpService.addCourseHelpOption($scope.courses);
         }
         else if ($scope.stage == $scope.STAGE_SELECT_BOOKS) {
-            HelpService.updateOptions(selectBooksHelpOptions);
+			HelpService.addBookHelpOption([]);
         }
     };
 
