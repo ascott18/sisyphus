@@ -128,7 +128,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-lg-12 col-lg-vspace">
+                        <div class="col-lg-12 col-md-vspace">
                             <h4>What would you like included in your report?</h4>
                             <small class="text-muted">(Must select at least one)</small>
 

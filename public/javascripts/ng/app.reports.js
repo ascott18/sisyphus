@@ -225,8 +225,8 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
     $scope.onSelectTerm = function()
     {
         var term = $scope.TermSelected;
-        $scope.reportDateStart = moment(term.order_start_date).addMonths(-1).toDate();
-        $scope.reportDateEnd = moment(term.order_due_date).addMonths(1).toDate();
+        $scope.reportDateStart = moment(term.order_start_date).subtract(1, 'months').toDate();
+        $scope.reportDateEnd = moment(term.order_due_date).add(1, 'months').toDate();
     };
 
     $scope.selectAllDepts = function()
