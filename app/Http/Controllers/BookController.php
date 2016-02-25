@@ -34,14 +34,16 @@ class BookController extends Controller
      * @return \Illuminate\Database\Eloquent\Builder
      */
     private function buildBookSearchQuery($tableState, $query) {
-        $predicateObject = [];
         if(isset($tableState->search->predicateObject))
             $predicateObject = $tableState->search->predicateObject; // initialize predicate object
+        else {
+            return $query;
+        }
 
-        if(isset($predicateObject->title))
+        if(isset($predicateObject->title) && $predicateObject->title != '')
             $query = $query->where('title', 'LIKE', '%'.$predicateObject->title.'%');
 
-        if(isset($predicateObject->author)) {
+        if(isset($predicateObject->author) && $predicateObject->author != '') {
             $query = $query->where('authors.name', 'LIKE', '%'.$predicateObject->author.'%');
             /*
             $query->join('authors', function ($join) use ($predicateObject) {
@@ -51,10 +53,10 @@ class BookController extends Controller
             */
         }
 
-        if(isset($predicateObject->publisher))
+        if(isset($predicateObject->publisher) && $predicateObject->publisher != '')
             $query = $query->where('publisher', 'LIKE', '%'.$predicateObject->publisher.'%');
 
-        if(isset($predicateObject->isbn13)) {
+        if(isset($predicateObject->isbn13) && $predicateObject->isbn13 != '') {
             $isbn = str_replace("-", "", $predicateObject->isbn13);
             $query = $query->where('isbn13', 'LIKE', '%' . $isbn . '%');
         }
@@ -121,7 +123,7 @@ class BookController extends Controller
                         ->whereNull('orders.deleted_at');
                 })
                 ->select('orders.book_id')
-                ->getQuery());
+                ->toBase());
         }
         else {
             // I am self-join, destroyer of worlds.
@@ -142,9 +144,12 @@ class BookController extends Controller
                     })
                     ->select('orders.book_id')
                     ->distinct()
-                    ->getQuery()
+                    ->toBase()
             );
         }
+
+        $query->select('books.*')
+            ->distinct();
 
         if((isset($tableState->sort->predicate) && $tableState->sort->predicate == "author")
             || isset($tableState->search->predicateObject->author) ) { // only join when we actually need it
@@ -158,7 +163,7 @@ class BookController extends Controller
 
         $query = $query->with('authors');
 
-        $books = $query->paginate(10);
+        $books = SearchServiceProvider::paginate($query, 10);
 
         return response()->json($books);
     }
@@ -172,14 +177,17 @@ class BookController extends Controller
      */
 
     private function buildBookDetailSearchQuery($tableState, $query) {
-        $predicateObject = [];
         if(isset($tableState->search->predicateObject))
             $predicateObject = $tableState->search->predicateObject; // initialize predicate object
+        else {
+            return $query;
+        }
 
-        if(isset($predicateObject->section))
-            SearchHelper::sectionSearchQuery($query, $predicateObject->section, 'listings.course_id'); // use search helper for section search
-        if(isset($predicateObject->name))
-            $query = $query->where('name', 'LIKE', '%'.$predicateObject->course_name.'%');
+        if(isset($predicateObject->section) && $predicateObject->section != '')
+        SearchHelper::sectionSearchQuery($query, $predicateObject->section); // use search helper for section search
+        if(isset($predicateObject->name) && $predicateObject->name != '') {
+            $query = $query->where('name', 'LIKE', '%'.$predicateObject->name.'%');
+        }
 
         return $query;
     }
@@ -198,6 +206,9 @@ class BookController extends Controller
     private function buildBookDetailSortQuery($tableState, $query) {
         if(isset($tableState->sort->predicate)) {
             $sorts = [
+                'term' => [
+                    'order_id', 'desc',
+                ],
                 'section' => [
                     'department', '',
                     'number', '',
