@@ -67,6 +67,9 @@ class RolesSeed extends Seeder
 
         makePerm('view-dashboard', "Other - View Dashboard");
 
+        makePerm('receive-dept-tickets', "Department - Receive Tickets");
+        makePerm('receive-all-tickets', "Other - Receive Unassigned Tickets");
+
 
         makeRole('admin', "Administrator")->attachPermissions([
             p('manage-users'),
@@ -83,6 +86,7 @@ class RolesSeed extends Seeder
             p('order-outside-period'),
             p('make-reports'),
             p('view-dashboard'),
+            p('receive-all-tickets'),
         ]);
 
         makeRole('store', "Bookstore Staff")->attachPermissions([
@@ -93,6 +97,7 @@ class RolesSeed extends Seeder
             p('view-all-courses'),
             p('make-reports'),
             p('view-dashboard'),
+            p('receive-all-tickets'),
         ]);
 
         makeRole('dept-sec', "Department Secretary")->attachPermissions([
@@ -105,6 +110,7 @@ class RolesSeed extends Seeder
             p('make-reports'),
             p('view-dashboard'),
             p('view-terms'),
+            p('receive-dept-tickets'),
         ]);
 
     }

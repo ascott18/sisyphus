@@ -189,10 +189,12 @@ class AuthServiceProvider extends ServiceProvider
 
 
         $gate->define('view-ticket', function (User $user, Ticket $ticket) {
-            // TODO: make this correct (check department, and have permissions for viewing department tickets, etc).
-            return $ticket->user_id == $user->user_id;
-        });
+            if ($ticket->user_id == $user->user_id)
+                true;
 
+            // Taking the easy way out...
+            return Ticket::visible()->where('ticket_id', '=', $ticket->ticket_id)->count();
+        });
 
         $gate->define('view-dashboard', function (User $user) {
             return $user->may('view-dashboard');

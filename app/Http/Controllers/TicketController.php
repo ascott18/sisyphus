@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Permission;
 use App\Models\Ticket;
 use App\Models\TicketComment;
 use App\Models\User;
@@ -13,11 +14,6 @@ use SearchHelper;
 
 class TicketController extends Controller
 {
-    public static $ticketStatusNames = [
-        0 => 'New',
-    ];
-
-
 
     /**
      * Display a listing of the resource.
@@ -33,26 +29,36 @@ class TicketController extends Controller
 
     public function getCreate(Request $request) {
         $this->authorize("all");
-        $options = [["header" => "Header 1", "body" => "body 1"], ["header" => "Header 1", "body" => "body 1"], ["header" => "Header 1", "body" => "body 1"]];
-//        $options = $request->input('options');
-        return view('tickets.create', ['options' => $options]);
+
+        $url = $request->input('url');
+        $department = $request->input('department');
+        $title = $request->input('title');
+
+        $ticket = new Ticket();
+        if ($title != null) {
+            $ticket->title = $title;
+        }
+        $ticket->url = $url;
+        $ticket->department = $department;
+        $ticket->user_id = Auth::user()->user_id;
+
+        return view('tickets.create', ['ticket' => $ticket]);
 
     }
 
     /**
      * Show the form for creating a new resource.
      *
+     * @param Request $request
      * @return \Illuminate\Http\Response
      */
     public function postSubmitTicket(Request $request)
     {
         $this->authorize("all");
+        $ticket = $request->get("ticket");
 
-        $ticket = $request->input("ticket");
-        $user_id = Auth::user()->user_id;
-
-        Ticket::create([
-            'user_id' => $user_id,
+        $ticket = Ticket::create([
+            'user_id' => $ticket['user_id'],
             'department' => $ticket['department'],
             'url' => $ticket['url'],
             'body' => $ticket['body'],
@@ -60,23 +66,27 @@ class TicketController extends Controller
             'status' => 0
         ]);
 
-        return response()->json($ticket);
+        return response()->json(['ticket' => $ticket]);
     }
 
     public function postSubmitComment(Request $request) {
-        $this->authorize("all");
+
+        $ticket_id = $request->get("ticket_id");
+
+        $ticket = Ticket::with(['comments.user', 'user'])->findOrFail($ticket_id);
+        $this->authorize("view-ticket", $ticket);
 
         $comment = $request->get("comment");
-        $ticketId = $request->get("ticketId");
+        $status = $request->get("status");
         $user_id = Auth::user()->user_id;
 
         TicketComment::create([
             'user_id' => $user_id,
-            'ticket_id' => $ticketId,
+            'ticket_id' => $ticket_id,
             'body' => $comment['body']
         ]);
 
-        $ticket = $this->initializeTicketComments($ticketId);
+        $ticket->update(['status' => $status]);
 
         return response()->json($ticket);
     }
@@ -87,24 +97,30 @@ class TicketController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function getDetails($id)
+    public function getDetails($ticket_id)
     {
-        $ticket = $this->initializeTicketComments($id);
-
-        return view('tickets.details', ['ticket' => $ticket]);
-    }
-
-    private function initializeTicketComments($id) {
-        $ticket = Ticket::findOrFail($id);
+        $ticket = Ticket::with(['comments.user', 'user'])->findOrFail($ticket_id);
 
         $this->authorize("view-ticket", $ticket);
-        $ticket->comments = $ticket->comments()->get();
 
-        foreach ($ticket->comments as $comment) {
-            $comment->author = User::findOrFail($comment->user_id);
+
+        $department = $ticket->department;
+
+        if ($department == null) {
+            $ticket['assignedToDisplay'] = "Bookstore Staff";
+        }
+        else {
+
+            $eligibleUsers = $ticket->getAssignableUsers();
+
+            if (count($eligibleUsers) == 0)
+                $ticket['assignedToDisplay'] = "Bookstore Staff";
+            else
+                $ticket['assignedToDisplay'] = join(', ', $eligibleUsers->pluck('first_last_name')->toArray());
         }
 
-        return $ticket;
+
+        return view('tickets.details', ['ticket' => $ticket]);
     }
 
     /**
@@ -171,8 +187,8 @@ class TicketController extends Controller
 
         $query = Ticket::visible($request->user());
 
-        if(isset($tableState->term_selected) && $tableState->term_selected != "") {
-            $query = $query->where('term_id', '=', $tableState->term_selected);
+        if(isset($tableState->statusSelected) && $tableState->statusSelected) {
+            $query = $query->where('status', '=', $tableState->statusSelected->key);
         }
 
         if((isset($tableState->sort->predicate) && $tableState->sort->predicate == "name")
@@ -189,10 +205,6 @@ class TicketController extends Controller
         $query = $query->with("user");
 
         $tickets = $query->paginate(10);
-
-        foreach ($tickets as $ticket) {
-            $ticket->status_display = static::$ticketStatusNames[$ticket->status];
-        }
 
         return response()->json($tickets);
     }
