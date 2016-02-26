@@ -51,15 +51,16 @@ class UserController extends Controller
     /**
      * Build the search query for the users controller
      *
-     * @param \Illuminate\Database\Query $query
-     * @param $tableState
-     * @return \Illuminate\Database\Query
+     * @param object $tableState
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     private function buildUserSearchQuery($tableState, $query)
     {
-        $predicateObject = [];
-        if(isset($tableState->search->predicateObject))
-            $predicateObject = $tableState->search->predicateObject; // initialize predicate object
+        if (isset($tableState->search->predicateObject))
+            $predicateObject = $tableState->search->predicateObject;
+        else
+            return $query;
 
         if (isset($predicateObject->lName))
             $query = $query->where('last_name', 'LIKE', '%' . $predicateObject->lName . '%');
@@ -77,13 +78,13 @@ class UserController extends Controller
     /**
      * Build the sort query for the users controller
      *
-     * @param \Illuminate\Database\Query $query
-     * @param $tableState
-     * @return \Illuminate\Database\Query
+     * @param object $tableState
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     private function buildUserSortQuery($tableState, $query)
     {
-        if(isset($tableState->sort->predicate)) {
+        if (isset($tableState->sort->predicate)) {
             $sorts = [
                 'last_name' => [
                     'last_name', '',

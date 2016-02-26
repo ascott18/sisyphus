@@ -126,20 +126,21 @@ class TicketController extends Controller
     /**
      * Build the search query for the tickets controller
      *
-     * @param \Illuminate\Database\Eloquent\Builder
-     * @param $tableState
+     * @param object $tableState
+     * @param \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
     private function buildTicketSearchQuery($tableState, $query) {
-        $predicateObject = [];
-        if(isset($tableState->search->predicateObject))
-            $predicateObject = $tableState->search->predicateObject; // initialize predicate object
+        if (isset($tableState->search->predicateObject))
+            $predicateObject = $tableState->search->predicateObject;
+        else
+            return $query;
 
-        if(isset($predicateObject->title))
+        if (isset($predicateObject->title))
             $query = $query->where('tickets.title', 'LIKE', '%'.$predicateObject->title.'%');
-        if(isset($predicateObject->name)) {
+
+        if (isset($predicateObject->name))
             SearchHelper::professorSearchQuery($query, $predicateObject->name);
-        }
 
         return $query;
     }
@@ -147,25 +148,24 @@ class TicketController extends Controller
     /**
      * Build the sort query for the tickets controller
      *
-     * @param \Illuminate\Database\Eloquent\Builder
-     * @param \Illuminate\Http\Request $tableState
+     * @param object $tableState
+     * @param \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
     private function buildTicketSortQuery($tableState, $query) {
-        if(isset($tableState->sort->predicate)) {
-            if(isset($tableState->sort->predicate)) {
-                $sorts = [
-                    'title' => [
-                        'tickets.title', '',
-                    ],
-                    'name' => [
-                        'users.last_name', '',
-                        'users.first_name', '',
-                    ]
-                ];
+        if (isset($tableState->sort->predicate)) {
+            $sorts = [
+                'title' => [
+                    'tickets.title', '',
+                ],
+                'name' => [
+                    'users.last_name', '',
+                    'users.first_name', '',
+                ]
+            ];
 
-                SearchHelper::buildSortQuery($query, $tableState->sort, $sorts);
-            }
+            SearchHelper::buildSortQuery($query, $tableState->sort, $sorts);
+
             return $query;
         }
 
@@ -181,31 +181,34 @@ class TicketController extends Controller
      */
     public function getTicketList(Request $request)
     {
-        $tableState = json_decode($request->input('table_state'));
-
         $this->authorize("all");
 
-        $query = Ticket::visible($request->user());
+        $tableState = json_decode($request->input('table_state'));
 
-        if(isset($tableState->statusSelected) && $tableState->statusSelected) {
+        $query = Ticket::visible();
+
+        if (isset($tableState->statusSelected->key)) {
             $query = $query->where('status', '=', $tableState->statusSelected->key);
         }
 
-        if((isset($tableState->sort->predicate) && $tableState->sort->predicate == "name")
+        if ((isset($tableState->sort->predicate) && $tableState->sort->predicate == "name")
             || isset($tableState->search->predicateObject->name) ) { // only join when we actually need it
 
             $query->join('users','users.user_id', '=', 'tickets.user_id');
 
         }
 
-        // TODO: nathan do this
         $query = $this->buildTicketSearchQuery($tableState, $query);
         $query = $this->buildTicketSortQuery($tableState, $query);
 
-        $query = $query->with("user");
+        $query = $query->with([
+            'user' => function($query){
+                return $query->select('user_id', 'last_name', 'first_name');
+            }
+        ]);
 
         $tickets = $query->paginate(10);
 
-        return response()->json($tickets);
+        return $tickets;
     }
 }

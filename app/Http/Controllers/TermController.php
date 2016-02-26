@@ -20,7 +20,7 @@ class TermController extends Controller
      */
     public function getIndex()
     {
-        $this->authorize("view-terms");
+        $this->authorize('view-terms');
 
         $maxYear = Term::max('year');
         $thisYear = Carbon::now()->year;
@@ -43,7 +43,7 @@ class TermController extends Controller
      */
     public function getDetails($term_id)
     {
-        $this->authorize("view-terms");
+        $this->authorize('view-terms');
 
         $term = Term::findOrFail($term_id);
 
@@ -57,7 +57,7 @@ class TermController extends Controller
     private function searchTermNames($searchTerm) {
         $results = array();
         foreach(Term::$termNumbers as $key => $termName) {
-            if(stripos($termName, $searchTerm) !== false) {
+            if (stripos($termName, $searchTerm) !== false) {
                 $results[] = $key;
             }
         }
@@ -67,27 +67,28 @@ class TermController extends Controller
     /**
      * Build the search query for the term controller
      *
-     * @param \Illuminate\Database\Eloquent\Builder
-     * @param $tableState
+     * @param object $tableState
+     * @param \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
     private function buildTermSearchQuery($tableState, $query) {
-        $predicateObject = [];
-        if(isset($tableState->search->predicateObject))
+        if (isset($tableState->search->predicateObject))
             $predicateObject = $tableState->search->predicateObject; // initialize predicate object
+        else
+            return $query;
 
-        if(isset($predicateObject->term)) {
+        if (isset($predicateObject->term)) {
             $termList = $this->searchTermNames($predicateObject->term);
 
             $query = $query->Where(function($sQuery) use ($termList) {
                 for($i=0; $i<count($termList); $i++) {
-                    $sQuery = $sQuery->orWhere("term_number", "=", $termList[$i]);            // this will take entire search into term field
+                    $sQuery = $sQuery->orWhere('term_number', '=', $termList[$i]);            // this will take entire search into term field
                 }
             });
         }
 
-        if(isset($predicateObject->year) && $predicateObject->year != "") {
-            $query = $query->where("year", "=", $predicateObject->year);              // this will search for matching year
+        if (isset($predicateObject->year) && $predicateObject->year != '') {
+            $query = $query->where('year', '=', $predicateObject->year);              // this will search for matching year
         }
 
         return $query;
@@ -96,12 +97,12 @@ class TermController extends Controller
     /**
      * Build the sort query for the term controller
      *
-     * @param \Illuminate\Database\Eloquent\Builder
-     * @param $tableState
+     * @param object $tableState
+     * @param \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
     private function buildTermSortQuery($tableState, $query) {
-        if(isset($tableState->sort->predicate)) {
+        if (isset($tableState->sort->predicate)) {
             $sorts = [
                 'term' => [
                     'term_number', '',
@@ -134,7 +135,7 @@ class TermController extends Controller
     {
         $tableState = json_decode($request->input('table_state'));
 
-        $this->authorize("view-terms");
+        $this->authorize('view-terms');
 
         $query = Term::query();
 
@@ -155,7 +156,7 @@ class TermController extends Controller
      */
     public function postDetails(Request $request, $term_id)
     {
-        $this->authorize("edit-terms");
+        $this->authorize('edit-terms');
 
         $term = Term::findOrFail($term_id);
 

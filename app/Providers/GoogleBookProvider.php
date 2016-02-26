@@ -35,15 +35,15 @@ class GoogleBookProvider extends ServiceProvider
     public function getRawSearchResults($isbn) {
         $cachedValue = Cache::get('isbn-'.$isbn);
 
-        if($cachedValue == null) {
+        if ($cachedValue == null) {
             $apiURL = 'https://www.googleapis.com/books/v1/volumes?q=isbn:' . $isbn;
-            if(config('app.google_api_key') != '') {
+            if (config('app.google_api_key') != '') {
                 $apiURL .= '&key='.config('app.google_api_key');
             }
 
             $newValue = json_decode(file_get_contents($apiURL));
 
-            if($newValue != null) {
+            if ($newValue != null) {
                 Cache::put('isbn-'.$isbn, $newValue, static::CACHE_DURATION);
             }
 
@@ -62,17 +62,17 @@ class GoogleBookProvider extends ServiceProvider
     public function getCoverThumbnail($isbn) {
         $rawSearch = $this->getRawSearchResults($isbn);
 
-        if(isset($rawSearch->items[0]->volumeInfo->imageLinks->thumbnail)) {
+        if (isset($rawSearch->items[0]->volumeInfo->imageLinks->thumbnail)) {
             $imageURL = $rawSearch->items[0]->volumeInfo->imageLinks->thumbnail;
 
             $cachedImage = Cache::get($imageURL);
 
-            if($cachedImage == null) {
+            if ($cachedImage == null) {
                 $image = file_get_contents($imageURL.config('app.google_api_key'));
 
                 $contentType = "";
                 foreach ($http_response_header as $headerLine) {
-                    if(preg_match('/content-type[^-]/i', $headerLine)){
+                    if (preg_match('/content-type[^-]/i', $headerLine)){
                         $contentType = preg_split("/[\s]/", $headerLine)[1];
                         break;
                     }

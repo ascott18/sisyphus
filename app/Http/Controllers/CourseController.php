@@ -188,21 +188,21 @@ class CourseController extends Controller
     /**
      * Build the search query for the courses controller
      *
-     * @param \Illuminate\Database\Query $query
-     * @param $tableState
-     * @return \Illuminate\Database\Query
+     * @param object $tableState
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     private function buildCourseSearchQuery($tableState, $query) {
 
         $predicateObject = [];
-        if(isset($tableState->search->predicateObject))
+        if (isset($tableState->search->predicateObject))
             $predicateObject = $tableState->search->predicateObject; // initialize predicate object
 
-        if(isset($predicateObject->section))
+        if (isset($predicateObject->section))
             SearchHelper::sectionSearchQuery($query, $predicateObject->section);
-        if(isset($predicateObject->name))
+        if (isset($predicateObject->name))
             $query = $query->where('name', 'LIKE', '%'.$predicateObject->name.'%');
-        if(isset($predicateObject->professor))
+        if (isset($predicateObject->professor))
             SearchHelper::professorSearchQuery($query, $predicateObject->professor);
 
         return $query;
@@ -212,12 +212,12 @@ class CourseController extends Controller
     /**
      * Build the sort query for the courses controller
      *
-     * @param \Illuminate\Database\Query $query
-     * @param $tableState
-     * @return \Illuminate\Database\Query
+     * @param object $tableState
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     private function buildCourseSortQuery($tableState, $query) {
-        if(isset($tableState->sort->predicate)) {
+        if (isset($tableState->sort->predicate)) {
             $sorts = [
                 'term_id' => [
                     'term_id', '',
@@ -255,7 +255,7 @@ class CourseController extends Controller
     {
         $tableState = json_decode($request->input('table_state'));
 
-        $this->authorize("view-course-list");
+        $this->authorize('view-course-list');
 
         $query = Course::visible($request->user())
             ->select('courses.*')
@@ -274,11 +274,11 @@ class CourseController extends Controller
             ]);
 
 
-        if(isset($tableState->term_selected) && $tableState->term_selected != "") {
+        if (isset($tableState->term_selected) && $tableState->term_selected != "") {
             $query = $query->where('term_id', '=', $tableState->term_selected);
         }
 
-        if((isset($tableState->sort->predicate) && $tableState->sort->predicate == "professor")
+        if ((isset($tableState->sort->predicate) && $tableState->sort->predicate == 'professor')
          || isset($tableState->search->predicateObject->professor) ) {
             // only join in the professor when we actually need it
             $query->join('users','users.user_id', '=', 'courses.user_id');

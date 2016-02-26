@@ -14,48 +14,42 @@ use GoogleBooks;
 
 class BookController extends Controller
 {
-
     /** GET: /books/
      *
      * @return \Illuminate\View\View
      */
     public function getIndex()
     {
-        $this->authorize("all");
+        $this->authorize('all');
 
         return view('books.index');
     }
 
+
     /**
      * Build the search query for the books controller
      *
-     * @param \Illuminate\Database\Eloquent\Builder
-     * @param $tableState
+     * @param object $tableState
+     * @param \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
     private function buildBookSearchQuery($tableState, $query) {
         $predicateObject = [];
-        if(isset($tableState->search->predicateObject))
+        if (isset($tableState->search->predicateObject))
             $predicateObject = $tableState->search->predicateObject; // initialize predicate object
 
-        if(isset($predicateObject->title))
+        if (isset($predicateObject->title))
             $query = $query->where('title', 'LIKE', '%'.$predicateObject->title.'%');
 
-        if(isset($predicateObject->author)) {
+        if (isset($predicateObject->author)) {
             $query = $query->where('authors.name', 'LIKE', '%'.$predicateObject->author.'%');
-            /*
-            $query->join('authors', function ($join) use ($predicateObject) {
-                $join->on('authors.book_id', '=', 'books.book_id')
-                    ->where('authors.name', 'LIKE', '%'.$predicateObject->author.'%');
-            });
-            */
         }
 
-        if(isset($predicateObject->publisher))
+        if (isset($predicateObject->publisher))
             $query = $query->where('publisher', 'LIKE', '%'.$predicateObject->publisher.'%');
 
-        if(isset($predicateObject->isbn13)) {
-            $isbn = str_replace("-", "", $predicateObject->isbn13);
+        if (isset($predicateObject->isbn13)) {
+            $isbn = str_replace('-', '', $predicateObject->isbn13);
             $query = $query->where('isbn13', 'LIKE', '%' . $isbn . '%');
         }
 
@@ -66,12 +60,12 @@ class BookController extends Controller
     /**
      * Build the sort query for the books controller
      *
-     * @param \Illuminate\Database\Eloquent\Builder
-     * @param \Illuminate\Http\Request $tableState
+     * @param object $tableState
+     * @param \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
     private function buildBookSortQuery($tableState, $query) {
-        if(isset($tableState->sort->predicate)) {
+        if (isset($tableState->sort->predicate)) {
             $sorts = [
                 'title' => [
                     'title', '',
@@ -93,19 +87,18 @@ class BookController extends Controller
         return $query;
     }
 
+
     /** GET: /books/book-list?page={}&{sort=}&{dir=}&{title=}&{publisher=}&{isbn=}
      * Searches the book list
      *
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-
     public function getBookList(Request $request)
     {
+        $this->authorize('all');
 
         $tableState = json_decode($request->input('table_state'));
-
-        $this->authorize("all");
 
         $user = $request->user();
         if ($user->may('view-all-courses')){
@@ -146,11 +139,10 @@ class BookController extends Controller
             );
         }
 
-        if((isset($tableState->sort->predicate) && $tableState->sort->predicate == "author")
+        if ((isset($tableState->sort->predicate) && $tableState->sort->predicate == "author")
             || isset($tableState->search->predicateObject->author) ) { // only join when we actually need it
 
             $query->join('authors','books.book_id', '=', 'authors.book_id');
-
         }
 
         $query = $this->buildBookSearchQuery($tableState, $query);
@@ -163,40 +155,39 @@ class BookController extends Controller
         return response()->json($books);
     }
 
+
     /**
      * Build the search query for the book detail list
      *
-     * @param \Illuminate\Database\Eloquent\Builder
-     * @param $tableState
+     * @param object $tableState
+     * @param \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-
     private function buildBookDetailSearchQuery($tableState, $query) {
-        $predicateObject = [];
-        if(isset($tableState->search->predicateObject))
-            $predicateObject = $tableState->search->predicateObject; // initialize predicate object
+        if (isset($tableState->search->predicateObject))
+            $predicateObject = $tableState->search->predicateObject;
+        else
+            return $query;
 
-        if(isset($predicateObject->section))
-            SearchHelper::sectionSearchQuery($query, $predicateObject->section, 'listings.course_id'); // use search helper for section search
-        if(isset($predicateObject->name))
+        if (isset($predicateObject->section))
+            SearchHelper::sectionSearchQuery($query, $predicateObject->section, 'listings.course_id');
+
+        if (isset($predicateObject->name))
             $query = $query->where('name', 'LIKE', '%'.$predicateObject->course_name.'%');
 
         return $query;
     }
 
 
-
-
-
     /**
      * Build the sort query for the book detail list
      *
-     * @param \Illuminate\Database\Eloquent\Builder
-     * @param $tableState
+     * @param object $tableState
+     * @param \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
     private function buildBookDetailSortQuery($tableState, $query) {
-        if(isset($tableState->sort->predicate)) {
+        if (isset($tableState->sort->predicate)) {
             $sorts = [
                 'section' => [
                     'department', '',
@@ -220,20 +211,19 @@ class BookController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-
     public function getBookDetailList(Request $request)
     {
-        $tableState = json_decode($request->input('table_state'));
+        $this->authorize('all');
 
-        $this->authorize("all");
+        $tableState = json_decode($request->input('table_state'));
 
         $query = Order::query()
             ->select('orders.*')
             ->distinct()
             ->with(['course.term', 'course.listings']);
 
-        if($request->input('book_id')) {
-            $query = $query->where('book_id', '=', str_replace('"', "", $request->input('book_id'))); // find the book ID
+        if ($request->input('book_id')) {
+            $query = $query->where('book_id', '=', str_replace('"', '', $request->input('book_id'))); // find the book ID
         }
 
         $query = $query->join('listings', 'orders.course_id', '=', 'listings.course_id');
@@ -248,65 +238,81 @@ class BookController extends Controller
             $order->course['canView'] = $request->user()->can('view-course', $order->course);
         }
 
-
         return response()->json($orders);
     }
 
 
+    /** GET: /books/cover?isbn={isbn}
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function getCover(Request $request) {
-        $this->authorize("all");
+        $this->authorize('all');
 
-        if(!preg_match('/[0-9\-]{13,20}/', $request->input('isbn')))
-            return response(file_get_contents(public_path('images/badRequest.jpg')),
+        if (!preg_match('/[0-9\-]{13,20}/', $request->input('isbn'))){
+            return response(
+                file_get_contents(public_path('images/badRequest.jpg')),
                 Response::HTTP_BAD_REQUEST,
-                ['Content-Type' => 'image/jpeg']);
-
-        if($request->input('isbn') != '') {
-            return GoogleBooks::getCoverThumbnail($request->input('isbn'));
+                ['Content-Type' => 'image/jpeg']
+            );
         }
+
+        return GoogleBooks::getCoverThumbnail($request->input('isbn'));
     }
 
-    /** GET: /books/details/{id}
-     * Display the specified resource.
+
+    /** GET: /books/details/{book_id}
      *
-     * @param  int  $id
+     * @param int $book_id
      * @return \Illuminate\View\View
      */
-    public function getDetails($id)
+    public function getDetails($book_id)
     {
-        $this->authorize("all");
+        $this->authorize('all');
 
-        $book = Book::findOrFail($id);
+        $book = Book::findOrFail($book_id);
 
         return view('books.details', ['book' => $book]);
     }
 
 
-    public function getEdit($id)
+    /** GET: /books/edit/{book_id}
+     *
+     * @param int $book_id
+     * @return \Illuminate\View\View
+     */
+    public function getEdit($book_id)
     {
-        $book = Book::findOrFail($id);
-        $this->authorize("edit-book", $book);
+        $book = Book::findOrFail($book_id);
+        $this->authorize('edit-book', $book);
 
         return view('books.edit', ['book' => $book]);
     }
 
-    /** GET: /books/book-by-isbn13/{id}
-     * Display the specified resource.
+
+    /** GET: /books/book-by-isbn13?isbn13={isbn13}
      *
-     * @param  int  $id
+     * @param Request $request
      * @return \Illuminate\View\View
      */
     public function getBookByIsbn(Request $request)
     {
-        $this->authorize("all");
+        $this->authorize('all');
 
         $isbn13 = $request->input('isbn13');
 
-        $book = Book::where('isbn13', '=', $isbn13)->with("authors")->get();
+        $book = Book::where('isbn13', '=', $isbn13)->with('authors')->get();
 
-        return response()->json($book);
+        return $book;
     }
 
+
+    /** POST: /books/edit
+     *
+     * @param Request $request
+     * @return \Illuminate\View\View
+     */
     public function postEdit(Request $request) {
         $this->validate($request, [
             'book' => 'required|array',
@@ -321,7 +327,7 @@ class BookController extends Controller
         $authors = $request->input('authors');
 
         $db_book = Book::findOrFail($book['book_id']);
-        $this->authorize("edit-book", $db_book);
+        $this->authorize('edit-book', $db_book);
 
         $db_book->update($book);
 

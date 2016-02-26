@@ -61,7 +61,7 @@ class CASAuth {
             // We call out to phpCas manually because Xavrsl/Cas swallows up exceptions in $cas->authenticate() for some reason.
 //          $cas->authenticate();
 
-            if(!$this->isPretending()){
+            if (!$this->isPretending()){
                 phpCAS::forceAuthentication();
             }
 
