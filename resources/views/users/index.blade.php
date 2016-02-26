@@ -52,7 +52,8 @@
                     <div class="table-responsive">
                         <table st-pipe="callServer"
                                st-table="displayed"
-                               class="table table-hover">
+                               class="table table-hover"
+                               empty-placeholder>
                             <thead>
                             <tr>
                                 <th width="1%"></th>

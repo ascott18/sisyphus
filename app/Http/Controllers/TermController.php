@@ -53,6 +53,8 @@ class TermController extends Controller
     /**
      * return array of matched string in the term names
      *
+     * @param $searchTerm
+     * @return array
      */
     private function searchTermNames($searchTerm) {
         $results = array();
@@ -61,6 +63,12 @@ class TermController extends Controller
                 $results[] = $key;
             }
         }
+
+        // if there were no matches, make the search fail
+        if(count($results) == 0) {
+            $results[] = -1;
+        }
+
         return $results;
     }
 
@@ -77,7 +85,7 @@ class TermController extends Controller
         else
             return $query;
 
-        if (isset($predicateObject->term)) {
+        if(isset($predicateObject->term) && $predicateObject->term != "") {
             $termList = $this->searchTermNames($predicateObject->term);
 
             $query = $query->Where(function($sQuery) use ($termList) {
@@ -108,7 +116,8 @@ class TermController extends Controller
                     'term_number', '',
                     'year', '',
                 ],
-                'term_id' => [
+                'year' => [
+                    'year', '',
                     'term_id', '',
                 ],
                 'order_start_date' => [

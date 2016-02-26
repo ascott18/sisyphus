@@ -81,7 +81,7 @@
                            empty-placeholder>
                         <thead>
                         <tr>
-                            <th>Term</th>
+                            <th st-sort="term" st-sort-default="reverse">Term</th>
                             <th st-sort="section">Course</th>
                             <th st-sort="name">Course Name</th>
                             <th>Required</th>
@@ -91,7 +91,7 @@
                         <tr>
                             <th></th>
                             <th><input type="text" class="form-control" placeholder="Search..." st-search="section"/></th>
-                            <th><input type="text" class="form-control" placeholder="Search..." st-search="course_name"/></th>
+                            <th><input type="text" class="form-control" placeholder="Search..." st-search="name"/></th>
                             <th></th>
                             <th></th>
                             <th></th>

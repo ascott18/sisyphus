@@ -119,10 +119,11 @@ app.filter('zpad', function() {
 
         // string.prototype.repeat doesn't work in IE - its part of ecmascript6.
         var zeros = "";
-        while (n-- > 0){
+        while (n-- > input.length){
             zeros += "0";
         }
-        return (zeros + input).slice(-1 * n)
+
+        return (zeros + input);
     };
 });
 
