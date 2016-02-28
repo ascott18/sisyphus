@@ -81,21 +81,6 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
             sort: true
         },
         {
-            name: 'Cross Listings',
-            value: function(courseOrderObj){
-                var result = '';
-                var listings = courseOrderObj.course.listings;
-                for(var i = 1; i < listings.length; i++)
-                {
-                    result +=
-                        listings[i].department + ' ' +
-                        $filter('zpad')(listings[i].number, 3) + '-' +
-                        $filter('zpad')(listings[i].section, 2) + (i == courses - 1 ? '' : ', ');
-                }
-                return result;
-            }
-        },
-        {
             name: 'Instructor',
             value: function(courseOrderObj){
                 return courseOrderObj.course.user ? courseOrderObj.course.user.last_name : 'TBA';
@@ -179,7 +164,22 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
             autoEnforce: function(){
                 return $scope.include.noBook
             }
-        }
+        },
+        {
+            name: 'Cross Listings',
+            value: function(courseOrderObj){
+                var result = '';
+                var listings = courseOrderObj.course.listings;
+                for(var i = 1; i < listings.length; i++)
+                {
+                    result +=
+                        listings[i].department + ' ' +
+                        $filter('zpad')(listings[i].number, 3) + '-' +
+                        $filter('zpad')(listings[i].section, 2) + (i == courses - 1 ? '' : ', ');
+                }
+                return result;
+            }
+        },
     ];
 
     $scope.ColumnsSelected = $scope.options.slice();
