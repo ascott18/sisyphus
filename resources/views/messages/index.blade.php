@@ -17,7 +17,7 @@
                     <div class="panel-heading">
                         <h3 class="panel-title">
                             <i class="fa fa-fw fa-envelope"></i>
-                            Messages
+                            Message Templates
                         </h3>
                     </div>
                     <div class="panel-body panel-list">
