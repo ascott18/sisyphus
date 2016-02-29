@@ -28,7 +28,8 @@
                     <br>
 
                     <a type="button" class="btn btn-success pull-right"
-                       ng-click="submitTicket()">
+                       ng-click="submitTicket()"
+                       href="/tickets/index">
                         <i class="fa fa-plus"></i> Submit Ticket
                     </a>
                 </form>

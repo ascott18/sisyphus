@@ -13,7 +13,7 @@
      ng-init="
         book_id = {{ $book->book_id }};
         book_isbn_13 = '{{ $book->isbn13 }}';
-        setHelpOption({{$book}});
+        setHelpOption({{ $book }});
     "
     >
     <div class="col-lg-12">
@@ -133,4 +133,5 @@
 @section('scripts-head')
     <script src="/javascripts/ng/helper.isbnHyphenate.js"></script>
     <script src="/javascripts/ng/app.books.js"></script>
+
 @stop

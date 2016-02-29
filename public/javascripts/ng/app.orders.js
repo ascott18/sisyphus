@@ -115,7 +115,7 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
 			HelpService.addCourseHelpOption($scope.courses);
         }
         else if ($scope.stage == $scope.STAGE_SELECT_BOOKS) {
-			HelpService.addBookHelpOption([]);
+
         }
     };
 
@@ -176,6 +176,13 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
                     })
                     .OrderByDescending("$.terms[0].term_id")
                     .ToArray();
+
+                var pastBooks = [];
+                for (var index in course['pastBooks']) {
+                    pastBooks.push((course['pastBooks'][index]).book);
+
+                }
+                HelpService.addBookHelpOption(pastBooks);
             }
         );
     };
@@ -347,7 +354,7 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
 
 
 
-app.controller("NewBookController", ["$scope", "$http", "CartService", function($scope, $http, CartService) {
+app.controller("NewBookController", ["$scope", "$http", "CartService", "HelpService", function($scope, $http, CartService, HelpService) {
     $scope.authors = [];
     $scope.master = {};
     $scope.book = {};
@@ -388,6 +395,7 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", function(
 
                         $scope.autofilledBook = data;
                         $scope.isAutoFilled = true;
+                        HelpService.addBookHelpOption([$scope.book]);
                     }
                 }
             );

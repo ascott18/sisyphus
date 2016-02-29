@@ -83,8 +83,8 @@ app.controller('TicketController', ['$scope', '$http', 'TicketsService', 'status
         if ($scope.comment['body'].trim()) {
             $http.post('/tickets/submit-comment', {comment: $scope.comment, ticket_id: $scope.ticket["ticket_id"], status : $scope.statusSelected.key}).then(
                 function success(response){
-                    $scope.comment = {body: ""};
                     $scope.comments = response.data.comments;
+                    $scope.comment = {body: ""};
                     $scope.ticket.status = response.data.status;
                 });
         }

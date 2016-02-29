@@ -434,9 +434,12 @@ app.controller('HelpModalController', ['$scope', 'HelpService', function($scope,
     };
 
     $scope.selectOption = function (selected) {
-        if (selected.options && selected.options.length != 0) {
+        if (selected.options && selected.options.length > 1) {
             $scope.options = selected.options;
             $scope.stage = selected.optionType;
+        }
+        else if (selected.options && selected.options.length == 1) {
+            $scope.createTicket(selected.options[0]);
         }
         else {
             $scope.createTicket(selected);
@@ -484,24 +487,39 @@ app.directive('modal', ['HelpService', function(HelpService) {
 
 app.factory("HelpService", function() {
 
-    var defaultOptions = [{header: "Report a Problem", body: "Does something not look right? Let us know."},
-                          {header: "Ask a Question", body: "Need some help? Submit a question."}];
-
     var SELECT_OPTION = 0;
     var COURSE_OPTION = 1;
     var BOOK_OPTION = 2;
 
+    var defaultOptions = [{header: "Report a Problem", body: "Does something not look right? Let us know."},
+                          {header: "Ask a Question", body: "Need some help? Submit a question."}];
 
-    var options = defaultOptions;
+    var selectBooksHelpOptions = {header: "Report Problem with Book",
+        body: "Is there a problem with a book? Please report it.",
+        optionType: BOOK_OPTION};
+
+
+    var options = [];
+    for (var i in defaultOptions) {
+        options.push(defaultOptions[i])
+    }
 
     var updateOptions = function(option) {
-        this.options = defaultOptions.push(option);
+        options.length = 0;
+        for (var i in defaultOptions) {
+            options.push(defaultOptions[i])
+        }
+        options.push(option);
     };
 
     var addCourseHelpOption = function(courses) {
         var selectCourseHelpOption =  {header: "Report Error in Course List",
             body: "Select this option if a course you are teaching is not listed here or a course you are not teaching is listed.",
             optionType: COURSE_OPTION};
+
+        var selectBooksHelpOptions = {header: "Report Problem with Book",
+            body: "Is there a problem with a book? Please report it.",
+            optionType: BOOK_OPTION};
 
         var options = [];
 
@@ -510,7 +528,7 @@ app.factory("HelpService", function() {
             var course = courses[index];
             option['course'] = course;
             option['url'] = "/courses/details/" + course.course_id;
-            option['title'] = "test";
+            option['title'] = "Problem with " + course.listings[0].name;
             option['department'] = course.listings[0].department;
             options.push(option);
         }
@@ -526,24 +544,34 @@ app.factory("HelpService", function() {
     };
 
     var addBookHelpOption = function(books) {
-        var selectBooksHelpOptions = {header: "Report Problem with Book",
-                                       body: "Is there a problem with a book? Please report it.",
-                                       optionType: BOOK_OPTION};
+
 
         var options = [];
 
         for (var index in books) {
             var option = {};
             var book = books[index];
-            option['book'] = book;
-            option['url'] = "/books/details/" + book.book_id;
-            option['title'] = "test";
+            option = createBookOption(book);
             options.push(option);
         }
 
-        selectBooksHelpOptions['options'] = options;
+        if (selectBooksHelpOptions['options']) {
+            selectBooksHelpOptions['options'] = selectBooksHelpOptions['options'].concat(options);
+        }
+        else {
+            selectBooksHelpOptions['options'] = options;
+        }
+
 
         updateOptions(selectBooksHelpOptions);
+    };
+
+    var createBookOption = function(book) {
+        var option = {};
+        option['book'] = book;
+        option['url'] = "/books/details/" + book.book_id;
+        option['title'] = "Problem With " + book.title;
+        return option;
     };
 
 
@@ -552,7 +580,7 @@ app.factory("HelpService", function() {
                    addCourseHelpOption  : addCourseHelpOption,
                    addBookHelpOption    : addBookHelpOption,
                    SELECT_OPTION        : SELECT_OPTION,
-                   COURSE_OPTION       : COURSE_OPTION,
-                   BOOK_OPTION        : BOOK_OPTION};
+                   COURSE_OPTION        : COURSE_OPTION,
+                   BOOK_OPTION          : BOOK_OPTION};
     return service;
 });

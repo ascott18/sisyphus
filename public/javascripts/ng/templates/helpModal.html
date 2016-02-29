@@ -42,10 +42,12 @@
                     <a ng-repeat="option in options"
                        class="list-group-item"
                        ng-click="createTicket(option)">
-                        <course-with-listings course="option">
-                            [[option.listings[0].name]]
-                        </course-with-listings>
+                        <div>
+                            <book-details book="option.book">
+                            </book-details>
+                        </div>
                     </a>
+
                 </div>
             </div>
 

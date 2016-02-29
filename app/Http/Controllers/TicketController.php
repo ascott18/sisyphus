@@ -87,6 +87,7 @@ class TicketController extends Controller
         ]);
 
         $ticket->update(['status' => $status]);
+        $ticket = Ticket::with(['comments.user', 'user'])->findOrFail($ticket_id);
 
         return response()->json($ticket);
     }
