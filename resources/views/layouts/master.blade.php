@@ -50,7 +50,7 @@
         {{--<button class="btn btn-lg btn-primary"--}}
                 {{--style="position: relative; top: -35px; left: 60%; z-index: 100000"--}}
                 {{--ng-click="espanol()">--}}
-            {{--en español--}}
+            {{--en espaï¿½ol--}}
         {{--</button>--}}
     {{--</div>--}}
 
@@ -78,7 +78,7 @@
                     <h2>Textbook Requests
                         @inject('auth', 'App\Providers\AuthServiceProvider')
                         @if ($auth->getIsDebuggingUnauthorizedAction())
-                            <p style="position: absolute; font-size: 0.7em; width: 100%">
+                            <p style="position: absolute; font-size: 0.6em; width: 100%">
                                 <i class="fa fa-bug fa-spin"></i> (debugging unauthorized action) <i class="fa fa-bug fa-spin"></i>
                             </p>
                         @endif

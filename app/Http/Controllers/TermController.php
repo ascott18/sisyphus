@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Models\Term;
+use PHPExcel_Cell;
+use PHPExcel_IOFactory;
 use SearchHelper;
 
 class TermController extends Controller
@@ -39,6 +41,7 @@ class TermController extends Controller
      *
      * Display a details view of the term from which the user can make changes.
      *
+     * @param $term_id
      * @return \Illuminate\Http\Response
      */
     public function getDetails($term_id)
@@ -49,6 +52,104 @@ class TermController extends Controller
 
         return view('terms.details', ['term' => $term]);
     }
+
+
+    /** GET /terms/import/{term_id}
+     *
+     * Displays a page from which the user can select a file with course information to upload.
+     *
+     * @param $term_id
+     * @return \Illuminate\Http\Response
+     */
+    public function getImport($term_id)
+    {
+        $this->authorize('edit-terms');
+
+        $term = Term::findOrFail($term_id);
+
+        return view('terms.import', ['term' => $term]);
+    }
+
+
+    /** POST /terms/import/{term_id}
+     *
+     * @param Request $request
+     * @param $term_id
+     * @return \Illuminate\Http\Response
+     */
+    public function postImport(Request $request, $term_id)
+    {
+        $this->authorize('edit-terms');
+
+        $term = Term::findOrFail($term_id);
+
+        if (!$request->hasFile('file')) {
+            return view('terms.import', ['term' => $term])
+                ->withErrors(['no-file' => 'No file was uploaded!']);
+        }
+        $file = $request->file('file');
+
+        if (!$file->isValid()) {
+            return view('terms.import', ['term' => $term])
+                ->withErrors(['bad-file' => 'There was an issue uploading the file. Please try again.']);
+        }
+
+
+        $fileName = $file->getRealPath();
+
+        // Load the spreadsheet into memory.
+        $reader = PHPExcel_IOFactory::createReaderForFile($fileName);
+        $reader->setReadDataOnly(true);
+        $spreadsheet = $reader->load($fileName);
+
+        // Measure the spreadsheet, and then find the locations of the columns that we care about.
+        $worksheet = $spreadsheet->getActiveSheet();
+        $highestRow = $worksheet->getHighestRow(); // e.g. 10
+        $highestColumn = $worksheet->getHighestColumn(); // e.g 'F'
+        $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn); // e.g. 5
+
+        $relevantColumns = [
+            'CAMPUS' => true,           // {RPT, CHN}
+            'DEPT' => true,             // {CSCD, PSYC, ENGL, ...}
+            'COURSE_ID' => true,        // CSCD371-01
+            'TITLE' => true,            // .NET PROGRAMMING
+            'XLST_COURSE_ID' => true,   // ENGL170-01
+            'TERM' => true,             // 201620
+
+            // Might be useful for future additions, but currently unused:
+            // 'GRP_MAX_ENRL'      // (max enrolment for the course, including all xlistings)
+        ];
+
+
+        // Scan through the header row and find where the $relevantColumns are.
+        $columnIndiciesByLabel = [];
+        for ($colIndex = 0; $colIndex <= $highestColumnIndex; $colIndex++){
+            $columnLabel = $worksheet->getCellByColumnAndRow($colIndex, 1)->getValue();
+            if (isset($relevantColumns[$columnLabel]))
+                $columnIndiciesByLabel[$columnLabel] = $colIndex;
+        }
+
+
+        // Now, scan through all the data rows and pick out the $relevantColumns.
+        $courses = [];
+        for ($rowIndex = 2; $rowIndex <= $highestRow; $rowIndex++){
+            $course = [];
+
+            foreach ($columnIndiciesByLabel as $columnLabel => $colIndex) {
+                $course[$columnLabel] = $worksheet->getCellByColumnAndRow($colIndex, $rowIndex)->getValue();
+            }
+
+            $courses[] = $course;
+        }
+        
+
+        return $courses;
+
+
+
+        return view('terms.confirmImport', ['term' => $term]);
+    }
+
 
     /**
      * return array of matched string in the term names
@@ -81,7 +182,7 @@ class TermController extends Controller
      */
     private function buildTermSearchQuery($tableState, $query) {
         if (isset($tableState->search->predicateObject))
-            $predicateObject = $tableState->search->predicateObject; // initialize predicate object
+            $predicateObject = $tableState->search->predicateObject;
         else
             return $query;
 
@@ -90,13 +191,13 @@ class TermController extends Controller
 
             $query = $query->Where(function($sQuery) use ($termList) {
                 for($i=0; $i<count($termList); $i++) {
-                    $sQuery = $sQuery->orWhere('term_number', '=', $termList[$i]);            // this will take entire search into term field
+                    $sQuery = $sQuery->orWhere('term_number', '=', $termList[$i]);
                 }
             });
         }
 
         if (isset($predicateObject->year) && $predicateObject->year != '') {
-            $query = $query->where('year', '=', $predicateObject->year);              // this will search for matching year
+            $query = $query->where('year', '=', $predicateObject->year);
         }
 
         return $query;
@@ -166,6 +267,11 @@ class TermController extends Controller
     public function postDetails(Request $request, $term_id)
     {
         $this->authorize('edit-terms');
+
+        $this->validate($request, [
+            'order_start_date' => 'required|date',
+            'order_due_date' => 'required|date',
+        ]);
 
         $term = Term::findOrFail($term_id);
 

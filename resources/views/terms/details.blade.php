@@ -31,7 +31,13 @@
 
                         <a href="/courses/index/{{$term->term_id}}" class="btn btn-primary">
                             <i class="fa fa-university"></i> View Courses
+                        </a> &nbsp;
+
+                        @can('edit-terms')
+                        <a href="/terms/import/{{$term->term_id}}" class="btn btn-primary">
+                            <i class="fa fa-university"></i> Import Courses
                         </a>
+                        @endcan
                     </div>
 
 
