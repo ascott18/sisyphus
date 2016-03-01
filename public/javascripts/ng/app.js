@@ -504,9 +504,9 @@ app.factory("HelpService", function() {
         options.push(defaultOptions[i])
     }
 
-    var findBookWithAttr = function(array, attr, value) {
+    var findBook = function(array, value) {
         for(var i = 0; i < array.length; i += 1) {
-            if(array[i]["book"][attr] === value) {
+            if(stripHyphens(array[i]["book"]["isbn13"]) === stripHyphens(value)) {
                 return i;
             }
         }
@@ -567,7 +567,7 @@ app.factory("HelpService", function() {
 
         if (selectBooksHelpOptions['options']) {
             for (option in options) {
-                if (findBookWithAttr(selectBooksHelpOptions['options'], "isbn13", stripHyphens(book['isbn13'])) == -1) {
+                if (findBook(selectBooksHelpOptions['options'], book['isbn13']) == -1) {
                     selectBooksHelpOptions['options'].push(options[option]);
                 }
             }
