@@ -504,11 +504,24 @@ app.factory("HelpService", function() {
         options.push(defaultOptions[i])
     }
 
-    var updateOptions = function(option) {
+    var findBookWithAttr = function(array, attr, value) {
+        for(var i = 0; i < array.length; i += 1) {
+            if(array[i]["book"][attr] === value) {
+                return i;
+            }
+        }
+        return -1;
+    };
+
+    var setDefaultOptions = function() {
         options.length = 0;
         for (var i in defaultOptions) {
             options.push(defaultOptions[i])
         }
+    };
+
+    var updateOptions = function(option) {
+        setDefaultOptions();
         options.push(option);
     };
 
@@ -516,10 +529,6 @@ app.factory("HelpService", function() {
         var selectCourseHelpOption =  {header: "Report Error in Course List",
             body: "Select this option if a course you are teaching is not listed here or a course you are not teaching is listed.",
             optionType: COURSE_OPTION};
-
-        var selectBooksHelpOptions = {header: "Report Problem with Book",
-            body: "Is there a problem with a book? Please report it.",
-            optionType: BOOK_OPTION};
 
         var options = [];
 
@@ -553,10 +562,15 @@ app.factory("HelpService", function() {
             var book = books[index];
             option = createBookOption(book);
             options.push(option);
+
         }
 
         if (selectBooksHelpOptions['options']) {
-            selectBooksHelpOptions['options'] = selectBooksHelpOptions['options'].concat(options);
+            for (option in options) {
+                if (findBookWithAttr(selectBooksHelpOptions['options'], "isbn13", stripHyphens(book['isbn13'])) == -1) {
+                    selectBooksHelpOptions['options'].push(options[option]);
+                }
+            }
         }
         else {
             selectBooksHelpOptions['options'] = options;
@@ -579,6 +593,7 @@ app.factory("HelpService", function() {
                    updateOptions        : updateOptions,
                    addCourseHelpOption  : addCourseHelpOption,
                    addBookHelpOption    : addBookHelpOption,
+                   setDefaultOptions    : setDefaultOptions,
                    SELECT_OPTION        : SELECT_OPTION,
                    COURSE_OPTION        : COURSE_OPTION,
                    BOOK_OPTION          : BOOK_OPTION};

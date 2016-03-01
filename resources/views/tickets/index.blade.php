@@ -51,7 +51,7 @@
                                         [[ ticket.title ]]
                                     </td>
                                     <td>[[ ticket.status | status ]]</td>
-                                    <td>user name stuff NATHAN DO THIS I GUESS</td>
+                                    <td>[[ ticket.user.first_name + ", " + ticket.user.last_name ]]</td>
                                     <td><a class="btn btn-sm btn-info" href="/tickets/details/[[ticket.ticket_id]]" role="button">
                                             Details <i class="fa fa-arrow-right"></i>
                                         </a>

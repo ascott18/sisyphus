@@ -68,7 +68,7 @@ app.directive('bookDetails', function($http) {
                 if (!scope.book)
                     return;
 
-                var isbn = scope.book.isbn13;
+                var isbn = stripHyphens(scope.book.isbn13);
                 if (!isbn){
                     return scope.thumbnail = noBookThumb;
                 }
@@ -115,7 +115,7 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
 			HelpService.addCourseHelpOption($scope.courses);
         }
         else if ($scope.stage == $scope.STAGE_SELECT_BOOKS) {
-
+            HelpService.setDefaultOptions();
         }
     };
 
@@ -177,12 +177,15 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
                     .OrderByDescending("$.terms[0].term_id")
                     .ToArray();
 
-                var pastBooks = [];
-                for (var index in course['pastBooks']) {
-                    pastBooks.push((course['pastBooks'][index]).book);
 
+                if (course['pastBooks'].length > 0) {
+                    var pastBooks = [];
+                    for (var index in course['pastBooks']) {
+                        pastBooks.push((course['pastBooks'][index]).book);
+
+                    }
+                    HelpService.addBookHelpOption(pastBooks);
                 }
-                HelpService.addBookHelpOption(pastBooks);
             }
         );
     };
@@ -391,6 +394,8 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", "HelpServ
                         $scope.book['title'] = data.title;
                         $scope.book['edition'] = data.edition;
                         $scope.book['publisher'] = data.publisher;
+                        $scope.book['book_id'] = data.book_id;
+                        $scope.book['isbn13'] = $scope.book.isbn13;
                         $scope.authors = data.authors;
 
                         $scope.autofilledBook = data;

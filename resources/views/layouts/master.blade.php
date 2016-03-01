@@ -50,7 +50,7 @@
         {{--<button class="btn btn-lg btn-primary"--}}
                 {{--style="position: relative; top: -35px; left: 60%; z-index: 100000"--}}
                 {{--ng-click="espanol()">--}}
-            {{--en español--}}
+            {{--en espaï¿½ol--}}
         {{--</button>--}}
     {{--</div>--}}
 
@@ -92,6 +92,7 @@
 
             <ul class="nav navbar-right top-nav">
                 @if (Auth::user())
+
                     <li >
                         <span id="userName">
                             <i class="fa fa-user"></i>
@@ -103,6 +104,7 @@
                     <li class="pull-right">
                         <span style="margin-left: 25px"><a href="/logout">Logout</a></span>
                     </li>
+
                 @endif
             </ul>
 
@@ -129,6 +131,7 @@
                 @can('make-reports')
                 <li><a href="/reports"><i class="fa fa-fw fa-bar-chart"></i> Reports</a></li>
                 @endcan
+                {{--<li><a ng-click="toggleModal()"><i class="fa fa-fw fa-question"></i> Help</a></li>--}}
 
 
                 <div class="icon-wrapper" ng-click="toggleModal()">
