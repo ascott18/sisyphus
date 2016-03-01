@@ -41,6 +41,8 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
     $scope.STAGE_VIEW_REPORT = 2;
     $scope.stage = $scope.STAGE_SELECT_FIELDS;
 
+    $scope.groupBySection = true;
+
     // used by the zoom buttons
     $scope.Math = window.Math;
 
@@ -186,13 +188,6 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
 
     $scope.ColumnsSelected = $scope.options.slice();
 
-    $scope.include = {
-        deleted: false,
-        nondeleted: false,
-        submitted: false,
-        notSubmitted: false,
-        noBook: false
-    };
 
     $scope.init = function(terms, departments){
         $scope.terms = terms;
@@ -216,13 +211,18 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
     };
 
     $scope.resetInclude = function(){
-        $scope.include.deleted = false;
-        $scope.include.nondeleted = false;
-        $scope.include.submitted = false;
-        $scope.include.notSubmitted = false;
-        $scope.include.noBook = false;
+        $scope.include = {
+            deleted: false,
+            nondeleted: true,
+            submitted: true,
+            notSubmitted: true,
+            noBook: true
+        };
+
         $scope.ColumnsSelected = $scope.options.slice();
     };
+
+    $scope.resetInclude();
 
     $scope.onSelectTerm = function()
     {
@@ -299,6 +299,7 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
                 endDate: $scope.reportDateEnd,
                 columns: $scope.columns,
                 include: $scope.include,
+                reportType: $scope.ReportType,
                 term_id: $scope.TermSelected.term_id,
                 departments: $scope.DeptsSelected,
         }, {timeout: $scope.canceler.promise}).then(function(response) {
@@ -333,6 +334,23 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
                     return row;
                 });
 
+
+            // Filter out any columns that the user did not select.
+            var columnIsSelectedMap = [];
+            for (var i = 0; i < $scope.options.length; i++){
+                columnIsSelectedMap[i] = $scope.ColumnsSelected.indexOf($scope.options[i]) >= 0;
+            }
+            reportRows = reportRows.Select(function(row){
+                var filteredRow = [];
+                for (var i = 0; i < columnIsSelectedMap.length; i++){
+                    if (columnIsSelectedMap[i])
+                        filteredRow.push(row[i]);
+                }
+
+                return filteredRow;
+            });
+
+
             // Group by sections if the user so desires.
             if ($scope.groupBySection){
                 var groupColumns = [];
@@ -363,21 +381,6 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
                     });
                 }
             }
-
-            // Filter out any columns that the user did not select.
-            var columnIsSelectedMap = [];
-            for (var i = 0; i < $scope.options.length; i++){
-                columnIsSelectedMap[i] = $scope.ColumnsSelected.indexOf($scope.options[i]) >= 0;
-            }
-            reportRows = reportRows.Select(function(row){
-                    var filteredRow = [];
-                    for (var i = 0; i < columnIsSelectedMap.length; i++){
-                        if (columnIsSelectedMap[i])
-                            filteredRow.push(row[i]);
-                    }
-
-                    return filteredRow;
-                });
 
 
             var hasSortedOnce = false;

@@ -19,16 +19,16 @@
                 <div class="panel-body">
                     <div class="radio">
                         <label >
-                            <input type="radio" ng-model="ReportType" ng-change="resetInclude()" value="orders" />
-                            Requests
-                            <small class="text-muted"><br>Allows for date filtering and for reporting on deleted requests.</small>
+                            <input type="radio" ng-model="ReportType" ng-change="resetInclude()" value="courses" />
+                            Courses
+                            <small class="text-muted"><br>Allows for reporting on courses that haven't responded.</small>
                         </label>
                     </div>
                     <div class="radio">
                         <label >
-                            <input type="radio" ng-model="ReportType" ng-change="resetInclude()" value="courses" />
-                            Courses
-                            <small class="text-muted"><br>Allows for reporting on courses that haven't responded.</small>
+                            <input type="radio" ng-model="ReportType" ng-change="resetInclude()" value="orders" />
+                            Requests
+                            <small class="text-muted"><br>Allows for date filtering and for reporting on deleted requests.</small>
                         </label>
                     </div>
                 </div>
