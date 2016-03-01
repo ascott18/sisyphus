@@ -27,17 +27,18 @@ app.controller('NewTicketController', ['$scope', '$http', 'HelpService', 'status
     $scope.ticket = {};
 
 
-    //var unloadListener = function (e) {
-    //    var confirmationMessage = 'If you leave before submitting, your changes will be lost.';
-    //
-    //    (e || window.event).returnValue = confirmationMessage; //Gecko + IE
-    //    return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
-    //};
+    var unloadListener = function (e) {
+        var confirmationMessage = 'If you leave before submitting, your changes will be lost.';
 
-    //window.addEventListener("beforeunload", unloadListener);
+        (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+        return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+    };
+
+    window.addEventListener("beforeunload", unloadListener);
 
     $scope.setTicket = function(ticket) {
         $scope.ticket = ticket;
+
     };
 
     $scope.submitTicket = function(){

@@ -447,6 +447,9 @@ app.controller('HelpModalController', ['$scope', 'HelpService', function($scope,
     };
 
     $scope.createTicket = function (ticketInfo) {
+        if (!(typeof ticketInfo.title != "undefined")) {
+            ticketInfo.title = "";
+        }
         window.location.href = $scope.href + "?url=" + ticketInfo.url + "&title=" + ticketInfo.title + "&department=" + ticketInfo.department;
     }
 }]);
