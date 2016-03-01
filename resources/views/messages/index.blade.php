@@ -8,7 +8,7 @@
 
 @section('content')
 
-    <div class="row" ng-controller="MessagesController" xmlns="http://www.w3.org/1999/html">
+    <div class="row" ng-controller="MessagesController">
         <div ng-show="stage == STAGE_COMPOSE">
 
             <div class="col-md-4 ">
