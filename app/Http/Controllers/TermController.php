@@ -84,18 +84,18 @@ class TermController extends Controller
         if(isset($tableState->search->predicateObject))
             $predicateObject = $tableState->search->predicateObject; // initialize predicate object
 
-        if(isset($predicateObject->term) && $predicateObject->term != "") {
+        if(isset($predicateObject->term) && $predicateObject->term != '') {
             $termList = $this->searchTermNames($predicateObject->term);
 
             $query = $query->Where(function($sQuery) use ($termList) {
                 for($i=0; $i<count($termList); $i++) {
-                    $sQuery = $sQuery->orWhere("term_number", "=", $termList[$i]);            // this will take entire search into term field
+                    $sQuery = $sQuery->orWhere('term_number', '=', $termList[$i]);            // this will take entire search into term field
                 }
             });
         }
 
-        if(isset($predicateObject->year) && $predicateObject->year != "") {
-            $query = $query->where("year", "=", $predicateObject->year);              // this will search for matching year
+        if(isset($predicateObject->year) && $predicateObject->year != '') {
+            $query = $query->where('year', '=', $predicateObject->year);              // this will search for matching year
         }
 
         return $query;
