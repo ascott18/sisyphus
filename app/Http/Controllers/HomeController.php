@@ -51,7 +51,7 @@ class HomeController extends Controller
         Auth::logout();
 
 
-        if(!CASAuth::isPretending()){
+        if (!CASAuth::isPretending()){
             $cas = app('cas');
             $cas->connection();
 

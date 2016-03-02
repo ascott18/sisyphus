@@ -19,16 +19,16 @@
                 <div class="panel-body">
                     <div class="radio">
                         <label >
-                            <input type="radio" ng-model="ReportType" ng-change="resetInclude()" value="orders" />
-                            Requests
-                            <small class="text-muted"><br>Allows for date filtering and for reporting on deleted requests.</small>
+                            <input type="radio" ng-model="ReportType" ng-change="resetInclude()" value="courses" />
+                            Courses
+                            <small class="text-muted"><br>Allows for reporting on courses that haven't responded.</small>
                         </label>
                     </div>
                     <div class="radio">
                         <label >
-                            <input type="radio" ng-model="ReportType" ng-change="resetInclude()" value="courses" />
-                            Courses
-                            <small class="text-muted"><br>Allows for reporting on courses that haven't responded.</small>
+                            <input type="radio" ng-model="ReportType" ng-change="resetInclude()" value="orders" />
+                            Requests
+                            <small class="text-muted"><br>Allows for date filtering and for reporting on deleted requests.</small>
                         </label>
                     </div>
                 </div>
@@ -201,7 +201,7 @@
 
 
 
-        <div ng-cloak class="col-lg-12" ng-if="getStage() == STAGE_VIEW_REPORT">
+        <div class="col-lg-12 ng-cloak" ng-if="getStage() == STAGE_VIEW_REPORT">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="fa fa-bar-chart"></i>
@@ -225,6 +225,18 @@
                         <i class="fa fa-download"></i> Download CSV
                     </button>
 
+                    <div class="pull-right">
+                        <button class="btn btn-default"
+                                ng-click="tableScale = Math.min(tableScale + 0.1, 2)">
+                            <i class="fa fa-search-plus"></i> Bigger
+                        </button>
+
+                        <button class="btn btn-default"
+                                ng-click="tableScale = Math.max(tableScale - 0.1, 0.5)">
+                            <i class="fa fa-search-minus"></i> Smaller
+                        </button>
+                    </div>
+
 
                     <style>
                         @media print{
@@ -242,12 +254,22 @@
                         }
                     </style>
 
+                        <style ng-repeat="(index, style) in ColumnStyles track by $index" ng-if="style" >
+                            #reportTable tbody td:nth-child([[index]]){
+                                [[style]]
+                            }
+                        </style>
+
                     <br>
                     <br>
-                    <table class="table table-hover" id="reportTable" super-fast-table="reportRows">
+                    <table class="table table-hover"
+                           id="reportTable"
+                           super-fast-table="reportRows"
+                           ng-init="tableScale = 1"
+                           ng-style="{'font-size': tableScale + 'em'}" >
                         <thead>
                             <tr>
-                                <th ng-repeat="optionProperties in ColumnsSelected"
+                                <th ng-repeat="optionProperties in ColumnsSelectedInOrder"
                                     ng-style="{width: optionProperties.width || ''}">
                                     [[optionProperties.name]]
                                 </th>

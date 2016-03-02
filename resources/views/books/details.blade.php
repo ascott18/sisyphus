@@ -75,7 +75,6 @@
                 <h3 class="panel-title"><i class="fa fa-history fa-fw"></i> Past Requests</h3>
             </div>
             <div class="panel-body">
-                [[ "99" | zpad:3 ]]
                 <div class="table-responsive">
                     <table st-pipe="callServer" st-table="displayed"
                            class="table table-hover"

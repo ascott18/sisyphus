@@ -116,7 +116,7 @@ class Term extends Model
 
 
                 $term = new static([
-                    'order_start_date' => $end->copy()->addMonths(-3),
+                    'order_start_date' => $end->copy()->addMonths(-2)->addDays(-15),
                     'order_due_date' => $end->copy(),
                 ]);
 

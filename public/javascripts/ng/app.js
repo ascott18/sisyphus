@@ -114,9 +114,6 @@ app.filter('zpad', function() {
         if(input === undefined)
             input = "";
         input = input.toString();
-
-        console.log(input);
-
         if(input.length >= n)
             return input;
 
@@ -191,12 +188,15 @@ app.directive('ngConfirmClick', [
 function(){
     return {
         link: function (scope, element, attr) {
-            var msg = attr.ngConfirmClickMessage || "Are you sure?";
-            var clickAction = attr.ngConfirmClick;
             element.bind('click', function (event) {
-                var confirmed = window.confirm(msg);
+                var msg = attr.ngConfirmClickMessage || "Are you sure?";
+                var shouldConfirm = true;
+                if (attr.ngConfirmClickIf)
+                    shouldConfirm = scope.$eval(attr.ngConfirmClickIf);
 
-                if (confirmed)
+                var clickAction = attr.ngConfirmClick;
+
+                if (!shouldConfirm || window.confirm(msg))
                 {
                     if (clickAction == 'submit'){
                         $(element).parent('form').submit()

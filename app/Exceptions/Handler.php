@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Session\TokenMismatchException;
 use Illuminate\Support\Facades\Config;
 use Symfony\Component\Debug\Exception\FlattenException;
@@ -53,8 +54,6 @@ class Handler extends ExceptionHandler
         $status = $e->getStatusCode();
 
         if (!in_array($status, $this->excludeCustomExceptions)) {
-            $debug = config('app.debug');
-
             $response = [
                 'success' => false,
                 'status' => $status,
@@ -123,15 +122,23 @@ class Handler extends ExceptionHandler
         try{
             $exception = FlattenException::create($e);
 
-            $content = view('error', ['response' => [
+
+            $response = [
                 'success' => false,
                 'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
                 'statusName' => Response::$statusTexts[Response::HTTP_INTERNAL_SERVER_ERROR],
                 'message' => config('app.debug') ? $e->getMessage() : "An unexpected error occurred.",
                 'flattenException' => config('app.debug') ? $exception : null,
-            ]])->render();
+            ];
 
-            return new Response($content, Response::HTTP_INTERNAL_SERVER_ERROR, []);
+            if (\Request::ajax()){
+                return new JsonResponse($response, $response['status'], []);
+            }
+            else{
+                $content = view('error', ['response' => $response])->render();
+
+                return new Response($content, $response['status'], []);
+            }
         }
         catch(Exception $renderException){
             return parent::convertExceptionToResponse($e);

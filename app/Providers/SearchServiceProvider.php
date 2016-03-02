@@ -20,6 +20,7 @@ class SearchServiceProvider extends ServiceProvider
         //
     }
 
+
     /**
      * Adds a search to a query that has the course listings joined
      *
@@ -61,6 +62,7 @@ class SearchServiceProvider extends ServiceProvider
         });
     }
 
+
     /**
      * Adds a search for a professor name to a query that
      * has professors already joined.
@@ -74,7 +76,7 @@ class SearchServiceProvider extends ServiceProvider
                 ->orWhere('users.last_name', 'LIKE', '%'.$search.'%');
 
             $searchArray = preg_split("/[\s,]+/", $search);
-            if(count($searchArray) == 2) {
+            if (count($searchArray) == 2) {
                 $sQuery = $sQuery->orWhere('users.first_name', 'LIKE', '%'.$searchArray[0].'%')
                     ->where('users.last_name', 'LIKE', '%'.$searchArray[1].'%')
                     ->orWhere('users.last_name', 'LIKE', '%'.$searchArray[0].'%')
@@ -85,6 +87,7 @@ class SearchServiceProvider extends ServiceProvider
         });
     }
 
+
     /**
      *
      * Checks for which columns to sort based on predicate column pairs passed
@@ -94,11 +97,10 @@ class SearchServiceProvider extends ServiceProvider
      * @param $sortInput
      * @param $sorts
      */
-
     public static function buildSortQuery($query, $sortInput, $sorts) {
         $order = $sortInput->reverse ? "desc" : "asc";
 
-        if(isset($sorts[$sortInput->predicate])) {
+        if (isset($sorts[$sortInput->predicate])) {
             $cols = $sorts[$sortInput->predicate];
             for($i = 0; $i< count($cols); $i+=2) {
                 $query->orderBy($cols[$i],  $cols[$i+1] ? $cols[$i+1] : $order);
@@ -135,6 +137,7 @@ class SearchServiceProvider extends ServiceProvider
             'pageName' => $pageName,
         ]);
     }
+
 
     /**
      * Modified from \Illuminate\Database\Query\Builder->getCountForPagination
@@ -173,9 +176,6 @@ class SearchServiceProvider extends ServiceProvider
 
         return $count;
     }
-
-
-
 
 
     /**

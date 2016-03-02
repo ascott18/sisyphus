@@ -51,9 +51,9 @@ class UserController extends Controller
     /**
      * Build the search query for the users controller
      *
-     * @param \Illuminate\Database\Query $query
-     * @param $tableState
-     * @return \Illuminate\Database\Query
+     * @param object $tableState
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     private function buildUserSearchQuery($tableState, $query)
     {
@@ -76,13 +76,13 @@ class UserController extends Controller
     /**
      * Build the sort query for the users controller
      *
-     * @param \Illuminate\Database\Query $query
-     * @param $tableState
-     * @return \Illuminate\Database\Query
+     * @param object $tableState
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     private function buildUserSortQuery($tableState, $query)
     {
-        if(isset($tableState->sort->predicate)) {
+        if (isset($tableState->sort->predicate)) {
             $sorts = [
                 'last_name' => [
                     'last_name', '',

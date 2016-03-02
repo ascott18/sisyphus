@@ -62,7 +62,6 @@ class MessageController extends Controller
             $currentTermIds[] = $term->term_id;
             $term['display_name'] = $term->displayName();
         }
-        $departments = $user->departments()->lists('department');
 
 
         $maySendAll = $user->may('send-all-messages');
@@ -73,19 +72,18 @@ class MessageController extends Controller
                 COUNT(
                     courses.no_book_marked IS NOT NULL
                 OR
-                    EXISTS (SELECT * FROM `orders` WHERE courses.course_id=orders.course_id AND orders.deleted_at IS NULL)
+                    (SELECT 1 FROM `orders` WHERE courses.course_id=orders.course_id AND orders.deleted_at IS NULL LIMIT 1) > 0
                 ) as coursesResponded,
                 COUNT(courses.course_id) as courseCount"))
             ->join('courses', 'courses.user_id', '=', 'users.user_id')
             ->whereIn('courses.term_id', $currentTermIds);
 
         if (!$maySendAll){
+            $departments = $user->departments()->lists('department');
             $query = $query
                 ->whereIn('courses.course_id',
                     Listing::select('listings.course_id')
                         ->whereIn('department', $departments)
-                        ->whereRaw('listings.course_id = courses.course_id')
-                        ->distinct()
                         ->toBase()
                 );
         }

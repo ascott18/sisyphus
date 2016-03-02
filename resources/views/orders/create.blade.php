@@ -120,7 +120,8 @@
                             <span >
                                 <button
                                         ng-confirm-click="noBook(course)"
-                                        ng-confirm-click-message="Are you sure you don't want a book? [[course.orders.length ? '\n\nAll requests on this course will be deleted!' : '']]"
+                                        ng-confirm-click-if="course.orders.length"
+                                        ng-confirm-click-message="Are you sure you don't want a book? [['\n\n']]All requests on this course will be deleted!"
                                         class="btn"
                                         ng-disabled="course.no_book"
                                         style="margin-left: 10px"
