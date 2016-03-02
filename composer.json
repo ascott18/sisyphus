@@ -11,7 +11,8 @@
         "barryvdh/laravel-ide-helper": "2.1.*",
         "zizaco/entrust": "1.4.1",
         "doctrine/dbal": "~2.3",
-        "phpoffice/phpexcel": "^1.8"
+        "phpoffice/phpexcel": "^1.8",
+        "athari/yalinqo": "^2.4"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

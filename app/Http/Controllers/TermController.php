@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\Listing;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Requests;
@@ -102,6 +103,150 @@ class TermController extends Controller
         $reader->setReadDataOnly(true);
         $spreadsheet = $reader->load($fileName);
 
+        $courses = static::parseSpreadsheet($spreadsheet, $term_id);
+
+        static::importCourses($courses, $term_id);
+
+        return view('terms.confirmImport', ['term' => $term]);
+    }
+
+    private static function importCourses($courses, $term_id){
+        $dbTerm = Term::findOrFail($term_id);
+        $dbTermCourseIdsQuery = $dbTerm->courses()->select('course_id')->toBase();
+
+
+        $updatedDbCourseIds = [];
+
+        foreach ($courses as $course) {
+            $dbListings = [];
+
+            $dbCourse = null;
+            $numListingsFound = 0;
+            foreach ($course['listings'] as $listing) {
+                $dbListing = Listing::whereIn('course_id', $dbTermCourseIdsQuery)->where([
+                    'department' => $listing['department'],
+                    'number' => $listing['number'],
+                    'section' => $listing['section']
+                ])->first();
+
+                if ($dbListing){
+                    $numListingsFound++;
+                    if (!$dbCourse) {
+                        $dbCourse = $dbListing->course;
+                        $dbListings[] = $dbListing;
+                    }
+                    elseif ($dbCourse->course_id != $dbListing->course_id) {
+                        // We found another listing, but it is on a different course.
+                        // So, we will ignore it.
+                    }
+                    else{
+                        $dbListings[] = $dbListing;
+                    }
+                }
+                else{
+                    // It is important that we fill gaps with nulls.
+                    $dbListings[] = null;
+                }
+            }
+
+            if ($numListingsFound == 0){
+                $listings = $course['listings'];
+
+                // We can't save the course with the listings stuck in its attributes table.
+                // Take them out, and then save them on the course the proper way.
+                unset($course['listings']);
+                $dbTerm->courses()->save($course);
+                $course->listings()->saveMany($listings);
+                $updatedDbCourseIds[$course->course_id] = true;
+                // TODO: record this action as feedback to the user.
+            }
+            else {
+                $i = 0;
+                $updatedDbListingIds = [];
+                $updatedDbCourseIds[$dbCourse->course_id] = true;
+                foreach ($course['listings'] as $listing) {
+                    $dbListing = $dbListings[$i++];
+                    if (!$dbListing){
+                        // TODO: record this action as feedback to the user.
+                        $dbCourse->listings()->save($listing);
+                        $dbListing = $listing;
+                    }
+                    else {
+                        // TODO: check if this actually needs updating, and count an update and a noaction differently.
+                        // TODO: record this action as feedback to the user.
+                        $dbListing->update($listing->toArray());
+                    }
+
+                    $updatedDbListingIds[$dbListing->listing_id] = true;
+                }
+
+                $dbListingsCount = count($dbCourse->listings);
+                foreach ($dbCourse->listings as $dbListing) {
+                    if (!isset($updatedDbListingIds[$dbListing->listing_id])){
+                        // this listing was not just created or updated. It needs to be deleted.
+
+                        if ($dbListingsCount == 1){
+                            // The listing to be deleted is the last listing on the course.
+                            // We need to delete the course as well.
+
+                            // if the course has orders, delete all the orders and mark the course as nobook.
+                            // if the course doesn't have orders (including any deleted orders), just delete the course.
+                            if (count($dbCourse->orders) == 0){
+                                $dbCourse->listings()->delete();
+                                $dbCourse->delete();
+                                // TODO: record this action as feedback to the user/
+                            }else{
+
+                                $dbCourse->orders()->delete();
+                                $dbCourse->no_book = true;
+                                $dbCourse->no_book_marked = Carbon::now();
+                                $dbCourse->save();
+                                // TODO: record this action as feedback to the user/
+                            }
+
+                        }
+                        else{
+                            // There are other listings on the course besides this one.
+                            // Deletion is safe.
+                            $dbListing->delete();
+                            // TODO: record this action as feedback to the user/
+                        }
+
+                        $dbListingsCount--;
+                    }
+                }
+
+            }
+        }
+
+
+        foreach ($dbTerm->courses as $dbCourse) {
+            if (!isset($updatedDbCourseIds[$dbCourse->course_id])){
+                // this course was not just created or updated. It needs to be deleted.
+
+                // if the course has orders, delete all the orders and mark the course as nobook.
+                // if the course doesn't have orders (including any deleted orders), just delete the course.
+                if (count($dbCourse->orders) == 0){
+                    $dbCourse->listings()->delete();
+                    $dbCourse->delete();
+                    // TODO: record this action as feedback to the user/
+                }else{
+
+                    $dbCourse->orders()->delete();
+                    $dbCourse->no_book = true;
+                    $dbCourse->no_book_marked = Carbon::now();
+                    $dbCourse->save();
+                    // TODO: record this action as feedback to the user/
+                }
+            }
+        }
+
+
+
+    }
+
+    private static function parseSpreadsheet($spreadsheet, $term_id){
+
         // Measure the spreadsheet, and then find the locations of the columns that we care about.
         $worksheet = $spreadsheet->getActiveSheet();
         $highestRow = $worksheet->getHighestRow(); // e.g. 10
@@ -109,14 +254,15 @@ class TermController extends Controller
         $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn); // e.g. 5
 
         $relevantColumns = [
-            'CAMPUS' => true,           // {RPT, CHN}
-            'DEPT' => true,             // {CSCD, PSYC, ENGL, ...}
-            'COURSE_ID' => true,        // CSCD371-01
+            'SORTCOURSE' => true,       // CSCD371-01
             'TITLE' => true,            // .NET PROGRAMMING
             'XLST_COURSE_ID' => true,   // ENGL170-01
-            'TERM' => true,             // 201620
 
+            // TODO: ask the bookstore if we only want CHN campus?
             // Might be useful for future additions, but currently unused:
+            //'CAMPUS' => true,           // {RPT, CHN}
+            //'DEPT' => true,             // {CSCD, PSYC, ENGL, ...}
+            //'TERM' => true,             // 201620
             // 'GRP_MAX_ENRL'      // (max enrolment for the course, including all xlistings)
         ];
 
@@ -133,7 +279,9 @@ class TermController extends Controller
         // Now, scan through all the data rows and pick out the $relevantColumns.
         $courses = [];
         for ($rowIndex = 2; $rowIndex <= $highestRow; $rowIndex++){
-            $course = [];
+            $course = [
+                'listings' => []
+            ];
 
             foreach ($columnIndiciesByLabel as $columnLabel => $colIndex) {
                 $course[$columnLabel] = $worksheet->getCellByColumnAndRow($colIndex, $rowIndex)->getValue();
@@ -141,13 +289,122 @@ class TermController extends Controller
 
             $courses[] = $course;
         }
-        
+
+
+        // We're done with the spreadsheet now. Lets make sense of all this data!
+        $bucketsById = [];
+        $allBuckets = [];
+
+
+        foreach ($courses as $course) {
+            $courseId = $course['SORTCOURSE'];
+            $xlId = $course['XLST_COURSE_ID'];
+
+
+            $hasBucket = false;
+            $hasBucket2 = false;
+            if (isset($bucketsById[$courseId])){
+                $bucket = $bucketsById[$courseId];
+                $hasBucket = true;
+            }
+
+            if (isset($bucketsById[$xlId])){
+                $bucket2 = $bucketsById[$xlId];
+                $hasBucket2 = true;
+            }
+
+            if (!$xlId || (!$hasBucket && !$hasBucket2)) {
+                $bucket = new \ArrayObject([$course]);
+
+                $bucketsById[$courseId] = $bucket;
+                $allBuckets[] = $bucket;
+                if ($xlId)
+                    $bucketsById[$xlId] = $bucket;
+            }
+            elseif ($hasBucket && !$hasBucket2) {
+                $bucket[] = $course;
+                $bucketsById[$xlId] = $bucket;
+            }
+            elseif (!$hasBucket && $hasBucket2) {
+                $bucket2[] = $course;
+                $bucketsById[$courseId] = $bucket2;
+            }
+            elseif ($bucket == $bucket2) {
+                $bucket[] = $course;
+            }
+            else {
+                // merge two buckets
+                foreach ($bucket2 as $bucketCourse) {
+                    $bucket[] = $bucketCourse;
+                    $bucketsById[$bucketCourse['SORTCOURSE']] = $bucket;
+                    $bucketsById[$bucketCourse['XLST_COURSE_ID']] = $bucket;
+                }
+
+                array_splice($allBuckets, array_search($bucket2, $allBuckets), 1);
+            }
+        }
+
+        $courses = [];
+        foreach ($allBuckets as $bucket) {
+            $array = $bucket->getArrayCopy();
+
+            $orderedBucket = from($array)
+                ->orderBy('$v["SORTCOURSE"]')
+                ->toArray();
+
+            $courseTitle = from($array)
+                ->first('$v["TITLE"]')['TITLE'];
+
+            $course = new Course();
+            $course->term_id = $term_id;
+            $listings = [];
+            // $firstCourse->user_id = NULL; // TODO;
+
+            $addedIds = [];
+            // do all the SORTCOURSE values before the XLST values.
+            foreach ($orderedBucket as $spreadsheetRow) {
+                $listing = static::addId($courseTitle, $spreadsheetRow['SORTCOURSE'], $addedIds);
+                if ($listing) $listings[] = $listing;
+            }
+            foreach ($orderedBucket as $spreadsheetRow) {
+                if (isset($spreadsheetRow['XLST_COURSE_ID']) && $spreadsheetRow['XLST_COURSE_ID']){
+
+                    $listing = static::addId($courseTitle, $spreadsheetRow['XLST_COURSE_ID'], $addedIds);
+                    if ($listing) $listings[] = $listing;
+                }
+            }
+
+            if (count($listings)){
+                $course['listings'] = $listings;
+                $courses[] = $course;
+            }
+        }
+
 
         return $courses;
+    }
 
+    private static function addId($courseTitle, $id, &$addedIds) {
+        if (isset($addedIds[$id])){
+            return null;
+        }
+        $addedIds[$id] = true;
 
+        $matches = [];
+        preg_match('/([A-Z]+)([0-9]+[A-Z]?)-([0-9]+)/', $id, $matches);
 
-        return view('terms.confirmImport', ['term' => $term]);
+        if (count($matches) != 4){
+            echo "DIDNT MATCH WELL: $id";
+            // TODO: WARN ABOUT THIS
+        } else {
+            $listing = new Listing();
+            $listing->name = $courseTitle;
+            $listing->department = $matches[1];
+            $listing->number = trim($matches[2], '0');
+            $listing->section = intval($matches[3]);
+            return $listing;
+        }
+        return null;
     }
 
 
@@ -281,5 +538,4 @@ class TermController extends Controller
 
         return $this->getDetails($term_id);
     }
-
 }

@@ -4,9 +4,66 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "221ea071975b866e4f24771a0f583f77",
-    "content-hash": "a2b8783f8db74adaeaeae3c77c0a7c5f",
+    "hash": "6f69d18d4f7b124b2dbf2ff71b6eb9b0",
+    "content-hash": "348c1bfca96165df8443ad8e68ea82f7",
     "packages": [
+        {
+            "name": "athari/yalinqo",
+            "version": "v2.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Athari/YaLinqo.git",
+                "reference": "13482700b4cfbda7c5c0c63d61a536c5c2b4360f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Athari/YaLinqo/zipball/13482700b4cfbda7c5c0c63d61a536c5c2b4360f",
+                "reference": "13482700b4cfbda7c5c0c63d61a536c5c2b4360f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5"
+            },
+            "require-dev": {
+                "phpdocumentor/phpdocumentor": "~2.8",
+                "phpunit/phpunit": "~4.6",
+                "satooshi/php-coveralls": "dev-master",
+                "symfony/validator": "<2.5"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "YaLinqo\\": "YaLinqo/"
+                },
+                "files": [
+                    "YaLinqo/Linq.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Alexander Prokhorov",
+                    "homepage": "https://github.com/Athari/"
+                }
+            ],
+            "description": "YaLinqo, a LINQ-to-objects library for PHP",
+            "homepage": "http://athari.github.io/YaLinqo",
+            "keywords": [
+                "linq",
+                "linqo",
+                "query",
+                "statistic"
+            ],
+            "time": "2016-01-11 12:32:40"
+        },
         {
             "name": "barryvdh/laravel-ide-helper",
             "version": "v2.1.2",
