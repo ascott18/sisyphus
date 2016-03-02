@@ -81,10 +81,10 @@ class TermController extends Controller
      */
     private function buildTermSearchQuery($tableState, $query) {
         $predicateObject = [];
-        if(isset($tableState->search->predicateObject))
+        if (isset($tableState->search->predicateObject))
             $predicateObject = $tableState->search->predicateObject; // initialize predicate object
 
-        if(isset($predicateObject->term) && $predicateObject->term != '') {
+        if (isset($predicateObject->term) && $predicateObject->term != '') {
             $termList = $this->searchTermNames($predicateObject->term);
 
             $query = $query->Where(function($sQuery) use ($termList) {
@@ -94,7 +94,7 @@ class TermController extends Controller
             });
         }
 
-        if(isset($predicateObject->year) && $predicateObject->year != '') {
+        if (isset($predicateObject->year) && $predicateObject->year != '') {
             $query = $query->where('year', '=', $predicateObject->year);              // this will search for matching year
         }
 

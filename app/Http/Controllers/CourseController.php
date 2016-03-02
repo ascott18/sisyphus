@@ -195,14 +195,14 @@ class CourseController extends Controller
     private function buildCourseSearchQuery($tableState, $query) {
 
         $predicateObject = [];
-        if(isset($tableState->search->predicateObject))
+        if (isset($tableState->search->predicateObject))
             $predicateObject = $tableState->search->predicateObject; // initialize predicate object
 
-        if(isset($predicateObject->section) && $predicateObject->section != '')
+        if (isset($predicateObject->section) && $predicateObject->section != '')
             SearchHelper::sectionSearchQuery($query, $predicateObject->section);
-        if(isset($predicateObject->name) && $predicateObject->name != '')
+        if (isset($predicateObject->name) && $predicateObject->name != '')
             $query = $query->where('name', 'LIKE', '%'.$predicateObject->name.'%');
-        if(isset($predicateObject->professor) && $predicateObject->professor != '')
+        if (isset($predicateObject->professor) && $predicateObject->professor != '')
             SearchHelper::professorSearchQuery($query, $predicateObject->professor);
 
         return $query;

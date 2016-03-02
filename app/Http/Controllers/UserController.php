@@ -58,7 +58,7 @@ class UserController extends Controller
     private function buildUserSearchQuery($tableState, $query)
     {
         $predicateObject = [];
-        if(isset($tableState->search->predicateObject))
+        if (isset($tableState->search->predicateObject))
             $predicateObject = $tableState->search->predicateObject; // initialize predicate object
 
         if (isset($predicateObject->lName) && $predicateObject->lName != '')
