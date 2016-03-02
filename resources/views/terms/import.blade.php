@@ -32,6 +32,53 @@
                         </button>
                     </div>
 
+
+                    <div>
+                        <h4>These courses were newly created.</h4>
+                        <ul>
+                            <li ng-repeat="course in actions.newCourse">
+                                <course-with-listings course="course"></course-with-listings>
+                            </li>
+                        </ul>
+
+                        <h4>These listings were newly created on existing courses.</h4>
+                        <ul>
+                            <li ng-repeat="courseListingPair in actions.newListing">
+                                <span class="text-muted">
+                                    <course-with-listings course="courseListingPair[0]">
+                                        &mdash; created
+                                        <span style="color: black">
+                                            [[courseListingPair[1].department]] [[courseListingPair[1].number | zpad:3]]-[[courseListingPair[1].section | zpad:2]] [[courseListingPair[1].name]]
+                                        </span>
+                                    </course-with-listings>
+                                </span>
+                            </li>
+                        </ul>
+
+                        <h4>These listings were updated.</h4>
+                        <ul>
+                            <li ng-repeat="listingPair in actions.updatedListing">
+                                [[listingPair[0].department]] [[listingPair[0].number | zpad:3]]-[[listingPair[0].section | zpad:2]] [[listingPair[0].name]]
+                                <i class="fa fa-arrow-right"></i>
+                                [[listingPair[1].department]] [[listingPair[1].number | zpad:3]]-[[listingPair[1].section | zpad:2]] [[listingPair[1].name]]
+                            </li>
+                        </ul>
+
+                        <h4>These listings didn't change.</h4>
+                        <ul>
+                            <li ng-repeat="listing in actions.noChangeListing">
+                                [[listing.department]] [[listing.number | zpad:3]]-[[listing.section | zpad:2]] [[listing.name]]
+                            </li>
+                        </ul>
+
+                        <h4>These listings were deleted.</h4>
+                        <ul>
+                            <li ng-repeat="listing in actions.deletedListing">
+                                [[listing.department]] [[listing.number | zpad:3]]-[[listing.section | zpad:2]] [[listing.name]]
+                            </li>
+                        </ul>
+                    </div>
+
                 </div>
             </div>
         </div>

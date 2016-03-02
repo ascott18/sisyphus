@@ -123,6 +123,15 @@ class TermController extends Controller
         $dbTerm = Term::findOrFail($term_id);
         $dbTermCourseIdsQuery = $dbTerm->courses()->select('course_id')->toBase();
 
+        $results = [
+            'newCourse' => [],
+            'newListing' => [],
+            'updatedListing' => [],
+            'noChangeListing' => [],
+            'deletedListing' => [],
+            'deletedCourseWithOrders' => [],
+            'deletedCourseWithoutOrders' => [],
+        ];
 
         $updatedDbCourseIds = [];
 
@@ -167,7 +176,9 @@ class TermController extends Controller
                 $dbTerm->courses()->save($course);
                 $course->listings()->saveMany($listings);
                 $updatedDbCourseIds[$course->course_id] = true;
-                // TODO: record this action as feedback to the user.
+
+                $listings = $course->listings; // need to attach the listings to the model.
+                $results['newCourse'][] = $course;
             }
             else {
                 $i = 0;
@@ -176,14 +187,24 @@ class TermController extends Controller
                 foreach ($course['listings'] as $listing) {
                     $dbListing = $dbListings[$i++];
                     if (!$dbListing){
-                        // TODO: record this action as feedback to the user.
                         $dbCourse->listings()->save($listing);
                         $dbListing = $listing;
+
+                        $results['newListing'][] = [$dbCourse, $dbListing];
                     }
                     else {
-                        // TODO: check if this actually needs updating, and count an update and a noaction differently.
-                        // TODO: record this action as feedback to the user.
-                        $dbListing->update($listing->toArray());
+
+                        $oldListing = $dbListing->toArray();
+
+                        $dbListing->fill($listing->toArray());
+                        if ($dbListing->isDirty()){
+                            $dbListing->save();
+                            $results['updatedListing'][] = [$oldListing, $dbListing];
+                        }
+                        else{
+                            $results['noChangeListing'][] = $dbListing;
+                        }
+
                     }
 
                     $updatedDbListingIds[$dbListing->listing_id] = true;
@@ -200,17 +221,20 @@ class TermController extends Controller
 
                             // if the course has orders, delete all the orders and mark the course as nobook.
                             // if the course doesn't have orders (including any deleted orders), just delete the course.
+                            // TODO: this isn't currently counting deleted orders. make 100% sure that it does.
                             if (count($dbCourse->orders) == 0){
                                 $dbCourse->listings()->delete();
                                 $dbCourse->delete();
-                                // TODO: record this action as feedback to the user/
+
+                                $results['deletedCourseWithoutOrders'][] = $dbCourse;
                             }else{
 
                                 $dbCourse->orders()->delete();
                                 $dbCourse->no_book = true;
                                 $dbCourse->no_book_marked = Carbon::now();
                                 $dbCourse->save();
-                                // TODO: record this action as feedback to the user/
+
+                                $results['deletedCourseWithOrders'][] = $dbCourse;
                             }
 
                         }
@@ -218,7 +242,8 @@ class TermController extends Controller
                             // There are other listings on the course besides this one.
                             // Deletion is safe.
                             $dbListing->delete();
-                            // TODO: record this action as feedback to the user/
+
+                            $results['deletedListing'][] = $dbListing;
                         }
 
                         $dbListingsCount--;
@@ -235,20 +260,25 @@ class TermController extends Controller
 
                 // if the course has orders, delete all the orders and mark the course as nobook.
                 // if the course doesn't have orders (including any deleted orders), just delete the course.
+                // TODO: this isn't currently counting deleted orders. make 100% sure that it does.
                 if (count($dbCourse->orders) == 0){
                     $dbCourse->listings()->delete();
                     $dbCourse->delete();
-                    // TODO: record this action as feedback to the user/
+
+                    $results['deletedCourseWithoutOrders'][] = $dbCourse;
                 }else{
 
                     $dbCourse->orders()->delete();
                     $dbCourse->no_book = true;
                     $dbCourse->no_book_marked = Carbon::now();
                     $dbCourse->save();
-                    // TODO: record this action as feedback to the user/
+
+                    $results['deletedCourseWithOrders'][] = $dbCourse;
                 }
             }
         }
+
+        return $results;
     }
 
     private static function parseSpreadsheet($spreadsheet, $term_id){
@@ -359,7 +389,7 @@ class TermController extends Controller
                 ->toArray();
 
             $courseTitle = from($array)
-                ->first('$v["TITLE"]')['TITLE'];
+                ->firstOrDefault(['TITLE'=>''], '$v["TITLE"]')['TITLE'];
 
             $course = new Course();
             $course->term_id = $term_id;

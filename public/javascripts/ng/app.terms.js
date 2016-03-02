@@ -39,9 +39,8 @@ app.controller('TermsImportController', function($rootScope, $scope, $http) {
         $http.post('/terms/import-preview/' + $scope.term_id, fd, {
             transformRequest: angular.identity,
             headers: {'Content-Type': undefined}
-        })
-        .success(function(response){
-
+        }).then(function(response){
+            $scope.actions = response.data.actions;
         });
     };
 });
