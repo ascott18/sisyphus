@@ -87,9 +87,9 @@ class OrderController extends Controller
 
 
             $book = [];
-            if ($request->input('isbn13') != null) {
+            if ($request->input('book_id') != null) {
                 $book = Book::with('authors')
-                    ->where('isbn13', '=', $request->input('isbn13'))
+                    ->where('book_id', '=', $request->input('book_id'))
                     ->get();
             }
 			$viewParams['book'] = $book;
