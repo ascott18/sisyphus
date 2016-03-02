@@ -137,7 +137,7 @@ class TicketController extends Controller
 
         if (isset($predicateObject->title) && $predicateObject->title != '')
             $query = $query->where('tickets.title', 'LIKE', '%'.$predicateObject->title.'%');
-        if (isset($predicateObject->name) && $predicateObject->name != '') {
+        if (isset($predicateObject->name) && $predicateObject->name != '')
             SearchHelper::professorSearchQuery($query, $predicateObject->name);
 
         return $query;
