@@ -20,3 +20,48 @@ app.controller('TermsTableController', function($scope, StHelper) {
         StHelper.callServer(tableState, config, $scope );
     };
 });
+
+app.controller('TermsImportController', function($rootScope, $scope, $http) {
+
+    $scope.browserTooOld = false;
+
+    if (typeof FormData == 'undefined'){
+        $rootScope.appErrors = $rootScope.appErrors || [];
+        $rootScope.appErrors.push({messages: ["Your browser is too old. You will not be able to use this feature. Please switch to a modern browser! "]});
+        $scope.browserTooOld = true;
+        return;
+    }
+
+    $scope.submitForPreview = function(){
+        var fd = new FormData();
+        fd.append('file', $scope.file);
+
+        $http.post('/terms/import-preview/' + $scope.term_id, fd, {
+            transformRequest: angular.identity,
+            headers: {'Content-Type': undefined}
+        })
+        .success(function(response){
+
+        });
+    };
+});
+
+
+// From https://jsfiddle.net/JeJenny/ZG9re/
+app.directive('fileModel', ['$parse', function ($parse) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            var model = $parse(attrs.fileModel);
+            var modelSetter = model.assign;
+
+            element.bind('change', function(){
+                scope.$apply(function(){
+                    modelSetter(scope, element[0].files[0]);
+                });
+            });
+
+            modelSetter(scope, element[0].files[0]);
+        }
+    };
+}]);

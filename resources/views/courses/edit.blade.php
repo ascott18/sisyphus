@@ -80,14 +80,14 @@
                                            placeholder="e.g. 100"
                                            ng-model="listing.number"
                                            required
-                                           pattern="[0-9]{1,10}" >
+                                           pattern="[0-9]{1,9}[A-Z]?" >
 
                                     <span ng-cloak ng-show="form.$submitted || form[makeFormKey($index, 'number')].$touched">
                                         <span class="text-danger" ng-show="form[makeFormKey($index, 'number')].$error.required">
                                             Number is required.
                                         </span>
                                         <span class="text-danger" ng-show="form[makeFormKey($index, 'number')].$error.pattern">
-                                            Number must be ... a number.
+                                            Number is not valid.
                                         </span>
                                     </span>
                                 </div>

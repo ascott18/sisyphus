@@ -9,8 +9,9 @@
 
 @section('content')
 
-    <div class="row" ng-controller="TermsController">
-        <div class="col-lg-12">
+    <div class="row" ng-controller="TermsImportController"
+            ng-init="term_id = {{$term->term_id}}">
+        <div class="col-lg-12" ng-show="!browserTooOld">
 
             <div class="panel panel-default">
                 <div class="panel-heading">
@@ -18,22 +19,18 @@
                 </div>
                 <div class="panel-body">
 
-                    <form action="/terms/import/{{$term->term_id}}" method="POST" enctype="multipart/form-data">
-                        {!! csrf_field() !!}
+                    <div class="form-group">
+                        <label>Select Course CSV
+                            <input type="file" file-model="file">
+                        </label>
+                        <p class="help-block">Example block-level help text here.</p>
+                    </div>
 
-                        <div class="form-group">
-                            <label>Select Course CSV
-                                <input type="file" name="file">
-                            </label>
-                            <p class="help-block">Example block-level help text here.</p>
-                        </div>
-
-                        <div class="col-lg-12 ">
-                            <button type="submit" class="btn btn-success pull-right" style="margin-top: 15px;">
-                                Process and Review input <i class="fa arrow-right"></i>
-                            </button>
-                        </div>
-                    </form>
+                    <div class="col-lg-12 ">
+                        <button class="btn btn-success" ng-click="submitForPreview()" >
+                            Process and Review input <i class="fa arrow-right"></i>
+                        </button>
+                    </div>
 
                 </div>
             </div>
@@ -44,5 +41,6 @@
 
 
 @section('scripts-head')
+    <script src="/javascripts/ui-bootstrap-tpls-0.14.3.min.js"></script>
     <script src="/javascripts/ng/app.terms.js"></script>
 @stop

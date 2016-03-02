@@ -5,13 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use App\Models\Listing;
 use Carbon\Carbon;
+use DB;
+use Exception;
 use Illuminate\Http\Request;
 use App\Http\Requests;
-use App\Http\Controllers\Controller;
 use App\Models\Term;
 use PHPExcel_Cell;
 use PHPExcel_IOFactory;
 use SearchHelper;
+use Symfony\Component\HttpFoundation\Response;
 
 class TermController extends Controller
 {
@@ -78,21 +80,19 @@ class TermController extends Controller
      * @param $term_id
      * @return \Illuminate\Http\Response
      */
-    public function postImport(Request $request, $term_id)
+    public function postImportPreview(Request $request, $term_id)
     {
         $this->authorize('edit-terms');
 
         $term = Term::findOrFail($term_id);
 
         if (!$request->hasFile('file')) {
-            return view('terms.import', ['term' => $term])
-                ->withErrors(['no-file' => 'No file was uploaded!']);
+            return response(['success' => false, 'message' => 'No file was uploaded!'], Response::HTTP_BAD_REQUEST);
         }
         $file = $request->file('file');
 
         if (!$file->isValid()) {
-            return view('terms.import', ['term' => $term])
-                ->withErrors(['bad-file' => 'There was an issue uploading the file. Please try again.']);
+            return response(['success' => false, 'message' => 'There was an issue uploading the file. Please try again.'], Response::HTTP_BAD_REQUEST);
         }
 
 
@@ -105,9 +105,18 @@ class TermController extends Controller
 
         $courses = static::parseSpreadsheet($spreadsheet, $term_id);
 
-        static::importCourses($courses, $term_id);
+        DB::beginTransaction();
+        try{
+            $actions = static::importCourses($courses, $term_id);
+        }
+        catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
 
-        return view('terms.confirmImport', ['term' => $term]);
+        DB::rollBack();
+
+        return ['success' => true, 'actions' => $actions];
     }
 
     private static function importCourses($courses, $term_id){
@@ -240,9 +249,6 @@ class TermController extends Controller
                 }
             }
         }
-
-
-
     }
 
     private static function parseSpreadsheet($spreadsheet, $term_id){
@@ -400,7 +406,7 @@ class TermController extends Controller
             $listing = new Listing();
             $listing->name = $courseTitle;
             $listing->department = $matches[1];
-            $listing->number = trim($matches[2], '0');
+            $listing->number = ltrim($matches[2], '0');
             $listing->section = intval($matches[3]);
             return $listing;
         }

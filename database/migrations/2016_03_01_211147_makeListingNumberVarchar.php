@@ -12,7 +12,12 @@ class MakeListingNumberVarchar extends Migration
      */
     public function up()
     {
-        //
+        // This was done because there are courses like "RIDE 530N-40"
+        Schema::table('listings', function(Blueprint $table) {
+            $table->string('number', 10)->change();
+
+            $table->index('section', 'idx_section');
+        });
     }
 
     /**
@@ -22,6 +27,10 @@ class MakeListingNumberVarchar extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('listings', function(Blueprint $table) {
+            $table->integer('number')->unsigned()->change();
+
+            $table->dropIndex('idx_section');
+        });
     }
 }

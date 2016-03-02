@@ -17,7 +17,7 @@ class CourseController extends Controller
         'course.listings.0' => 'required',
         'course.listings.0.name' => 'required|string',
         'course.listings.*.department' => 'required|string|min:2|max:10',
-        'course.listings.*.number' => 'required|numeric',
+        'course.listings.*.number' => 'required|regex:/[0-9]{1,9}[A-Z]?/',
         'course.listings.*.section' => 'required|numeric',
     ];
 
