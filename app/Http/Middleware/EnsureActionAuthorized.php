@@ -30,7 +30,7 @@ class EnsureActionAuthorized
         $response = $next($request);
 
         // Don't warn about this if we're responding with an exception,
-        // or if the status is 422, which means that validation failed.
+        // or if the status is 422, (422 means that validation failed).
         if ($response->status() == 422
             || (isset($response->exception) && $response->exception))
         {
@@ -42,7 +42,7 @@ class EnsureActionAuthorized
 
             if (config("app.debug")){
                 $message .= "\n\nDeveloper Notes:\n"
-                    . 'Make sure to call $this->authorize("some-ability") in this action at least once for all execution paths.
+                    . 'Make sure to call $this->authorize("some-gate") in this action at least once for all execution paths.
                     Explicitly authorize the "all" ability if the action is truly public.';
             }
 

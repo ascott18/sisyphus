@@ -304,8 +304,12 @@ app.factory('RequestsErrorHandler', ['$q', '$rootScope', function($q, $rootScope
                 console.log(rejection);
                 if (rejection.data && rejection.data.success == false && rejection.data.message )
                 {
+                    var messages = [rejection.data.message];
+                    if (rejection.data.messages)
+                        messages = messages.concat(rejection.data.messages);
+
                     $rootScope.appErrors.push({
-                        messages: [rejection.data.message]
+                        messages: messages
                     });
                 }
                 else if (rejection.data.response && rejection.data.response.message )

@@ -132,6 +132,17 @@ class Handler extends ExceptionHandler
             ];
 
             if (\Request::ajax()){
+                if ($response['flattenException'])
+                {
+                    $response['messages'] = [];
+                    foreach ($response['flattenException']->getTrace() as $t) {
+                        $response['messages'][] =
+                            (isset($t['file']) && isset($t['line']) ? $t['file'] . ':' . $t['line'] : '') .
+                            ' in function ' .
+                            ($t['function'] ? $t['function'] : '???');
+                    }
+                }
+
                 return new JsonResponse($response, $response['status'], []);
             }
             else{

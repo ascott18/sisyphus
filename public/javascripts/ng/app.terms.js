@@ -32,6 +32,17 @@ app.controller('TermsImportController', function($rootScope, $scope, $http) {
         return;
     }
 
+    $scope.noChangeListingLimit = 10;
+    $scope.newCourseLimit = 10;
+
+    $scope.showAllNewCourses = function(){
+        $scope.newCourseLimit = undefined;
+    };
+
+    $scope.showAllNoChangeListings = function(){
+        $scope.noChangeListingLimit = undefined;
+    };
+
     $scope.submitForPreview = function(){
         var fd = new FormData();
         fd.append('file', $scope.file);

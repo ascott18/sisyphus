@@ -1,4 +1,4 @@
-# EWU Senior Project Book Ordering System
+# EWU Senior Project - Faculty Book Ordering System
 
 
 ## Deployment Instructions
@@ -24,22 +24,37 @@ Next, clone this repository to the web root of your apache installation. Then, g
 * Run `php artisan key:generate`
     * This will populate APP_KEY in your `.env` file.
 * Run `php artisan migrate` to generate the database.
-    * If you would like to seed the database with test data, run `php artisan migrate:refresh --seed` instead. Be warned that this will drop all tables and re-create them.
+    * If you would like to seed the database with data, run `php artisan migrate:refresh --seed` instead. Be warned that this will drop all tables and re-create them.
 * Ensure that Apache has full permissions to the `storage` directory of the project.
     * This includes execute permission. Cached version of the compiled Laravel blade templates are stored here, and they need to be executable.
 
 ### Apache Configuration
 
+* This part of this file assumes you have a primitive understanding of apache configuration files. If you don't, go do some Googling and come back later.
 * This application makes the assumption that data returned from MySQL will be of the correct types (as opposed to only strings). This means that the `mysqlnd` native driver is [required](http://stackoverflow.com/questions/5323146/mysql-integer-field-is-returned-as-string-in-php). Install it with `apt-get install php5-mysqlnd`.
+    * If you are using XAMPP locally, you already have it.
 * In order for CAS (SSO) authentication to work, `php5-curl` is required. Install it with `apt-get install php5-curl`.
+    * If you are using XAMPP locally, you already have it.
 * Laravel, the framework used by this application, requires `mod_rewrite`. Enable it by running `a2enmod rewrite`.
+    * If you are using XAMPP, ensure that `LoadModule rewrite_module modules/mod_rewrite.so` isn't commented out in your apache conf.
 * Set the `DocumentRoot` to the `public` directory in the root of the project.
 * Find the `<Directory>` directive that governs the document root (it may be in your base apache configuration, or in a VirtualHost), and set `AllowOverride All`. Laravel makes use of directory-specific .htaccess files, and will not work if this is not set.
 * Ensure that `AccessFileName .htaccess` is set.
 * Don't forget to restart Apache to apply the configuration changes!
+* Here is an example vhost:
+
+    ```
+    Listen 8080
+    <VirtualHost *:8080>
+      ServerName localhost
+      DocumentRoot "C:/xampp/htdocs/sisyphus/public"
+      <Directory "C:/xampp/htdocs/sisyphus/public">
+        AllowOverride all
+      </Directory>
+    </VirtualHost>```
     
 ### Optimization
-There are a few optimization steps that may be taken if this is a permanent installation.
+There are a few optimization steps that may be taken **if this is a production deployment**.
 
 * Run `php artisan config:cache`
     * If you update any configuration for the application, including what is in the `.env` file, you **MUST** re-run this command to apply your changes.
@@ -48,7 +63,7 @@ There are a few optimization steps that may be taken if this is a permanent inst
     
     
 ## Structure
-The following is a brief primer on the structure of this project. If you would like to read more in-depth information about Laravel, check out the [Laravel 5.1 Documentation](http://laravel.com/docs/5.1)
+The following is a brief primer on the structure of this project. If you would like to read more in-depth information about Laravel, I strongly recommend you read the [Laravel 5.2 Documentation](http://laravel.com/docs/5.2)
 
 * Laravel is an MVC framework. Important components may be found in the following locations:
     * Environment-specific configuration: `/.env`

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\Listing;
+use App\Models\User;
 use Carbon\Carbon;
 use DB;
 use Exception;
@@ -17,6 +18,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 class TermController extends Controller
 {
+    const FACULTY_EMAIL_TBD = '#N/A';
+    const FACULTY_EMAIL_CONFIDENTIAL = 'CONFID';
+
     /** GET /terms
      *
      * Display a listing of the resource.
@@ -155,7 +159,8 @@ class TermController extends Controller
                     }
                     elseif ($dbCourse->course_id != $dbListing->course_id) {
                         // We found another listing, but it is on a different course.
-                        // So, we will ignore it.
+                        // So, we will ignore it (i guess?)
+                        $dbListings[] = null;
                     }
                     else{
                         $dbListings[] = $dbListing;
@@ -177,7 +182,8 @@ class TermController extends Controller
                 $course->listings()->saveMany($listings);
                 $updatedDbCourseIds[$course->course_id] = true;
 
-                $listings = $course->listings; // need to attach the listings to the model.
+                // need to attach the listings to the model.
+                $course->listings;
                 $results['newCourse'][] = $course;
             }
             else {
@@ -221,8 +227,7 @@ class TermController extends Controller
 
                             // if the course has orders, delete all the orders and mark the course as nobook.
                             // if the course doesn't have orders (including any deleted orders), just delete the course.
-                            // TODO: this isn't currently counting deleted orders. make 100% sure that it does.
-                            if (count($dbCourse->orders) == 0){
+                            if ($dbCourse->orders()->withTrashed()->count() == 0){
                                 $dbCourse->listings()->delete();
                                 $dbCourse->delete();
 
@@ -260,8 +265,7 @@ class TermController extends Controller
 
                 // if the course has orders, delete all the orders and mark the course as nobook.
                 // if the course doesn't have orders (including any deleted orders), just delete the course.
-                // TODO: this isn't currently counting deleted orders. make 100% sure that it does.
-                if (count($dbCourse->orders) == 0){
+                if ($dbCourse->orders()->withTrashed()->count()){
                     $dbCourse->listings()->delete();
                     $dbCourse->delete();
 
@@ -290,11 +294,14 @@ class TermController extends Controller
         $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn); // e.g. 5
 
         $relevantColumns = [
-            'SORTCOURSE' => true,       // CSCD371-01
-            'TITLE' => true,            // .NET PROGRAMMING
-            'XLST_COURSE_ID' => true,   // ENGL170-01
+            'COURSE_ID' => true,        // ART155-01
+            'TITLE' => true,            // BEGINNING PAINTING
+            'XLST_COURSE_ID' => true,   // ART450-01
+            'XLST_TITLE' => true,       // PAINTING
+            'FacultyEmail' => true,
+            'FacultyLastName' => true,
+            'FacultyFirstName' => true,
 
-            // TODO: ask the bookstore if we only want CHN campus?
             // Might be useful for future additions, but currently unused:
             //'CAMPUS' => true,           // {RPT, CHN}
             //'DEPT' => true,             // {CSCD, PSYC, ENGL, ...}
@@ -307,106 +314,116 @@ class TermController extends Controller
         $columnIndiciesByLabel = [];
         for ($colIndex = 0; $colIndex <= $highestColumnIndex; $colIndex++){
             $columnLabel = $worksheet->getCellByColumnAndRow($colIndex, 1)->getValue();
+
             if (isset($relevantColumns[$columnLabel]))
                 $columnIndiciesByLabel[$columnLabel] = $colIndex;
         }
 
 
         // Now, scan through all the data rows and pick out the $relevantColumns.
-        $courses = [];
+        $spreadsheetRows = [];
         for ($rowIndex = 2; $rowIndex <= $highestRow; $rowIndex++){
-            $course = [
-                'listings' => []
-            ];
+            $spreadsheetRow = [];
 
             foreach ($columnIndiciesByLabel as $columnLabel => $colIndex) {
-                $course[$columnLabel] = $worksheet->getCellByColumnAndRow($colIndex, $rowIndex)->getValue();
+                $spreadsheetRow[$columnLabel] = $worksheet->getCellByColumnAndRow($colIndex, $rowIndex)->getValue();
             }
 
-            $courses[] = $course;
+            $spreadsheetRows[] = $spreadsheetRow;
         }
 
 
-        // We're done with the spreadsheet now. Lets make sense of all this data!
-        $bucketsById = [];
         $allBuckets = [];
 
+        $primaryListingBucket = null;
+        foreach ($spreadsheetRows as $spreadsheetRow) {
+            $courseId = $spreadsheetRow['COURSE_ID'];
+            $xlId = $spreadsheetRow['XLST_COURSE_ID'];
 
-        foreach ($courses as $course) {
-            $courseId = $course['SORTCOURSE'];
-            $xlId = $course['XLST_COURSE_ID'];
-
-
-            $hasBucket = false;
-            $hasBucket2 = false;
-            if (isset($bucketsById[$courseId])){
-                $bucket = $bucketsById[$courseId];
-                $hasBucket = true;
+            if ($courseId && !$xlId){
+                // This is just a regular old course with no XListings.
+                // Pop it in its own bucket and store it.
+                $allBuckets[] = new \ArrayObject([$spreadsheetRow]);
+                $primaryListingBucket = null;
             }
-
-            if (isset($bucketsById[$xlId])){
-                $bucket2 = $bucketsById[$xlId];
-                $hasBucket2 = true;
-            }
-
-            if (!$xlId || (!$hasBucket && !$hasBucket2)) {
-                $bucket = new \ArrayObject([$course]);
-
-                $bucketsById[$courseId] = $bucket;
-                $allBuckets[] = $bucket;
-                if ($xlId)
-                    $bucketsById[$xlId] = $bucket;
-            }
-            elseif ($hasBucket && !$hasBucket2) {
-                $bucket[] = $course;
-                $bucketsById[$xlId] = $bucket;
-            }
-            elseif (!$hasBucket && $hasBucket2) {
-                $bucket2[] = $course;
-                $bucketsById[$courseId] = $bucket2;
-            }
-            elseif ($bucket == $bucket2) {
-                $bucket[] = $course;
-            }
-            else {
-                // merge two buckets
-                foreach ($bucket2 as $bucketCourse) {
-                    $bucket[] = $bucketCourse;
-                    $bucketsById[$bucketCourse['SORTCOURSE']] = $bucket;
-                    $bucketsById[$bucketCourse['XLST_COURSE_ID']] = $bucket;
+            elseif (!$courseId && $xlId){
+                if (!$spreadsheetRow['XLST_TITLE'] || $spreadsheetRow['XLST_TITLE'] == $primaryListingBucket[0]['TITLE']){
+                    // This is a crosslisting with the same title as the original. Put it in the most recent bucket.
+                    $primaryListingBucket[] = $spreadsheetRow;
                 }
-
-                array_splice($allBuckets, array_search($bucket2, $allBuckets), 1);
+                else {
+                    // This is a crosslisting with a different title from the original. Make it be its own course.
+                    $allBuckets[] = new \ArrayObject([$spreadsheetRow]);
+                }
+            }
+            elseif ($courseId == $xlId){
+                // This is the primary listing of a course that has crosslistings.
+                // Make a bucket for it and save the bucket.
+                $allBuckets[] = $primaryListingBucket = new \ArrayObject([$spreadsheetRow]);
             }
         }
 
+
         $courses = [];
+        $alreadyProcessed = [];
         foreach ($allBuckets as $bucket) {
-            $array = $bucket->getArrayCopy();
+            $bucket = $bucket->getArrayCopy();
 
-            $orderedBucket = from($array)
-                ->orderBy('$v["SORTCOURSE"]')
-                ->toArray();
+            if ($bucket[0]['TITLE'])
+                $courseTitle = $bucket[0]['TITLE'];
+            else
+                $courseTitle = $bucket[0]['XLST_TITLE'];
 
-            $courseTitle = from($array)
-                ->firstOrDefault(['TITLE'=>''], '$v["TITLE"]')['TITLE'];
-
+            $userEmail = $bucket[0]['FacultyEmail'];
             $course = new Course();
+
+            if ($userEmail == static::FACULTY_EMAIL_TBD || $userEmail == static::FACULTY_EMAIL_CONFIDENTIAL){
+                $course->user_id = null;
+            }
+            else{
+                $net_id = preg_split('/@/', $userEmail)[0];
+                $dbUser = User::where(['net_id' => $net_id])->first();
+
+                if (!$dbUser){
+                    $dbUser = new User;
+                    $dbUser->net_id = $net_id;
+                    $dbUser->email = $userEmail;
+                    $dbUser->first_name = $bucket[0]['FacultyFirstName'];
+                    $dbUser->last_name = $bucket[0]['FacultyLastName'];
+                    $dbUser->save();
+                }
+
+                $course->user_id = $dbUser->user_id;
+            }
+
             $course->term_id = $term_id;
             $listings = [];
-            // $firstCourse->user_id = NULL; // TODO;
 
-            $addedIds = [];
-            // do all the SORTCOURSE values before the XLST values.
-            foreach ($orderedBucket as $spreadsheetRow) {
-                $listing = static::addId($courseTitle, $spreadsheetRow['SORTCOURSE'], $addedIds);
-                if ($listing) $listings[] = $listing;
-            }
-            foreach ($orderedBucket as $spreadsheetRow) {
+            foreach ($bucket as $spreadsheetRow) {
                 if (isset($spreadsheetRow['XLST_COURSE_ID']) && $spreadsheetRow['XLST_COURSE_ID']){
+                    $id = $spreadsheetRow['XLST_COURSE_ID'];
+                }
+                else {
+                    $id = $spreadsheetRow['COURSE_ID'];
+                }
 
-                    $listing = static::addId($courseTitle, $spreadsheetRow['XLST_COURSE_ID'], $addedIds);
-                    if ($listing) $listings[] = $listing;
+                if (isset($alreadyProcessed[$id])){
+                    continue;
+                }
+                $alreadyProcessed[$id] = true;
+
+                $matches = [];
+                preg_match('/([A-Z]+)([0-9]+[A-Z]?)-([0-9]+)/', $id, $matches);
+
+                if (count($matches) != 4){
+                    // TODO: WARN ABOUT THIS? it probably won't ever happen.
+                } else {
+                    $listing = new Listing();
+                    $listing->name = $courseTitle;
+                    $listing->department = $matches[1];
+                    $listing->number = ltrim($matches[2], '0');
+                    $listing->section = intval($matches[3]);
+                    $listings[] = $listing;
                 }
             }
 
@@ -418,29 +435,6 @@ class TermController extends Controller
 
 
         return $courses;
-    }
-
-    private static function addId($courseTitle, $id, &$addedIds) {
-        if (isset($addedIds[$id])){
-            return null;
-        }
-        $addedIds[$id] = true;
-
-        $matches = [];
-        preg_match('/([A-Z]+)([0-9]+[A-Z]?)-([0-9]+)/', $id, $matches);
-
-        if (count($matches) != 4){
-            echo "DIDNT MATCH WELL: $id";
-            // TODO: WARN ABOUT THIS
-        } else {
-            $listing = new Listing();
-            $listing->name = $courseTitle;
-            $listing->department = $matches[1];
-            $listing->number = ltrim($matches[2], '0');
-            $listing->section = intval($matches[3]);
-            return $listing;
-        }
-        return null;
     }
 
 
