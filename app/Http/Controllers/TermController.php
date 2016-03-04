@@ -78,13 +78,8 @@ class TermController extends Controller
     }
 
 
-    /** POST /terms/import/{term_id}
-     *
-     * @param Request $request
-     * @param $term_id
-     * @return \Illuminate\Http\Response
-     */
-    public function postImportPreview(Request $request, $term_id)
+
+    private function importHelper(Request $request, $term_id, $doCommitTransaction = false)
     {
         $this->authorize('edit-terms');
 
@@ -118,12 +113,50 @@ class TermController extends Controller
             throw $e;
         }
 
-        DB::rollBack();
+        if ($doCommitTransaction){
+            DB::commit();
+        }
+        else{
+            DB::rollBack();
+        }
 
         return ['success' => true, 'actions' => $actions];
     }
 
-    private static function importCourses($courses, $term_id){
+
+    /** POST /terms/import-data/{term_id}
+     *
+     * Finalizes a data import.
+     *
+     * @param Request $request
+     * @param $term_id
+     * @return \Illuminate\Http\Response
+     * @throws Exception
+     */
+    public function postImportData(Request $request, $term_id)
+    {
+        return $this->importHelper($request, $term_id, true);
+    }
+
+
+    /** POST /terms/import-preview/{term_id}
+     *
+     * Performs a dry run of a data import using a transaction that will be rolled back.
+     * Allows the user to preview an import before they commit to it.
+     *
+     * @param Request $request
+     * @param $term_id
+     * @return \Illuminate\Http\Response
+     * @throws Exception
+     */
+    public function postImportPreview(Request $request, $term_id)
+    {
+        return $this->importHelper($request, $term_id, false);
+    }
+
+
+    private static function importCourses($courses, $term_id)
+    {
         $dbTerm = Term::findOrFail($term_id);
         $dbTermCourseIdsQuery = $dbTerm->courses()->select('course_id')->toBase();
 

@@ -18,24 +18,47 @@
                     <h3 class="panel-title"><i class="fa fa-calendar fa-fw"></i> Import Data</h3>
                 </div>
                 <div class="panel-body">
+                    <div ng-show="!submittingPreview && !havePreviewResponse && !submittingImport">
+                        <h2>
+                            Please select a course report from reporting.eastern.ewu.edu to import.
+                        </h2>
+                        <h4>We won't make any changes right away - you will have a chance to review what will happen before you confirm the import.</h4>
+                        <br>
+                        <br>
 
-                    <div class="form-group">
-                        <label>Select Course CSV
-                            <input type="file" file-model="file">
-                        </label>
-                        <p class="help-block">Example block-level help text here.</p>
+                        <div class="form-group">
+                            <label>Select Course Report (.csv, .xls, or .xlsx)
+                                <input type="file" file-model="file">
+                            </label>
+                        </div>
+                        <br>
                     </div>
 
-                    <div class="col-lg-12 ">
-                        <button class="btn btn-success" ng-click="submitForPreview()" >
-                            Process and Review input <i class="fa arrow-right"></i>
-                        </button>
+                    <div ng-show="submittingPreview || submittingImport">
+                        <h2>
+                            The file you submitted is being processed. This can take a minute...
+                        </h2>
                     </div>
 
+                    <div ng-show="havePreviewResponse && !submittedImport && !submittingImport">
+                        <h2>
+                            Here is a <strong>preview</strong> of what will happen if you proceed with this import.
+                        </h2>
+                        <h4>Please be aware that <strong>nothing has actually been imported</strong> - this is just a preview.</h4>
+                        <h5>If you would like to continue with this import after you review this information, scroll to the bottom and click Import.</h5>
+                        <br>
+                        <br>
+                    </div>
 
-                    <div>
+                    <div ng-show="submittedImport">
+                        <h2>
+                            The following actions were successfully performed!
+                        </h2>
+                    </div>
+
+                    <div class="row" ng-show="actions">
                         <div class="col-md-4" ng-show="actions.newCourse.length">
-                            <h4>These [[actions.newCourse.length]] courses were newly created.</h4>
+                            <h4>These [[actions.newCourse.length]] courses [[!submittedImport ? 'will be' : 'were']] newly created.</h4>
                             <ul>
                                 <li ng-repeat="course in actions.newCourse | limitTo:newCourseLimit">
                                     <course-with-listings course="course">
@@ -54,7 +77,7 @@
                         </div>
 
                         <div class="col-md-4" ng-show="actions.newListing.length">
-                            <h4>These [[actions.newListing.length]] listings were newly created on existing courses.</h4>
+                            <h4>These [[actions.newListing.length]] listings [[!submittedImport ? 'will be' : 'were']] newly created on existing courses.</h4>
                             <ul>
                                 <li ng-repeat="courseListingPair in actions.newListing">
                                 <span class="text-muted">
@@ -70,7 +93,7 @@
                         </div>
 
                         <div class="col-md-4" ng-show="actions.updatedListing.length">
-                            <h4>These [[actions.updatedListing.length]] listings were updated.</h4>
+                            <h4>These [[actions.updatedListing.length]] listings [[!submittedImport ? 'will be' : 'were']] updated.</h4>
                             <ul>
                                 <li ng-repeat="listingPair in actions.updatedListing">
                                     [[listingPair[0].department]] [[listingPair[0].number | zpad:3]]-[[listingPair[0].section | zpad:2]] [[listingPair[0].name]]
@@ -98,7 +121,7 @@
                         </div>
 
                         <div class="col-md-4" ng-show="actions.deletedListing.length">
-                            <h4>These [[actions.deletedListing.length]] listings were deleted.</h4>
+                            <h4>These [[actions.deletedListing.length]] listings [[!submittedImport ? 'will be' : 'were']] deleted.</h4>
                             <ul>
                                 <li ng-repeat="listing in actions.deletedListing">
                                     [[listing.department]] [[listing.number | zpad:3]]-[[listing.section | zpad:2]] [[listing.name]]
@@ -107,7 +130,7 @@
                         </div>
 
                         <div class="col-md-4" ng-show="actions.deletedCourseWithoutOrders.length">
-                            <h4>These [[actions.deletedCourseWithoutOrders.length]] courses were deleted.</h4>
+                            <h4>These [[actions.deletedCourseWithoutOrders.length]] courses [[!submittedImport ? 'will be' : 'were']] deleted.</h4>
                             <ul>
                                 <li ng-repeat="course in actions.deletedCourseWithoutOrders">
                                     <course-with-listings course="course">
@@ -119,7 +142,7 @@
 
                         <div class="col-md-4" ng-show="actions.deletedCourseWithOrders.length">
                             <h4>These [[actions.deletedCourseWithOrders.length]] courses needed to be deleted, but had requests.
-                                <small>They were marked as no book, and their requests were deleted.</small>
+                                <small>They [[!submittedImport ? 'will be' : 'were']] marked as no book, and their requests [[!submittedImport ? 'will be' : 'were']] deleted.</small>
                             </h4>
                             <ul>
                                 <li ng-repeat="course in actions.deletedCourseWithOrders">
@@ -128,6 +151,21 @@
                                     </course-with-listings>
                                 </li>
                             </ul>
+                        </div>
+                    </div>
+
+                    <br>
+                    <br>
+
+                    <div class="row">
+                        <div class="col-lg-12 ">
+                            <button class="btn btn-success" ng-click="submitForPreview()" ng-show="!submittingPreview && !havePreviewResponse">
+                                Process and Review Input <i class="fa arrow-right"></i>
+                            </button>
+
+                            <button class="btn btn-success" ng-click="submitForImport()" ng-show="havePreviewResponse && !submittingImport && !submittedImport" >
+                                Import These Courses <i class="fa arrow-right"></i>
+                            </button>
                         </div>
                     </div>
 

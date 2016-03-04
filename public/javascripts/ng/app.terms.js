@@ -44,6 +44,8 @@ app.controller('TermsImportController', function($rootScope, $scope, $http) {
     };
 
     $scope.submitForPreview = function(){
+        $scope.submittingPreview = true;
+
         var fd = new FormData();
         fd.append('file', $scope.file);
 
@@ -52,6 +54,25 @@ app.controller('TermsImportController', function($rootScope, $scope, $http) {
             headers: {'Content-Type': undefined}
         }).then(function(response){
             $scope.actions = response.data.actions;
+            $scope.submittingPreview = false;
+            $scope.havePreviewResponse = true;
+        });
+    };
+
+    $scope.submitForImport = function(){
+        $scope.actions = false;
+        $scope.submittingImport = true;
+
+        var fd = new FormData();
+        fd.append('file', $scope.file);
+
+        $http.post('/terms/import-data/' + $scope.term_id, fd, {
+            transformRequest: angular.identity,
+            headers: {'Content-Type': undefined}
+        }).then(function(response){
+            $scope.actions = response.data.actions;
+            $scope.submittingImport = false;
+            $scope.submittedImport = true;
         });
     };
 });
