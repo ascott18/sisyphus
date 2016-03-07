@@ -86,7 +86,8 @@ For all of these modules, you can also check the output of `php -m` to see if th
       <Directory "C:/xampp/htdocs/sisyphus/public">
         AllowOverride all
       </Directory>
-    </VirtualHost>```
+    </VirtualHost>
+    ```
     
 ### Optimization
 There are a few optimization steps that may be taken **if this is a production deployment**.
