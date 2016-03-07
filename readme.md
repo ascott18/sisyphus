@@ -12,6 +12,8 @@ First, ensure that all dependencies are installed:
     * PDO PHP Extension
     * Mbstring PHP Extension
     * Tokenizer PHP Extension
+    * ZIP PHP Extension (for PHPExcel)
+    * XML PHP Extension (for PHPExcel)
 * MySQL 5.6
 
 ### Application Configuration

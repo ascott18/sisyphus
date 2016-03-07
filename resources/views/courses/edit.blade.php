@@ -21,11 +21,9 @@
                     {!! csrf_field() !!}
 
                     <div class="col-md-6">
-                        @if(isset($term_id))
-                            <input type="hidden" name="course[term_id]" value="{{$term_id}}">
-                            <label>Term</label>
-                            <h4>{{$term_name}}</h4>
-                        @endif
+                        <input type="hidden" name="course[term_id]" value="{{$term_id}}">
+                        <label>Term</label>
+                        <h4>{{$term_name}}</h4>
 
                         <div class="form-group">
                             <label>

@@ -243,7 +243,7 @@
                             body {
                                 font-size: 8pt;
                             }
-                            .panel-body > button.btn {
+                            .panel-body button.btn {
                                 display: none;
                             }
                         }

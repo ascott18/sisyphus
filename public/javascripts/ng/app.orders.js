@@ -75,18 +75,10 @@ app.directive('bookDetails', function($http) {
 app.controller('OrdersController', ['$scope', '$http', 'CartService', 'BreadcrumbService', 'HelpService',
     function($scope, $http, CartService, BreadcrumbService, HelpService){
 
-    $scope.courses = [];
 	$scope.STAGE_SELECT_COURSE = 1;
 	$scope.STAGE_SELECT_BOOKS  = 2;
 	$scope.STAGE_REVIEW_ORDERS = 3;
 	$scope.STAGE_ORDER_SUCCESS = 4;
-
-    $scope.setCourses = function (courses) {
-        $scope.courses = courses;
-		HelpService.addCourseHelpOption(courses);
-    };
-
-    $scope.cartBooks = CartService.cartBooks;
 
     $scope.stage = $scope.STAGE_SELECT_COURSE;
 
@@ -98,44 +90,58 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
         $scope.stage = stage;
 
         if ($scope.stage == $scope.STAGE_SELECT_COURSE) {
-			HelpService.addCourseHelpOption($scope.courses);
+            HelpService.addCourseHelpOption($scope.courses);
         }
         else if ($scope.stage == $scope.STAGE_SELECT_BOOKS) {
-			HelpService.addBookHelpOption([]);
+            HelpService.addBookHelpOption([]);
         }
     };
 
+    $scope.setCourses = function (courses) {
+        $scope.courses = courses;
+		HelpService.addCourseHelpOption(courses);
+    };
+
+    $scope.cartBooks = CartService.cartBooks;
 
 
-    $scope.placeRequestForCourse = function(course) {
+
+    $scope.selectCourseToPlaceRequest = function(course) {
         $scope.setStage($scope.STAGE_SELECT_BOOKS);
 
         $scope.selectedCourse = course;
 
+        // Add the name of the course to the breadcrumbs at the top of the page
+        // so that the user can be sure which course they selected.
         BreadcrumbService.clear();
         BreadcrumbService.push($scope.$eval(
             '(listing = selectedCourse.listings[0]).department + " " + (listing.number | zpad:3) + "-" + (listing.section | zpad:2) + " " + listing.name'
         ));
 
+        // Go fetch all the past offerings of the course that the user selected from the server.
         $http.get('/requests/past-courses/' + course.course_id).then(
             function success(response) {
                 var pastCourses = response.data;
 
                 course['pastBooks'] = Enumerable
                     .From(pastCourses)
+
                     // Select an object for each order that has the course, the order, and the book on it.
                     .SelectMany("$.orders", "course,order => {course:course, order:order, book:order.book}")
-                    .Where(function(bookGrouping) {
+
+                    // If a book_id was passed into the request, it is already in the cart, so don't add it to the past books.
+                    .Where(function(courseOrderBookObject) {
                         if($scope.passedBookId) {
-                            return bookGrouping.book.book_id != $scope.passedBookId;
+                            return courseOrderBookObject.book.book_id != $scope.passedBookId;
                         } else {
                             return true;
                         }
 
                     })
-                    // Group these objects by the book id, selecting a new object for each book that
-                    // contains that book and the collection of the previously selected objects
-                    // that belong to each book.
+
+                    // Group these objects by the book id, selecting a new object for each book,
+                    // containing that book and the collection of the previously selected
+                    // course-order-book objects that belong to each book.
                     .GroupBy("$.book.book_id", "", function (key, bookGroupings) {
                         // For each book, associate a list of terms for which that book was ordered.
                         return {

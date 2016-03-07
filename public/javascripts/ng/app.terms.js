@@ -34,6 +34,7 @@ app.controller('TermsImportController', function($rootScope, $scope, $http) {
 
     $scope.noChangeListingLimit = 10;
     $scope.newCourseLimit = 10;
+    $scope.willWere = 'will be';
 
     $scope.showAllNewCourses = function(){
         $scope.newCourseLimit = undefined;
@@ -73,6 +74,7 @@ app.controller('TermsImportController', function($rootScope, $scope, $http) {
             $scope.actions = response.data.actions;
             $scope.submittingImport = false;
             $scope.submittedImport = true;
+            $scope.willWere = 'were';
         });
     };
 });

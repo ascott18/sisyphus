@@ -58,7 +58,7 @@
 
                     <div class="row" ng-show="actions">
                         <div class="col-md-4" ng-show="actions.newCourse.length">
-                            <h4>These [[actions.newCourse.length]] courses [[!submittedImport ? 'will be' : 'were']] newly created.</h4>
+                            <h4>These [[actions.newCourse.length]] courses [[willWere]] newly created.</h4>
                             <ul>
                                 <li ng-repeat="course in actions.newCourse | limitTo:newCourseLimit">
                                     <course-with-listings course="course">
@@ -76,29 +76,40 @@
                             </a>
                         </div>
 
+                        <div class="col-md-4" ng-show="actions.changedProfessor.length">
+                            <h4>These [[actions.changedProfessor.length]] courses [[willWere]] assigned a different professor.</h4>
+                            <ul>
+                                <li ng-repeat="course in actions.changedProfessor">
+                                    <course-with-listings course="course">
+                                        &mdash; [[course.listings[0].name]] &nbsp; <i class="fa fa-arrow-right"></i> &nbsp; [[course.user.last_first_name]]
+                                    </course-with-listings>
+                                </li>
+                            </ul>
+                        </div>
+
                         <div class="col-md-4" ng-show="actions.newListing.length">
-                            <h4>These [[actions.newListing.length]] listings [[!submittedImport ? 'will be' : 'were']] newly created on existing courses.</h4>
+                            <h4>These [[actions.newListing.length]] listings [[willWere]] newly created on existing courses.</h4>
                             <ul>
                                 <li ng-repeat="courseListingPair in actions.newListing">
-                                <span class="text-muted">
-                                    <course-with-listings course="courseListingPair[0]">
-                                        &mdash; created
-                                        <span style="color: black">
-                                            [[courseListingPair[1].department]] [[courseListingPair[1].number | zpad:3]]-[[courseListingPair[1].section | zpad:2]] [[courseListingPair[1].name]]
-                                        </span>
-                                    </course-with-listings>
-                                </span>
+                                    <span class="text-muted">
+                                        <course-with-listings course="courseListingPair[0]">
+                                            &mdash; [[courseListingPair[1].name]] &mdash; create listing
+                                            <span style="color: black">
+                                                [[courseListingPair[1].department]] [[courseListingPair[1].number | zpad:3]]-[[courseListingPair[1].section | zpad:2]]
+                                            </span>
+                                        </course-with-listings>
+                                    </span>
                                 </li>
                             </ul>
                         </div>
 
                         <div class="col-md-4" ng-show="actions.updatedListing.length">
-                            <h4>These [[actions.updatedListing.length]] listings [[!submittedImport ? 'will be' : 'were']] updated.</h4>
+                            <h4>These [[actions.updatedListing.length]] listings [[willWere]] updated.</h4>
                             <ul>
                                 <li ng-repeat="listingPair in actions.updatedListing">
-                                    [[listingPair[0].department]] [[listingPair[0].number | zpad:3]]-[[listingPair[0].section | zpad:2]] [[listingPair[0].name]]
-                                    <i class="fa fa-arrow-right"></i>
-                                    [[listingPair[1].department]] [[listingPair[1].number | zpad:3]]-[[listingPair[1].section | zpad:2]] [[listingPair[1].name]]
+                                    [[listingPair[0].department]] [[listingPair[0].number | zpad:3]]-[[listingPair[0].section | zpad:2]] &mdash; [[listingPair[0].name]]
+                                    &nbsp; <i class="fa fa-arrow-right"></i> &nbsp;
+                                    [[listingPair[1].department]] [[listingPair[1].number | zpad:3]]-[[listingPair[1].section | zpad:2]] &mdash; [[listingPair[1].name]]
                                 </li>
                             </ul>
                         </div>
@@ -107,7 +118,7 @@
                             <h4>These [[actions.noChangeListing.length]] listings didn't change.</h4>
                             <ul>
                                 <li ng-repeat="listing in actions.noChangeListing | limitTo:noChangeListingLimit">
-                                    [[listing.department]] [[listing.number | zpad:3]]-[[listing.section | zpad:2]] [[listing.name]]
+                                    [[listing.department]] [[listing.number | zpad:3]]-[[listing.section | zpad:2]] &mdash; [[listing.name]]
                                 </li>
                             </ul>
 
@@ -121,7 +132,7 @@
                         </div>
 
                         <div class="col-md-4" ng-show="actions.deletedListing.length">
-                            <h4>These [[actions.deletedListing.length]] listings [[!submittedImport ? 'will be' : 'were']] deleted.</h4>
+                            <h4>These [[actions.deletedListing.length]] listings [[willWere]] deleted.</h4>
                             <ul>
                                 <li ng-repeat="listing in actions.deletedListing">
                                     [[listing.department]] [[listing.number | zpad:3]]-[[listing.section | zpad:2]] [[listing.name]]
@@ -130,7 +141,7 @@
                         </div>
 
                         <div class="col-md-4" ng-show="actions.deletedCourseWithoutOrders.length">
-                            <h4>These [[actions.deletedCourseWithoutOrders.length]] courses [[!submittedImport ? 'will be' : 'were']] deleted.</h4>
+                            <h4>These [[actions.deletedCourseWithoutOrders.length]] courses [[willWere]] deleted.</h4>
                             <ul>
                                 <li ng-repeat="course in actions.deletedCourseWithoutOrders">
                                     <course-with-listings course="course">
@@ -141,8 +152,8 @@
                         </div>
 
                         <div class="col-md-4" ng-show="actions.deletedCourseWithOrders.length">
-                            <h4>These [[actions.deletedCourseWithOrders.length]] courses needed to be deleted, but had requests.
-                                <small>They [[!submittedImport ? 'will be' : 'were']] marked as no book, and their requests [[!submittedImport ? 'will be' : 'were']] deleted.</small>
+                            <h4>These [[actions.deletedCourseWithOrders.length]] courses [[willWere]] deleted, but had requests.
+                                <small>They [[willWere]] marked as no book, and their requests [[willWere]] deleted.</small>
                             </h4>
                             <ul>
                                 <li ng-repeat="course in actions.deletedCourseWithOrders">
@@ -160,11 +171,11 @@
                     <div class="row">
                         <div class="col-lg-12 ">
                             <button class="btn btn-success" ng-click="submitForPreview()" ng-show="!submittingPreview && !havePreviewResponse">
-                                Process and Review Input <i class="fa arrow-right"></i>
+                                Process and Review Input <i class="fa fa-arrow-right"></i>
                             </button>
 
                             <button class="btn btn-success" ng-click="submitForImport()" ng-show="havePreviewResponse && !submittingImport && !submittedImport" >
-                                Import These Courses <i class="fa arrow-right"></i>
+                                Import These Courses <i class="fa fa-arrow-right"></i>
                             </button>
                         </div>
                     </div>

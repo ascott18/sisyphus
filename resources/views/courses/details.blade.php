@@ -16,7 +16,7 @@
                 </div>
                 <div class="panel-body">
 
-                    @can('edit-course', $course)
+                    @can('modify-course', $course)
                     <a class="btn btn-primary" href="/courses/edit/{{ $course->course_id }}" role="button">
                         <i class="fa fa-pencil"></i> Edit
                     </a>

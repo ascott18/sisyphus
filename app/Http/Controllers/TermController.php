@@ -81,7 +81,7 @@ class TermController extends Controller
 
     private function importHelper(Request $request, $term_id, $doCommitTransaction = false)
     {
-        $this->authorize('edit-terms');
+        $this->authorize('modify-courses');
 
         $term = Term::findOrFail($term_id);
 
@@ -172,7 +172,15 @@ class TermController extends Controller
 
         $updatedDbCourseIds = [];
 
+
+        $user = \Auth::user();
         foreach ($courses as $course) {
+            // Ignore any courses that the user doesn't have permissions to create/edit
+            if (!$user->can('modify-course', $course))
+            {
+                continue;
+            }
+
             $dbListings = [];
 
             $dbCourse = null;
@@ -215,14 +223,26 @@ class TermController extends Controller
                 $course->listings()->saveMany($listings);
                 $updatedDbCourseIds[$course->course_id] = true;
 
-                // need to attach the listings to the model.
+                // Use magic method access to attach the listings to the model.
                 $course->listings;
+
+                // Record this action to display it to the user.
                 $results['newCourse'][] = $course;
             }
             else {
                 $i = 0;
                 $updatedDbListingIds = [];
                 $updatedDbCourseIds[$dbCourse->course_id] = true;
+
+                if ($course->user_id != $dbCourse->user_id){
+                    $dbCourse->user_id = $course->user_id;
+                    $dbCourse->save();
+
+                    // Attach the user to the model so it can be given as feedback to the user.
+                    $dbCourse->user;
+                    $results['changedProfessor'][] = $dbCourse;
+                }
+
                 foreach ($course['listings'] as $listing) {
                     $dbListing = $dbListings[$i++];
                     if (!$dbListing){
@@ -252,33 +272,17 @@ class TermController extends Controller
                 $dbListingsCount = count($dbCourse->listings);
                 foreach ($dbCourse->listings as $dbListing) {
                     if (!isset($updatedDbListingIds[$dbListing->listing_id])){
-                        // this listing was not just created or updated. It needs to be deleted.
+                        // This listing was not just created or updated. It needs to be deleted.
 
                         if ($dbListingsCount == 1){
                             // The listing to be deleted is the last listing on the course.
                             // We need to delete the course as well.
 
-                            // if the course has orders, delete all the orders and mark the course as nobook.
-                            // if the course doesn't have orders (including any deleted orders), just delete the course.
-                            if ($dbCourse->orders()->withTrashed()->count() == 0){
-                                $dbCourse->listings()->delete();
-                                $dbCourse->delete();
-
-                                $results['deletedCourseWithoutOrders'][] = $dbCourse;
-                            }else{
-
-                                $dbCourse->orders()->delete();
-                                $dbCourse->no_book = true;
-                                $dbCourse->no_book_marked = Carbon::now();
-                                $dbCourse->save();
-
-                                $results['deletedCourseWithOrders'][] = $dbCourse;
-                            }
-
+                            static::deleteCourseForImport($results, $dbCourse);
                         }
                         else{
                             // There are other listings on the course besides this one.
-                            // Deletion is safe.
+                            // Deletion of this specific listing is safe.
                             $dbListing->delete();
 
                             $results['deletedListing'][] = $dbListing;
@@ -292,30 +296,45 @@ class TermController extends Controller
         }
 
 
-        foreach ($dbTerm->courses as $dbCourse) {
+        // Look at all the courses on the term, and delete any courses
+        // that we didn't just import.
+        foreach ($dbTerm->courses()->visible()->get() as $dbCourse) {
             if (!isset($updatedDbCourseIds[$dbCourse->course_id])){
                 // this course was not just created or updated. It needs to be deleted.
 
-                // if the course has orders, delete all the orders and mark the course as nobook.
-                // if the course doesn't have orders (including any deleted orders), just delete the course.
-                if ($dbCourse->orders()->withTrashed()->count()){
-                    $dbCourse->listings()->delete();
-                    $dbCourse->delete();
-
-                    $results['deletedCourseWithoutOrders'][] = $dbCourse;
-                }else{
-
-                    $dbCourse->orders()->delete();
-                    $dbCourse->no_book = true;
-                    $dbCourse->no_book_marked = Carbon::now();
-                    $dbCourse->save();
-
-                    $results['deletedCourseWithOrders'][] = $dbCourse;
-                }
+                static::deleteCourseForImport($results, $dbCourse);
             }
         }
 
         return $results;
+    }
+
+    private static function deleteCourseForImport(&$results, Course $dbCourse){
+        // Use magic method access to attach the listings to the model.
+        // We need to do this so the user can see what this deletion actually happened on.
+        $dbCourse->listings;
+
+        if ($dbCourse->orders()->withTrashed()->count() == 0){
+            // If the course doesn't have orders (including any deleted orders), just delete the course.
+
+            // Make a copy of the course's info before we delete it.
+            // If we don't, it will show up as 000-00 when it is displayed back to the user.
+            $copyBeforeDelete = $dbCourse->toArray();
+
+            $dbCourse->listings()->delete();
+            $dbCourse->delete();
+
+            $results['deletedCourseWithoutOrders'][] = $copyBeforeDelete;
+        }else{
+            // If the course has orders, delete all the orders and mark the course as nobook.
+            // We need to maintain a record of the deleted orders that were placed.
+            $dbCourse->orders()->delete();
+            $dbCourse->no_book = true;
+            $dbCourse->no_book_marked = Carbon::now();
+            $dbCourse->save();
+
+            $results['deletedCourseWithOrders'][] = $dbCourse;
+        }
     }
 
     private static function parseSpreadsheet($spreadsheet, $term_id){
