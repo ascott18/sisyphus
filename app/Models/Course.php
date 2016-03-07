@@ -111,19 +111,19 @@ class Course extends Model
         }
         elseif ($user->may($deptPermission))
         {
-            return $query->where(function($query) use ($user) {
+            return $query->where(function($q) use ($user) {
                 $deptSubQuery = $user
                     ->departments()
                     ->select('department')
                     ->toBase();
 
-                $query->where('courses.user_id', '=', $user->user_id);
-
-                return $query = $query->orWhereIn('courses.course_id',
-                    Listing::withoutGlobalScope('order')
-                        ->select('course_id')
-                        ->whereIn('listings.department', $deptSubQuery)
-                        ->toBase()
+                return
+                  $q->where('courses.user_id', '=', $user->user_id)
+                    ->orWhereIn('courses.course_id',
+                        Listing::withoutGlobalScope('order')
+                            ->select('course_id')
+                            ->whereIn('listings.department', $deptSubQuery)
+                            ->toBase()
                 );
             });
         }

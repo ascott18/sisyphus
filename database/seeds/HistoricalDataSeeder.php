@@ -14,11 +14,6 @@ class HistoricalDataSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\User::create([
-            'first_name' => "Initial",
-            'last_name' => "Data",
-        ]);
-
         $eaglenetFiles = [
             ["Winter", 2012],
             ["Spring", 2012],
@@ -37,6 +32,10 @@ class HistoricalDataSeeder extends Seeder
             ["Spring Semester", 2016],
         ];
 
+        $spreadsheetFiles = [
+            ["20160304SummerCourseOfferings.xlsx", 2016, "Summer"]
+        ];
+
         foreach ($eaglenetFiles as $fileInfo) {
             $this->command->line("Parsing eaglenet $fileInfo[0] $fileInfo[1]...");
             $fileName = str_replace(' ', '', $fileInfo[0]) . $fileInfo[1];
@@ -44,6 +43,15 @@ class HistoricalDataSeeder extends Seeder
                 'termNumber' => array_search($fileInfo[0], Term::$termNumbers),
                 'year' => $fileInfo[1],
                 'file' => "database/seeds/dataFiles/eagleNet$fileName.csv"
+            ]);
+        }
+
+        foreach ($spreadsheetFiles as $fileInfo) {
+            $this->command->line("Parsing spreadsheet $fileInfo[2] $fileInfo[1]...");
+            Artisan::call('parseCourseSpreadsheet', [
+                'termNumber' => array_search($fileInfo[2], Term::$termNumbers),
+                'year' => $fileInfo[1],
+                'file' => "database/seeds/dataFiles/$fileInfo[0]"
             ]);
         }
 

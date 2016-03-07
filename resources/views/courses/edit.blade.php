@@ -21,11 +21,9 @@
                     {!! csrf_field() !!}
 
                     <div class="col-md-6">
-                        @if(isset($term_id))
-                            <input type="hidden" name="course[term_id]" value="{{$term_id}}">
-                            <label>Term</label>
-                            <h4>{{$term_name}}</h4>
-                        @endif
+                        <input type="hidden" name="course[term_id]" value="{{$term_id}}">
+                        <label>Term</label>
+                        <h4>{{$term_name}}</h4>
 
                         <div class="form-group">
                             <label>
@@ -80,14 +78,14 @@
                                            placeholder="e.g. 100"
                                            ng-model="listing.number"
                                            required
-                                           pattern="[0-9]{1,10}" >
+                                           pattern="[0-9]{1,9}[A-Z]?" >
 
                                     <span ng-cloak ng-show="form.$submitted || form[makeFormKey($index, 'number')].$touched">
                                         <span class="text-danger" ng-show="form[makeFormKey($index, 'number')].$error.required">
                                             Number is required.
                                         </span>
                                         <span class="text-danger" ng-show="form[makeFormKey($index, 'number')].$error.pattern">
-                                            Number must be ... a number.
+                                            Number is not valid.
                                         </span>
                                     </span>
                                 </div>
@@ -111,6 +109,7 @@
                                         <span ng-cloak style="display: table-cell;">
                                             <a class="btn btn-danger"
                                                style="margin-left: 10px"
+                                               title="Remove Cross-Listing"
                                                ng-show="!$first"
                                                ng-click="deleteListing(listing)">
                                                 <i class="fa fa-times"></i>
@@ -135,6 +134,17 @@
                             <span ng-cloak ng-show="course.listings.length > 1">Add Another Cross-Listing</span>
                             <span ng-show="course.listings.length == 1">Add a Cross-Listing</span>
                         </a>
+
+                        <div ng-show="course.listings.length > 1"
+                             class="text-muted">
+                            <br>
+                            <p>
+                                <h5><strong>Friendly reminder:</strong></h5>
+                                Don't use cross-listings as a shortcut to place requests for many courses at the same time.
+                                <br>
+                                Only use cross-listings if the course truly is cross-listed.
+                            </p>
+                        </div>
                     </div>
 
                     <div class="col-md-6 col-md-vspace"

@@ -78,7 +78,7 @@
                     <h2>Textbook Requests
                         @inject('auth', 'App\Providers\AuthServiceProvider')
                         @if ($auth->getIsDebuggingUnauthorizedAction())
-                            <p style="position: absolute; font-size: 0.7em; width: 100%">
+                            <p style="position: absolute; font-size: 0.6em; width: 100%">
                                 <i class="fa fa-bug fa-spin"></i> (debugging unauthorized action) <i class="fa fa-bug fa-spin"></i>
                             </p>
                         @endif
@@ -201,7 +201,7 @@
             <div ng-cloak ng-repeat="error in appErrors"
                     class="alert alert-danger alert-dismissible" role="alert">
                 <button type="button" class="close" aria-label="Close" ng-click="appErrors.splice(appErrors.indexOf(error), 1)"><span aria-hidden="true">&times;</span></button>
-                <strong>[[error.title || "Error!"]]</strong> <span ng-repeat="message in error.messages"><br>[[message]]</span>
+                <strong>[[error.title || "Error!"]]</strong> <span ng-repeat="message in error.messages track by $index"><br>[[message]]</span>
             </div>
 
             @yield('content')

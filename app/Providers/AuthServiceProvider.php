@@ -10,6 +10,8 @@ use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 use Request;
 use View;
@@ -85,7 +87,7 @@ class AuthServiceProvider extends ServiceProvider
                         $this->isDebuggingUnauthorizedAction = true;
                     }
                     $runningBefore = false;
-                    return true;
+                    // return true;
                 }
                 $runningBefore = false;
             }
@@ -103,7 +105,7 @@ class AuthServiceProvider extends ServiceProvider
             }
 
             if ($user->may($deptPermission) &&
-                $user->departments()->whereIn('department', $course->listings->pluck('department'))->count()){
+                $user->departments->whereIn('department', Arr::pluck($course->listings, 'department'))->count()){
                 return true;
             }
 
@@ -133,16 +135,12 @@ class AuthServiceProvider extends ServiceProvider
             return true; // $user->may('view-course-list');
         });
 
-        $gate->define('edit-course', function (User $user, Course $course) {
-            return $user->can('view-course', $course) && $user->may('edit-courses');
+        $gate->define('modify-course', function (User $user, Course $course) {
+            return $user->may('edit-courses') && $user->can('view-course', $course);
         });
 
-        $gate->define('create-courses', function (User $user) {
-            return $user->may('create-all-courses') || $user->may('create-dept-courses');
-        });
-
-        $gate->define('create-course', function (User $user, Course $course) use ($courseFilter) {
-            return $courseFilter($user, $course, 'create-all-courses', 'create-dept-courses');
+        $gate->define('modify-courses', function (User $user) {
+            return $user->may('edit-courses');
         });
 
 

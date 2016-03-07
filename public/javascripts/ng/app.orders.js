@@ -20,24 +20,17 @@ app.directive('bookEditor', function() {
     };
 });
 
-var ISBN13_REGEXP = /^\d{13}$/;
+var ISBN13_REGEXP = /^(?:[0-9]-?){12}[0-9]$/;
 app.directive('isbn13', function() {
     return {
         require: 'ngModel',
         link: function(scope, elm, attrs, ctrl) {
             ctrl.$validators.isbn13 = function(modelValue, viewValue) {
-
                 if (ctrl.$isEmpty(modelValue)) {
-                    // consider empty models to be valid
                     return true;
                 }
-                viewValue = stripHyphens(viewValue);
-                if (ISBN13_REGEXP.test(viewValue)) {
-                    // it is valid
-                    return true;
-                }
-                // it is invalid
-                return false;
+
+                return ISBN13_REGEXP.test(viewValue);
             };
         }
     };
@@ -70,16 +63,9 @@ app.directive('bookDetails', function($http) {
 
                 var isbn = stripHyphens(scope.book.isbn13);
                 if (!isbn){
-                    return scope.thumbnail = noBookThumb;
+                    return scope.thumbnail = '/images/coverNotAvailable.jpg';
                 }
-                if (isbn != scope.lastIsbn)
-                {
-                    scope.lastIsbn = isbn;
-                    scope.thumbnail = '/books/cover?isbn=' + isbn;
-                }
-                else {
-                    return scope.thumbnail;
-                }
+                return scope.thumbnail = '/books/cover?isbn=' + isbn;
             }
         }
     }
@@ -89,7 +75,6 @@ app.directive('bookDetails', function($http) {
 app.controller('OrdersController', ['$scope', '$http', 'CartService', 'BreadcrumbService', 'HelpService',
     function($scope, $http, CartService, BreadcrumbService, HelpService){
 
-    $scope.courses = [];
 	$scope.STAGE_SELECT_COURSE = 1;
 	$scope.STAGE_SELECT_BOOKS  = 2;
 	$scope.STAGE_REVIEW_ORDERS = 3;
@@ -113,44 +98,58 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
         $scope.stage = stage;
 
         if ($scope.stage == $scope.STAGE_SELECT_COURSE) {
-			HelpService.addCourseHelpOption($scope.courses);
+            HelpService.addCourseHelpOption($scope.courses);
         }
         else if ($scope.stage == $scope.STAGE_SELECT_BOOKS) {
             HelpService.setDefaultOptions();
         }
     };
 
+    $scope.setCourses = function (courses) {
+        $scope.courses = courses;
+		HelpService.addCourseHelpOption(courses);
+    };
+
+    $scope.cartBooks = CartService.cartBooks;
 
 
-    $scope.placeRequestForCourse = function(course) {
+
+    $scope.selectCourseToPlaceRequest = function(course) {
         $scope.setStage($scope.STAGE_SELECT_BOOKS);
 
         $scope.selectedCourse = course;
 
+        // Add the name of the course to the breadcrumbs at the top of the page
+        // so that the user can be sure which course they selected.
         BreadcrumbService.clear();
         BreadcrumbService.push($scope.$eval(
             '(listing = selectedCourse.listings[0]).department + " " + (listing.number | zpad:3) + "-" + (listing.section | zpad:2) + " " + listing.name'
         ));
 
+        // Go fetch all the past offerings of the course that the user selected from the server.
         $http.get('/requests/past-courses/' + course.course_id).then(
             function success(response) {
                 var pastCourses = response.data;
 
                 course['pastBooks'] = Enumerable
                     .From(pastCourses)
+
                     // Select an object for each order that has the course, the order, and the book on it.
                     .SelectMany("$.orders", "course,order => {course:course, order:order, book:order.book}")
-                    .Where(function(bookGrouping) {
+
+                    // If a book_id was passed into the request, it is already in the cart, so don't add it to the past books.
+                    .Where(function(courseOrderBookObject) {
                         if($scope.passedBookId) {
-                            return bookGrouping.book.book_id != $scope.passedBookId;
+                            return courseOrderBookObject.book.book_id != $scope.passedBookId;
                         } else {
                             return true;
                         }
 
                     })
-                    // Group these objects by the book id, selecting a new object for each book that
-                    // contains that book and the collection of the previously selected objects
-                    // that belong to each book.
+
+                    // Group these objects by the book id, selecting a new object for each book,
+                    // containing that book and the collection of the previously selected
+                    // course-order-book objects that belong to each book.
                     .GroupBy("$.book.book_id", "", function (key, bookGroupings) {
                         // For each book, associate a list of terms for which that book was ordered.
                         return {
@@ -234,16 +233,9 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
 
     $scope.addPassedBookToCart = function(book) { // isbn was passed in from book details page
         if(book.length != 0) {
-            $scope.master = {};
-            $scope.master['title'] = book[0].title;
-            $scope.master['edition'] = book[0].edition;
-            $scope.master['publisher'] = book[0].publisher;
-            $scope.master['authors'] = book[0].authors;
-            $scope.master['orders'] = book[0].orders;
-            $scope.master['book_id'] = book[0].book_id;
             $scope.passedBookId = book[0].book_id;
             var bookData = {};
-            bookData['book'] = $scope.master;
+            bookData['book'] = book[0];
             bookData['book']['isbn13'] = stripHyphens(book[0].isbn13);
             CartService.cartBooks.push(bookData);
         }
@@ -254,16 +246,25 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
 
         if (!$scope.submitting && form.$valid) {
             var sections = [];
-            sections.push($scope.selectedCourse);
+            sections.push({course_id: $scope.selectedCourse.course_id});
 
             if ($scope.additionalCourses != null) {
                 for (var i = 0; i < $scope.additionalCourses.length; i++){
-                    sections.push($scope.additionalCourses[i]);
+                    sections.push({course_id: $scope.additionalCourses[i].course_id});
                 }
             }
 
+            var cleanCart = [];
+            // Only send what we need. Cart items have other stuff on them besides what we need,
+            // like the terms that the book was used for past books
+            for (var i = 0; i < CartService.cartBooks.length; i++){
+                var cartItem = angular.copy(CartService.cartBooks[i]);
+                cartItem.terms = null;
+                cleanCart.push(cartItem);
+            }
+
             $scope.submitting = true;
-            $http.post('/requests/submit-order', {courses:sections, cart:CartService.cartBooks}).then(
+            $http.post('/requests/submit-order', {courses: sections, cart: cleanCart}).then(
                 function success(response){
                     $scope.additionalCourses = null;
                     $scope.submitting = false;
@@ -360,7 +361,6 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
 
 app.controller("NewBookController", ["$scope", "$http", "CartService", "HelpService", function($scope, $http, CartService, HelpService) {
     $scope.authors = [];
-    $scope.master = {};
     $scope.book = {};
     $scope.submitted = false;
     $scope.isAutoFilled = false;
@@ -376,7 +376,7 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", "HelpServ
             $scope.isAutoFilled = false;
             $scope.autofilledBook = null;
             $scope.authors = [];
-            $scope.book = angular.copy($scope.master);
+            $scope.book = {};
             $scope.book['isbn13'] = book['isbn13'];
         }
         var stripped = stripHyphens(book['isbn13']);
@@ -418,13 +418,12 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", "HelpServ
         $scope.submitted = true;
 
         if (ignoreValidation || form.$valid) {
-            $scope.master = angular.copy(book);
-            $scope.master["authors"] = $scope.authors;
+            var book = angular.copy(book);
+            book["authors"] = $scope.authors;
             var bookData = {};
-            bookData['book'] = $scope.master;
+            bookData['book'] = book;
             bookData['book']['isbn13'] = stripHyphens(bookData['book']['isbn13']);
             CartService.cartBooks.push(bookData);
-            $scope.master = {};
             $scope.authors = [];
             $scope.reset(form);
         }
@@ -437,7 +436,7 @@ app.controller("NewBookController", ["$scope", "$http", "CartService", "HelpServ
             form.$setUntouched();
         }
         $scope.isAutoFilled = false;
-        $scope.book = angular.copy($scope.master);
+        $scope.book = {};
     };
 
     $scope.reset();

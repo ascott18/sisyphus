@@ -27,7 +27,7 @@
                     <a href="/books/edit/{{ $book->book_id }}" class="btn btn-primary " role="button">
                         <i class="fa fa-pencil"></i> Edit
                     </a>
-                    <a href="/requests?isbn13={{ $book->isbn13 }}" class="btn btn-primary" role="button">
+                    <a href="/requests?book_id={{ $book->book_id }}" class="btn btn-primary" role="button">
                         <i class="fa fa-shopping-cart"></i> Request This Book
                     </a>
                     <dl class="dl-horizontal">
@@ -82,7 +82,7 @@
                            empty-placeholder>
                         <thead>
                         <tr>
-                            <th>Term</th>
+                            <th st-sort="term" st-sort-default="reverse">Term</th>
                             <th st-sort="section">Course</th>
                             <th st-sort="name">Course Name</th>
                             <th>Required</th>
@@ -92,7 +92,7 @@
                         <tr>
                             <th></th>
                             <th><input type="text" class="form-control" placeholder="Search..." st-search="section"/></th>
-                            <th><input type="text" class="form-control" placeholder="Search..." st-search="course_name"/></th>
+                            <th><input type="text" class="form-control" placeholder="Search..." st-search="name"/></th>
                             <th></th>
                             <th></th>
                             <th></th>

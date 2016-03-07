@@ -18,7 +18,11 @@
                 <div class="panel-body">
 
                     <div class="col-lg-12">
-                        @can('create-courses')
+                    </div>
+
+
+                    <div class="col-lg-4 col-md-12">
+                        @can('modify-courses')
                         <a href="/courses/create/{{$term->term_id}}" class="btn btn-primary">
                             <i class="fa fa-plus"></i> Create Course
                         </a>
@@ -29,15 +33,22 @@
                             <i class="fa fa-bar-chart"></i> Create Report
                         </a> &nbsp;
 
+                        <br>
+                        <br>
                         <a href="/courses/index/{{$term->term_id}}" class="btn btn-primary">
                             <i class="fa fa-university"></i> View Courses
+                        </a> &nbsp;
+
+                        @can('modify-courses')
+                        <a href="/terms/import/{{$term->term_id}}" class="btn btn-primary">
+                            <i class="fa fa-upload"></i> Import Courses
                         </a>
-                    </div>
+                        @endcan
 
-
-                    <div class="col-lg-4 col-md-12">
                         <br>
                         <br>
+                        <br>
+
                         <dl class="dl-horizontal">
                             <dt>Term</dt>
                             <dd>{{ $term->term_name }}</dd>

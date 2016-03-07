@@ -7,6 +7,8 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
 use phpCAS;
+use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class CASAuth {
 
@@ -45,9 +47,6 @@ class CASAuth {
      */
     public function handle($request, Closure $next)
     {
-        // TODO: Do we want to check this?
-        // If we do check this, we will only auth with CAS when the session expires (config.session.lifetime)
-        // If we don't check this, we will auth with CAS every single request. Both have their merits, i guess.
         if ($this->auth->guest())
         {
             $cas = app('cas');
@@ -59,9 +58,9 @@ class CASAuth {
             // This will throw an exception if authentication fails,
             // and will immediately redirect to login.ewu.edu if authentication is needed.
             // We call out to phpCas manually because Xavrsl/Cas swallows up exceptions in $cas->authenticate() for some reason.
-//          $cas->authenticate();
+            // $cas->authenticate();
 
-            if(!$this->isPretending()){
+            if (!$this->isPretending()){
                 phpCAS::forceAuthentication();
             }
 
@@ -69,33 +68,14 @@ class CASAuth {
             // If we get here, the user is authenticated with CAS.
             $net_id = $cas->getCurrentUser();
 
-            $oldUser = $this->auth->user();
-
             $user = \App\Models\User::where(['net_id' => $net_id])->first();
 
             if (is_null($user))
             {
-                if (!$this->isPretending())
-                {
-                    $attributes = $cas->getAttributes();
-                }
-                else
-                {
-                    $attributes = [
-                        'Ewuid' => "00123456",
-                    ];
-                }
-
-                $user = new \App\Models\User();
-                $user->net_id = $net_id;
-                $user->ewu_id = $attributes['Ewuid'];
-                $user->save();
+                throw new AccessDeniedHttpException("User '$net_id' was not found in this system.\n Please contact an administrator if you believe this to be in error.");
             }
 
-            if (!$oldUser || $oldUser['net_id'] != $net_id)
-            {
-                $this->auth->login($user);
-            }
+            $this->auth->login($user);
         }
 
         return $next($request);

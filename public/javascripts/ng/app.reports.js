@@ -41,6 +41,10 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
     $scope.STAGE_VIEW_REPORT = 2;
     $scope.stage = $scope.STAGE_SELECT_FIELDS;
 
+    $scope.groupBySection = true;
+
+    // used by the zoom buttons
+    $scope.Math = window.Math;
 
     var dateGrouper = function(values){
         var count = values.Count('');
@@ -81,25 +85,9 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
             sort: true
         },
         {
-            name: 'Cross Listings',
-            value: function(courseOrderObj){
-                var result = '';
-                var listings = courseOrderObj.course.listings;
-                for(var i = 1; i < listings.length; i++)
-                {
-                    result +=
-                        listings[i].department + ' ' +
-                        $filter('zpad')(listings[i].number, 3) + '-' +
-                        $filter('zpad')(listings[i].section, 2) + (i == courses - 1 ? '' : ', ');
-                }
-                return result;
-            }
-        },
-        {
             name: 'Instructor',
             value: function(courseOrderObj){
                 return courseOrderObj.course.user ? courseOrderObj.course.user.last_name : 'TBA';
-                //return courseOrderObj.course.user ? $scope.groupBySection ? courseOrderObj.course.user.last_name : courseOrderObj.course.user.last_first_name : 'TBA'
             },
             group: function(values){
                 return values.OrderBy().Distinct().ToString("; ");
@@ -179,18 +167,27 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
             autoEnforce: function(){
                 return $scope.include.noBook
             }
+        },
+        {
+            name: 'Cross Listings',
+            style: 'white-space: pre;',
+            value: function(courseOrderObj){
+                var result = '';
+                var listings = courseOrderObj.course.listings;
+                for (var i = 1; i < listings.length; i++)
+                {
+                    result +=
+                        listings[i].department + ' ' +
+                        $filter('zpad')(listings[i].number, 3) + '-' +
+                        $filter('zpad')(listings[i].section, 2) + (i == listings.length - 1 ? '' : ',\n');
+                }
+                return result;
+            }
         }
     ];
 
     $scope.ColumnsSelected = $scope.options.slice();
 
-    $scope.include = {
-        deleted: false,
-        nondeleted: false,
-        submitted: false,
-        notSubmitted: false,
-        noBook: false
-    };
 
     $scope.init = function(terms, departments){
         $scope.terms = terms;
@@ -214,13 +211,18 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
     };
 
     $scope.resetInclude = function(){
-        $scope.include.deleted = false;
-        $scope.include.nondeleted = false;
-        $scope.include.submitted = false;
-        $scope.include.notSubmitted = false;
-        $scope.include.noBook = false;
+        $scope.include = {
+            deleted: false,
+            nondeleted: true,
+            submitted: true,
+            notSubmitted: true,
+            noBook: true
+        };
+
         $scope.ColumnsSelected = $scope.options.slice();
     };
+
+    $scope.resetInclude();
 
     $scope.onSelectTerm = function()
     {
@@ -249,9 +251,10 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
 
     $scope.getReportHeaderRow = function(){
         var row = [];
-        for (var i = 0; i < $scope.ColumnsSelected.length; i++){
-            var optionProperties = $scope.ColumnsSelected[i];
-            row.push(optionProperties.name);
+        for (var i = 0; i < $scope.options.length; i++){
+            if ($scope.ColumnsSelected.indexOf($scope.options[i]) >= 0){
+                row.push($scope.options[i].name);
+            }
         }
         return row;
     };
@@ -265,7 +268,7 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
         $scope.reportRows = null;
         $scope.setStage($scope.STAGE_VIEW_REPORT);
 
-        for(var i = 0; i < $scope.options.length; i++){
+        for (var i = 0; i < $scope.options.length; i++){
             var indexOf = $scope.ColumnsSelected.indexOf($scope.options[i]);
             if ($scope.options[i].doesAutoEnforce){
                 if ($scope.options[i].autoEnforce())
@@ -279,12 +282,24 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
             }
         }
 
+        $scope.ColumnsSelectedInOrder = [];
+        $scope.ColumnStyles = [];
+        var colIndex = 1;
+        for (var i = 0; i < $scope.options.length; i++){
+            if ($scope.ColumnsSelected.indexOf($scope.options[i]) >= 0){
+                $scope.ColumnsSelectedInOrder.push($scope.options[i]);
+
+                $scope.ColumnStyles[colIndex++] = $scope.options[i].style || '';
+            }
+        }
+
         $scope.canceler = $q.defer();
         $http.post('/reports/submit-report', {
                 startDate: $scope.reportDateStart,
                 endDate: $scope.reportDateEnd,
                 columns: $scope.columns,
                 include: $scope.include,
+                reportType: $scope.ReportType,
                 term_id: $scope.TermSelected.term_id,
                 departments: $scope.DeptsSelected,
         }, {timeout: $scope.canceler.promise}).then(function(response) {
@@ -319,12 +334,28 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
                     return row;
                 });
 
+
+            // Filter out any columns that the user did not select.
+            var columnIsSelectedMap = [];
+            for (var i = 0; i < $scope.options.length; i++){
+                columnIsSelectedMap[i] = $scope.ColumnsSelected.indexOf($scope.options[i]) >= 0;
+            }
+            reportRows = reportRows.Select(function(row){
+                var filteredRow = [];
+                for (var i = 0; i < columnIsSelectedMap.length; i++){
+                    if (columnIsSelectedMap[i])
+                        filteredRow.push(row[i]);
+                }
+
+                return filteredRow;
+            });
+
+
             // Group by sections if the user so desires.
             if ($scope.groupBySection){
                 var groupColumns = [];
                 for (var i = 0; i < $scope.ColumnsSelected.length; i++) {
-                    var optionProperties = $scope.ColumnsSelected[i];
-                    if (optionProperties.group) {
+                    if ($scope.ColumnsSelected[i].group) {
                         groupColumns.push(i);
                     }
                 }
@@ -351,26 +382,14 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
                 }
             }
 
-            // Filter out any columns that the user did not select.
-            var columnIsSelectedMap = [];
-            for (var i = 0; i < $scope.options.length; i++){
-                columnIsSelectedMap[i] = $scope.ColumnsSelected.indexOf($scope.options[i]) >= 0;
-            }
-            reportRows = reportRows.Select(function(row){
-                    var filteredRow = [];
-                    for (var i = 0; i < columnIsSelectedMap.length; i++){
-                        if (columnIsSelectedMap[i])
-                            filteredRow.push(row[i]);
-                    }
-
-                    return filteredRow;
-                });
-
 
             var hasSortedOnce = false;
 
-            for (var i = 0; i < $scope.ColumnsSelected.length; i++){
-                var optionProperties = $scope.ColumnsSelected[i];
+            for (var i = 0; i < columnIsSelectedMap.length; i++){
+                if (!columnIsSelectedMap[i])
+                    continue;
+
+                var optionProperties = $scope.options[i];
                 if (!optionProperties.sort) continue;
                 if (!hasSortedOnce){
                     hasSortedOnce = true;

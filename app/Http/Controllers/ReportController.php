@@ -50,6 +50,7 @@ class ReportController extends Controller
             'startDate' => 'required|date',
             'endDate' => 'required|date',
             'term_id' => 'required|exists:terms,term_id',
+            'reportType' => 'required|string|in:orders,courses',
             'include.deleted' => 'required|boolean',
             'include.nondeleted' => 'required|boolean',
             'include.submitted' => 'required|boolean',
@@ -76,7 +77,7 @@ class ReportController extends Controller
 
         $term_id = $params['term_id'];
 
-        if ($include['deleted'] || $include['nondeleted']){
+        if ($params['reportType'] == 'orders' && ($include['deleted'] || $include['nondeleted'])){
             $query = Order::whereIn('course_id',
                 Course::visible()
                 ->join('listings', 'listings.course_id', '=', 'courses.course_id')
@@ -140,7 +141,7 @@ class ReportController extends Controller
                 $results[] = $course;
             }
         }
-        elseif ($include['submitted'] || $include['notSubmitted'] || $include['noBook']) {
+        elseif ($params['reportType'] == 'courses' && ($include['submitted'] || $include['notSubmitted'] || $include['noBook'])) {
             $query = Course::visible()
                 ->where('term_id', '=', $term_id)
                 ->addWhereExistsQuery(

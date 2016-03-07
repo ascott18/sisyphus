@@ -17,7 +17,7 @@
             current_user_id = {{$current_user_id}};
             setCourses({{$courses}});
             @if (isset($course))
-                placeRequestForCourse((courses | filter:{'course_id': {{$course->course_id}} })[0]);
+                selectCourseToPlaceRequest((courses | filter:{'course_id': {{$course->course_id}} })[0]);
             @endif
             @if (isset($book))
                 addPassedBookToCart( {{ json_encode($book) }} );
@@ -56,7 +56,7 @@
             <div class="col-lg-offset-1 col-lg-10"
                  ng-show="courses.length > 0">
                 <div class="panel panel-default"
-                     ng-repeat="course in courses"
+                     ng-repeat="course in courses | orderBy:['listings[0].department', 'listings[0].number', 'listings[0].section']"
                      ng-init="term = (terms | filter:{term_id: course.term_id})[0]">
                     <div class="panel-heading">
                         <h3 class="panel-title clearfix">
@@ -112,7 +112,7 @@
                             </ul>
                         </div>
                         <div class="pull-right">
-                            <a ng-click="placeRequestForCourse(course)"
+                            <a ng-click="selectCourseToPlaceRequest(course)"
                                class="btn "
                                ng-class="!courseNeedsOrders(course) ? 'btn-default' : 'btn-primary'">
                                 Place a request <i class="fa fa-arrow-right fa-fw"></i>
@@ -120,7 +120,8 @@
                             <span >
                                 <button
                                         ng-confirm-click="noBook(course)"
-                                        ng-confirm-click-message="Are you sure you don't want a book? [[course.orders.length ? '\n\nAll requests on this course will be deleted!' : '']]"
+                                        ng-confirm-click-if="course.orders.length"
+                                        ng-confirm-click-message="Are you sure you don't want a book? [['\n\n']]All requests on this course will be deleted!"
                                         class="btn"
                                         ng-disabled="course.no_book"
                                         style="margin-left: 10px"

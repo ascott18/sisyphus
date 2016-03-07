@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Models\Order;
 use Illuminate\Http\Response;
 use App\Models\Course;
+use Illuminate\Validation\ValidationException;
 use Redirect;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -21,7 +22,13 @@ use SearchHelper;
 
 class OrderController extends Controller
 {
+    /**
+     * The number of months past that we will grab the past books used for a course.
+     * Bookstore doesn't want us showing data that is too old so that profs are
+     * less inclined to pick old books. Old books are often harder for the bookstore to acquire.
+     */
     const PAST_BOOKS_NUM_MONTHS = 24;
+
 
     /** GET: /requests/
      *
@@ -30,12 +37,16 @@ class OrderController extends Controller
      */
     public function getIndex(Request $request)
     {
-        //if ($request->user()->may('place-all-orders'))
-        //    return $this->getList($request);
-        //else
-            return $this->getCreate($request, null);
+        return $this->getCreate($request, null);
     }
 
+
+    /** GET: /requests/create/{course_id?}
+     *
+     * @param Request $request
+     * @param int|null $course_id
+     * @return \Illuminate\View\View
+     */
     public function getCreate(Request $request, $course_id = null)
     {
         $user = $request->user();
@@ -76,10 +87,9 @@ class OrderController extends Controller
 
 
             $book = [];
-            if($request->input('isbn13') != null) {
-                $book = Book::query()
-                    ->where('isbn13', '=', $request->input('isbn13'))
-                    ->with('authors')
+            if ($request->input('book_id') != null) {
+                $book = Book::with('authors')
+                    ->where('book_id', '=', $request->input('book_id'))
                     ->get();
             }
 			$viewParams['book'] = $book;
@@ -117,6 +127,12 @@ class OrderController extends Controller
         return view('orders.create', $viewParams);
     }
 
+
+    /** POST: /requests/no-book/{order_id}
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function postNoBook(Request $request)
     {
         $course_id = $request->input("course_id");
@@ -137,6 +153,13 @@ class OrderController extends Controller
         return ['success' => true];
     }
 
+
+    /** POST: /requests/delete/{order_id}
+     *
+     * @param Request $request
+     * @param $order_id
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function postDelete(Request $request, $order_id)
     {
         $order = Order::findOrFail($order_id);
@@ -151,14 +174,14 @@ class OrderController extends Controller
     }
 
 
-
-    /**
-     * @param $id int course id to get books for.
+    /** GET: /requests/past-courses/{course_id}
+     *
+     * @param $course_id int course id to get books for.
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getPastCourses($id)
+    public function getPastCourses($course_id)
     {
-        $course = Course::findOrFail($id);
+        $course = Course::findOrFail($course_id);
 
         $this->authorize('place-order-for-course', $course);
 
@@ -188,27 +211,32 @@ class OrderController extends Controller
         return $courses;
     }
 
-    /**
-     * Store a newly created resource in storage.
+
+    /** POST: /requests/submit-order
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function postSubmitOrder(Request $request)
     {
         $this->validate($request, [
             'courses' => 'required',
             'courses.*.course_id' => 'required|numeric|exists:courses,course_id',
+
             'cart' => 'required',
             'cart.*.book' => 'required',
-//            'cart.*.book.isbn13' => 'required_without:book_id',
-            'cart.*.book.title' => 'required_without:book_id',
-            'cart.*.book.publisher' => 'required_without:book_id',
-            'cart.*.book.authors' => 'required_without:book_id',
-            'cart.*.book.authors[0]' => 'required_without:book_id',
-            'cart.*.book.authors.*.name' => 'required',
+            'cart.*.book.book_id' => 'numeric|exists:books,book_id',
+            'cart.*.book.isbn13' => 'regex:/^(?:[0-9]-?){12}[0-9]$/',
+            'cart.*.book.title' => 'required_without:cart.*.book.book_id',
+            'cart.*.book.publisher' => 'required_without:cart.*.book.book_id',
+            'cart.*.book.authors' => 'required_without:cart.*.book.book_id',
+
+            // we cant require authors.0, but we can require authors.0.name
+            // (to ensure new books have at least one author).
+            'cart.*.book.authors.0.name' => 'required_without:cart.*.book.book_id',
+            'cart.*.book.authors.*.name' => 'required_without:cart.*.book.book_id',
             'cart.*.notes' => '',
-            'cart.*.required' => 'required',
+            'cart.*.required' => 'required|boolean',
         ]);
 
         $params = $request->all();
@@ -226,13 +254,13 @@ class OrderController extends Controller
         $orderResults = [];
 
 
+        /** @var Course $course */
         foreach($courses as $course) {
             foreach ($params['cart'] as $bookData) {
 
                 $book = $bookData['book'];
 
                 if (!isset($book['book_id']) || !$book['book_id']) {
-
                     $isbn = isset($book['isbn13']) ? $book['isbn13'] : '';
                     $isbn = preg_replace('|[^0-9]|', '', $isbn);
                     $edition = trim(isset($book['edition']) ? $book['edition'] : '');
@@ -293,13 +321,15 @@ class OrderController extends Controller
                     }
                 }
                 else{
-                    $order = Order::create([
+                    $order = $course->orders()->save(new Order([
                         'notes' => $notes,
                         'placed_by' => $user_id,
-                        'course_id' => $course['course_id'],
                         'required' => $bookData['required'],
                         'book_id' => $book_id
-                    ]);
+                    ]));
+
+                    // Reload orders so we can detect duplicate orders.
+                    $course->load('orders');
 
                     $orderResults[$book_id][] = [
                         'notPlaced' => false,

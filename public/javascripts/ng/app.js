@@ -119,10 +119,11 @@ app.filter('zpad', function() {
 
         // string.prototype.repeat doesn't work in IE - its part of ecmascript6.
         var zeros = "";
-        while (n-- > 0){
+        while (n-- > input.length){
             zeros += "0";
         }
-        return (zeros + input).slice(-1 * n)
+
+        return (zeros + input);
     };
 });
 
@@ -187,12 +188,15 @@ app.directive('ngConfirmClick', [
 function(){
     return {
         link: function (scope, element, attr) {
-            var msg = attr.ngConfirmClickMessage || "Are you sure?";
-            var clickAction = attr.ngConfirmClick;
             element.bind('click', function (event) {
-                var confirmed = window.confirm(msg);
+                var msg = attr.ngConfirmClickMessage || "Are you sure?";
+                var shouldConfirm = true;
+                if (attr.ngConfirmClickIf)
+                    shouldConfirm = scope.$eval(attr.ngConfirmClickIf);
 
-                if (confirmed)
+                var clickAction = attr.ngConfirmClick;
+
+                if (!shouldConfirm || window.confirm(msg))
                 {
                     if (clickAction == 'submit'){
                         $(element).parent('form').submit()
@@ -300,8 +304,12 @@ app.factory('RequestsErrorHandler', ['$q', '$rootScope', function($q, $rootScope
                 console.log(rejection);
                 if (rejection.data && rejection.data.success == false && rejection.data.message )
                 {
+                    var messages = [rejection.data.message];
+                    if (rejection.data.messages)
+                        messages = messages.concat(rejection.data.messages);
+
                     $rootScope.appErrors.push({
-                        messages: [rejection.data.message]
+                        messages: messages
                     });
                 }
                 else if (rejection.data.response && rejection.data.response.message )
