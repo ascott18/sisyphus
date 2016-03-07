@@ -24,7 +24,14 @@ app.controller('CoursesIndexController', function($scope, StHelper) {
 });
 
 
-app.controller('CoursesDetailsController', function($http, $scope) {
+app.controller('CoursesDetailsController', ['$http', '$scope', 'HelpService', function($http, $scope, HelpService) {
+
+
+
+    $scope.setCourseHelp = function(course) {
+        HelpService.addCourseHelpOption([course]);
+    };
+
     $scope.noBook = function(course_id)
     {
         $http.post('/requests/no-book', {course_id: course_id}).then(
@@ -32,7 +39,7 @@ app.controller('CoursesDetailsController', function($http, $scope) {
                 location.reload();
             });
     };
-});
+}]);
 
 app.controller('CoursesModifyController', function($filter, $scope) {
     $scope.getSelectedUser = function(){

@@ -8,7 +8,7 @@
 
 @section('content')
 
-    <div class="row" ng-controller="CoursesDetailsController">
+    <div class="row" ng-controller="CoursesDetailsController" ng-init="setCourseHelp({{ $course }})">
         <div class="col-lg-12">
             <div class="panel panel-default">
                 <div class="panel-heading">

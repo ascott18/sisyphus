@@ -101,9 +101,9 @@
                             [[ ticket['assignedToDisplay'] ]]
                         </dd>
 
-                        <dt>Linked To</dt>
-                        <dd>
-                            <a ng-href="[[ ticket['url'] ]]">
+                        <dt ng-if="ticket.urlValid">Linked To</dt>
+                        <dd ng-if="ticket.urlValid">
+                            <a ng-if="ticket.urlValid" ng-href="[[ ticket['url'] ]]">
                                 [[ ticket['url'] ]]
                             </a>
                         </dd>

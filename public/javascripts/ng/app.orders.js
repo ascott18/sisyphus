@@ -98,6 +98,7 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
     $scope.setCourses = function (courses) {
         $scope.courses = courses;
 		HelpService.addCourseHelpOption(courses);
+        HelpService.addMissingCourseOption();
     };
 
     $scope.cartBooks = CartService.cartBooks;

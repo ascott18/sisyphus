@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Permission;
 use App\Models\Ticket;
 use App\Models\TicketComment;
-use App\Models\User;
 use Auth;
 use Illuminate\Http\Request;
 use App\Http\Requests;
-use App\Http\Controllers\Controller;
+use URL;
 use SearchHelper;
+use DB;
+use Mail;
 
 class TicketController extends Controller
 {
@@ -80,7 +81,7 @@ class TicketController extends Controller
         $status = $request->get("status");
         $user_id = Auth::user()->user_id;
 
-        TicketComment::create([
+        $comment = TicketComment::create([
             'user_id' => $user_id,
             'ticket_id' => $ticket_id,
             'body' => $comment['body']
@@ -89,7 +90,7 @@ class TicketController extends Controller
         $ticket->update(['status' => $status]);
         $ticket = Ticket::with(['comments.user', 'user'])->findOrFail($ticket_id);
 
-        return response()->json($ticket);
+        return ['success' => true, 'ticket' => $ticket, 'comment' => $comment];
     }
 
     /**
@@ -123,6 +124,7 @@ class TicketController extends Controller
 
         return view('tickets.details', ['ticket' => $ticket]);
     }
+
 
     /**
      * Build the search query for the tickets controller
@@ -208,5 +210,86 @@ class TicketController extends Controller
         $tickets = $query->paginate(10);
 
         return response()->json($tickets);
+    }
+
+
+    public function postSendNewCommentEmail(Request $request)
+    {
+        $currentUser = $request->user();
+        $ticket = Ticket::with(['comments.user', 'user'])->findOrFail($request->input('ticket_id'));
+        $comment = TicketComment::with(['user'])->findOrFail($request->input('ticket_comment_id'));
+
+        $this->authorize("view-ticket", $ticket);
+
+        $numRequested = 0;
+        $numSent = 0;
+
+        if ($ticket->department) {
+
+            $recipients = $ticket->getAssignableUsers();
+            $ticket['numRecipients'] = count($recipients);
+
+            if (count($recipients) != 0)
+                $ticket['assignedToDisplay'] = join(', ', $recipients->pluck('first_last_name')->toArray());
+
+
+            foreach ($recipients as $recipient)
+            {
+                $numRequested++;
+
+                if ($recipient && $recipient->email)
+                {
+                    $numSent++;
+                    Mail::queue('tickets.email', ['ticket' => $ticket,
+                                                    'comment' => $comment],
+
+                        function ($m) use ($recipient, $ticket, $currentUser, $comment) {
+                        $email = $recipient->email;
+                        $sender = $recipient->first_name . ' ' . $recipient->last_name;
+                        $m->from($currentUser->email, "$currentUser->first_name $currentUser->last_name");
+                        $m->to($email, $sender);
+                        $m->subject($sender . " commented on ticket: " . $ticket->title);
+                    });
+                }
+            }
+
+        }
+
+
+        return ['success' => true, 'requested' => $numRequested, 'sent' => $numSent, 'recipientIds' => $recipients];
+    }
+
+    public function postSendNewTicketEmail(Request $request)
+    {
+        $currentUser = $request->user();
+        $ticket = Ticket::findOrFail($request->input('ticket_id'));
+        $this->authorize("view-ticket", $ticket);
+
+        $numRequested = 0;
+        $numSent = 0;
+
+        if ($ticket->department) {
+            $recipients = $ticket->getAssignableUsers();
+
+            foreach ($recipients as $recipient)
+            {
+                $numRequested++;
+
+                if ($recipient && $recipient->email)
+                {
+                    $numSent++;
+                    Mail::queue([], [], function ($m) use ($recipient, $ticket, $currentUser) {
+                        $email = $recipient->email;
+                        $m->from($currentUser->email, "$currentUser->first_name $currentUser->last_name");
+                        $m->to($email, $recipient->first_name . ' ' . $recipient->last_name);
+                        $m->subject("Ticket created");
+                        $m->setBody("Testing", 'text/html');
+                    });
+                }
+            }
+        }
+
+
+        return ['success' => true, 'requested' => $numRequested, 'sent' => $numSent, 'recipientIds' => $recipients];
     }
 }

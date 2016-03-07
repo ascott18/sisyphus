@@ -418,6 +418,8 @@ app.controller('HelpModalController', ['$scope', 'HelpService', function($scope,
     $scope.COURSE_OPTION = HelpService.COURSE_OPTION;
     $scope.BOOK_OPTION = HelpService.BOOK_OPTION;
 
+    $scope.missingCourseOption = HelpService.MISSING_COURSE_OPTION;
+
     $scope.stage = $scope.SELECT_OPTION;
 
     $scope.showModal = false;
@@ -447,8 +449,11 @@ app.controller('HelpModalController', ['$scope', 'HelpService', function($scope,
     };
 
     $scope.createTicket = function (ticketInfo) {
-        if (!(typeof ticketInfo.title != "undefined")) {
+        if (typeof ticketInfo.title == "undefined") {
             ticketInfo.title = "";
+        }
+        if (typeof ticketInfo.url == "undefined") {
+            ticketInfo.url = null;
         }
         window.location.href = $scope.href + "?url=" + ticketInfo.url + "&title=" + ticketInfo.title + "&department=" + ticketInfo.department;
     }
@@ -528,6 +533,12 @@ app.factory("HelpService", function() {
         options.push(option);
     };
 
+    var addMissingCourseOption = function() {
+        var missingCourseOption = {header: "Report Missing Course",
+            body: "Is a course missing? Report it."};
+        options.push(missingCourseOption);
+    };
+
     var addCourseHelpOption = function(courses) {
         var selectCourseHelpOption =  {header: "Report Error in Course List",
             body: "Select this option if a course you are teaching is not listed here or a course you are not teaching is listed.",
@@ -545,10 +556,10 @@ app.factory("HelpService", function() {
             options.push(option);
         }
 
-        var option = {};
-        option['body'] = "Missing course";
-        option['url'] = null;
-        options.push(option);
+        //var option = {};
+        //option['body'] = "Missing course";
+        //option['url'] = null;
+        //options.push(option);
 
         selectCourseHelpOption['options'] = options;
 
@@ -597,6 +608,7 @@ app.factory("HelpService", function() {
                    addCourseHelpOption  : addCourseHelpOption,
                    addBookHelpOption    : addBookHelpOption,
                    setDefaultOptions    : setDefaultOptions,
+                   addMissingCourseOption   : addMissingCourseOption,
                    SELECT_OPTION        : SELECT_OPTION,
                    COURSE_OPTION        : COURSE_OPTION,
                    BOOK_OPTION          : BOOK_OPTION};

@@ -22,15 +22,10 @@
                        class="list-group-item"
                        ng-click="createTicket(option)">
 
-                        <div ng-show="option.course">
+                        <div>
                             <course-with-listings course="option.course">
                                 [[option.course.listings[0].name]]
                             </course-with-listings>
-                        </div>
-
-                        <div ng-show="!option.course">
-                            <h4 class="list-group-item-heading">[[ option.header ]]</h4>
-                            <p class="list-group-item-text">[[ option.body ]]</p>
                         </div>
 
                     </a>

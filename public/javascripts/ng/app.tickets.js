@@ -42,7 +42,7 @@ app.controller('NewTicketController', ['$scope', '$http', 'HelpService', 'status
     };
 
     $scope.submitTicket = function(){
-        //window.removeEventListener("beforeunload", unloadListener);
+        window.removeEventListener("beforeunload", unloadListener);
 
         $http.post('/tickets/submit-ticket', {ticket : $scope.ticket}).then(
             function success(response){
@@ -75,6 +75,12 @@ app.controller('TicketController', ['$scope', '$http', 'TicketsService', 'status
 
     $scope.setTicket = function(ticket) {
         $scope.ticket = ticket;
+        if ($scope.ticket.url == "null") {
+            $scope.ticket.urlValid = false;
+        }
+        else {
+            $scope.ticket.urlValid = true;
+        }
         $scope.statusSelected = $scope.statuses[$scope.ticket.status];
         $scope.comments = ticket.comments;
     };
@@ -84,8 +90,18 @@ app.controller('TicketController', ['$scope', '$http', 'TicketsService', 'status
         if ($scope.comment['body'].trim()) {
             $http.post('/tickets/submit-comment', {comment: $scope.comment, ticket_id: $scope.ticket["ticket_id"], status : $scope.statusSelected.key}).then(
                 function success(response){
-                    $scope.comments = response.data.comments;
+                    $scope.comments = response.data.ticket.comments;
+                    var comment_id = response.data.comment.ticket_comment_id;
                     $scope.comment = {body: ""};
+
+                    //send an email that a comment has been made
+                    $http.post('/tickets/send-new-comment-email', {ticket_id: $scope.ticket.ticket_id, ticket_comment_id : comment_id ,status: $scope.statusSelected}).then(
+                        function success(response) {
+                            var data = response.data;
+                        }
+                    );
+
+
                     $scope.ticket.status = response.data.status;
                 });
         }
