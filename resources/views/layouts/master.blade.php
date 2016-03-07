@@ -56,8 +56,8 @@
 
     <i ng-spinner ng-cloak class="fa fa-spinner fa-spin" ng-show="spinnerActive"></i>
 
-    <modal title="Help" visible="showModal">
-    </modal>
+    {{--<modal title="Help" visible="showModal">--}}
+    {{--</modal>--}}
 
     <!-- Navigation-->
     <nav role="navigation" class="navbar navbar-inverse navbar-fixed-top">
@@ -127,16 +127,16 @@
                 @can('manage-users')
                     <li><a href="/users"><i class="fa fa-fw fa-group"></i> Users</a></li>
                 @endcan
-                <li><a href="/tickets"><i class="fa fa-fw fa-life-ring"></i> Tickets</a></li>
+                {{--<li><a href="/tickets"><i class="fa fa-fw fa-life-ring"></i> Tickets</a></li>--}}
                 @can('make-reports')
                 <li><a href="/reports"><i class="fa fa-fw fa-bar-chart"></i> Reports</a></li>
                 @endcan
                 {{--<li><a ng-click="toggleModal()"><i class="fa fa-fw fa-question"></i> Help</a></li>--}}
 
 
-                <div class="icon-wrapper" ng-click="toggleModal()">
-                    <i class="fa fa-question custom-icon"></i>
-                </div>
+                {{--<div class="icon-wrapper" ng-click="toggleModal()">--}}
+                    {{--<i class="fa fa-question custom-icon"></i>--}}
+                {{--</div>--}}
             </div>
 		</div>
     </nav>
