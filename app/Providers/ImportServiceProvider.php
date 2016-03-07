@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Support\ServiceProvider;
 use PHPExcel;
 use PHPExcel_Cell;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class ImportServiceProvider extends ServiceProvider
 {
@@ -52,6 +53,11 @@ class ImportServiceProvider extends ServiceProvider
         ".net" => ".NET",
         "Adst" => "ADST",
         "U.s." => "U.S.",
+        "Us" => "US",
+        "Nw" => "NW",
+        "Pe" => "PE",
+        "Pt" => "PT",
+        "Mba" => "MBA",
         "Directed Study " => "Directed Study: ",
     ];
 
@@ -322,6 +328,14 @@ class ImportServiceProvider extends ServiceProvider
                 $columnIndexesByLabel[$columnLabel] = $colIndex;
         }
 
+        // Make sure that we found all the required columns,
+        // and error out if we didn't find one of them.
+        foreach (static::$RELEVANT_COLUMNS as $columnLabel => $_) {
+            if (!isset($columnIndexesByLabel[$columnLabel])){
+                throw new BadRequestHttpException("The provided spreadsheet was missing the $columnLabel column.");
+            }
+        }
+
 
         // Now, scan through all the data rows and pick out the RELEVANT_COLUMNS from each row.
         // We start $rowIndex at 2 because $rowIndex == 1 is the header row.
@@ -461,7 +475,7 @@ class ImportServiceProvider extends ServiceProvider
                 // letter at the end of it for some reason. This letter is significant,
                 // which is why listing->number is a VARCHAR and not an INT column in the DB.
                 $matches = [];
-                preg_match('/([A-Z]+)([0-9]+[A-Z]?)-([0-9]+)/', $id, $matches);
+                preg_match('/([A-Z]{2,10})([0-9]{1,9}[A-Z]?)-([0-9]+)/', $id, $matches);
 
                 if (count($matches) != 4){
                     // This should never, ever happen.

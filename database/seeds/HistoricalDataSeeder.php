@@ -48,7 +48,7 @@ class HistoricalDataSeeder extends Seeder
 
         foreach ($spreadsheetFiles as $fileInfo) {
             $this->command->line("Parsing spreadsheet $fileInfo[2] $fileInfo[1]...");
-            Artisan::call('parseCourseCsv', [
+            Artisan::call('parseCourseSpreadsheet', [
                 'termNumber' => array_search($fileInfo[2], Term::$termNumbers),
                 'year' => $fileInfo[1],
                 'file' => "database/seeds/dataFiles/$fileInfo[0]"

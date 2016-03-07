@@ -28,7 +28,9 @@
 
                         <div class="form-group">
                             <label>Select Course Report (.csv, .xls, or .xlsx)
-                                <input type="file" file-model="file">
+                                <input type="file"
+                                       accept=".csv,.xls,.xlsx"
+                                       file-model="file">
                             </label>
                         </div>
                         <br>
@@ -170,11 +172,16 @@
 
                     <div class="row">
                         <div class="col-lg-12 ">
-                            <button class="btn btn-success" ng-click="submitForPreview()" ng-show="!submittingPreview && !havePreviewResponse">
+                            <button class="btn btn-success"
+                                    ng-disabled="!file"
+                                    ng-click="submitForPreview()"
+                                    ng-show="!submittingPreview && !havePreviewResponse">
                                 Process and Review Input <i class="fa fa-arrow-right"></i>
                             </button>
 
-                            <button class="btn btn-success" ng-click="submitForImport()" ng-show="havePreviewResponse && !submittingImport && !submittedImport" >
+                            <button class="btn btn-success"
+                                    ng-click="submitForImport()"
+                                    ng-show="havePreviewResponse && !submittingImport && !submittedImport" >
                                 Import These Courses <i class="fa fa-arrow-right"></i>
                             </button>
                         </div>
