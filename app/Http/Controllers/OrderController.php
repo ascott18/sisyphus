@@ -254,6 +254,7 @@ class OrderController extends Controller
         $orderResults = [];
 
 
+        /** @var Course $course */
         foreach($courses as $course) {
             foreach ($params['cart'] as $bookData) {
 
@@ -320,13 +321,15 @@ class OrderController extends Controller
                     }
                 }
                 else{
-                    $order = Order::create([
+                    $order = $course->orders()->save(new Order([
                         'notes' => $notes,
                         'placed_by' => $user_id,
-                        'course_id' => $course['course_id'],
                         'required' => $bookData['required'],
                         'book_id' => $book_id
-                    ]);
+                    ]));
+
+                    // Reload orders so we can detect duplicate orders.
+                    $course->load('orders');
 
                     $orderResults[$book_id][] = [
                         'notPlaced' => false,

@@ -109,6 +109,7 @@
                                         <span ng-cloak style="display: table-cell;">
                                             <a class="btn btn-danger"
                                                style="margin-left: 10px"
+                                               title="Remove Cross-Listing"
                                                ng-show="!$first"
                                                ng-click="deleteListing(listing)">
                                                 <i class="fa fa-times"></i>
@@ -133,6 +134,17 @@
                             <span ng-cloak ng-show="course.listings.length > 1">Add Another Cross-Listing</span>
                             <span ng-show="course.listings.length == 1">Add a Cross-Listing</span>
                         </a>
+
+                        <div ng-show="course.listings.length > 1"
+                             class="text-muted">
+                            <br>
+                            <p>
+                                <h5><strong>Friendly reminder:</strong></h5>
+                                Don't use cross-listings as a shortcut to place requests for many courses at the same time.
+                                <br>
+                                Only use cross-listings if the course truly is cross-listed.
+                            </p>
+                        </div>
                     </div>
 
                     <div class="col-md-6 col-md-vspace"

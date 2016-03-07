@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         \App\Console\Commands\ParseMBS::class,
         \App\Console\Commands\ParseCourseCsv::class,
+        \App\Console\Commands\ParseCourseSpreadsheet::class,
         \App\Console\Commands\CorrectBookTitles::class
     ];
 
