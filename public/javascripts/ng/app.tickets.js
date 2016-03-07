@@ -46,8 +46,15 @@ app.controller('NewTicketController', ['$scope', '$http', 'HelpService', 'status
 
         $http.post('/tickets/submit-ticket', {ticket : $scope.ticket}).then(
             function success(response){
-                var ticket = response.data;
+                var ticket = response.data.ticket;
                 $scope.ticket = ticket;
+
+                $http.post('/tickets/send-new-ticket-email', {ticket_id: $scope.ticket.ticket_id}).then(
+                    function success(response) {
+                        var data = response.data;
+                        window.location.href = '/';
+                    }
+                );
         });
     };
 }]);

@@ -223,6 +223,7 @@ class TicketController extends Controller
 
         $numRequested = 0;
         $numSent = 0;
+        $url = action('TicketController@getDetails', ['ticket_id' => $ticket->ticket_id]);
 
         if ($ticket->department) {
 
@@ -240,8 +241,9 @@ class TicketController extends Controller
                 if ($recipient && $recipient->email)
                 {
                     $numSent++;
-                    Mail::queue('tickets.email', ['ticket' => $ticket,
-                                                    'comment' => $comment],
+                    Mail::queue('emails.comment', ['ticket' => $ticket,
+                                                    'comment' => $comment,
+                                                    'link' => $url],
 
                         function ($m) use ($recipient, $ticket, $currentUser, $comment) {
                         $email = $recipient->email;
@@ -256,7 +258,7 @@ class TicketController extends Controller
         }
 
 
-        return ['success' => true, 'requested' => $numRequested, 'sent' => $numSent, 'recipientIds' => $recipients];
+        return ['success' => true, 'requested' => $numRequested, 'sent' => $numSent, 'recipientIds' => $recipients, 'url' => $url];
     }
 
     public function postSendNewTicketEmail(Request $request)
@@ -268,6 +270,8 @@ class TicketController extends Controller
         $numRequested = 0;
         $numSent = 0;
 
+        $url = action('TicketController@getDetails', ['ticket_id' => $ticket->ticket_id]);
+
         if ($ticket->department) {
             $recipients = $ticket->getAssignableUsers();
 
@@ -278,12 +282,13 @@ class TicketController extends Controller
                 if ($recipient && $recipient->email)
                 {
                     $numSent++;
-                    Mail::queue([], [], function ($m) use ($recipient, $ticket, $currentUser) {
+                    Mail::queue('emails.ticket', ['ticket' => $ticket,
+                                                            'link' => $url],
+                        function ($m) use ($recipient, $ticket, $currentUser) {
                         $email = $recipient->email;
                         $m->from($currentUser->email, "$currentUser->first_name $currentUser->last_name");
                         $m->to($email, $recipient->first_name . ' ' . $recipient->last_name);
-                        $m->subject("Ticket created");
-                        $m->setBody("Testing", 'text/html');
+                        $m->subject("Ticket created: " . $ticket->title);
                     });
                 }
             }
