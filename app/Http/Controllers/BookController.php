@@ -175,9 +175,8 @@ class BookController extends Controller
             return $query;
 
         if (isset($predicateObject->section) && $predicateObject->section != '')
-        	SearchHelper::sectionSearchQuery($query, $predicateObject->section);
-        
-		if (isset($predicateObject->name) && $predicateObject->name != '')
+        SearchHelper::sectionSearchQuery($query, $predicateObject->section); // use search helper for section search
+        if (isset($predicateObject->name) && $predicateObject->name != '')
             $query = $query->where('name', 'LIKE', '%'.$predicateObject->name.'%');
         
 

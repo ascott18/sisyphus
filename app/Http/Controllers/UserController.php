@@ -57,20 +57,18 @@ class UserController extends Controller
      */
     private function buildUserSearchQuery($tableState, $query)
     {
+        $predicateObject = [];
         if (isset($tableState->search->predicateObject))
-            $predicateObject = $tableState->search->predicateObject;
-        else
-            return $query;
+            $predicateObject = $tableState->search->predicateObject; // initialize predicate object
 
-        if (isset($predicateObject->lName))
+        if (isset($predicateObject->lName) && $predicateObject->lName != '')
             $query = $query->where('last_name', 'LIKE', '%' . $predicateObject->lName . '%');
-        if (isset($predicateObject->fName))
+        if (isset($predicateObject->fName) && $predicateObject->fName != '')
             $query = $query->where('first_name', 'LIKE', '%' . $predicateObject->fName . '%');
-        if (isset($predicateObject->netID))
+        if (isset($predicateObject->netID) && $predicateObject->netID != '')
             $query = $query->where('net_id', 'LIKE', '%' . $predicateObject->netID . '%');
-        if (isset($predicateObject->email))
+        if (isset($predicateObject->email) && $predicateObject->email != '')
             $query = $query->where('email', 'LIKE', '%' . $predicateObject->email . '%');
-
         return $query;
     }
 

@@ -183,12 +183,13 @@ class TermController extends Controller
      * @return \Illuminate\Database\Eloquent\Builder
      */
     private function buildTermSearchQuery($tableState, $query) {
+        $predicateObject = [];
         if (isset($tableState->search->predicateObject))
             $predicateObject = $tableState->search->predicateObject;
         else
             return $query;
 
-        if(isset($predicateObject->term) && $predicateObject->term != "") {
+        if (isset($predicateObject->term) && $predicateObject->term != '') {
             $termList = $this->searchTermNames($predicateObject->term);
 
             $query = $query->Where(function($sQuery) use ($termList) {

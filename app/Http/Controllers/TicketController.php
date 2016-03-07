@@ -131,15 +131,13 @@ class TicketController extends Controller
      * @return \Illuminate\Database\Eloquent\Builder
      */
     private function buildTicketSearchQuery($tableState, $query) {
+        $predicateObject = [];
         if (isset($tableState->search->predicateObject))
-            $predicateObject = $tableState->search->predicateObject;
-        else
-            return $query;
+            $predicateObject = $tableState->search->predicateObject; // initialize predicate object
 
-        if (isset($predicateObject->title))
+        if (isset($predicateObject->title) && $predicateObject->title != '')
             $query = $query->where('tickets.title', 'LIKE', '%'.$predicateObject->title.'%');
-
-        if (isset($predicateObject->name))
+        if (isset($predicateObject->name) && $predicateObject->name != '')
             SearchHelper::professorSearchQuery($query, $predicateObject->name);
 
         return $query;
