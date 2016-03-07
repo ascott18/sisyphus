@@ -40,7 +40,7 @@ Next, clone this repository to the web root of your apache installation. Then, g
     * This directory contains compiled views, sessions (if the session driver is set to 'file'), and caches (if the cache driver is set to 'file').
     * The following should get permissions set up sufficiently:
         * `sudo chown -R www-data:www-data` to set the appropriate owner and group of all the files.
-        * `chmod -R 755 storage/` to set the appropriate permissions for /storage. 
+        * `sudo chmod -R 755 storage/` to set the appropriate permissions for /storage. 
 
 ### PHP Configuration
 This application requires the following PHP extensions. There is a good chance they are all already installed and enabled. Check `phpinfo()` output to check if any are missing.
