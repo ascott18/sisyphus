@@ -455,7 +455,7 @@ class UserController extends Controller
     /**
      * The set of default validation rules for creating/editing users.
      */
-    const USER_VALIDATION = [
+    public static $USER_VALIDATION = [
         'user.first_name' => 'required|string',
         'user.last_name' => 'required|string',
         'user.email' => 'required|string|unique:users,email',
@@ -488,7 +488,7 @@ class UserController extends Controller
         $this->authorize('manage-users');
 
         // Perform the common validation that we do on all user modification (create or edit) requests.
-        $this->validate($request, static::USER_VALIDATION, [
+        $this->validate($request, static::$USER_VALIDATION, [
             'user.email.unique' => 'That Email already belongs to a user.'
         ]);
 
@@ -548,7 +548,7 @@ class UserController extends Controller
      */
     public function postEdit(Request $request)
     {
-        $this->validate($request, static::USER_VALIDATION);
+        $this->validate($request, static::$USER_VALIDATION);
         $user = $request->get('user');
         $user_id = $user['user_id'];
 
