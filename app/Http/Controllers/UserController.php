@@ -8,6 +8,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use Illuminate\Http\Response;
+use App\Providers\SearchServiceProvider;
+
 
 class UserController extends Controller
 {

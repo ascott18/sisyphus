@@ -11,6 +11,8 @@ use App\Http\Requests;
 use URL;
 use DB;
 use Mail;
+use App\Providers\SearchServiceProvider;
+
 
 class TicketController extends Controller
 {

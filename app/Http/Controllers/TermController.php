@@ -16,6 +16,8 @@ use PHPExcel_Cell;
 use PHPExcel_IOFactory;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use App\Providers\SearchServiceProvider;
+
 
 class TermController extends Controller
 {
