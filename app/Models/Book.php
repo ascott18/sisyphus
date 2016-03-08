@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Author[] $authors
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Order[] $orders
  * @property integer $book_id
- * @property string $asin // todo: remove this from the database.
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  */

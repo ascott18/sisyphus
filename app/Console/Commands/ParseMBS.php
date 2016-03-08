@@ -291,7 +291,7 @@ EOL;
 
                         if ($course['noText']) {
                             $dbCourse->no_book = true;
-                            // TODO: this date is fake data.
+                            // This date is fake data.
                             $dbCourse->no_book_marked = $term->order_start_date->copy()->addDays(rand(0, $termPeriodDayLength));
                             $dbCourse->save();
                         }
@@ -336,7 +336,7 @@ EOL;
                             //$dbOrder->save();
 
 
-                            // TODO: this date is fake data.
+                            // This date is fake data.
                             $dbOrder->created_at = $term->order_start_date->copy()->addDays(rand(0, $termPeriodDayLength));
                             $dbOrder->save();
                         }
