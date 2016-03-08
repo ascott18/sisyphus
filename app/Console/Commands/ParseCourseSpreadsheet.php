@@ -62,7 +62,22 @@ class ParseCourseSpreadsheet extends Command
         $reader->setReadDataOnly(true);
         $spreadsheet = $reader->load($fileName);
 
-        Auth::login(User::where(['net_id' => 'cbean'])->firstOrfail());
+
+
+        // IMPORTANT
+
+        // We will parse these spreadsheets as Connie so that we only get CSCD/CPLA data in here,
+        // since we are only doing a compsci rollout for now.
+
+        // If you want to parse everything, you will need to make a role that can see all courses,
+        // and then you will need to seed a user that has that role, and then you will need to place their net_id here.
+        $net_id = 'cbean';
+        echo "Parsing spreadsheet as user $net_id \n";
+        Auth::login(User::where(['net_id' => $net_id])->firstOrfail());
+
+
+
+
 
         $courses = ImportServiceProvider::parseSpreadsheet($spreadsheet, $term_id);
 

@@ -9,7 +9,6 @@ use Auth;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use URL;
-use SearchHelper;
 use DB;
 use Mail;
 
@@ -140,8 +139,9 @@ class TicketController extends Controller
 
         if (isset($predicateObject->title) && $predicateObject->title != '')
             $query = $query->where('tickets.title', 'LIKE', '%'.$predicateObject->title.'%');
+
         if (isset($predicateObject->name) && $predicateObject->name != '')
-            SearchHelper::professorSearchQuery($query, $predicateObject->name);
+            SearchServiceProvider::professorSearchQuery($query, $predicateObject->name);
 
         return $query;
     }
@@ -165,7 +165,7 @@ class TicketController extends Controller
                 ]
             ];
 
-            SearchHelper::buildSortQuery($query, $tableState->sort, $sorts);
+            SearchServiceProvider::buildSortQuery($query, $tableState->sort, $sorts);
 
             return $query;
         }
@@ -204,6 +204,7 @@ class TicketController extends Controller
 
         $query = $query->with([
             'user' => function($query){
+                // Only select what we need from users for security/information disclosure purposes.
                 return $query->select('user_id', 'last_name', 'first_name');
             }
         ]);

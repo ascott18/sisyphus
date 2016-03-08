@@ -44,6 +44,12 @@ class HomeController extends Controller
     }
 
 
+    /** GET: /logout
+     *
+     * Logs the current user out.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function getLogout(){
         $this->authorize('all');
 
@@ -65,7 +71,9 @@ class HomeController extends Controller
     }
 
     private static function getCachedDashboardData($user_id){
+        // Get all of the data that goes into making the charts on the dashboard.
         // Cache this for x minutes.
+
         return Cache::remember('dashboard-' . $user_id, static::CACHE_MINUTES, function() {
             return [
                 'chartData' => static::getChartData(),
@@ -79,6 +87,7 @@ class HomeController extends Controller
     }
 
     private static function getChartData(){
+        // Gets the data that goes into making the term charts on the top of the dashboard.
 
         $chartData = [];
 
@@ -90,17 +99,20 @@ class HomeController extends Controller
                 ->skip($i++)
                 ->first();
 
+            // If there isn't another term, we ran out of terms.
+            // Stop trying to make more charts.
             if ($term == null)
                 break;
 
             $courseCount = Course::visible()->where('term_id', '=', $term->term_id)->count();
 
+            // If there are no courses that are visible to the user for this term,
+            // continue on to the next term.
             if ($courseCount == 0)
                 continue;
 
             $numChartsFound++;
 
-            // TODO: how does this react to many orders placed at the same instant?
             $orderReport = Course::visible()
                 ->where('term_id', '=', $term->term_id)
                 ->select(\DB::raw('count(*) as count, (SELECT DATE(MIN(o.created_at)) FROM orders o WHERE o.course_id = courses.course_id AND o.deleted_at IS NULL) as date'))
@@ -212,8 +224,8 @@ class HomeController extends Controller
         return $data;
     }
 
-    private static function getActivityStats(){
 
+    private static function getActivityStats(){
         $start = Carbon::today()->subDays(static::ACTIVITY_STATS_DAYS);
 
 

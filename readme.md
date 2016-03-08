@@ -39,11 +39,11 @@ Next, clone this repository to the web root of your apache installation. Then, g
     * This includes execute permission. Cached version of the compiled Laravel blade templates are stored here, and they need to be executable.
     * This directory contains compiled views, sessions (if the session driver is set to 'file'), and caches (if the cache driver is set to 'file').
     * The following should get permissions set up sufficiently:
-        * `sudo chown -R www-data:www-data` to set the appropriate owner and group of all the files.
+        * `sudo chown -R www-data:www-data` to set the appropriate owner and group of all the files in the project.
         * `sudo chmod -R 755 storage/` to set the appropriate permissions for /storage. 
 
 ### PHP Configuration
-This application requires the following PHP extensions. There is a good chance they are all already installed and enabled. Check `phpinfo()` output to check if any are missing.
+This application requires the following PHP extensions. There is a good chance they are all already installed and enabled. Check `phpinfo()` output to check if any are missing. You can also check the output of `php -m` to see if they are installed.
 
 * OpenSSL PHP Extension (`openssl`)
     * Look for "OpenSSL support" in `phpinfo()`
@@ -61,15 +61,14 @@ This application requires the following PHP extensions. There is a good chance t
     * Required for CAS (SSO) authentication
     * Look for "cURL support" in `phpinfo()`
     * Install it with `apt-get install php5-curl` if it isn't installed.
-* This application makes the assumption that data returned from MySQL will be of the correct types (as opposed to only strings). This means that the `mysqlnd` native driver is [required](http://stackoverflow.com/questions/5323146/mysql-integer-field-is-returned-as-string-in-php). Install it with `apt-get install php5-mysqlnd`.
+* **IMPORTANT**: This application makes the assumption that data returned from MySQL will be of the correct types (as opposed to only strings). This means that the `mysqlnd` native driver is [required](http://stackoverflow.com/questions/5323146/mysql-integer-field-is-returned-as-string-in-php). Install it with `apt-get install php5-mysqlnd`.
     * If you are using XAMPP locally, you already have it.
     
-For all of these modules, you can also check the output of `php -m` to see if they are installed.
     
     
 ### Apache Configuration
 
-* This part of this file assumes you have a primitive understanding of apache configuration files. If you don't, go do some Googling and come back later.
+* This part of this file assumes you have at least a basic understanding of apache and its configuration files. If you don't, go do some Googling and come back later.
 * Laravel, the framework used by this application, requires `mod_rewrite`. Enable it by running `a2enmod rewrite`.
     * If you are using XAMPP, ensure that `LoadModule rewrite_module modules/mod_rewrite.so` isn't commented out in your apache conf.
 * Set the `DocumentRoot` to the `public` directory in the root of the project.
@@ -79,8 +78,7 @@ For all of these modules, you can also check the output of `php -m` to see if th
 * Here is an example vhost:
 
     ```
-    Listen 8080
-    <VirtualHost *:8080>
+    <VirtualHost *:80>
       ServerName localhost
       DocumentRoot "C:/xampp/htdocs/sisyphus/public"
       <Directory "C:/xampp/htdocs/sisyphus/public">
@@ -100,22 +98,23 @@ There are a few optimization steps that may be taken **if this is a production d
 ## Structure
 The following is a brief primer on the structure of this project. If you would like to read more in-depth information about Laravel, I strongly recommend you read the [Laravel 5.2 Documentation](http://laravel.com/docs/5.2)
 
-* Laravel is an MVC framework. Important components may be found in the following locations:
-    * Error logs: `/storage/logs`
-        * All errors that occur with the application will be logged here.
-        * If APP_DEBUG is false, errors will not be reported in any detail to clients.
-        * If APP_DEBUG is true, full stack traces will be sent back to clients.
-    * Environment-specific configuration: `/.env`
-        * Be aware of the Optimization section above if you modify this file.
-    * All general configuration (which pulls from .env): `/config/*.php`
-        * Be aware of the Optimization section above if you modify these files.
-    * Models: `/app/Models`
-    * Views: `/resources/views`
-    * Controllers: `/app/Http/Controllers`
-    * Routes: `/app/Http/routes.php`
-    * Middleware: `/app/Http/Middleware`
-        * Middleware is registered in `/app/Http/Kernel/php`
-    * Static Resources (js/css/fonts/images): `/public`
+Laravel is an MVC framework. Important components may be found in the following locations:
+
+* Error logs: `/storage/logs`
+    * All errors that occur with the application will be logged here.
+    * If APP_DEBUG is false, errors will not be reported in any detail to clients.
+    * If APP_DEBUG is true, full stack traces will be sent back to clients.
+* Environment-specific configuration: `/.env`
+    * Be aware of the Optimization section above if you modify this file.
+* All general configuration (which pulls from .env): `/config/*.php`
+    * Be aware of the Optimization section above if you modify these files.
+* Models: `/app/Models`
+* Views: `/resources/views`
+* Controllers: `/app/Http/Controllers`
+* Routes: `/app/Http/routes.php`
+* Middleware: `/app/Http/Middleware`
+    * Middleware is registered in `/app/Http/Kernel.php`
+* Static Resources (js/css/fonts/images): `/public`
     
 * Other important components of this project are the following:
     * CAS (SSO) authentication enforcement point: `/app/Http/Middleware/CASAuth.php`

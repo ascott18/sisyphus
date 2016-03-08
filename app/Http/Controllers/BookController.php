@@ -9,12 +9,13 @@ use App\Models\Book;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use SearchHelper;
 use GoogleBooks;
 
 class BookController extends Controller
 {
     /** GET: /books/
+     *
+     * Displays a page with a list of all books.
      *
      * @return \Illuminate\View\View
      */
@@ -35,20 +36,22 @@ class BookController extends Controller
      */
     private function buildBookSearchQuery($tableState, $query) {
         if (isset($tableState->search->predicateObject))
-            $predicateObject = $tableState->search->predicateObject; // initialize predicate object
+            $predicateObject = $tableState->search->predicateObject;
         else {
             return $query;
         }
 
-        if (isset($predicateObject->title) && $predicateObject->title != '')
+        if (isset($predicateObject->title) && $predicateObject->title != ''){
             $query = $query->where('title', 'LIKE', '%'.$predicateObject->title.'%');
+        }
 
         if (isset($predicateObject->author) && $predicateObject->author != '') {
             $query = $query->where('authors.name', 'LIKE', '%'.$predicateObject->author.'%');
         }
 
-        if (isset($predicateObject->publisher) && $predicateObject->publisher != '')
+        if (isset($predicateObject->publisher) && $predicateObject->publisher != ''){
             $query = $query->where('publisher', 'LIKE', '%'.$predicateObject->publisher.'%');
+        }
 
         if (isset($predicateObject->isbn13) && $predicateObject->isbn13 != '') {
             $isbn = str_replace('-', '', $predicateObject->isbn13);
@@ -83,7 +86,7 @@ class BookController extends Controller
                 ]
             ];
 
-            SearchHelper::buildSortQuery($query, $tableState->sort, $sorts);
+            SearchServiceProvider::buildSortQuery($query, $tableState->sort, $sorts);
 
         }
         return $query;
@@ -91,6 +94,7 @@ class BookController extends Controller
 
 
     /** GET: /books/book-list?page={}&{sort=}&{dir=}&{title=}&{publisher=}&{isbn=}
+     *
      * Searches the book list
      *
      * @param \Illuminate\Http\Request $request
@@ -104,6 +108,7 @@ class BookController extends Controller
 
         $user = $request->user();
         if ($user->may('view-all-courses')){
+            // If the user can see all courses, then all books are relevant to them.
             $query = Book::query();
         }
         else if ($user->may('view-dept-courses')){
@@ -113,10 +118,11 @@ class BookController extends Controller
                 Course::visible()
                 ->join('orders', function ($join) {
                     $join->on('orders.course_id', '=', 'courses.course_id')
-                        ->whereNull('orders.deleted_at');
+                         ->whereNull('orders.deleted_at');
                 })
                 ->select('orders.book_id')
-                ->toBase());
+                ->toBase()
+            );
         }
         else {
             // I am self-join, destroyer of worlds.
@@ -124,16 +130,19 @@ class BookController extends Controller
             // similar to the ones that the current user teaches (same number and dept).
             // This way we get a nice set of relevant books to the user, without bombarding them with
             // every single physics book just because they taught a physics class once five years ago.
+
+            // We can't use $course->getSimilarCourseIdsQuery() because that method only gets courses
+            // that are similar to some single course, but we need ALL similar courses.
             $query = Book::whereIn('books.book_id',
                 Course::where('courses.user_id', '=', $user->user_id)
                     ->join('listings', 'courses.course_id', '=', 'listings.course_id')
                     ->join('listings as similarListings', function ($join) {
                         $join->on('listings.department', '=', 'similarListings.department')
-                            ->on('listings.number', '=', 'similarListings.number');
+                             ->on('listings.number', '=', 'similarListings.number');
                     })
                     ->join('orders', function ($join) {
                         $join->on('orders.course_id', '=', 'similarListings.course_id')
-                            ->whereNull('orders.deleted_at');
+                             ->whereNull('orders.deleted_at');
                     })
                     ->select('orders.book_id')
                     ->distinct()
@@ -142,10 +151,12 @@ class BookController extends Controller
         }
 
         $query->select('books.*')
-            ->distinct();
+              ->distinct();
 
+
+        // If we're searching by author, we need to join in the authors first.
         if ((isset($tableState->sort->predicate) && $tableState->sort->predicate == "author")
-            || isset($tableState->search->predicateObject->author) ) { // only join when we actually need it
+            || isset($tableState->search->predicateObject->author) ) {
 
             $query->join('authors','books.book_id', '=', 'authors.book_id');
         }
@@ -155,9 +166,10 @@ class BookController extends Controller
 
         $query = $query->with('authors');
 
+        // We must use our custom paginator because of our SELECT DISTINCT (books.*)
         $books = SearchServiceProvider::paginate($query, 10);
 
-        return response()->json($books);
+        return $books;
     }
 
 
@@ -175,7 +187,8 @@ class BookController extends Controller
             return $query;
 
         if (isset($predicateObject->section) && $predicateObject->section != '')
-        SearchHelper::sectionSearchQuery($query, $predicateObject->section); // use search helper for section search
+            SearchServiceProvider::sectionSearchQuery($query, $predicateObject->section);
+
         if (isset($predicateObject->name) && $predicateObject->name != '')
             $query = $query->where('name', 'LIKE', '%'.$predicateObject->name.'%');
         
@@ -207,7 +220,7 @@ class BookController extends Controller
                 ]
             ];
 
-            SearchHelper::buildSortQuery($query, $tableState->sort, $sorts);
+            SearchServiceProvider::buildSortQuery($query, $tableState->sort, $sorts);
         }
         return $query;
     }

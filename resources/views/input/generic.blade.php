@@ -1,3 +1,20 @@
+
+
+
+
+
+
+
+
+
+{{-- To future developers on this project:
+    Please don't use this. Please kill it with fire.
+    I'm sorry for having made this in the first place.
+    I didn't realize it was still in use until the last week of the project
+    when there was too much other stuff to do than to try and get rid of it.--}}
+
+
+
 <div class="form-group">
     <?php
         // Convert dot notation to array indexer notation

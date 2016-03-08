@@ -537,7 +537,14 @@ class ImportServiceProvider extends ServiceProvider
         }else{
             // If the course has orders, delete all the orders and mark the course as nobook.
             // We need to maintain a record of the deleted orders that were placed.
-            $dbCourse->orders()->delete();
+            foreach ($dbCourse->orders as $order) {
+                if (!$order->deleted_by) {
+                    $order->deleted_by = \Auth::user()->user_id;
+                    $order->save();
+                    $order->delete();
+                }
+            }
+
             $dbCourse->no_book = true;
             $dbCourse->no_book_marked = Carbon::now();
             $dbCourse->save();
@@ -555,5 +562,6 @@ class ImportServiceProvider extends ServiceProvider
     public function register()
     {
         // Do nothing. We just have static methods here.
+        // Probably not the proper way to do this, but oh well.
     }
 }

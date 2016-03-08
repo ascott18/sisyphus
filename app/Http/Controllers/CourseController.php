@@ -10,11 +10,14 @@ use App\Providers\SearchServiceProvider;
 use Illuminate\Http\Request;
 use App\Models\Term;
 use Illuminate\Validation\ValidationException;
-use SearchHelper;
-use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class CourseController extends Controller
 {
+    /**
+     * The validation rules for creating or updating a course.
+     *
+     * @var array
+     */
     public static $CourseValidation = [
         'course.term_id' => 'required|numeric',
         'course.listings' => 'required',
@@ -25,10 +28,14 @@ class CourseController extends Controller
         'course.listings.*.section' => 'required|numeric',
     ];
 
-    /**
-     * Display a listing of the resource.
+
+    /** GET: /courses/{$term_id?}
+     *
+     * Display a listing of courses.
+     * If term_id is provided, the filter on the grid will be initially set to that term..
      *
      * @param Request $request
+     * @param null $term_id
      * @return \Illuminate\Http\Response
      */
     public function getIndex(Request $request, $term_id = null)
@@ -52,19 +59,21 @@ class CourseController extends Controller
     }
 
 
-    /**
-     * Display a listing of the resource.
+    /** GET: /courses/details/course_id
      *
-     * @param $id integer The id of the course to display details for.
+     * Displays the details of a course.
+     *
+     * @param $course_id integer The id of the course to display details for.
      * @return \Illuminate\Http\Response
      */
-    public function getDetails($id)
+    public function getDetails($course_id)
     {
-        $course = Course::findOrFail($id);
+        $course = Course::findOrFail($course_id);
 
         $this->authorize("view-course", $course);
 
-        // We will show deleted orders in red on this screen.
+        // We will show deleted orders in red on this screen,
+        // so we need to include deleted ones on the course.
         $course->orders = $course->orders()->withTrashed()->get();
 
         return view('courses.details', ['course' => $course]);
@@ -76,7 +85,7 @@ class CourseController extends Controller
      * Display the page to edit a course.
      *
      * @param Request $request
-     * @param $course_id The id of the course to edit.
+     * @param $course_id int The id of the course to edit.
      * @return \Illuminate\Http\Response
      */
     public function getEdit(Request $request, $course_id)
@@ -86,6 +95,7 @@ class CourseController extends Controller
         $this->authorize("modify-course", $course);
 
         // All users, from which we will select a professor.
+        // Only select what we need for security/information disclosure purposes.
         $users = User::all(['first_name', 'last_name', 'user_id']);
 
         return view('courses.edit', [
@@ -155,14 +165,28 @@ class CourseController extends Controller
         $this->authorize("modify-courses");
 
         // All users, from which we will select a professor.
+        // Only select what we need for security/information disclosure purposes.
         $users = User::all(['first_name', 'last_name', 'user_id']);
 
         $term = Term::findOrFail($term_id);
 
-        return view('courses.edit', ['panelTitle' => 'New Course', 'users' => $users, 'term_id' => $term_id, 'term_name' => $term->displayName()]);
+        return view('courses.edit', [
+            'panelTitle' => 'New Course',
+            'users' => $users,
+            'term_id' => $term_id,
+            'term_name' => $term->displayName()
+        ]);
     }
 
 
+    /** POST: /courses/create
+     *
+     * Process a request to create a course
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws ValidationException
+     */
     public function postCreate(Request $request)
     {
         $this->authorize("modify-courses");
@@ -181,7 +205,6 @@ class CourseController extends Controller
         $this->authorize("modify-course", $dbCourse);
 
         // They can indeed create this course, so it is now safe to save to the database.
-
         $dbCourse->save();
         for ($i = 0; $i < count($listings); $i++){
             $dbCourse->listings()->create($listings[$i]);
@@ -209,6 +232,7 @@ class CourseController extends Controller
             ->with([
                 'term',
                 'user' => function($query) {
+                    // Only select what we need from users for security/information disclosure purposes.
                     return $query->select('user_id', 'first_name', 'last_name');
                 },
                 'listings',
@@ -303,16 +327,19 @@ class CourseController extends Controller
      */
     private function buildCourseSearchQuery($tableState, $query) {
 
-        $predicateObject = [];
         if (isset($tableState->search->predicateObject))
-            $predicateObject = $tableState->search->predicateObject; // initialize predicate object
+            $predicateObject = $tableState->search->predicateObject;
+        else
+            return $query;
 
         if (isset($predicateObject->section) && $predicateObject->section != '')
-            SearchHelper::sectionSearchQuery($query, $predicateObject->section);
+            SearchServiceProvider::sectionSearchQuery($query, $predicateObject->section);
+
         if (isset($predicateObject->name) && $predicateObject->name != '')
             $query = $query->where('name', 'LIKE', '%'.$predicateObject->name.'%');
+
         if (isset($predicateObject->professor) && $predicateObject->professor != '')
-            SearchHelper::professorSearchQuery($query, $predicateObject->professor);
+            SearchServiceProvider::professorSearchQuery($query, $predicateObject->professor);
 
         return $query;
     }
@@ -348,7 +375,7 @@ class CourseController extends Controller
                 ]
             ];
 
-            SearchHelper::buildSortQuery($query, $tableState->sort, $sorts);
+            SearchServiceProvider::buildSortQuery($query, $tableState->sort, $sorts);
         }
         
         return $query;

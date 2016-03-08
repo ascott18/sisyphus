@@ -1,7 +1,15 @@
 var app = angular.module('sisyphus', ['sisyphus.helpers', 'sisyphus.helpers.isbnHyphenate', 'ui.bootstrap' , 'smart-table', 'ngSanitize', 'ngCsv']);
 
 
-
+/**
+ * This directive is for generating simple HTML tables.
+ * It is a much faster alternatives to doing two ng-repeats
+ * in the HTML because there is so much overhead with the data binding there
+ * that we don't actually need to worry about.
+ * When using this directive, the assumption is made that the contents
+ * of the backing array will never change. To update the generated table,
+ * change the actual array referenced by the backing scope variable.
+ */
 app.directive('superFastTable', function($http) {
     return {
         restrict: 'A',
@@ -18,6 +26,7 @@ app.directive('superFastTable', function($http) {
                         var row = rows[r];
                         for (var c = 0; c < row.length; c++){
                             var td = document.createElement("td");
+                            // createTextNode guards against XSS, and also minor HTML formatting issues.
                             td.appendChild(document.createTextNode(row[c] || ""));
                             tr.appendChild(td);
                         }
@@ -46,6 +55,7 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
     // used by the zoom buttons
     $scope.Math = window.Math;
 
+    // Helper function to determine they key by which we will group date columns.
     var dateGrouper = function(values){
         var count = values.Count('');
         if (count == 0)
@@ -61,6 +71,7 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
         }
     };
 
+    // Contains all of the column options for the reports.
     $scope.options = [
         {
             name: 'Course Title',
@@ -158,7 +169,7 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
             shouldShow: function(){
                 return !$scope.ReportType || $scope.ReportType == 'orders'
             },
-            groupStyle: 'dateRange'
+            group: dateGrouper
         },
         {
             name: 'Selected No Book?',
@@ -195,6 +206,7 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
         $scope.DeptsSelected = departments.slice();
     };
 
+
     $scope.getStage = function(){
         return $scope.stage;
     };
@@ -205,6 +217,7 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
         if (stage == $scope.STAGE_SELECT_FIELDS && $scope.canceler)
             $scope.canceler.resolve();
     };
+
 
     $scope.shouldOptionShow = function(optionProperties){
         return !optionProperties.shouldShow || optionProperties.shouldShow()
@@ -226,6 +239,9 @@ app.controller('ReportsController', function($scope, $http, $filter, $q) {
 
     $scope.onSelectTerm = function()
     {
+        // When the user changes the selected term, update the date range to something appropriate for that term.
+        // We extend the dates out from the term by a month in either direction so that orders that were placed
+        // or deleted before or after the order peroid of the term won't be omitted accidentally.
         var term = $scope.TermSelected;
         $scope.reportDateStart = moment(term.order_start_date).subtract(1, 'months').toDate();
         $scope.reportDateEnd = moment(term.order_due_date).add(1, 'months').toDate();

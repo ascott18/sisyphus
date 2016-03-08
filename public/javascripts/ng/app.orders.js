@@ -231,14 +231,12 @@ app.controller('OrdersController', ['$scope', '$http', 'CartService', 'Breadcrum
         }
     };
 
-    $scope.addPassedBookToCart = function(book) { // isbn was passed in from book details page
-        if(book.length != 0) {
-            $scope.passedBookId = book[0].book_id;
-            var bookData = {};
-            bookData['book'] = book[0];
-            bookData['book']['isbn13'] = stripHyphens(book[0].isbn13);
-            CartService.cartBooks.push(bookData);
-        }
+    $scope.addPassedBookToCart = function(book) {
+        $scope.passedBookId = book.book_id;
+        var bookData = {};
+        bookData['book'] = book;
+        bookData['book']['isbn13'] = stripHyphens(book.isbn13);
+        CartService.cartBooks.push(bookData);
     };
 
     $scope.submitOrders = function(form) {

@@ -29,13 +29,17 @@ class CASAuth {
         $this->session = app('session');
     }
 
+
+    /**
+     * Checks whether or not CAS_PRETEND_USER is set in the .env file.
+     * xavrsl/cas provides this functionality, but this method is not public for some reason,
+     * so we roll our own.
+     *
+     * @return bool
+     */
     public static function isPretending()
     {
-        if (!empty(config("cas.cas_pretend_user")))
-        {
-            return true;
-        }
-        return false;
+        return !empty(config("cas.cas_pretend_user"));
     }
 
     /**
@@ -47,8 +51,11 @@ class CASAuth {
      */
     public function handle($request, Closure $next)
     {
+        // Checks whether there is an active session associated with the current request.
         if ($this->auth->guest())
         {
+            // Retrieve the instance of CasManager from the Laravel service container.
+            // This comes from CasServiceProvider->register()
             $cas = app('cas');
 
             // Need to manually connect since we're bypassing Xavrsl\Cas\CasManager for our authentication attempt.
@@ -58,8 +65,8 @@ class CASAuth {
             // This will throw an exception if authentication fails,
             // and will immediately redirect to login.ewu.edu if authentication is needed.
             // We call out to phpCas manually because Xavrsl/Cas swallows up exceptions in $cas->authenticate() for some reason.
-            // $cas->authenticate();
 
+            // $cas->authenticate();
             if (!$this->isPretending()){
                 phpCAS::forceAuthentication();
             }
@@ -70,11 +77,14 @@ class CASAuth {
 
             $user = \App\Models\User::where(['net_id' => $net_id])->first();
 
+            // If the user isn't found, then they almost certainly have no need to access this system.
+            // Throw an exception to present them with an appropriate message, which will halt the request.
             if (is_null($user))
             {
-                throw new AccessDeniedHttpException("User '$net_id' was not found in this system.\n Please contact an administrator if you believe this to be in error.");
+                throw new AccessDeniedHttpException("User '$net_id' was not found in this system.\n Please contact an administrator if you need to be added.");
             }
 
+            // Log the user in with Laravel, starting a session for them.
             $this->auth->login($user);
         }
 
