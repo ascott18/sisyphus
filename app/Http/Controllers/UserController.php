@@ -17,7 +17,7 @@ class UserController extends Controller
      *
      * @var array
      */
-    const ESSENTIAL_PERMISSIONS = [
+    public static $ESSENTIAL_PERMISSIONS = [
         'manage-users',
         'manage-roles',
     ];
@@ -101,7 +101,7 @@ class UserController extends Controller
 
             $permissions = $currentRole->permissions;
             foreach ($permissions as $permission ) {
-                if (in_array($permission->name, static::ESSENTIAL_PERMISSIONS)){
+                if (in_array($permission->name, static::$ESSENTIAL_PERMISSIONS)){
                     // This role has an essential permission, so we need to make sure that
                     // removing this role from this user will not cause that permissions
                     // to be orphaned.
@@ -408,7 +408,7 @@ class UserController extends Controller
             return ['success' => true];
 
         // Guard against accidental removal of an essential permission.
-        if (in_array($permission->name, static::ESSENTIAL_PERMISSIONS)){
+        if (in_array($permission->name, static::$ESSENTIAL_PERMISSIONS)){
             $otherRolesWithPermission = $permission->roles()->where('roles.id', '!=', $role->id)->get();
 
             if (count($otherRolesWithPermission) == 0){
