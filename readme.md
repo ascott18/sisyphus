@@ -84,7 +84,8 @@ This application requires the following PHP extensions. There is a good chance t
       <Directory "C:/xampp/htdocs/sisyphus/public">
         AllowOverride all
       </Directory>
-    </VirtualHost>```
+    </VirtualHost>
+    ```
     
 ### Optimization
 There are a few optimization steps that may be taken **if this is a production deployment**.
