@@ -86,6 +86,7 @@
             </form>
 
         </div>
+
         <div class="col-lg-5">
             <div class="panel panel-default">
                 <div class="panel-heading">

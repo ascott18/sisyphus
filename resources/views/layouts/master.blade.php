@@ -46,6 +46,7 @@
 <div id="wrapper">
 
     {{--Uncomment this. I dare you.--}}
+
     {{--<div style="height: 0;">--}}
         {{--<button class="btn btn-lg btn-primary"--}}
                 {{--style="position: relative; top: -35px; left: 60%; z-index: 100000"--}}
@@ -55,6 +56,8 @@
     {{--</div>--}}
 
     <i ng-spinner ng-cloak class="fa fa-spinner fa-spin" ng-show="spinnerActive"></i>
+
+    {{--Uncomment this directive for the help modal -- also uncomment the button below to get it to open--}}
 
     {{--<modal title="Help" visible="showModal">--}}
     {{--</modal>--}}
@@ -127,12 +130,15 @@
                 @can('manage-users')
                     <li><a href="/users"><i class="fa fa-fw fa-group"></i> Users</a></li>
                 @endcan
+                {{--The tab so current user can view tickets created by them or for them--}}
+
                 {{--<li><a href="/tickets"><i class="fa fa-fw fa-life-ring"></i> Tickets</a></li>--}}
                 @can('make-reports')
                 <li><a href="/reports"><i class="fa fa-fw fa-bar-chart"></i> Reports</a></li>
                 @endcan
-                {{--<li><a ng-click="toggleModal()"><i class="fa fa-fw fa-question"></i> Help</a></li>--}}
 
+
+                {{--Here is the button to get the help modal to pop up--}}
 
                 {{--<div class="icon-wrapper" ng-click="toggleModal()">--}}
                     {{--<i class="fa fa-question custom-icon"></i>--}}

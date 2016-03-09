@@ -1,4 +1,7 @@
 
+{{--This is the view that should be sent to whom it may concern when a new comment is made on a ticket. The status needs to be--}}
+{{--changed from its number code to its string value (no way exists currently to do that server-side).--}}
+
 <!DOCTYPE html>
 
 <html lang="en">

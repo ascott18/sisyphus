@@ -1,4 +1,4 @@
-
+{{--This is the view is the view that should be emailed to whom it may concern when a new ticket is created, it needs some love--}}
 
 <!DOCTYPE html>
 
