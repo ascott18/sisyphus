@@ -35,6 +35,8 @@ class TermController extends Controller
         $maxYear = Term::max('year');
         $thisYear = Carbon::now()->year;
 
+        // Create the terms up to a year in the future.
+        // This is the only way for new terms to be created - for users to visit this page.
         if ($maxYear <= $thisYear){
             for($year = $maxYear + 1; $year <= $thisYear + 1; $year++){
                 Term::createTermsForYear($year);

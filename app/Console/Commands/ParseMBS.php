@@ -258,13 +258,14 @@ EOL;
                     // pull all of the section numbers that we have in the database for this course.
                     $sectionNumbers = null;
                     if (trim($sectionData) == "ALL") {
-                        $sectionNumbers =
-                        Listing::join('courses', 'courses.course_id', '=', 'listings.course_id')
-                        ->where([
-                            'term_id' => $term->term_id,
-                            'department' => $deptCourses[1],
-                            'number' => $courseNumber,
-                        ])->lists('section');
+                        $sectionNumbers = Listing
+                            ::join('courses', 'courses.course_id', '=', 'listings.course_id')
+                            ->where([
+                                'term_id' => $term->term_id,
+                                'department' => $deptCourses[1],
+                                'number' => $courseNumber,
+                            ])
+                            ->lists('section');
                     } else {
                         // If the section number is not "ALL",
                         // expand out the numbers again like we did for course numbers.
@@ -276,12 +277,13 @@ EOL;
                         $sectionNumber = trim($sectionNumber);
 
                         $dbCourse = Course::join('listings', 'courses.course_id', '=', 'listings.course_id')
-                        ->where([
-                            'term_id' => $term->term_id,
-                            'department' => $department,
-                            'number' => $courseNumber,
-                            'section' => $sectionNumber,
-                        ])->first();
+                            ->where([
+                                'term_id' => $term->term_id,
+                                'department' => $department,
+                                'number' => $courseNumber,
+                                'section' => $sectionNumber,
+                            ])
+                            ->first();
 
                         if (!$dbCourse) {
                             echo("$deptCourses[1] $courseNumber-$sectionNumber was not found.\n");
@@ -325,20 +327,20 @@ EOL;
                                 'book_id' => $dbBook->book_id,
                             ]);
 
-                            $dbOrder = new Order;
-                            $dbOrder->book_id = $dbBook->book_id;
-                            $dbOrder->course_id = $dbCourse->course_id;
-                            $dbOrder->placed_by = null;
-                            // Don't do this - it feels weird.
-                            //if ($classCapacity){
-                            //    $dbOrder->notes = "Class Capacity: $classCapacity";
-                            //}
-                            //$dbOrder->save();
+                            $alreadyHasBook = $dbCourse->orders->where('book_id', $dbBook->book_id)->count() > 0;
 
+                            if (!$alreadyHasBook){
+                                $dbOrder = new Order;
+                                $dbOrder->book_id = $dbBook->book_id;
+                                $dbOrder->course_id = $dbCourse->course_id;
+                                $dbOrder->placed_by = null;
 
-                            // This date is fake data.
-                            $dbOrder->created_at = $term->order_start_date->copy()->addDays(rand(0, $termPeriodDayLength));
-                            $dbOrder->save();
+                                // This date is fake data.
+                                $dbOrder->created_at = $term->order_start_date->copy()->addDays(rand(0, $termPeriodDayLength));
+                                $dbOrder->save();
+
+                                $dbCourse->load('orders');
+                            }
                         }
                     }
                 }

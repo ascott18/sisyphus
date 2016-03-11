@@ -15,7 +15,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 class ImportServiceProvider extends ServiceProvider
 {
     // The value in the spreadsheet for courses that have an undetermined professor.
-    const FACULTY_EMAIL_TBD = '#N/A';
+    const FACULTY_LAST_NAME_TBD = 'STAFF';
 
     // Not relevant anymore, but in a past version of the report that gets imported here,
     // about 40% of professors were marked confidential.
@@ -30,9 +30,9 @@ class ImportServiceProvider extends ServiceProvider
         'TITLE' => true,            // BEGINNING PAINTING
         'XLST_COURSE_ID' => true,   // ART450-01
         'XLST_TITLE' => true,       // PAINTING
-        'FacultyEmail' => true,
-        'FacultyLastName' => true,
-        'FacultyFirstName' => true,
+        'EMAIL' => true,
+        'INST_LAST_NAME' => true,
+        'INST_FIRST_NAME' => true,
 
         // Might be useful for future additions, but currently unused:
         //'CAMPUS' => true,           // {RPT, CHN}
@@ -375,11 +375,6 @@ class ImportServiceProvider extends ServiceProvider
                 }
                 else {
                     // This is a crosslisting with a different title from the original. Make it be its own course.
-                    // We have to copy over faculty information from the 'parent' course since faculty information
-                    // is never set on crosslistings.
-                    $spreadsheetRow['FacultyEmail'] = $primaryListingBucket[0]['FacultyEmail'];
-                    $spreadsheetRow['FacultyFirstName'] = $primaryListingBucket[0]['FacultyFirstName'];
-                    $spreadsheetRow['FacultyLastName'] = $primaryListingBucket[0]['FacultyLastName'];
                     $allBuckets[] = new \ArrayObject([$spreadsheetRow]);
                 }
             }
@@ -412,13 +407,14 @@ class ImportServiceProvider extends ServiceProvider
             $courseTitle = title_case($courseTitle);
             $courseTitle = strtr($courseTitle, static::$title_transforms_post);
 
-            $userEmail = $bucket[0]['FacultyEmail'];
+            $userLastName = $bucket[0]['INST_LAST_NAME'];
+            $userEmail = $bucket[0]['EMAIL'];
             $course = new Course();
             $course->term_id = $term_id;
 
             // Setup the user for the course.
             // Use the existing user if one exists, or create one if a user doesn't exist.
-            if ($userEmail == static::FACULTY_EMAIL_TBD || $userEmail == static::FACULTY_EMAIL_CONFIDENTIAL){
+            if ($userLastName == static::FACULTY_LAST_NAME_TBD || $userEmail == static::FACULTY_EMAIL_CONFIDENTIAL){
                 // Confidential users shouldn't be an issue anymore, but there was a time
                 // where OIT refused to give us about 40% of professors' emails and names
                 // because of a miscommunication between them and the Registrar.
@@ -436,8 +432,8 @@ class ImportServiceProvider extends ServiceProvider
                     $dbUser = new User;
                     $dbUser->net_id = $net_id;
                     $dbUser->email = $userEmail;
-                    $dbUser->first_name = $bucket[0]['FacultyFirstName'];
-                    $dbUser->last_name = $bucket[0]['FacultyLastName'];
+                    $dbUser->first_name = $bucket[0]['INST_FIRST_NAME'];
+                    $dbUser->last_name = $userLastName;
                     $dbUser->save();
                 }
 
