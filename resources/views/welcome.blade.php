@@ -176,7 +176,7 @@
 
         @if(count($responseStats))
             var data = {!! json_encode($responseStats) !!}
-            Morris.Line({
+            Morris.Bar({
                 element: 'response-chart',
                 data: data,
                 xkey: 'name',
