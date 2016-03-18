@@ -446,7 +446,7 @@ class ImportServiceProvider extends ServiceProvider
 
             // Setup the user for the course.
             // Use the existing user if one exists, or create one if a user doesn't exist.
-            if ($userLastName == static::FACULTY_LAST_NAME_TBD || $userEmail == static::FACULTY_EMAIL_CONFIDENTIAL){
+            if (!$userEmail || $userLastName == static::FACULTY_LAST_NAME_TBD || $userEmail == static::FACULTY_EMAIL_CONFIDENTIAL){
                 // Confidential users shouldn't be an issue anymore, but there was a time
                 // where OIT refused to give us about 40% of professors' emails and names
                 // because of a miscommunication between them and the Registrar.
