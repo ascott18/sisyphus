@@ -33,14 +33,14 @@ class HistoricalDataSeeder extends Seeder
         ];
 
         $spreadsheetFiles = [
-            ["F14Bookstore_Order_Course_List.xls", 2014, "Fall"],
-            ["W15Bookstore_Order_Course_List.xls", 2015, "Winter"],
-            ["S15Bookstore_Order_Course_List.xls", 2015, "Spring"],
-            ["SU15Bookstore_Order_Course_List.xls", 2015, "Summer"],
-            ["F15Bookstore_Order_Course_List.xls", 2015, "Fall"],
-            ["W16Bookstore_Order_Course_List.xls", 2016, "Winter"],
-            ["S16Bookstore_Order_Course_List.xls", 2016, "Spring"],
             ["20160304SummerCourseOfferings.xlsx", 2016, "Summer"],
+            ["S16Bookstore_Order_Course_List.xls", 2016, "Spring"],
+            ["W16Bookstore_Order_Course_List.xls", 2016, "Winter"],
+            ["F15Bookstore_Order_Course_List.xls", 2015, "Fall"],
+            ["SU15Bookstore_Order_Course_List.xls", 2015, "Summer"],
+            ["S15Bookstore_Order_Course_List.xls", 2015, "Spring"],
+            ["W15Bookstore_Order_Course_List.xls", 2015, "Winter"],
+            ["F14Bookstore_Order_Course_List.xls", 2014, "Fall"],
         ];
 
         // Don't do this anymore - it isn't good data (lacks proper instructor information)
