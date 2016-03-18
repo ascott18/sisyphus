@@ -33,18 +33,28 @@ class HistoricalDataSeeder extends Seeder
         ];
 
         $spreadsheetFiles = [
-            ["20160304SummerCourseOfferings.xlsx", 2016, "Summer"]
+            ["F14Bookstore_Order_Course_List.xls", 2014, "Fall"],
+            ["W15Bookstore_Order_Course_List.xls", 2015, "Winter"],
+            ["S15Bookstore_Order_Course_List.xls", 2015, "Spring"],
+            ["SU15Bookstore_Order_Course_List.xls", 2015, "Summer"],
+            ["F15Bookstore_Order_Course_List.xls", 2015, "Fall"],
+            ["W16Bookstore_Order_Course_List.xls", 2016, "Winter"],
+            ["S16Bookstore_Order_Course_List.xls", 2016, "Spring"],
+            ["20160304SummerCourseOfferings.xlsx", 2016, "Summer"],
         ];
 
-        foreach ($eaglenetFiles as $fileInfo) {
-            $this->command->line("Parsing eaglenet $fileInfo[0] $fileInfo[1]...");
-            $fileName = str_replace(' ', '', $fileInfo[0]) . $fileInfo[1];
-            Artisan::call('parseCourseCsv', [
-                'termNumber' => array_search($fileInfo[0], Term::$termNumbers),
-                'year' => $fileInfo[1],
-                'file' => "database/seeds/dataFiles/eagleNet$fileName.csv"
-            ]);
-        }
+        // Don't do this anymore - it isn't good data (lacks proper instructor information)
+        // It was never intended to be a permanant thing - just useful while we were developing
+        // before we got the real data from OIT.
+//        foreach ($eaglenetFiles as $fileInfo) {
+//            $this->command->line("Parsing eaglenet $fileInfo[0] $fileInfo[1]...");
+//            $fileName = str_replace(' ', '', $fileInfo[0]) . $fileInfo[1];
+//            Artisan::call('parseCourseCsv', [
+//                'termNumber' => array_search($fileInfo[0], Term::$termNumbers),
+//                'year' => $fileInfo[1],
+//                'file' => "database/seeds/dataFiles/eagleNet$fileName.csv"
+//            ]);
+//        }
 
         foreach ($spreadsheetFiles as $fileInfo) {
             $this->command->line("Parsing spreadsheet $fileInfo[2] $fileInfo[1]...");

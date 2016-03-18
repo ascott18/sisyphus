@@ -81,6 +81,12 @@ class ParseCourseSpreadsheet extends Command
 
         $courses = ImportServiceProvider::parseSpreadsheet($spreadsheet, $term_id);
 
+        // Attempt to prevent out of memory errors.
+        $spreadsheet->garbageCollect();
+        $spreadsheet->disconnectWorksheets();
+        unset($spreadsheet);
+        unset($reader);
+
         $actions = ImportServiceProvider::importCourses($courses, $term_id);
 
         foreach ($actions as $actionName => $actionList) {

@@ -29,10 +29,14 @@ class ImportServiceProvider extends ServiceProvider
         'COURSE_ID' => true,        // ART155-01
         'TITLE' => true,            // BEGINNING PAINTING
         'XLST_COURSE_ID' => true,   // ART450-01
-        'XLST_TITLE' => true,       // PAINTING
         'EMAIL' => true,
         'INST_LAST_NAME' => true,
         'INST_FIRST_NAME' => true,
+
+        // Well, this column WAS here an a version of the report that we were told by
+        // OIT would be the FINAL version of the report. Guess what? It isn't in the
+        // final version of the report that is up on Jasper!
+        //'XLST_TITLE' => true,       // PAINTING
 
         // Might be useful for future additions, but currently unused:
         //'CAMPUS' => true,           // {RPT, CHN}
@@ -319,10 +323,16 @@ class ImportServiceProvider extends ServiceProvider
 
 
 
+        $startOffset = 0;
+        // Check and see if the first row is a dumb row that contains the date and a title.
+        if (!$worksheet->getCellByColumnAndRow(6, 1)->getValue()){
+            $startOffset = 1;
+        }
+
         // Scan through the header row and find where the RELEVANT_COLUMNS are.
         $columnIndexesByLabel = [];
         for ($colIndex = 0; $colIndex <= $highestColumnIndex; $colIndex++){
-            $columnLabel = $worksheet->getCellByColumnAndRow($colIndex, 1)->getValue();
+            $columnLabel = $worksheet->getCellByColumnAndRow($colIndex, 1 + $startOffset)->getValue();
 
             if (isset(static::$RELEVANT_COLUMNS[$columnLabel]))
                 $columnIndexesByLabel[$columnLabel] = $colIndex;
@@ -340,7 +350,7 @@ class ImportServiceProvider extends ServiceProvider
         // Now, scan through all the data rows and pick out the RELEVANT_COLUMNS from each row.
         // We start $rowIndex at 2 because $rowIndex == 1 is the header row.
         $spreadsheetRows = [];
-        for ($rowIndex = 2; $rowIndex <= $highestRow; $rowIndex++){
+        for ($rowIndex = 2 + $startOffset; $rowIndex <= $highestRow; $rowIndex++){
             $spreadsheetRow = [];
 
             foreach ($columnIndexesByLabel as $columnLabel => $colIndex) {
@@ -369,7 +379,7 @@ class ImportServiceProvider extends ServiceProvider
                 $primaryListingBucket = null;
             }
             elseif (!$courseId && $xlId){
-                if (!$spreadsheetRow['XLST_TITLE'] || $spreadsheetRow['XLST_TITLE'] == $primaryListingBucket[0]['TITLE']){
+                if (!isset($spreadsheetRow['XLST_TITLE']) || !$spreadsheetRow['XLST_TITLE'] || $spreadsheetRow['XLST_TITLE'] == $primaryListingBucket[0]['TITLE']){
                     // This is a crosslisting with the same title as the original. Put it in the most recent bucket.
                     $primaryListingBucket[] = $spreadsheetRow;
                 }
@@ -378,9 +388,11 @@ class ImportServiceProvider extends ServiceProvider
                     $allBuckets[] = new \ArrayObject([$spreadsheetRow]);
                 }
             }
-            elseif ($courseId == $xlId){
+            elseif ($courseId && $xlId && $courseId == $xlId){
                 // This is the primary listing of a course that has crosslistings.
                 // Make a bucket for it and save the bucket so we can add more to it.
+                // Check that both of them are not falsey so that we skip over blank lines.
+                // The real version of the reports that we get from Jasper have every other line as blank (grrr....)
                 $allBuckets[] = $primaryListingBucket = new \ArrayObject([$spreadsheetRow]);
             }
         }

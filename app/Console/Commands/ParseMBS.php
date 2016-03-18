@@ -69,6 +69,10 @@ EOL;
                 echo("Skipping $termName $term[2] because it wasn't in the database\n");
                 continue;
             }
+            if ($dbTerm->courses->count() == 0){
+                echo("Skipping $termName $term[2] because it doesn't have any courses in the database.\n");
+                continue;
+            }
 
             $semesterTermName = $termName == "Winter" ? "Spring" : $termName;
             $termNumber = array_search("$semesterTermName Semester", Term::$termNumbers);
