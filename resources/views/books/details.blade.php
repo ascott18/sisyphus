@@ -24,9 +24,11 @@
             </div>
             <div class="panel-body">
                 <div class="col-sm-6">
+                    @can('edit-book', $book)
                     <a href="/books/edit/{{ $book->book_id }}" class="btn btn-primary " role="button">
                         <i class="fa fa-pencil"></i> Edit
                     </a>
+                    @endcan
                     <a href="/requests?book_id={{ $book->book_id }}" class="btn btn-primary" role="button">
                         <i class="fa fa-shopping-cart"></i> Request This Book
                     </a>
