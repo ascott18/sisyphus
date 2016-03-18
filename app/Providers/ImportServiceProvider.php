@@ -136,6 +136,26 @@ class ImportServiceProvider extends ServiceProvider
                 continue;
             }
 
+
+            // Setup the user for the course if an unsaved user is attached to it from the parse.
+            if (isset($course['user']) && !$course->user_id){
+                /** @var User $courseUser */
+                $courseUser = $course['user'];
+                unset($course['user']);
+                $net_id = $courseUser->net_id;
+
+                // Check that this user hasn't already been created for a course previously parsed.
+                $dbUser = User::where(['net_id' => $net_id])->first();
+                if (!$dbUser){
+                    // User is definitely safe to create.
+                    $courseUser->save();
+                    $dbUser = $courseUser;
+                }
+
+                // Setup the user_id on the course.
+                $course->user_id = $dbUser->user_id;
+            }
+
             // Store all the listings that are already in the database for this course.
             // If a listing is not found in the database for a given input listing,
             // this array will record a null in its place so that there is always a
@@ -441,15 +461,16 @@ class ImportServiceProvider extends ServiceProvider
                 $dbUser = User::where(['net_id' => $net_id])->first();
 
                 if (!$dbUser){
-                    $dbUser = new User;
+                    $course['user'] = $dbUser = new User;
                     $dbUser->net_id = $net_id;
                     $dbUser->email = $userEmail;
                     $dbUser->first_name = $bucket[0]['INST_FIRST_NAME'];
                     $dbUser->last_name = $userLastName;
-                    $dbUser->save();
+                }
+                else{
+                    $course->user_id = $dbUser->user_id;
                 }
 
-                $course->user_id = $dbUser->user_id;
             }
 
             $listings = [];

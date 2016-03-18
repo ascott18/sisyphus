@@ -72,7 +72,7 @@ class ParseCourseSpreadsheet extends Command
         // If you want to parse everything, you will need to make a role that can see all courses,
         // and then you will need to seed a user that has that role, and then you will need to place their net_id here.
         $net_id = 'cbean';
-        echo "Parsing spreadsheet as user $net_id \n";
+        echo "Processing spreadsheet as user $net_id \n";
         Auth::login(User::where(['net_id' => $net_id])->firstOrfail());
 
 
